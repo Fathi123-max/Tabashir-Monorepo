@@ -194,6 +194,13 @@ The `tabashir-web/prisma/schema.prisma` defines the data model:
 - **Mobile API Prefix**: All mobile-specific endpoints use `/api/mobile/` prefix
 - **Build Cache**: If builds fail, clean both `flutter clean` (mobile) and `.next` (web)
 
+### Critical Development Guidelines
+
+- **⚠️ Database Changes**: If you change the Prisma schema, you MUST consider the impact on both Web and Mobile (since Mobile relies on the API which relies on the DB)
+- **⚠️ Mobile API Compatibility**: Do NOT break existing `/api/mobile/*` endpoints. The mobile app is sensitive to contract changes
+- **Design Standards**: For Web UI, prioritize "Premium" design—smooth animations, perfect spacing, and high-quality typography (Inter/Geist)
+- **Dependencies**: Do not add new system-level dependencies without approval
+
 ## Key Documentation Files
 
 - `tabashir-mobile/CLAUDE.md` - Complete mobile app architecture
