@@ -200,9 +200,49 @@ The `tabashir-web/prisma/schema.prisma` defines the data model:
 - **⚠️ Mobile API Compatibility**: Do NOT break existing `/api/mobile/*` endpoints. The mobile app is sensitive to contract changes
 - **Design Standards**: For Web UI, prioritize "Premium" design—smooth animations, perfect spacing, and high-quality typography (Inter/Geist)
 - **Dependencies**: Do not add new system-level dependencies without approval
+- **Monorepo Awareness**: Always check which directory you are in. Do not mix commands (e.g., running `flutter` in `tabashir-web`)
+- **Documentation**: Update `CLAUDE.md` or relevant `README.md` files if you make significant architectural changes
+
+## Testing the API
+
+The backend API can be tested using the provided shell scripts:
+
+```bash
+# Test resume API endpoints
+./test-resume-api.sh YOUR_JWT_TOKEN
+
+# Test all resume endpoints (comprehensive test)
+./test-all-resume-endpoints.sh YOUR_JWT_TOKEN
+
+# Test saved jobs API
+./test-saved-jobs-api.sh YOUR_JWT_TOKEN
+
+# Test file upload
+./test-upload.sh YOUR_JWT_TOKEN
+```
+
+Or manually with curl:
+
+```bash
+# Health check
+curl http://localhost:3000/api/mobile/test \
+  -H "Authorization: Bearer TOKEN"
+
+# List resumes
+curl http://localhost:3000/api/mobile/resumes \
+  -H "Authorization: Bearer TOKEN"
+
+# Upload resume
+curl -X POST http://localhost:3000/api/mobile/resumes \
+  -H "Authorization: Bearer TOKEN" \
+  -F "file=@/path/to/resume.pdf"
+```
+
+See `QUICK_REFERENCE.md` for complete endpoint documentation.
 
 ## Key Documentation Files
 
-- `tabashir-mobile/CLAUDE.md` - Complete mobile app architecture
-- `tabashir-web/CLAUDE.md` - Complete web app architecture
-- `QUICK_REFERENCE.md` - Resume API quick reference
+- **`tabashir-mobile/CLAUDE.md`** - Complete mobile app architecture with Clean Architecture, BLoC state management, Isar database, and all mobile-specific development workflows
+- **`tabashir-web/CLAUDE.md`** - Complete web app architecture with Next.js App Router, Prisma ORM, NextAuth, and all web-specific development workflows
+- **`QUICK_REFERENCE.md`** - Resume API quick reference with all 9 endpoints, authentication, and testing examples
+- **`.cursorrules`** - Development rules and coding standards for both web and mobile apps
