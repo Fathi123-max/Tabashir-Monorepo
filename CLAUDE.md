@@ -4,48 +4,38 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-Tabashir is an HR consulting platform with a monorepo structure:
-
+Tabashir is an HR consulting platform with a **monorepo structure** containing:
 - **tabashir-mobile**: Flutter mobile application (iOS/Android)
 - **tabashir-web**: Next.js web application with admin dashboard
 - **Backend API**: Next.js API routes serving both web and mobile apps
 
 The platform provides job matching, AI-powered resume optimization, application tracking, payment processing, and multi-user role management (Candidates, Recruiters, Admins).
 
-## Monorepo Structure
-
-```
-tabashir/
-├── tabashir-mobile/          # Flutter mobile app
-│   ├── lib/                  # Flutter source code
-│   └── CLAUDE.md             # Mobile-specific guidance
-├── tabashir-web/             # Next.js web app
-│   ├── app/                  # Next.js App Router
-│   ├── prisma/               # Database schema
-│   └── CLAUDE.md             # Web-specific guidance
-└── CLAUDE.md                 # This file (monorepo overview)
-```
-
-## Development Commands
+## Quick Start Commands
 
 ### Web Application (tabashir-web)
 
 ```bash
 cd tabashir-web
 
-pnpm install                  # Install dependencies
-pnpm dev                      # Start development server
+# Install dependencies
+pnpm install
+
+# Development
+pnpm dev                      # Start dev server (http://localhost:3000)
 pnpm build                    # Build for production
-pnpm lint                     # Run linting
+pnpm start                    # Start production server
+pnpm lint                     # Run ESLint
 
-# Database
+# Database operations
 pnpm prisma generate          # Generate Prisma client
-pnpm prisma db push           # Push schema changes
-pnpm prisma migrate dev --name migration_name
-pnpm prisma studio            # Database browser
+pnpm prisma db push           # Push schema changes (dev)
+pnpm migrate dev --name name  # Create migration
+pnpm prisma studio            # Open database browser
 
-# Single test
-pnpm test -- filename.test.ts
+# Testing
+pnpm test                     # Run tests
+pnpm test filename.test.ts    # Run specific test
 ```
 
 ### Mobile Application (tabashir-mobile)
@@ -53,98 +43,210 @@ pnpm test -- filename.test.ts
 ```bash
 cd tabashir-mobile
 
-flutter pub get               # Install dependencies
-dart run build_runner build --delete-conflicting-outputs  # Generate code
+# Install dependencies
+flutter pub get
 
-flutter run                   # Run the app
+# Development
+flutter run                   # Run app (hot reload enabled)
 flutter run -d <device_id>    # Run on specific device
 
+# Code generation (required after modifying models/DI)
+dart run build_runner build --delete-conflicting-outputs
+dart run build_runner watch   # Watch mode for development
+
+# Code quality
 dart format .                 # Format code
 flutter analyze               # Analyze code
-flutter test                  # Run tests
-flutter test test/specific_test.dart  # Single test
+flutter test                  # Run all tests
+flutter test test/file.dart  # Run specific test
 
+# Build
 flutter build apk --release   # Android release
 flutter build ios --release   # iOS release
 
-flutter clean && flutter pub get  # Clean build cache
+# Clean build cache
+flutter clean && flutter pub get
 ```
 
-### Backend API Testing
+### API Testing
 
 ```bash
-./test-resume-api.sh YOUR_JWT_TOKEN
-
-# Or manually
-curl http://localhost:3000/api/mobile/resumes \
-  -H "Authorization: Bearer YOUR_JWT_TOKEN"
+# From repository root
+./test/scripts/test-resume-api.sh YOUR_JWT_TOKEN
+./test/scripts/test-all-resume-endpoints.sh YOUR_JWT_TOKEN
+./test/scripts/test-saved-jobs-api.sh YOUR_JWT_TOKEN
 ```
 
-## High-Level Architecture
-
-### System Overview
+## Monorepo Structure
 
 ```
-Mobile App (Flutter)     Web App (Next.js)
-        |                       |
-        +----------- API Routes (Next.js)
-                        |
-                Prisma ORM
-                        |
-                PostgreSQL Database
+tabashir/
+├── tabashir-mobile/          # Flutter mobile app
+│   ├── lib/                  # Flutter source
+│   │   ├── core/             # Infrastructure (DI, network, theme, services)
+│   │   ├── features/          # Feature modules (Clean Architecture)
+│   │   └── shared/           # Shared components
+│   ├── android/              # Android platform files
+│   ├── ios/                  # iOS platform files
+│   └── pubspec.yaml          # Dependencies
+├── tabashir-web/             # Next.js web app
+│   ├── app/                  # Next.js App Router
+│   │   ├── (auth)/           # Authentication pages
+│   │   ├── (candidate)/      # Candidate dashboard
+│   │   ├── (owner)/          # Admin panel (owner = admin)
+│   │   ├── (recruiter)/      # Recruiter features
+│   │   ├── api/              # API routes
+│   │   │   ├── mobile/       # API for Flutter app
+│   │   │   ├── auth/         # NextAuth endpoints
+│   │   │   ├── admin/        # Admin API
+│   │   │   └── stripe/       # Stripe webhooks
+│   │   └── layout.tsx        # Root layout
+│   ├── prisma/               # Database schema
+│   ├── components/           # UI components
+│   ├── actions/              # Server Actions
+│   └── package.json          # Dependencies
+├── docs/                     # Comprehensive documentation
+│   ├── project/              # Project-wide docs
+│   ├── mobile/               # Mobile app docs
+│   ├── web/                  # Web app docs
+│   ├── api/                  # API documentation
+│   ├── guides/               # Implementation guides
+│   └── architecture/         # Architecture docs
+├── test/                     # API testing scripts
+└── .cursorrules             # Development rules and standards
 ```
 
-**External Services**: Stripe (payments), UploadThing (file storage), OpenAI (AI features)
+## System Architecture
+
+### High-Level Architecture
+
+```
+┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
+│  Mobile App    │    │   Web App       │    │   Backend API   │
+│  (Flutter)      │◄──►│  (Next.js)      │◄──►│  (Next.js)      │
+└────────┬────────┘    └────────┬────────┘    └────────┬────────┘
+         │                      │                      │
+         └──────────────────────┼──────────────────────┘
+                                │
+                         ┌──────▼──────┐
+                         │  Prisma ORM │
+                         └──────┬──────┘
+                                │
+                         ┌──────▼──────┐
+                         │ PostgreSQL  │
+                         │  Database   │
+                         └─────────────┘
+```
+
+**External Services**:
+- Stripe (payments)
+- UploadThing (file storage)
+- OpenAI (AI features - resume optimization, translation)
+- Firebase (mobile analytics, crashlytics, messaging)
+- NextAuth (web authentication)
 
 ### User Types & Access Control
 
 - **Candidates**: Job seekers - search jobs, upload resumes, apply to positions
 - **Recruiters**: Post jobs, view applications, manage job postings
-- **Admins**: Full system access via admin dashboard (SUPER_ADMIN or REGULAR_ADMIN roles)
+- **Admins**: Full system access via admin dashboard
+  - SUPER_ADMIN: Full system access, can manage admin permissions
+  - REGULAR_ADMIN: Limited admin access based on assigned permissions
 
 Admin permissions are granularly controlled via `AdminPermission` enum in the database.
 
-### Mobile App Architecture
-
-The Flutter app follows **Clean Architecture** with feature-based organization:
-
-- **State Management**: BLoC/Cubit pattern using `flutter_bloc`
-- **Navigation**: `go_router` for declarative routing
-- **Database**: Isar (NoSQL) for local storage and offline support
-- **Dependency Injection**: `get_it` + `injectable`
-- **Code Generation**: Freezed, JSON Serializable, Injectable, Retrofit
-
-Key directories:
-- `lib/core/`: Shared infrastructure (DI, routing, theme, services)
-- `lib/features/`: Feature modules (auth, jobs, profile, resume, etc.)
-- `lib/shared/`: Reusable components across features
-
-### Web App Architecture
-
-The Next.js app uses **App Router** with route grouping:
-
-- **(auth)/**: Authentication pages for all user types
-- **(candidate)/**: Candidate dashboard and features
-- **(owner)/**: Admin panel (note: "owner" refers to admin users)
-- **(recruiter)/**: Recruiter dashboard and job management
-- **api/**: API routes (also used by mobile app)
-
-Key technologies:
-- **UI**: Tailwind CSS + Shadcn UI (Radix primitives)
-- **Forms**: React Hook Form + Zod validation
-- **State**: Zustand for client-side state
-- **Database**: Prisma ORM with PostgreSQL
-- **Auth**: NextAuth.js 5.0.0-beta.28
-
 ### API Design
 
-- **Mobile API**: `/api/mobile/*` - Used by Flutter app
+- **Mobile API**: `/api/mobile/*` - Used by Flutter app (JWT authentication required)
 - **Web API**: `/api/web/*` or direct routes - Used by web app
 - **Admin API**: `/api/admin/*` - Used by admin dashboard
 
 Key endpoints: Authentication (`/api/auth/*`), Resume Management (`/api/mobile/resumes/*`), Job Management, Payments, User Management.
 
-### Database Schema
+See `docs/project/QUICK_REFERENCE.md` for complete API documentation.
+
+## Mobile App Architecture (Flutter)
+
+### Tech Stack
+- **Framework**: Flutter (Dart)
+- **State Management**: BLoC/Cubit (`flutter_bloc`)
+- **DI**: `get_it` + `injectable`
+- **Code Gen**: `build_runner`, `freezed`, `json_serializable`, `retrofit`
+- **Database**: Isar (NoSQL, offline-first)
+- **Networking**: Dio
+
+### Architecture Standards
+- **Clean Architecture**: Strictly follow `Presentation` -> `Domain` -> `Data` layers
+  - **Presentation**: Widgets, Cubits/Blocs
+  - **Domain**: Entities, Repository Interfaces (pure Dart)
+  - **Data**: Repository Implementations, Data Sources (API/DB), DTOs
+- **Feature-First**: Organize code by feature (e.g., `lib/features/auth`)
+
+### Directory Structure
+
+```
+lib/
+├── core/                    # Core application infrastructure
+│   ├── bootstrap/           # App initialization
+│   ├── constants/           # Global constants
+│   ├── database/            # Isar setup
+│   ├── di/                  # Dependency injection (get_it + injectable)
+│   ├── error/               # Error handling (GlobalBlocObserver, DioErrorMapper)
+│   ├── localization/        # EasyLocalization
+│   ├── network/             # HTTP clients (Dio), interceptors
+│   ├── router/              # go_router configuration
+│   ├── services/            # Core services (analytics, notification, file, etc.)
+│   ├── theme/               # App theme (light/dark)
+│   ├── ui/                  # Shared UI components
+│   └── utils/               # Utilities
+├── features/                # Feature modules
+│   ├── auth/                # Authentication
+│   ├── jobs/                # Job search
+│   ├── profile/             # User profiles
+│   ├── resume/              # Resume builder
+│   ├── ai_resume/           # AI-powered resume
+│   ├── job_applications/    # Applications
+│   ├── notifications/       # Push notifications
+│   ├── subscription/        # Subscription plans
+│   └── ...                  # Other features
+└── shared/                  # Shared components
+```
+
+### Key Mobile Services (DI registered)
+
+- **IsarService**: NoSQL database initialization
+- **AuthService**: Firebase authentication
+- **NotificationService**: Push notifications (OneSignal + Firebase)
+- **LocalStorageService**: Secure storage
+- **FileService**: File handling, PDF generation
+- **StripeService**: Payment processing
+- **ResumeParsingService**: AI resume parsing
+
+## Web App Architecture (Next.js)
+
+### Tech Stack
+- **Framework**: Next.js (App Router)
+- **Language**: TypeScript
+- **Styling**: Tailwind CSS + Shadcn UI (Radix primitives)
+- **State**: Zustand (Client), React Server Components (Server)
+- **Database**: PostgreSQL + Prisma ORM
+- **Auth**: NextAuth.js (v5)
+- **Forms**: React Hook Form + Zod
+
+### Architecture Standards
+- **App Router**: Use `app/` directory conventions
+- **Route Groups**: Use `(auth)`, `(candidate)`, `(recruiter)`, `(owner)` to organize routes
+- **Server Actions**: Use Server Actions for data mutations instead of API routes
+- **API Routes**: Maintain `/api/mobile/*` strictly for mobile app
+
+### Route Groups
+
+- **`(auth)/`**: Authentication pages for all user types
+- **`(candidate)/`**: Candidate dashboard and features
+- **`(owner)/`**: Admin panel (note: "owner" refers to admin users)
+- **`(recruiter)/`**: Recruiter dashboard and job management
+
+## Database Schema
 
 The `tabashir-web/prisma/schema.prisma` defines the data model:
 
@@ -152,7 +254,28 @@ The `tabashir-web/prisma/schema.prisma` defines the data model:
 - **Candidate/Recruiter/Owner**: Extended profiles
 - **Job/JobApplication**: Job postings and applications
 - **Resume/AiResume**: Resume documents
+- **AdminPermission**: Granular admin permissions
 - **Payment/Subscription**: Stripe payment records
+
+## Development Guidelines (Critical)
+
+### ⚠️ Database Changes
+If you change the Prisma schema, you **MUST** consider the impact on both Web and Mobile (since Mobile relies on the API which relies on the DB).
+
+### ⚠️ Mobile API Compatibility
+Do **NOT** break existing `/api/mobile/*` endpoints. The mobile app is sensitive to contract changes.
+
+### Design Standards
+For Web UI, prioritize "Premium" design—smooth animations, perfect spacing, and high-quality typography (Inter/Geist).
+
+### Dependencies
+Do not add new system-level dependencies without approval.
+
+### Monorepo Awareness
+Always check which directory you are in. Do not mix commands (e.g., running `flutter` in `tabashir-web`).
+
+### Documentation
+Update `CLAUDE.md` or relevant `README.md` files if you make significant architectural changes.
 
 ## Common Development Tasks
 
@@ -185,64 +308,61 @@ The `tabashir-web/prisma/schema.prisma` defines the data model:
 - API endpoints under `/api/mobile/*` are specifically designed for mobile
 - See `tabashir-mobile/lib/core/network/` for HTTP client setup
 
+## Code Quality Standards
+
+### Mobile (Flutter)
+- **Immutability**: Use `freezed` for all data models and BLoC states
+- **Const Correctness**: ALWAYS use `const` constructors where possible
+- **Typing**: Strong typing. Avoid `dynamic`
+- **Linting**: Adhere to `very_good_analysis` rules
+- **Async**: Use `Future` and `Stream` correctly. Handle errors in BLoC, not UI
+
+### Web (Next.js)
+- **Components**: Functional components. Use `interface Props` for props
+- **Tailwind**: Use utility classes. Avoid custom CSS modules unless necessary
+- **Strict Mode**: No `any`. Fix type errors properly
+- **Error Handling**: Use `try/catch` in Server Actions and API routes. Return structured error responses
+
 ## Important Notes
 
 - **Generated Code**: In mobile app, `*.g.dart` and `*.freezed.dart` files are committed to git
 - **Database Migrations**: Always use Prisma migrations, never edit the database directly
 - **API Authentication**: JWT tokens required for all mobile API endpoints
-- **Route Groups**: In web app, route groups (e.g., `(owner)`, `(candidate)`) don't affect URL structure
+- **Route Groups**: In web app, route groups don't affect URL structure
 - **Mobile API Prefix**: All mobile-specific endpoints use `/api/mobile/` prefix
 - **Build Cache**: If builds fail, clean both `flutter clean` (mobile) and `.next` (web)
+- **Generated Files**: Prisma client is generated, not committed
 
-### Critical Development Guidelines
+## Key Documentation
 
-- **⚠️ Database Changes**: If you change the Prisma schema, you MUST consider the impact on both Web and Mobile (since Mobile relies on the API which relies on the DB)
-- **⚠️ Mobile API Compatibility**: Do NOT break existing `/api/mobile/*` endpoints. The mobile app is sensitive to contract changes
-- **Design Standards**: For Web UI, prioritize "Premium" design—smooth animations, perfect spacing, and high-quality typography (Inter/Geist)
-- **Dependencies**: Do not add new system-level dependencies without approval
-- **Monorepo Awareness**: Always check which directory you are in. Do not mix commands (e.g., running `flutter` in `tabashir-web`)
-- **Documentation**: Update `CLAUDE.md` or relevant `README.md` files if you make significant architectural changes
+- **`docs/project/CLAUDE.md`** - Detailed monorepo guide
+- **`docs/mobile/CLAUDE.md`** - Complete mobile architecture
+- **`docs/web/CLAUDE.md`** - Complete web architecture
+- **`docs/project/QUICK_REFERENCE.md`** - Resume API reference
+- **`.cursorrules`** - Development rules and coding standards
 
-## Testing the API
+## External Services Configuration
 
-The backend API can be tested using the provided shell scripts:
+### Environment Variables
 
-```bash
-# Test resume API endpoints
-./test-resume-api.sh YOUR_JWT_TOKEN
-
-# Test all resume endpoints (comprehensive test)
-./test-all-resume-endpoints.sh YOUR_JWT_TOKEN
-
-# Test saved jobs API
-./test-saved-jobs-api.sh YOUR_JWT_TOKEN
-
-# Test file upload
-./test-upload.sh YOUR_JWT_TOKEN
+**Web App** (`.env`):
+```env
+DATABASE_URL="postgresql://..."
+NEXTAUTH_URL="http://localhost:3000"
+NEXTAUTH_SECRET="..."
+JWT_ACCESS_SECRET="..."
+JWT_REFRESH_SECRET="..."
+STRIPE_SECRET_KEY="..."
+UPLOADTHING_SECRET="..."
+OPENAI_API_KEY="..."
 ```
 
-Or manually with curl:
-
-```bash
-# Health check
-curl http://localhost:3000/api/mobile/test \
-  -H "Authorization: Bearer TOKEN"
-
-# List resumes
-curl http://localhost:3000/api/mobile/resumes \
-  -H "Authorization: Bearer TOKEN"
-
-# Upload resume
-curl -X POST http://localhost:3000/api/mobile/resumes \
-  -H "Authorization: Bearer TOKEN" \
-  -F "file=@/path/to/resume.pdf"
+**Mobile App** (`.env`):
+```env
+FIREBASE_PROJECT_ID=...
+GOOGLE_SIGN_IN_CLIENT_ID=...
+STRIPE_PUBLISHABLE_KEY=...
+ONESIGNAL_APP_ID=...
 ```
 
-See `QUICK_REFERENCE.md` for complete endpoint documentation.
-
-## Key Documentation Files
-
-- **`tabashir-mobile/CLAUDE.md`** - Complete mobile app architecture with Clean Architecture, BLoC state management, Isar database, and all mobile-specific development workflows
-- **`tabashir-web/CLAUDE.md`** - Complete web app architecture with Next.js App Router, Prisma ORM, NextAuth, and all web-specific development workflows
-- **`QUICK_REFERENCE.md`** - Resume API quick reference with all 9 endpoints, authentication, and testing examples
-- **`.cursorrules`** - Development rules and coding standards for both web and mobile apps
+See individual app documentation for complete setup guides.
