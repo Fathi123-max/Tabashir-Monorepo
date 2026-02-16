@@ -25,7 +25,7 @@
 ### Common Commands
 ```bash
 # Development
-pnpm dev                    # Start dev server (http://localhost:3000)
+pnpm dev                    # Start dev server (http://localhost:3001)
 pnpm build                  # Build for production
 pnpm start                  # Start production server
 pnpm lint                   # Run ESLint

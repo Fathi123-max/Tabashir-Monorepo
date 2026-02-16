@@ -22,7 +22,7 @@ cd tabashir-web
 pnpm install
 
 # Development
-pnpm dev                      # Start dev server (http://localhost:3000)
+pnpm dev                      # Start dev server (http://localhost:3001)
 pnpm build                    # Build for production
 pnpm start                    # Start production server
 pnpm lint                     # Run ESLint
@@ -348,7 +348,7 @@ Update `CLAUDE.md` or relevant `README.md` files if you make significant archite
 **Web App** (`.env`):
 ```env
 DATABASE_URL="postgresql://..."
-NEXTAUTH_URL="http://localhost:3000"
+NEXTAUTH_URL="http://localhost:3001"
 NEXTAUTH_SECRET="..."
 JWT_ACCESS_SECRET="..."
 JWT_REFRESH_SECRET="..."
