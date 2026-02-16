@@ -42,8 +42,8 @@ def test_login_success(client):
 
     # Create test user
     execute_prisma_query(
-        """INSERT INTO users (id, email, password, name, "userType")
-           VALUES (%s, %s, %s, %s, %s)
+        """INSERT INTO users (id, email, password, name, "userType", "createdAt", "updatedAt")
+           VALUES (%s, %s, %s, %s, %s, NOW(), NOW())
            ON CONFLICT (email) DO NOTHING""",
         ("test-user-123", "test@example.com", hash_password("password123"), "Test User", "CANDIDATE"),
         commit=True
