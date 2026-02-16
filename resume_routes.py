@@ -15,6 +15,7 @@ import psycopg2
 from app import Config
 from app.models.cv_models import *
 from app.database.db import get_ai_db_connection
+from app.routes.middleware import jwt_required
 from app.services.arabic_translator import translate_docx_to_arabic
 from app.services.cv_processor import cv_formatter
 from app.services.job_apply import process_ai_job_input,process_ai_job_input_not_active,serialize_row,get_client_job_settings,activate_client_job_apply, suggest_job_titles_from_resume,get_client_cv_filename, convert_docx_to_pdf, update_client_cv_filename, main as run_ranking_main
@@ -422,6 +423,7 @@ apply_parser.add_argument('positions', type=str, location='form', action='append
 
 @resume_ns.route('/apply')
 class ApplyJobs(Resource):
+    @jwt_required
     @resume_ns.expect(apply_parser)
     @resume_ns.response(HTTPStatus.OK.value, 'Successfully matched and ranked jobs')
     @resume_ns.response(HTTPStatus.BAD_REQUEST.value, 'Invalid input')
@@ -527,6 +529,7 @@ apply_specific_parser.add_argument('gender', type=str, location='form', required
 
 @resume_ns.route('/add_client')
 class AddClient(Resource):
+    @jwt_required
     @resume_ns.expect(apply_parser)
     @resume_ns.response(HTTPStatus.OK.value, 'Successfully matched and ranked jobs')
     @resume_ns.response(HTTPStatus.BAD_REQUEST.value, 'Invalid input')
@@ -683,7 +686,7 @@ def format_cv_from_path(input_path: Path, output_language: str = "regular"):
 
 @resume_ns.route('/activate-job-apply')
 class ActivateJobApply(Resource):
-
+    @jwt_required
     @resume_ns.expect(activate_job_apply_parser)
     def post(self):
         try:
