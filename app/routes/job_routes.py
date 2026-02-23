@@ -15,9 +15,9 @@ def get_recommended_jobs():
 
     # Get user's skills and job type
     user = execute_prisma_query(
-        """SELECT c."jobType", cp.skills, cp.experience
-           FROM candidates c
-           JOIN "candidateProfiles" cp ON cp."candidateId" = c.id
+        """SELECT cp."jobType", cp.skills, cp.experience
+           FROM "Candidate" c
+           JOIN "CandidateProfile" cp ON cp."candidateId" = c.id
            WHERE c."userId" = %s""",
         (user_id,),
         fetch_one=True
@@ -28,7 +28,7 @@ def get_recommended_jobs():
         """SELECT id, title, company, "companyLogo", "jobType", "salaryMin",
                   "salaryMax", location, description, requirements, "benefits",
                   "views", "applicationsCount", "createdAt"
-           FROM jobs
+           FROM "Job"
            WHERE status = 'ACTIVE' AND "isActive" = true
            ORDER BY "createdAt" DESC
            LIMIT 20""",
@@ -48,8 +48,8 @@ def get_saved_jobs():
     jobs = execute_prisma_query(
         """SELECT j.id, j.title, j.company, j."companyLogo", j."jobType",
                   j.location, j."salaryMin", j."salaryMax", s."createdAt" as savedAt
-           FROM "savedJobPosts" s
-           JOIN jobs j ON j.id = s."jobId"
+           FROM "SavedJobPost" s
+           JOIN "Job" j ON j.id = s."jobId"
            WHERE s."userId" = %s
            ORDER BY s."createdAt" DESC""",
         (user_id,),
@@ -74,7 +74,7 @@ def save_job():
         return jsonify({"error": "jobId required"}), HTTPStatus.BAD_REQUEST
 
     execute_prisma_query(
-        """INSERT INTO "savedJobPosts" (id, "jobId", "userId", "createdAt", "updatedAt")
+        """INSERT INTO "SavedJobPost" (id, "jobId", "userId", "createdAt", "updatedAt")
            VALUES (%s, %s, %s, NOW(), NOW())
            ON CONFLICT DO NOTHING""",
         (str(uuid.uuid4()), job_id, user_id),
@@ -91,7 +91,7 @@ def unsave_job(job_id):
     user_id = request.user_id
 
     execute_prisma_query(
-        'DELETE FROM "savedJobPosts" WHERE "jobId" = %s AND "userId" = %s',
+        'DELETE FROM "SavedJobPost" WHERE "jobId" = %s AND "userId" = %s',
         (job_id, user_id),
         commit=True
     )

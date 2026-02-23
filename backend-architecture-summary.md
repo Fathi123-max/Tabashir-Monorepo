@@ -28,8 +28,8 @@ The platform serves both web (Next.js) and mobile (Flutter) applications through
 │   Main Backend   │         │     Resume/Jobs Backend        │
 │   (Next.js)      │         │     (External API Service)     │
 │                  │         │                                │
-│  localhost:3000 │         │  backend.tabashir.ae          │
-│  localhost:3000  │         │                                │
+│  localhost:5001 │         │  backend.tabashir.ae          │
+│  localhost:5001  │         │                                │
 │                  │         │  Endpoints:                     │
 │ Endpoints:       │         │  • /api/v1/resume/jobs         │
 │ • /api/auth/*    │         │  • /api/v1/resume/format       │
@@ -118,7 +118,7 @@ The platform serves both web (Next.js) and mobile (Flutter) applications through
 | **Primary Role** | User management, payments, auth | Job listings, resume processing |
 | **Database** | PostgreSQL with Prisma ORM | PostgreSQL (separate instance) |
 | **Authentication** | NextAuth.js + JWT | API Token |
-| **Deployment** | Vercel/AWS (localhost:3000) | Separate server (backend.tabashir.ae) |
+| **Deployment** | Vercel/AWS (localhost:5001) | Separate server (backend.tabashir.ae) |
 | **Key Features** | • User registration/login<br>• Payment processing<br>• Subscription management<br>• Profile management<br>• Admin panel<br>• File uploads | • Job CRUD operations<br>• Resume formatting<br>• AI job matching<br>• Resume translation<br>• Application tracking |
 | **API Endpoints** | ~30 endpoints | ~15 endpoints |
 | **External Services** | Stripe, UploadThing, OpenAI, Email | OpenAI, Email |

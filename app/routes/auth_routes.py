@@ -4,7 +4,7 @@ from app.database.prisma_db import execute_prisma_query
 from app.services.jwt_service import create_access_token, create_refresh_token
 from app.services.password_service import verify_password, hash_password
 
-auth_bp = Blueprint('auth', __name__, url_prefix='/api/auth')
+auth_bp = Blueprint('auth', __name__, url_prefix='/api/mobile/auth')
 
 @auth_bp.route('/login', methods=['POST'])
 def login():

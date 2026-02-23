@@ -1,0 +1,49 @@
+ * Serving Flask app 'run'
+ * Debug mode: on
+[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5001
+ * Running on http://192.168.0.144:5001
+[33mPress CTRL+C to quit[0m
+ * Restarting with stat
+ * Debugger is active!
+ * Debugger PIN: 593-232-663
+127.0.0.1 - - [17/Feb/2026 10:41:30] "GET /api/mobile/resumes HTTP/1.1" 200 -
+127.0.0.1 - - [17/Feb/2026 10:41:30] "[35m[1mPOST /api/v1/resume/apply HTTP/1.1[0m" 500 -
+127.0.0.1 - - [17/Feb/2026 10:41:43] "GET /api/mobile/resumes HTTP/1.1" 200 -
+127.0.0.1 - - [17/Feb/2026 10:41:43] "[35m[1mPOST /api/v1/resume/apply HTTP/1.1[0m" 500 -
+ * Detected change in '/Users/Apple/Documents/tabashir/app/services/job_apply/__init__.py', reloading
+ * Restarting with stat
+ * Debugger is active!
+ * Debugger PIN: 593-232-663
+127.0.0.1 - - [17/Feb/2026 10:50:08] "[31m[1mGET /api/mobile/resumes HTTP/1.1[0m" 401 -
+127.0.0.1 - - [17/Feb/2026 10:50:08] "POST /api/mobile/auth/refresh HTTP/1.1" 200 -
+127.0.0.1 - - [17/Feb/2026 10:50:08] "GET /api/mobile/resumes HTTP/1.1" 200 -
+127.0.0.1 - - [17/Feb/2026 10:50:08] "[35m[1mPOST /api/v1/resume/apply HTTP/1.1[0m" 500 -
+127.0.0.1 - - [17/Feb/2026 10:50:26] "GET /api/mobile/me HTTP/1.1" 200 -
+WARNING:root:Using mock job data: AI database connection unavailable, using mock data
+127.0.0.1 - - [17/Feb/2026 10:50:26] "GET /api/v1/resume/jobs?page=0&limit=20 HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [17/Feb/2026 10:50:26] "GET /api/v1/resume/jobs?page=0&limit=20 HTTP/1.1" 200 -
+127.0.0.1 - - [17/Feb/2026 10:50:26] "GET /api/mobile/resumes HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [17/Feb/2026 10:50:26] "GET /api/mobile/resumes HTTP/1.1" 200 -
+127.0.0.1 - - [17/Feb/2026 10:50:26] "GET /api/mobile/home/dashboard HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [17/Feb/2026 10:50:26] "GET /api/mobile/home/dashboard HTTP/1.1" 200 -
+WARNING:root:Using mock job data: AI database connection unavailable, using mock data
+127.0.0.1 - - [17/Feb/2026 10:50:26] "GET /api/v1/resume/jobs?page=0&limit=3 HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [17/Feb/2026 10:50:26] "GET /api/v1/resume/jobs?page=0&limit=3 HTTP/1.1" 200 -
+WARNING:root:Using mock applied jobs data: AI database connection unavailable, using mock data
+127.0.0.1 - - [17/Feb/2026 10:50:26] "GET /api/v1/resume/applied-jobs?email=john.doe@example.com HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [17/Feb/2026 10:50:26] "GET /api/v1/resume/applied-jobs?email=john.doe@example.com HTTP/1.1" 200 -
+127.0.0.1 - - [17/Feb/2026 10:50:26] "GET /api/mobile/home/trending HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [17/Feb/2026 10:50:26] "GET /api/mobile/home/trending HTTP/1.1" 200 -
+127.0.0.1 - - [17/Feb/2026 10:50:26] "GET /api/mobile/home/recommendations HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [17/Feb/2026 10:50:26] "GET /api/mobile/home/recommendations HTTP/1.1" 200 -
+127.0.0.1 - - [17/Feb/2026 10:50:27] "GET /api/mobile/home/analytics HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [17/Feb/2026 10:50:27] "GET /api/mobile/home/analytics HTTP/1.1" 200 -
+127.0.0.1 - - [17/Feb/2026 10:50:27] "GET /api/mobile/home/market-insights HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [17/Feb/2026 10:50:27] "GET /api/mobile/home/market-insights HTTP/1.1" 200 -
+127.0.0.1 - - [17/Feb/2026 10:50:27] "GET /api/mobile/home/dashboard HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [17/Feb/2026 10:50:27] "GET /api/mobile/home/dashboard HTTP/1.1" 200 -
+WARNING:root:Using mock job data: AI database connection unavailable, using mock data
+127.0.0.1 - - [17/Feb/2026 10:50:27] "GET /api/v1/resume/jobs?page=0&limit=3 HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [17/Feb/2026 10:50:27] "GET /api/v1/resume/jobs?page=0&limit=3 HTTP/1.1" 200 -
