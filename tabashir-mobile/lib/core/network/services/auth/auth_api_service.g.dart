@@ -11,7 +11,9 @@ part of 'auth_api_service.dart';
 // ignore_for_file: unnecessary_brace_in_string_interps,no_leading_underscores_for_local_identifiers,unused_element,unnecessary_string_interpolations,unused_element_parameter
 
 class _AuthApiService implements AuthApiService {
-  _AuthApiService(this._dio, {this.baseUrl, this.errorLogger});
+  _AuthApiService(this._dio, {this.baseUrl, this.errorLogger}) {
+    baseUrl ??= '/api/v1';
+  }
 
   final Dio _dio;
 
@@ -33,7 +35,7 @@ class _AuthApiService implements AuthApiService {
       Options(method: 'POST', headers: _headers, extra: _extra)
           .compose(
             _dio.options,
-            '/mobile/auth/login',
+            '/auth/login',
             queryParameters: queryParameters,
             data: _data,
           )
@@ -65,7 +67,7 @@ class _AuthApiService implements AuthApiService {
       Options(method: 'POST', headers: _headers, extra: _extra)
           .compose(
             _dio.options,
-            '/mobile/auth/register',
+            '/auth/register',
             queryParameters: queryParameters,
             data: _data,
           )
@@ -96,7 +98,7 @@ class _AuthApiService implements AuthApiService {
       Options(method: 'POST', headers: _headers, extra: _extra)
           .compose(
             _dio.options,
-            '/mobile/auth/refresh',
+            '/auth/refresh',
             queryParameters: queryParameters,
             data: _data,
           )

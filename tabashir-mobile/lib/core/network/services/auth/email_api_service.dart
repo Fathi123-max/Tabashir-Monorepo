@@ -8,7 +8,7 @@ import '../../models/auth/email_verification_response.dart';
 part 'email_api_service.g.dart';
 
 /// Email API client
-@RestApi(baseUrl: 'http://localhost:5001/api/auth')
+@RestApi(baseUrl: '/api/v1/auth')
 abstract class EmailApiService {
   factory EmailApiService(Dio dio) = _EmailApiService;
 

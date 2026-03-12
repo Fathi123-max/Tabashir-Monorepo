@@ -25,7 +25,7 @@ import '../../models/send_linkedin_email_request.dart';
 part 'tabashir_api_service.g.dart';
 
 /// REST API client for Tabashir backend
-@RestApi(baseUrl: 'http://localhost:5001/api/v1/resume')
+@RestApi(baseUrl: '/api/v1/resume')
 abstract class TabashirApiService {
   factory TabashirApiService(Dio dio) = _TabashirApiService;
 

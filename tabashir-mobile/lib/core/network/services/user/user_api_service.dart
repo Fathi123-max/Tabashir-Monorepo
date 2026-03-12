@@ -13,22 +13,22 @@ import '../../models/profile/profile_update_response.dart';
 part 'user_api_service.g.dart';
 
 /// User management API client
-@RestApi(baseUrl: 'http://localhost:5001/api')
+@RestApi(baseUrl: '/api/v1')
 abstract class UserApiService {
   factory UserApiService(Dio dio) = _UserApiService;
 
   /// Get comprehensive user profile data from mobile API
-  @GET('/mobile/me')
+  @GET('/user/mobile/me')
   Future<HttpResponse<UserProfileResponse>> getUserProfile();
 
   /// Update user profile (name, email, phone, etc.)
-  @PUT('/mobile/profile')
+  @PUT('/user/mobile/profile')
   Future<HttpResponse<ProfileUpdateResponse>> updateProfile(
     @Body() ProfileUpdateRequest profileUpdate,
   );
 
   /// Update candidate personal info
-  @POST('/candidate/onboarding/personal-info')
+  @POST('/mobile/candidate/onboarding/personal-info')
   Future<HttpResponse<OnboardingResponse>> updatePersonalInfo(
     @Body() PersonalInfoRequest personalInfo,
   );

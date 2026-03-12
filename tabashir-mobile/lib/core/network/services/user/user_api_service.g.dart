@@ -12,7 +12,7 @@ part of 'user_api_service.dart';
 
 class _UserApiService implements UserApiService {
   _UserApiService(this._dio, {this.baseUrl, this.errorLogger}) {
-    baseUrl ??= 'http://localhost:5001/api';
+    baseUrl ??= '/api/v1';
   }
 
   final Dio _dio;
@@ -31,7 +31,7 @@ class _UserApiService implements UserApiService {
       Options(method: 'GET', headers: _headers, extra: _extra)
           .compose(
             _dio.options,
-            '/mobile/me',
+            '/user/mobile/me',
             queryParameters: queryParameters,
             data: _data,
           )
@@ -61,7 +61,7 @@ class _UserApiService implements UserApiService {
       Options(method: 'PUT', headers: _headers, extra: _extra)
           .compose(
             _dio.options,
-            '/mobile/profile',
+            '/user/mobile/profile',
             queryParameters: queryParameters,
             data: _data,
           )
@@ -91,7 +91,7 @@ class _UserApiService implements UserApiService {
       Options(method: 'POST', headers: _headers, extra: _extra)
           .compose(
             _dio.options,
-            '/candidate/onboarding/personal-info',
+            '/mobile/candidate/onboarding/personal-info',
             queryParameters: queryParameters,
             data: _data,
           )

@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class DioClient {
   DioClient() {
@@ -8,6 +9,7 @@ class DioClient {
   late Dio _dio;
 
   BaseOptions _getDefaultOptions() => BaseOptions(
+    baseUrl: dotenv.env['API_BASE_URL'] ?? 'http://10.0.2.2:5050',
     connectTimeout: const Duration(seconds: 120),
     receiveTimeout: const Duration(seconds: 120),
     sendTimeout: const Duration(seconds: 120),

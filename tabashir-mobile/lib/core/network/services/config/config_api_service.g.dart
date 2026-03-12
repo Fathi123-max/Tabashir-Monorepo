@@ -12,7 +12,7 @@ part of 'config_api_service.dart';
 
 class _ConfigApiService implements ConfigApiService {
   _ConfigApiService(this._dio, {this.baseUrl, this.errorLogger}) {
-    baseUrl ??= 'http://localhost:5001/api';
+    baseUrl ??= '/api/v1';
   }
 
   final Dio _dio;

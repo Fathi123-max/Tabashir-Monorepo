@@ -105,8 +105,8 @@ class AuthDioClient {
 
   BaseOptions _getDefaultOptions() {
     // Get API base URL from environment variable or use production URL as fallback
-    // For local Flask development, use: http://localhost:5001
-    final baseUrl = dotenv.env['API_BASE_URL'] ?? 'http://localhost:5001';
+    // For local Flask development, use: http://10.0.2.2:5050
+    final baseUrl = dotenv.env['API_BASE_URL'] ?? 'http://10.0.2.2:5050';
 
     return BaseOptions(
       // Main backend URL for authentication, user management, payments, etc.

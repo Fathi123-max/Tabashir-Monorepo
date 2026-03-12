@@ -1,3 +1,5 @@
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+
 /// API endpoints configuration
 /// Centralized location for all API endpoint URLs
 class ApiEndpoints {
@@ -6,49 +8,51 @@ class ApiEndpoints {
   // ==========================================
   // Base URLs
   // ==========================================
-  static const String appBaseUrl = 'http://localhost:5001';
-  static const String backendBaseUrl = 'http://localhost:5001';
+  static String get appBaseUrl => dotenv.env['API_BASE_URL'] ?? 'http://10.0.2.2:5050';
+  static String get backendBaseUrl => appBaseUrl;
 
   // ==========================================
   // Auth Endpoints
   // ==========================================
-  static const String authLogin = '/api/mobile/auth/login';
-  static const String authRegister = '/api/mobile/auth/register';
-  static const String authVerifyEmail = '/api/auth/verify-email';
+  static const String authLogin = '/api/v1/auth/login';
+  static const String authRegister = '/api/v1/auth/register';
+  static const String authVerifyEmail = '/api/v1/auth/verify-email';
+  static const String authRefresh = '/api/v1/auth/refresh';
 
   // ==========================================
   // User Management Endpoints
   // ==========================================
-  static const String userProfile = '/api/user/profile';
+  static const String userProfile = '/api/v1/user/profile';
+  static const String userMobileMe = '/api/v1/user/mobile/me';
   static const String candidatePersonalInfo =
-      '/api/candidate/onboarding/personal-info';
+      '/api/v1/mobile/candidate/onboarding/personal-info';
   static const String candidateProfessionalInfo =
-      '/api/candidate/onboarding/professional-info';
+      '/api/v1/mobile/candidate/onboarding/professional-info';
 
   // ==========================================
   // Subscription Endpoints
   // ==========================================
-  static const String subscriptionLatest = '/api/subscription/latest';
-  static const String subscriptionDebug = '/api/subscription/debug';
-  static const String subscriptionTest = '/api/subscription/test';
+  static const String subscriptionLatest = '/api/v1/mobile/subscription/latest';
+  static const String subscriptionDebug = '/api/v1/mobile/subscription/debug';
+  static const String subscriptionTest = '/api/v1/mobile/subscription/test';
 
   // ==========================================
   // Payment Endpoints
   // ==========================================
-  static const String paymentIntent = '/api/payment-intent';
+  static const String paymentIntent = '/api/v1/mobile/payment-intent';
   static const String stripeCheckoutSession =
-      '/api/stripe/create-checkout-session';
-  static const String paymentLatest = '/api/payments/latest';
+      '/api/v1/mobile/stripe/create-checkout-session';
+  static const String paymentLatest = '/api/v1/mobile/payments/latest';
 
   // ==========================================
   // File Upload Endpoints
   // ==========================================
-  static const String uploadThing = '/api/uploadthing';
+  static const String uploadThing = '/api/v1/mobile/uploadthing';
 
   // ==========================================
   // AI Resume Endpoints
   // ==========================================
-  static const String aiResumeCreate = '/api/ai-resume/create';
+  static const String aiResumeCreate = '/api/v1/mobile/ai-resume/create';
 
   // ==========================================
   // Resume & Job Processing Endpoints

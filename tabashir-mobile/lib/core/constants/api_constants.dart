@@ -1,17 +1,19 @@
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+
 /// API constants for the application
 class ApiConstants {
   /// Base API URL (Main API) - Using Flask for local development
-  static const String baseUrl = 'http://localhost:5001';
+  static String get baseUrl => dotenv.env['API_BASE_URL'] ?? 'http://10.0.2.2:5050';
 
   /// Production Backend URL for CV processing and job matching
   /// Used by TabashirApiService for: format, translate, apply, jobs
-  static const String productionBackendUrl =
-      'http://localhost:5001/api/v1/resume';
+  static String get productionBackendUrl =>
+      '$baseUrl/api/v1/resume';
 
   /// Development Backend URL for resume CRUD operations (testing only)
   /// Used by ResumeApiService for: upload, list, get, update, delete
   /// NOTE: Only available in development environment
-  static const String devBackendUrl = 'http://localhost:5001/api/mobile';
+  static String get devBackendUrl => '$baseUrl/api/v1/mobile';
 
   /// Authentication endpoints
   static const String loginEndpoint = '/auth/login';

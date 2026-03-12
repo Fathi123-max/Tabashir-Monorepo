@@ -12,7 +12,7 @@ part of 'email_api_service.dart';
 
 class _EmailApiService implements EmailApiService {
   _EmailApiService(this._dio, {this.baseUrl, this.errorLogger}) {
-    baseUrl ??= 'http://localhost:5001/api/auth';
+    baseUrl ??= '/api/v1/auth';
   }
 
   final Dio _dio;

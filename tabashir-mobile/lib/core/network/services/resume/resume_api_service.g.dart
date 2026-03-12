@@ -12,7 +12,7 @@ part of 'resume_api_service.dart';
 
 class _ResumeApiService implements ResumeApiService {
   _ResumeApiService(this._dio, {this.baseUrl, this.errorLogger}) {
-    baseUrl ??= 'http://localhost:5001/api/mobile';
+    baseUrl ??= '/api/v1/mobile';
   }
 
   final Dio _dio;

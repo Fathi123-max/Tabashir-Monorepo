@@ -30,7 +30,7 @@ Map<String, dynamic> _$NotificationCountResponseToJson(
 
 class _NotificationApiService implements NotificationApiService {
   _NotificationApiService(this._dio, {this.baseUrl, this.errorLogger}) {
-    baseUrl ??= '/api/mobile';
+    baseUrl ??= '/api/v1/mobile';
   }
 
   final Dio _dio;

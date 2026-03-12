@@ -11,26 +11,26 @@ import '../../models/auth/refresh_token_response.dart';
 part 'auth_api_service.g.dart';
 
 /// Authentication API client for Tabashir app
-@RestApi(baseUrl: '')
+@RestApi(baseUrl: '/api/v1')
 abstract class AuthApiService {
   factory AuthApiService(Dio dio) = _AuthApiService;
 
   /// Login user with email and password
-  @POST('/mobile/auth/login')
+  @POST('/auth/login')
   Future<HttpResponse<AuthResponse>> login(
     @Body() LoginRequest loginRequest,
     @Header('x-api-token') String apiToken,
   );
 
   /// Register new user
-  @POST('/mobile/auth/register')
+  @POST('/auth/register')
   Future<HttpResponse<AuthResponse>> register(
     @Body() RegisterRequest registerRequest,
     @Header('x-api-token') String apiToken,
   );
 
   /// Refresh access token using refresh token
-  @POST('/mobile/auth/refresh')
+  @POST('/auth/refresh')
   Future<HttpResponse<RefreshTokenResponse>> refreshToken(
     @Body() Map<String, dynamic> request,
   );

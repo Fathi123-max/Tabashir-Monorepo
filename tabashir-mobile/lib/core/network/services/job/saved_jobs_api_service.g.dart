@@ -12,7 +12,7 @@ part of 'saved_jobs_api_service.dart';
 
 class _SavedJobsApiService implements SavedJobsApiService {
   _SavedJobsApiService(this._dio, {this.baseUrl, this.errorLogger}) {
-    baseUrl ??= 'http://localhost:5001/api/mobile';
+    baseUrl ??= '/api/v1';
   }
 
   final Dio _dio;
@@ -31,7 +31,7 @@ class _SavedJobsApiService implements SavedJobsApiService {
       Options(method: 'GET', headers: _headers, extra: _extra)
           .compose(
             _dio.options,
-            '/saved-jobs',
+            '/jobs/saved-jobs',
             queryParameters: queryParameters,
             data: _data,
           )
@@ -59,7 +59,7 @@ class _SavedJobsApiService implements SavedJobsApiService {
       Options(method: 'POST', headers: _headers, extra: _extra)
           .compose(
             _dio.options,
-            '/saved-jobs',
+            '/jobs/saved-jobs',
             queryParameters: queryParameters,
             data: _data,
           )
@@ -86,7 +86,7 @@ class _SavedJobsApiService implements SavedJobsApiService {
       Options(method: 'DELETE', headers: _headers, extra: _extra)
           .compose(
             _dio.options,
-            '/saved-jobs/${jobId}',
+            '/jobs/saved-jobs/${jobId}',
             queryParameters: queryParameters,
             data: _data,
           )
@@ -114,7 +114,7 @@ class _SavedJobsApiService implements SavedJobsApiService {
       Options(method: 'POST', headers: _headers, extra: _extra)
           .compose(
             _dio.options,
-            '/sync-jobs',
+            '/mobile/sync-jobs',
             queryParameters: queryParameters,
             data: _data,
           )

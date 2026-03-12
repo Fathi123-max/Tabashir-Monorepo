@@ -8,7 +8,7 @@ import '../../models/ai_resume/create_ai_resume_response.dart';
 part 'ai_resume_api_service.g.dart';
 
 /// AI Resume API client
-@RestApi(baseUrl: 'http://localhost:5001/api')
+@RestApi(baseUrl: '/api/v1/mobile')
 abstract class AiResumeApiService {
   factory AiResumeApiService(Dio dio) = _AiResumeApiService;
 

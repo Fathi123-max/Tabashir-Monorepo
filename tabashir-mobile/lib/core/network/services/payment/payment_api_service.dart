@@ -11,7 +11,7 @@ import '../../models/payment/latest_payment_response.dart';
 part 'payment_api_service.g.dart';
 
 /// Payment API client
-@RestApi(baseUrl: 'http://localhost:5001/api')
+@RestApi(baseUrl: '/api/v1/mobile')
 abstract class PaymentApiService {
   factory PaymentApiService(Dio dio) = _PaymentApiService;
 

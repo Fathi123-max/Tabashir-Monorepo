@@ -8,7 +8,7 @@ import '../../models/upload/upload_response.dart';
 part 'upload_api_service.g.dart';
 
 /// File upload API client
-@RestApi(baseUrl: 'http://localhost:5001/api')
+@RestApi(baseUrl: '/api/v1/mobile')
 abstract class UploadApiService {
   factory UploadApiService(Dio dio) = _UploadApiService;
 

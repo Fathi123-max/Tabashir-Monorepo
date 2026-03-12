@@ -23,7 +23,7 @@ class HomeApiService {
   final AuthDioClient _authDioClient;
   final LocalStorageService _localStorageService;
 
-  static const String baseUrl = 'http://localhost:5001/api/mobile';
+  static const String _homeBaseUrl = '/api/v1/home';
 
   /// Fetch home dashboard data including featured jobs and user statistics
   Future<HomeDashboardResponse> getHomeDashboardData({
@@ -34,7 +34,7 @@ class HomeApiService {
     try {
       // Fetch data from the new dashboard API endpoint
       final response = await _authDioClient.dio.get(
-        '$baseUrl/home/dashboard',
+        '$_homeBaseUrl/dashboard',
       );
 
       final responseData = response.data as Map<String, dynamic>;
@@ -114,7 +114,7 @@ class HomeApiService {
 
     try {
       final response = await _authDioClient.dio.get(
-        '$baseUrl/home/trending',
+        '$_homeBaseUrl/trending',
       );
 
       print('[HOME_API_SERVICE] Fetched trending data: ${response.data}');
@@ -131,7 +131,7 @@ class HomeApiService {
 
     try {
       final response = await _authDioClient.dio.get(
-        '$baseUrl/home/market-insights',
+        '$_homeBaseUrl/market-insights',
       );
 
       print('[HOME_API_SERVICE] Fetched market insights: ${response.data}');
@@ -148,7 +148,7 @@ class HomeApiService {
 
     try {
       final response = await _authDioClient.dio.get(
-        '$baseUrl/home/analytics',
+        '$_homeBaseUrl/analytics',
       );
 
       print('[HOME_API_SERVICE] Fetched analytics: ${response.data}');
@@ -165,7 +165,7 @@ class HomeApiService {
 
     try {
       final response = await _authDioClient.dio.get(
-        '$baseUrl/home/recommendations',
+        '$_homeBaseUrl/recommendations',
       );
 
       print('[HOME_API_SERVICE] Fetched recommendations: ${response.data}');
@@ -182,7 +182,7 @@ class HomeApiService {
 
     try {
       final response = await _authDioClient.dio.get(
-        '$baseUrl/home/dashboard',
+        '$_homeBaseUrl/dashboard',
       );
 
       print('[HOME_API_SERVICE] Fetched dashboard: ${response.data}');

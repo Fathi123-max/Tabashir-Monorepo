@@ -8,7 +8,7 @@ import '../../models/config/ai_job_apply_config_response.dart';
 part 'config_api_service.g.dart';
 
 /// Configuration API client for fetching app configuration
-@RestApi(baseUrl: 'http://localhost:5001/api')
+@RestApi(baseUrl: '/api/v1')
 abstract class ConfigApiService {
   factory ConfigApiService(Dio dio) = _ConfigApiService;
 
