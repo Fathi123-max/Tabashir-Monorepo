@@ -56,48 +56,4 @@ def create_app(config_class=Config):
     api.add_namespace(mobile_ns, path='/api/v1/mobile')
     api.add_namespace(resume_mobile_ns, path='/api/v1/mobile/resumes')
 
-    @app.before_request
-    def validate_api_token():
-        # Allow OPTIONS requests without auth (for CORS preflight)
-        if request.method == 'OPTIONS':
-            return '', 200
-
-        if not request.path.startswith('/api/'):
-            return
-
-        # Skip API token check for JWT-protected routes
-        jwt_prefixes = ('/api/v1/auth', '/api/v1/user', '/api/v1/jobs', '/api/v1/home', '/api/v1/mobile')
-        if any(request.path.startswith(p) for p in jwt_prefixes):
-            return  # JWT middleware handles auth via @jwt_required decorator
-
-        # Existing X-API-TOKEN validation for /api/v1/resume
-        token = request.headers.get('X-API-TOKEN')
-        if not token:
-            return make_response(jsonify({
-                'success': False,
-                'message': 'Unauthorized: Missing API token'
-            }), 401)
-
-        try:
-            conn = get_db_connection()
-            cursor = conn.cursor()
-            cursor.execute("SELECT token FROM api_tokens WHERE active = TRUE")
-            rows = cursor.fetchall()
-            valid_tokens = [row['token'] for row in rows]
-
-            cursor.close()
-            conn.close()
-        except Exception as e:
-            return make_response(jsonify({
-                'success': False,
-                'message': 'Token validation DB error',
-                'error': str(e)
-            }), 500)
-
-        if token not in valid_tokens:
-            return make_response(jsonify({
-                'success': False,
-                'message': 'Unauthorized: Invalid API token'
-            }), 401)
-
     return app

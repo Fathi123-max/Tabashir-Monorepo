@@ -116,14 +116,9 @@ class AuthDioClient {
       receiveTimeout: const Duration(seconds: 120),
       sendTimeout: const Duration(seconds: 120),
       // The default headers for the API client
-      // In this case, we are setting the `Content-Type` to `application/json`
-      // and the `x-api-token` to the API token used for authentication.
-      // This token is specific to the localhost:5050 API and is used to authenticate
-      // the mobile client to the backend services.
+      // In this case, we are setting the `Content-Type` to `application/json`.
       headers: {
         'Content-Type': 'application/json',
-        'x-api-token':
-            'a5c3b58a2d0f49b1949ef70c5e91710b8e04e88ab62cc4f814d388d6e3910ae5',
       },
     );
   }

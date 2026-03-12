@@ -22,14 +22,10 @@ class _AuthApiService implements AuthApiService {
   final ParseErrorLogger? errorLogger;
 
   @override
-  Future<HttpResponse<AuthResponse>> login(
-    LoginRequest loginRequest,
-    String apiToken,
-  ) async {
+  Future<HttpResponse<AuthResponse>> login(LoginRequest loginRequest) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
-    final _headers = <String, dynamic>{r'x-api-token': apiToken};
-    _headers.removeWhere((k, v) => v == null);
+    final _headers = <String, dynamic>{};
     final _data = loginRequest;
     final _options = _setStreamType<HttpResponse<AuthResponse>>(
       Options(method: 'POST', headers: _headers, extra: _extra)
@@ -56,12 +52,10 @@ class _AuthApiService implements AuthApiService {
   @override
   Future<HttpResponse<AuthResponse>> register(
     RegisterRequest registerRequest,
-    String apiToken,
   ) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
-    final _headers = <String, dynamic>{r'x-api-token': apiToken};
-    _headers.removeWhere((k, v) => v == null);
+    final _headers = <String, dynamic>{};
     final _data = registerRequest;
     final _options = _setStreamType<HttpResponse<AuthResponse>>(
       Options(method: 'POST', headers: _headers, extra: _extra)

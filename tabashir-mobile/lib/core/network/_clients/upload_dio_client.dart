@@ -17,7 +17,6 @@ class UploadDioClient {
     sendTimeout: const Duration(seconds: 120),
     headers: {
       'Content-Type': 'multipart/form-data',
-      'x-api-token': dotenv.env['TABASHIR_API_TOKEN'] ?? 'a5c3b58a2d0f49b1949ef70c5e91710b8e04e88ab62cc4f814d388d6e3910ae5',
     },
   );
 

@@ -19,14 +19,12 @@ abstract class AuthApiService {
   @POST('/auth/login')
   Future<HttpResponse<AuthResponse>> login(
     @Body() LoginRequest loginRequest,
-    @Header('x-api-token') String apiToken,
   );
 
   /// Register new user
   @POST('/auth/register')
   Future<HttpResponse<AuthResponse>> register(
     @Body() RegisterRequest registerRequest,
-    @Header('x-api-token') String apiToken,
   );
 
   /// Refresh access token using refresh token
