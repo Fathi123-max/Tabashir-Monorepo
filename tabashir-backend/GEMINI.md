@@ -1,90 +1,76 @@
-# Tabashir - Resume Processing & Job Matching API
+# Tabashir Backend - Project Context & Instructions
 
-Tabashir is an AI-powered platform designed to process, format, and enhance ATS-friendly resumes using Natural Language Processing (NLP) and Large Language Models (LLMs). It facilitates CV transformation, translation, structuring, and AI-driven job matching.
+The `tabashir-backend` is an AI-powered Python backend application designed to process, format, and enhance ATS-friendly resumes using Natural Language Processing (NLP) and Large Language Models (LLMs). It handles CV transformation, translation, structuring, and AI-driven job matching, as well as serving dedicated mobile API endpoints.
 
 ## Project Overview
 
-- **Purpose:** Automate resume professionalization, structuring, and matching for the job market.
-- **Main Technologies:**
-    - **Backend:** Flask, Flask-RestX (Swagger documentation), Flask-CORS.
-    - **AI/LLM:** OpenAI (GPT-4o), DeepSeek API.
-    - **NLP & File Processing:** PyMuPDF (text extraction), SpaCy (NLP tasks), `docxtpl` (Word template rendering), `docx2pdf`.
-    - **Data Science:** Pandas, Scikit-learn, Scipy.
-    - **Database:** PostgreSQL (utilizing Neon and a dedicated AI database), `psycopg2`.
-    - **Authentication:** JWT (JSON Web Tokens) and custom API Tokens (`X-API-TOKEN`).
+- **Core Technologies:**
+  - **Frameworks:** Flask, Flask-RestX (for Swagger documentation), Flask-CORS.
+  - **AI/LLM:** OpenAI API (GPT-4o), DeepSeek API.
+  - **NLP & Documents:** PyMuPDF, PyPDF2, SpaCy (`en_core_web_sm`), `docxtpl` (Word template rendering).
+  - **Database:** PostgreSQL (Neon) accessed via `psycopg2` (RealDictCursor).
+- **Authentication:**
+  - Inter-service endpoints (e.g. `/api/v1/resume/*`) require an `X-API-TOKEN`.
+  - User-facing mobile endpoints (e.g. `/api/mobile/*`) require a Bearer JWT.
 
 ## Architecture
 
-The project is split into two main application modules:
+The backend operates two main entry points, utilizing Flask Blueprints and Namespaces:
 
-1.  **`app/` (Port 5050):** The primary/legacy backend. It handles the core resume processing, AI transformation, and structured formatting.
-2.  **`new_app/` (Port 5051):** A mobile-focused API layer providing endpoints for authentication, user profiles, home dashboard, and mobile-specific job interactions.
+1. **Core Resume Processing (`run_root.py` - Port 5001/5050):** Handles heavy NLP tasks, AI transformation, text extraction, and Word/PDF generation.
+2. **Mobile API Layer (`run_new.py` - Port 5051):** Endpoints specifically designed for mobile authentication, home dashboard, and user profiles.
 
 ### Key Directories
+- `app/routes/`: API endpoint definitions (Flask-RestX Namespaces).
+- `app/services/`: Core business logic.
+  - `cv_processor.py`: AI-driven CV rewriting (`cv_transformer`) and structured JSON extraction (`cv_formatter`).
+  - `job_apply/`: Logic for candidate-job semantic matching and ranking.
+  - `text_extractor.py`: PDF/DOCX parsing.
+- `app/models/`: Domain data structures (e.g., `Resume` object schema).
+- `app/database/`: Database connectivity.
+- `templates/`: Microsoft Word `.docx` templates used to generate user-ready resumes.
 
-- `app/routes/` & `new_app/routes/`: API endpoint definitions using Flask-RestX Namespaces and Blueprints.
-- `app/services/`: Core business logic:
-    - `cv_processor.py`: Orchestrates AI-driven CV transformation and structuring.
-    - `arabic_translator.py`: Handles translation tasks.
-    - `email_service.py`: Manages email communications.
-    - `job_apply/`: Logic for AI-based job matching and application.
-- `app/models/`: Data structures, notably the `Resume` object in `cv_models.py`.
-- `app/database/`: Database connection and utility functions.
-- `templates/`: Microsoft Word (`.docx`) templates used for generating formatted resumes.
+## AI Resume Workflow
+
+1. **Extraction:** Raw text is pulled from uploaded PDF/DOCX files.
+2. **Transformation:** AI refines the text (expanding bullet points, fixing grammar, matching tone).
+3. **Structuring:** The refined text is parsed into a strict JSON object mapped to the `Resume` model.
+4. **Generation:** The JSON data is injected into `docxtpl` templates to produce a formatted `.docx` file (which can be converted to PDF).
 
 ## Building and Running
 
 ### Prerequisites
-
 - Python 3.11+
-- PostgreSQL database (Main and AI DBs)
-- API Keys: OpenAI, DeepSeek (optional)
+- PostgreSQL database (schema defined by Prisma in `tabashir-frontend`)
 
-### Setup
+### Setup Environment
+```bash
+cd tabashir-backend
+python -m venv venv
+source venv/bin/activate
+pip install -r requirements.txt
+python -m spacy download en_core_web_sm
+```
 
-1.  **Install Dependencies:**
-    ```bash
-    pip install -r requirements.txt
-    ```
-2.  **Environment Variables:**
-    Copy `.env.example` to `.env` and fill in the required credentials (DB URLs, API Keys, etc.).
-    ```bash
-    cp .env.example .env
-    ```
+*(Note: Provide your API keys and DB credentials in `.env` based on `.env.example`)*
 
-### Running the Application
+### Run the Servers
+```bash
+# Run the core resume API (Port 5001)
+python run_root.py
 
-- **Start Main API (Legacy):**
-  ```bash
-  python run.py
-  ```
-  Running on `http://localhost:5050`. Swagger docs available at the root.
+# Run the mobile API layer (Port 5051)
+python run_new.py
+```
 
-- **Start Mobile API:**
-  ```bash
-  python run_new.py
-  ```
-  Running on `http://localhost:5051`. Swagger docs available at `/docs`.
-
-- **Apify Sync:**
-  ```bash
-  sh run_apify_sync.sh
-  ```
+### Background Tasks
+```bash
+# Run Apify job synchronization
+sh run_apify_sync.sh
+```
 
 ## Development Conventions
 
-- **API Documentation:** Always use `flask-restx` namespaces to ensure Swagger documentation is automatically generated.
-- **AI Interactions:** LLM logic is centralized in `app/services/cv_processor.py`. It uses a two-step process: `cv_transformer` (creative rewriting) followed by `cv_formatter` (structured extraction).
-- **Database Access:** Use `get_db_connection()` from `app.database.db`. The project uses raw SQL with `psycopg2` and `RealDictCursor`.
-- **CV Templates:** Formatted CVs are generated by injecting the `Resume` object into `docxtpl` templates located in the `templates/` folder.
-- **Authentication:**
-    - `/api/v1/resume` typically requires `X-API-TOKEN`.
-    - Mobile routes and user-specific routes (`/api/v1/auth`, `/api/v1/user`, etc.) use Bearer JWT tokens.
-
-## Key Workflows
-
-1.  **Extraction:** `text_extractor.py` and `text_extract_PyMuPDF.py` pull raw text from PDF/DOCX.
-2.  **Transformation:** AI professionalizes the raw text, expanding bullet points and fixing grammar.
-3.  **Structuring:** AI parses the transformed text into a structured JSON/Object format (`Resume` model).
-4.  **Generation:** The structured data is rendered into a `.docx` template and optionally converted to `.pdf`.
-5.  **Matching:** `ai_matching.py` ranks candidates against job descriptions using AI analysis.
+- **API Documentation:** Always use `flask-restx` namespaces to ensure Swagger documentation is automatically generated (`/docs`).
+- **Database Modularity:** This service uses raw SQL queries via `psycopg2`. **Do not** attempt to run schema migrations from here; all schema definitions belong to `tabashir-frontend/prisma/schema.prisma`.
+- **AI Pipelines:** Any changes to the LLM interaction should be centralized in `app/services/cv_processor.py`.

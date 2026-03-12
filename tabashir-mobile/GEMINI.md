@@ -1,70 +1,73 @@
 # Tabashir Mobile - Project Context & Instructions
 
-Tabashir is an AI-powered HR platform. This directory contains the Flutter mobile application, following Clean Architecture and feature-based modularization.
+`tabashir-mobile` is the Flutter application providing candidates with a streamlined, on-the-go experience for job searching, AI resume building, and application tracking.
 
 ## Project Overview
 
-- **Main Technologies:** Flutter (Dart), BLoC/Cubit (State Management), GoRouter (Navigation), GetIt/Injectable (DI), Isar (Local DB), Firebase (Auth, Analytics, Crashlytics, Messaging), OneSignal (Push Notifications), Stripe (Payments).
-- **Architecture:** Clean Architecture (Presentation, Domain, Data layers) organized by feature modules in `lib/features/`.
-- **Core Components:** Centralized logic for routing, theming, and shared services in `lib/core/`.
+- **Framework:** Flutter (Dart).
+- **State Management:** BLoC / Cubit.
+- **Architecture:** Clean Architecture (Presentation, Domain, Data layers).
+- **Navigation:** GoRouter.
+- **Dependency Injection:** GetIt / Injectable.
+- **Local Storage:** Isar Database.
+- **Networking:** Dio (HTTP client) communicating with the Next.js API and Python Mobile API layer.
+- **Infrastructure:** Firebase (Auth, Analytics, Crashlytics), OneSignal (Push Notifications).
 
-## Key Features & Modules
+## Key Features & Modules (`lib/features/`)
 
-- **Auth (`lib/features/auth`)**: Handles email/password and social login (Google, Apple).
-- **Jobs (`lib/features/jobs`)**: Job search, details, and saving functionality.
-- **Profile (`lib/features/profile`)**: User profile management, settings, and password updates.
-- **Resume (`lib/features/resume`)**: Import and preview resumes; utilizes a local package `packages/flutter_pdf_text` for extraction.
-- **AI Tools**:
-  - `ai_resume_builder`: AI-powered resume generation.
-  - `ai_job_apply`: AI-assisted job application workflow.
-- **Onboarding/Splash**: Initial user experience and app walkthrough.
+- **Auth:** Email/Password and Social login (Google, Apple). Uses JWT Bearer tokens for subsequent API requests.
+- **Jobs:** Job search, advanced filtering, details, and saved jobs management.
+- **Profile:** User settings, password changes, and personal information.
+- **Resume (`resume_vault`):** Import, preview, and manage resumes. Uses the local `packages/flutter_pdf_text` for on-device PDF text extraction before sending data to the AI backend.
+- **Applications:** Track the status of submitted job applications.
+- **Notifications:** In-app notification center.
 
 ## Building and Running
 
 ### Prerequisites
-- Flutter SDK (check `pubspec.yaml` for minimum version, currently `^3.9.2`).
-- A valid `.env` file (see `.env.example`).
-- Firebase configuration (`google-services.json` for Android, `GoogleService-Info.plist` for iOS).
+- Flutter SDK (`^3.9.2`).
+- A valid `.env` file (copied from `.env.example`).
+- Firebase configuration files (`google-services.json` for Android, `GoogleService-Info.plist` for iOS).
 
 ### Key Commands
-- **Install Dependencies:** `flutter pub get`
-- **Code Generation (Crucial):** `dart run build_runner build --delete-conflicting-outputs` (Required for Freezed, Injectable, and Retrofit).
-- **Run the App:** `flutter run`
-- **Run Tests:** `flutter test`
-- **Clean Project:** `flutter clean && flutter pub get`
+
+```bash
+cd tabashir-mobile
+
+# Install dependencies
+flutter pub get
+
+# Code Generation (CRUCIAL step after modifying models or DI)
+dart run build_runner build --delete-conflicting-outputs
+
+# Run the app
+flutter run
+
+# Run tests
+flutter test
+```
 
 ## Development Conventions
 
-### 🧩 Structure Alignment
-- New features must reside in `lib/features/[feature_name]/`.
-- Sub-folders: `data/`, `domain/`, `presentation/`.
-- Shared/Core widgets belong in `lib/core/ui/` or `lib/core/components/`.
+### Structure & Clean Architecture
+- Every new feature must reside in `lib/features/[feature_name]/` and follow the tripartite structure:
+  - `data/`: Models, Repositories implementations, Data Sources.
+  - `domain/`: Entities, Repository interfaces.
+  - `presentation/`: Cubits/State, Screens, Widgets.
+- Shared widgets and utilities belong in `lib/core/` or `lib/shared/`.
 
-### 🎨 Theming & Styling
-- **Always** use `Theme.of(context)` or the `AppTheme` class.
-- Avoid hardcoded colors or text styles.
-- Use `flutter_screenutil` for responsive sizing (Design Size: 375x812).
+### State Management
+- Use **Cubit + Freezed** to manage feature states.
+- Avoid placing business logic in UI widgets.
+- Global singletons (like `ProfileCubit` or `SavedJobsCubit`) are initialized in `lib/main.dart` or via GetIt.
 
-### ⚙️ State Management
-- Use **Cubit + Freezed** for most state management needs.
-- Global Cubits (like `ProfileCubit` and `SavedJobsCubit`) are initialized in `lib/main.dart`.
+### Theming
+- Always use `Theme.of(context)` or the centralized `AppTheme` class for colors and typography.
+- Use `flutter_screenutil` (e.g., `16.w`, `24.h`) to ensure responsive UI scaling across different device sizes.
 
-### 🧭 Navigation & Routing
-- Routes are defined centrally in `lib/core/router/app_router.dart` using `GoRouter`.
-- Route names are managed in `lib/core/router/route_names.dart`.
+### Navigation & Localization
+- Register new routes centrally in `lib/core/router/app_router.dart`.
+- Keep hardcoded strings out of the UI. Use `easy_localization` (`.tr()`) and store strings in `assets/translations/en.json`.
 
-### 🌐 Localization
-- Uses `easy_localization`.
-- Translation files are in `assets/translations/` (`ar.json`, `en.json`, `es.json`).
-- Always use `.tr()` on strings for internationalization.
-
-### 💉 Dependency Injection
-- Uses `get_it` and `injectable`.
-- Mark services with `@injectable` or `@singleton` and run `build_runner`.
-
-## Important Files
-- `lib/main.dart`: Entry point and global provider setup.
-- `lib/core/bootstrap/app_bootstrap.dart`: Application initialization sequence (Firebase, Isar, DI).
-- `pubspec.yaml`: Project dependencies and asset definitions.
-- `lib/core/router/app_router.dart`: Main navigation and redirect logic.
-- `.qwen/agents/`: Specialized agent instructions for different parts of the system.
+### Auto-Generated Code
+- Do not manually edit `*.g.dart` or `*.freezed.dart` files. Run the `build_runner` script to regenerate them when updating models or `@injectable` annotations.
