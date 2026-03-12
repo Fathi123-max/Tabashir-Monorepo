@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:tabashir/core/services/auth_session_service.dart';
 
 /// Backend Dio client for backend.tabashir.ae API
@@ -110,7 +111,9 @@ class BackendDioClient {
     sendTimeout: const Duration(seconds: 120),
     headers: {
       'Content-Type': 'application/json',
-      'X-API-TOKEN': dotenv.env['TABASHIR_API_TOKEN'] ?? 'a5c3b58a2d0f49b1949ef70c5e91710b8e04e88ab62cc4f814d388d6e3910ae5',
+      'X-API-TOKEN':
+          dotenv.env['TABASHIR_API_TOKEN'] ??
+          'a5c3b58a2d0f49b1949ef70c5e91710b8e04e88ab62cc4f814d388d6e3910ae5',
     },
   );
 

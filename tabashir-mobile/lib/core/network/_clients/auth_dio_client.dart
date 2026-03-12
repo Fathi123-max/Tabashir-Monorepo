@@ -118,8 +118,8 @@ class AuthDioClient {
       // The default headers for the API client
       // In this case, we are setting the `Content-Type` to `application/json`
       // and the `x-api-token` to the API token used for authentication.
-      // This token is specific to the localhost:5001 API and is used to authenticate
-      // requests to endpoints that require authentication.
+      // This token is specific to the localhost:5050 API and is used to authenticate
+      // the mobile client to the backend services.
       headers: {
         'Content-Type': 'application/json',
         'x-api-token':
