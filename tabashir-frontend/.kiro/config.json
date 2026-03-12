@@ -1,0 +1,112 @@
+{
+  "project": {
+    "name": "Tabashir Web",
+    "type": "next.js",
+    "description": "Job platform web application with multi-role support (Candidate, Recruiter, Admin)"
+  },
+  "architecture": {
+    "framework": "Next.js 15 App Router",
+    "language": "TypeScript",
+    "database": "PostgreSQL with Prisma ORM",
+    "auth": "NextAuth v5 (beta)",
+    "styling": "Tailwind CSS + shadcn/ui",
+    "state": "Zustand",
+    "i18n": "i18next + react-i18next",
+    "payments": "Stripe",
+    "storage": "UploadThing"
+  },
+  "structure": {
+    "routes": {
+      "(auth)": "Authentication pages (login, register, verify-email)",
+      "(candidate)": "Candidate dashboard and features",
+      "(recruiter)": "Recruiter dashboard and job management",
+      "(owner)": "Admin panel with role-based permissions",
+      "api": "API routes and webhooks"
+    },
+    "patterns": {
+      "data_fetching": "Server Components with async/await",
+      "mutations": "Server Actions in actions/ directory",
+      "api_routes": "Route handlers in app/api/",
+      "components": "Client components in components/ui/ (shadcn)",
+      "forms": "react-hook-form + zod validation"
+    }
+  },
+  "database": {
+    "schema": "prisma/schema.prisma",
+    "models": [
+      "User (multi-role: CANDIDATE, ADMIN, RECURITER)",
+      "Candidate, Recruiter, Owner (role-specific data)",
+      "JobPost, JobApplication, SavedJobPost, JobLike",
+      "Resume, AIResume",
+      "Subscription, Payment",
+      "Course, CourseEnrollment",
+      "AdminPermissionAssignment (granular permissions)"
+    ],
+    "enums": ["UserType", "AdminRole", "AdminPermission"]
+  },
+  "context": {
+    "include": [
+      "app/**/*.{ts,tsx}",
+      "components/**/*.{ts,tsx}",
+      "lib/**/*.ts",
+      "actions/**/*.ts",
+      "hooks/**/*.{ts,tsx}",
+      "types/**/*.ts",
+      "prisma/schema.prisma",
+      "package.json",
+      "tsconfig.json",
+      "next.config.mjs",
+      "tailwind.config.ts"
+    ],
+    "exclude": [
+      "node_modules/**",
+      ".next/**",
+      "build/**",
+      "public/**",
+      "*.md",
+      "*.lock"
+    ],
+    "priority": [
+      "prisma/schema.prisma",
+      "lib/permissions.ts",
+      "app/utils/auth.ts",
+      "actions/**/*.ts"
+    ]
+  },
+  "rules": [
+    "Use Next.js 15 App Router conventions",
+    "Server Components by default, 'use client' only when needed",
+    "Server Actions for all mutations (in actions/ directory)",
+    "Use Prisma for all database operations",
+    "Follow shadcn/ui component patterns",
+    "Implement role-based access control (RBAC) with AdminPermission enum",
+    "Use NextAuth session for authentication",
+    "Handle i18n with useTranslation hook",
+    "Use Zod for schema validation",
+    "Follow TypeScript strict mode",
+    "API routes return JSON with success/error structure",
+    "Use lib/api.ts for external API calls",
+    "Implement proper error handling with try-catch",
+    "Use loading.tsx for loading states",
+    "Use error.tsx for error boundaries"
+  ],
+  "features": {
+    "auth": "Email/password, OAuth (Google, Apple, Facebook), email verification",
+    "roles": "Candidate (job search, apply), Recruiter (post jobs), Admin (manage platform)",
+    "jobs": "Job posting, search, filtering, AI-powered matching, easy apply",
+    "resume": "Upload, parse, AI enhancement, multiple versions",
+    "payments": "Stripe integration, subscriptions, one-time payments",
+    "courses": "Free courses for candidates",
+    "admin": "Granular permission system, user management, analytics"
+  },
+  "conventions": {
+    "naming": {
+      "components": "PascalCase",
+      "files": "kebab-case",
+      "functions": "camelCase",
+      "constants": "UPPER_SNAKE_CASE"
+    },
+    "imports": "Use @/ alias for root imports",
+    "exports": "Named exports preferred over default"
+  }
+}

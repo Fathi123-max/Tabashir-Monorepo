@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "908457286237",
+    "project_id": "tabashir-a2d9a",
+    "storage_bucket": "tabashir-a2d9a.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:908457286237:android:3d11da3756ef72d2a6cbb4",
+        "android_client_info": {
+          "package_name": "ae.tabashir"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "908457286237-sl5h3g85uf350uje8k39f55t6ankopjc.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBR59Xh6LDJ7S2BlkWarjmd435MCRFfgDs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "908457286237-sl5h3g85uf350uje8k39f55t6ankopjc.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "908457286237-kcd4psro9fe34ljqgjfp5t124r873j5o.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.tabashir"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -1,0 +1,166 @@
+{
+  "project": {
+    "name": "Tabashir Mobile",
+    "type": "flutter",
+    "description": "Cross-platform mobile app for job platform with multi-role support"
+  },
+  "architecture": {
+    "framework": "Flutter 3.9+",
+    "language": "Dart",
+    "state_management": "BLoC (flutter_bloc)",
+    "dependency_injection": "GetIt + Injectable",
+    "navigation": "GoRouter",
+    "networking": "Dio + Retrofit",
+    "local_storage": "Isar + SharedPreferences + FlutterSecureStorage",
+    "auth": "Firebase Auth + Custom JWT",
+    "notifications": "OneSignal + Firebase Messaging",
+    "payments": "Stripe (flutter_stripe)",
+    "localization": "easy_localization"
+  },
+  "structure": {
+    "core": {
+      "bootstrap": "App initialization (Firebase, DI, services)",
+      "di": "Dependency injection setup (GetIt + Injectable)",
+      "network": "API clients (Retrofit), models, services",
+      "router": "GoRouter configuration and routes",
+      "services": "Platform services (auth, storage, notifications, stripe)",
+      "theme": "App theming and styling",
+      "constants": "App-wide constants and enums",
+      "error": "Error handling and reporting"
+    },
+    "features": {
+      "pattern": "Clean Architecture (data/domain/presentation)",
+      "layers": {
+        "data": "repositories, datasources, models, mappers",
+        "domain": "repository interfaces",
+        "presentation": "cubit (BLoC), screens, widgets"
+      }
+    },
+    "features_list": [
+      "auth (login, register, social auth)",
+      "home (dashboard, job feed)",
+      "jobs (search, details, apply)",
+      "profile (user profile, resume vault)",
+      "ai_job_apply (AI-powered job application)",
+      "ai_resume_builder (AI resume creation)",
+      "notifications (push notifications)",
+      "payments (Stripe integration)",
+      "subscription (subscription management)",
+      "onboarding (user onboarding flow)",
+      "services (platform services)",
+      "search (job search)",
+      "messages (messaging)",
+      "settings (app settings)"
+    ]
+  },
+  "patterns": {
+    "state_management": "BLoC pattern with Cubit",
+    "dependency_injection": "Constructor injection via GetIt",
+    "repository": "Repository pattern for data layer",
+    "api_calls": "Retrofit with Dio interceptors",
+    "error_handling": "DioErrorMapper + GlobalBlocObserver",
+    "navigation": "GoRouter with named routes",
+    "models": "Freezed for immutable models with JSON serialization"
+  },
+  "context": {
+    "include": [
+      "lib/**/*.dart",
+      "test/**/*.dart",
+      "pubspec.yaml",
+      "analysis_options.yaml",
+      "build.yaml"
+    ],
+    "exclude": [
+      "build/**",
+      ".dart_tool/**",
+      "ios/**",
+      "android/**",
+      "macos/**",
+      "linux/**",
+      "windows/**",
+      "web/**",
+      "*.md",
+      "*.lock",
+      "*.g.dart",
+      "*.freezed.dart",
+      "*.config.dart"
+    ],
+    "priority": [
+      "lib/core/di/module.dart",
+      "lib/core/bootstrap/app_bootstrap.dart",
+      "lib/core/router/app_router.dart",
+      "lib/core/network/api_client.dart",
+      "lib/main.dart"
+    ]
+  },
+  "rules": [
+    "Use BLoC (Cubit) for state management",
+    "Use GetIt for dependency injection with @injectable annotations",
+    "Follow Clean Architecture: data/domain/presentation layers",
+    "Use Repository pattern for data access",
+    "Use Retrofit for API calls with Dio",
+    "Use Freezed for immutable models",
+    "Use GoRouter for navigation",
+    "Follow very_good_analysis linting rules",
+    "Use Isar for local database",
+    "Use FlutterSecureStorage for sensitive data",
+    "Implement proper error handling with DioErrorMapper",
+    "Use easy_localization for i18n (en, ar, es)",
+    "Use Firebase for auth, analytics, crashlytics",
+    "Use OneSignal for push notifications",
+    "Follow feature-first folder structure",
+    "Each feature has data/domain/presentation layers",
+    "Cubits emit states, never mutate state directly",
+    "Use BlocProvider for dependency injection in widgets",
+    "Use BlocBuilder/BlocListener for UI updates",
+    "Repository interfaces in domain, implementations in data"
+  ],
+  "features": {
+    "auth": "Email/password, Firebase Auth, Google Sign-In, Apple Sign-In, JWT tokens",
+    "roles": "Candidate, Recruiter, Admin with role-based UI",
+    "jobs": "Job listing, search, filtering, details, apply, save, like",
+    "profile": "User profile, resume vault, resume parsing, CV upload",
+    "ai_features": "AI job application, AI resume builder, AI matching",
+    "payments": "Stripe integration, subscriptions, payment history",
+    "notifications": "OneSignal push notifications, in-app notifications",
+    "localization": "Multi-language support (English, Arabic, Spanish)",
+    "offline": "Isar local database for offline support"
+  },
+  "conventions": {
+    "naming": {
+      "files": "snake_case",
+      "classes": "PascalCase",
+      "variables": "camelCase",
+      "constants": "lowerCamelCase",
+      "private": "_prefixed"
+    },
+    "cubit": {
+      "naming": "FeatureCubit (e.g., AuthCubit, JobsCubit)",
+      "state": "FeatureState with sealed classes (Freezed)",
+      "methods": "Action verbs (e.g., login, fetchJobs, updateProfile)"
+    },
+    "repository": {
+      "interface": "FeatureRepository in domain/repositories",
+      "implementation": "FeatureRepositoryImpl in data/repositories"
+    },
+    "models": {
+      "api": "Use Freezed with @freezed annotation",
+      "json": "Use json_serializable with @JsonSerializable"
+    }
+  },
+  "dependencies": {
+    "state": "flutter_bloc",
+    "di": "get_it, injectable",
+    "network": "dio, retrofit, pretty_dio_logger",
+    "navigation": "go_router",
+    "storage": "isar, flutter_secure_storage, shared_preferences",
+    "ui": "flutter_screenutil, google_fonts, cached_network_image, shimmer",
+    "forms": "reactive_forms",
+    "localization": "easy_localization",
+    "firebase": "firebase_core, firebase_auth, firebase_analytics, firebase_crashlytics, firebase_messaging",
+    "notifications": "onesignal_flutter, flutter_local_notifications",
+    "payments": "flutter_stripe",
+    "social_auth": "google_sign_in, sign_in_with_apple",
+    "files": "file_picker, pdfx"
+  }
+}

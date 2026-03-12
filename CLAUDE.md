@@ -6,17 +6,17 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 Tabashir is an HR consulting platform with a **monorepo structure** containing:
 - **tabashir-mobile**: Flutter mobile application (iOS/Android)
-- **tabashir-web**: Next.js web application with admin dashboard
+- **tabashir-frontend**: Next.js web application with admin dashboard
 - **Backend API**: Next.js API routes serving both web and mobile apps
 
 The platform provides job matching, AI-powered resume optimization, application tracking, payment processing, and multi-user role management (Candidates, Recruiters, Admins).
 
 ## Quick Start Commands
 
-### Web Application (tabashir-web)
+### Web Application (tabashir-frontend)
 
 ```bash
-cd tabashir-web
+cd tabashir-frontend
 
 # Install dependencies
 pnpm install
@@ -89,7 +89,7 @@ tabashir/
 │   ├── android/              # Android platform files
 │   ├── ios/                  # iOS platform files
 │   └── pubspec.yaml          # Dependencies
-├── tabashir-web/             # Next.js web app
+├── tabashir-frontend/          # Next.js web app
 │   ├── app/                  # Next.js App Router
 │   │   ├── (auth)/           # Authentication pages
 │   │   ├── (candidate)/      # Candidate dashboard
@@ -108,7 +108,7 @@ tabashir/
 ├── docs/                     # Comprehensive documentation
 │   ├── project/              # Project-wide docs
 │   ├── mobile/               # Mobile app docs
-│   ├── web/                  # Web app docs
+│   ├── frontend/               # Frontend app docs
 │   ├── api/                  # API documentation
 │   ├── guides/               # Implementation guides
 │   └── architecture/         # Architecture docs
@@ -122,7 +122,7 @@ tabashir/
 
 ```
 ┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
-│  Mobile App    │    │   Web App       │    │   Backend API   │
+│  Mobile App    │    │   Frontend App  │    │   Backend API   │
 │  (Flutter)      │◄──►│  (Next.js)      │◄──►│  (Next.js)      │
 └────────┬────────┘    └────────┬────────┘    └────────┬────────┘
          │                      │                      │
@@ -143,7 +143,7 @@ tabashir/
 - UploadThing (file storage)
 - OpenAI (AI features - resume optimization, translation)
 - Firebase (mobile analytics, crashlytics, messaging)
-- NextAuth (web authentication)
+- NextAuth (frontend authentication)
 
 ### User Types & Access Control
 
@@ -158,7 +158,7 @@ Admin permissions are granularly controlled via `AdminPermission` enum in the da
 ### API Design
 
 - **Mobile API**: `/api/mobile/*` - Used by Flutter app (JWT authentication required)
-- **Web API**: `/api/web/*` or direct routes - Used by web app
+- **Frontend API**: `/api/frontend/*` or direct routes - Used by frontend app
 - **Admin API**: `/api/admin/*` - Used by admin dashboard
 
 Key endpoints: Authentication (`/api/auth/*`), Resume Management (`/api/mobile/resumes/*`), Job Management, Payments, User Management.
@@ -222,7 +222,7 @@ lib/
 - **StripeService**: Payment processing
 - **ResumeParsingService**: AI resume parsing
 
-## Web App Architecture (Next.js)
+## Frontend App Architecture (Next.js)
 
 ### Tech Stack
 - **Framework**: Next.js (App Router)
@@ -248,7 +248,7 @@ lib/
 
 ## Database Schema
 
-The `tabashir-web/prisma/schema.prisma` defines the data model:
+The `tabashir-frontend/prisma/schema.prisma` defines the data model:
 
 - **User**: Central model with `userType` (CANDIDATE | ADMIN | RECRUITER)
 - **Candidate/Recruiter/Owner**: Extended profiles
@@ -260,19 +260,19 @@ The `tabashir-web/prisma/schema.prisma` defines the data model:
 ## Development Guidelines (Critical)
 
 ### ⚠️ Database Changes
-If you change the Prisma schema, you **MUST** consider the impact on both Web and Mobile (since Mobile relies on the API which relies on the DB).
+If you change the Prisma schema, you **MUST** consider the impact on both Frontend and Mobile (since Mobile relies on the API which relies on the DB).
 
 ### ⚠️ Mobile API Compatibility
 Do **NOT** break existing `/api/mobile/*` endpoints. The mobile app is sensitive to contract changes.
 
 ### Design Standards
-For Web UI, prioritize "Premium" design—smooth animations, perfect spacing, and high-quality typography (Inter/Geist).
+For Frontend UI, prioritize "Premium" design—smooth animations, perfect spacing, and high-quality typography (Inter/Geist).
 
 ### Dependencies
 Do not add new system-level dependencies without approval.
 
 ### Monorepo Awareness
-Always check which directory you are in. Do not mix commands (e.g., running `flutter` in `tabashir-web`).
+Always check which directory you are in. Do not mix commands (e.g., running `flutter` in `tabashir-frontend`).
 
 ### Documentation
 Update `CLAUDE.md` or relevant `README.md` files if you make significant architectural changes.
@@ -288,7 +288,7 @@ Update `CLAUDE.md` or relevant `README.md` files if you make significant archite
 5. Add DI registration in `lib/core/di/module.dart` if needed
 6. Run: `dart run build_runner build --delete-conflicting-outputs`
 
-### Adding a New Web Route
+### Adding a New Frontend Route
 
 1. Create page in route group: `app/(group)/feature/page.tsx`
 2. Add server actions in `actions/` if needed
@@ -317,7 +317,7 @@ Update `CLAUDE.md` or relevant `README.md` files if you make significant archite
 - **Linting**: Adhere to `very_good_analysis` rules
 - **Async**: Use `Future` and `Stream` correctly. Handle errors in BLoC, not UI
 
-### Web (Next.js)
+### Frontend (Next.js)
 - **Components**: Functional components. Use `interface Props` for props
 - **Tailwind**: Use utility classes. Avoid custom CSS modules unless necessary
 - **Strict Mode**: No `any`. Fix type errors properly
@@ -328,7 +328,7 @@ Update `CLAUDE.md` or relevant `README.md` files if you make significant archite
 - **Generated Code**: In mobile app, `*.g.dart` and `*.freezed.dart` files are committed to git
 - **Database Migrations**: Always use Prisma migrations, never edit the database directly
 - **API Authentication**: JWT tokens required for all mobile API endpoints
-- **Route Groups**: In web app, route groups don't affect URL structure
+- **Route Groups**: In frontend app, route groups don't affect URL structure
 - **Mobile API Prefix**: All mobile-specific endpoints use `/api/mobile/` prefix
 - **Build Cache**: If builds fail, clean both `flutter clean` (mobile) and `.next` (web)
 - **Generated Files**: Prisma client is generated, not committed
@@ -337,7 +337,7 @@ Update `CLAUDE.md` or relevant `README.md` files if you make significant archite
 
 - **`docs/project/CLAUDE.md`** - Detailed monorepo guide
 - **`docs/mobile/CLAUDE.md`** - Complete mobile architecture
-- **`docs/web/CLAUDE.md`** - Complete web architecture
+- **`docs/frontend/CLAUDE.md`** - Complete frontend architecture
 - **`docs/project/QUICK_REFERENCE.md`** - Resume API reference
 - **`.cursorrules`** - Development rules and coding standards
 
@@ -345,7 +345,7 @@ Update `CLAUDE.md` or relevant `README.md` files if you make significant archite
 
 ### Environment Variables
 
-**Web App** (`.env`):
+**Frontend App** (`.env`):
 ```env
 DATABASE_URL="postgresql://..."
 NEXTAUTH_URL="http://localhost:3001"

@@ -1,0 +1,14 @@
+# swagger_to_dart configuration
+# See https://pub.dev/packages/swagger_to_dart for details
+
+swagger_to_dart:
+  # Local swagger spec file
+  input_directory: lib/core/network/swagger_spec.json
+
+  # Output directory for generated code
+  output_directory: lib/core/network/generated
+
+  # API client configuration
+  api_client:
+    # Base API client class name
+    base_api_client_class_name: TabashirApiClient

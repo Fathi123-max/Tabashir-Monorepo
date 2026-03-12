@@ -1,0 +1,13 @@
+targets:
+  $default:
+    builders:
+      isar_generator|isar_generator:
+        generate_for:
+          - lib/core/database/models/*.dart
+      swagger_to_dart:
+        generate_for:
+          - lib/core/network/swagger_config.yaml
+        options:
+          output_directory: lib/core/network/generated
+          input_url: https://backend.tabashir.ae/swagger.json
+          input_file: lib/core/network/swagger_spec.json

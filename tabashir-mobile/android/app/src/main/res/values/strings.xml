@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Stripe Configuration -->
+    <!-- Replace with your actual Stripe publishable key from the Stripe Dashboard -->
+    <string name="stripe_publishable_key">pk_test_51234567890abcdef...</string>
+</resources>

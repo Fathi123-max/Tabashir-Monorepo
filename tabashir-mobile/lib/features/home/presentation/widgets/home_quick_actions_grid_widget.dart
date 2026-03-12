@@ -1,0 +1,58 @@
+import 'package:easy_localization/easy_localization.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:go_router/go_router.dart';
+import 'package:tabashir/features/home/presentation/widgets/home_quick_action_card_widget.dart';
+import 'package:tabashir/core/theme/app_theme.dart';
+import 'package:tabashir/core/router/route_names.dart';
+
+class HomeQuickActionsGridWidget extends StatelessWidget {
+  const HomeQuickActionsGridWidget({super.key});
+
+  @override
+  Widget build(BuildContext context) => GridView.count(
+    crossAxisCount: 2,
+    shrinkWrap: true,
+    physics: const NeverScrollableScrollPhysics(),
+    mainAxisSpacing: AppTheme.spacingMd.h,
+    crossAxisSpacing: AppTheme.spacingMd.w,
+    children: [
+      // Upload/Update Resume
+      HomeQuickActionCardWidget(
+        icon: Icons.upload_file_outlined,
+        label: 'Upload/Update\nResume'.tr(),
+        onTap: () {
+          print('[QUICK_ACTIONS] Navigate to Resume Vault');
+          context.push(RouteNames.resumeVault);
+        },
+      ),
+      // AI Job Apply
+      HomeQuickActionCardWidget(
+        icon: Icons.rocket_launch_outlined,
+        label: 'AI Job Apply'.tr(),
+        onTap: () {
+          print('[QUICK_ACTIONS] Navigate to AI Job Apply');
+          context.push(RouteNames.aiJobApply);
+        },
+      ),
+      // Saved Jobs
+      HomeQuickActionCardWidget(
+        icon: Icons.bookmark_outline,
+        label: 'Saved Jobs'.tr(),
+        onTap: () {
+          print('[QUICK_ACTIONS] Navigate to Saved Jobs');
+          context.push(RouteNames.savedJobs);
+        },
+      ),
+      // AI Services
+      HomeQuickActionCardWidget(
+        icon: Icons.auto_awesome_outlined,
+        label: 'AI Services'.tr(),
+        onTap: () {
+          print('[QUICK_ACTIONS] Navigate to Services');
+          context.push(RouteNames.services);
+        },
+      ),
+    ],
+  );
+}

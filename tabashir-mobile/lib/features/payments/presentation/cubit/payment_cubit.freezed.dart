@@ -1,0 +1,361 @@
+// GENERATED CODE - DO NOT MODIFY BY HAND
+// coverage:ignore-file
+// ignore_for_file: type=lint
+// ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
+
+part of 'payment_cubit.dart';
+
+// **************************************************************************
+// FreezedGenerator
+// **************************************************************************
+
+// dart format off
+T _$identity<T>(T value) => value;
+
+/// @nodoc
+mixin _$PaymentState {
+
+ PaymentStatus get status; String get errorMessage; PaymentIntentResponse? get paymentIntent; CheckoutSessionResponse? get checkoutSession; LatestPaymentResponse? get latestPayment; bool get paymentSheetInitialized; bool get paymentSuccessful;
+/// Create a copy of PaymentState
+/// with the given fields replaced by the non-null parameter values.
+@JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+$PaymentStateCopyWith<PaymentState> get copyWith => _$PaymentStateCopyWithImpl<PaymentState>(this as PaymentState, _$identity);
+
+  /// Serializes this PaymentState to a JSON map.
+  Map<String, dynamic> toJson();
+
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is PaymentState&&(identical(other.status, status) || other.status == status)&&(identical(other.errorMessage, errorMessage) || other.errorMessage == errorMessage)&&(identical(other.paymentIntent, paymentIntent) || other.paymentIntent == paymentIntent)&&(identical(other.checkoutSession, checkoutSession) || other.checkoutSession == checkoutSession)&&(identical(other.latestPayment, latestPayment) || other.latestPayment == latestPayment)&&(identical(other.paymentSheetInitialized, paymentSheetInitialized) || other.paymentSheetInitialized == paymentSheetInitialized)&&(identical(other.paymentSuccessful, paymentSuccessful) || other.paymentSuccessful == paymentSuccessful));
+}
+
+@JsonKey(includeFromJson: false, includeToJson: false)
+@override
+int get hashCode => Object.hash(runtimeType,status,errorMessage,paymentIntent,checkoutSession,latestPayment,paymentSheetInitialized,paymentSuccessful);
+
+@override
+String toString() {
+  return 'PaymentState(status: $status, errorMessage: $errorMessage, paymentIntent: $paymentIntent, checkoutSession: $checkoutSession, latestPayment: $latestPayment, paymentSheetInitialized: $paymentSheetInitialized, paymentSuccessful: $paymentSuccessful)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class $PaymentStateCopyWith<$Res>  {
+  factory $PaymentStateCopyWith(PaymentState value, $Res Function(PaymentState) _then) = _$PaymentStateCopyWithImpl;
+@useResult
+$Res call({
+ PaymentStatus status, String errorMessage, PaymentIntentResponse? paymentIntent, CheckoutSessionResponse? checkoutSession, LatestPaymentResponse? latestPayment, bool paymentSheetInitialized, bool paymentSuccessful
+});
+
+
+$PaymentIntentResponseCopyWith<$Res>? get paymentIntent;$CheckoutSessionResponseCopyWith<$Res>? get checkoutSession;$LatestPaymentResponseCopyWith<$Res>? get latestPayment;
+
+}
+/// @nodoc
+class _$PaymentStateCopyWithImpl<$Res>
+    implements $PaymentStateCopyWith<$Res> {
+  _$PaymentStateCopyWithImpl(this._self, this._then);
+
+  final PaymentState _self;
+  final $Res Function(PaymentState) _then;
+
+/// Create a copy of PaymentState
+/// with the given fields replaced by the non-null parameter values.
+@pragma('vm:prefer-inline') @override $Res call({Object? status = null,Object? errorMessage = null,Object? paymentIntent = freezed,Object? checkoutSession = freezed,Object? latestPayment = freezed,Object? paymentSheetInitialized = null,Object? paymentSuccessful = null,}) {
+  return _then(_self.copyWith(
+status: null == status ? _self.status : status // ignore: cast_nullable_to_non_nullable
+as PaymentStatus,errorMessage: null == errorMessage ? _self.errorMessage : errorMessage // ignore: cast_nullable_to_non_nullable
+as String,paymentIntent: freezed == paymentIntent ? _self.paymentIntent : paymentIntent // ignore: cast_nullable_to_non_nullable
+as PaymentIntentResponse?,checkoutSession: freezed == checkoutSession ? _self.checkoutSession : checkoutSession // ignore: cast_nullable_to_non_nullable
+as CheckoutSessionResponse?,latestPayment: freezed == latestPayment ? _self.latestPayment : latestPayment // ignore: cast_nullable_to_non_nullable
+as LatestPaymentResponse?,paymentSheetInitialized: null == paymentSheetInitialized ? _self.paymentSheetInitialized : paymentSheetInitialized // ignore: cast_nullable_to_non_nullable
+as bool,paymentSuccessful: null == paymentSuccessful ? _self.paymentSuccessful : paymentSuccessful // ignore: cast_nullable_to_non_nullable
+as bool,
+  ));
+}
+/// Create a copy of PaymentState
+/// with the given fields replaced by the non-null parameter values.
+@override
+@pragma('vm:prefer-inline')
+$PaymentIntentResponseCopyWith<$Res>? get paymentIntent {
+    if (_self.paymentIntent == null) {
+    return null;
+  }
+
+  return $PaymentIntentResponseCopyWith<$Res>(_self.paymentIntent!, (value) {
+    return _then(_self.copyWith(paymentIntent: value));
+  });
+}/// Create a copy of PaymentState
+/// with the given fields replaced by the non-null parameter values.
+@override
+@pragma('vm:prefer-inline')
+$CheckoutSessionResponseCopyWith<$Res>? get checkoutSession {
+    if (_self.checkoutSession == null) {
+    return null;
+  }
+
+  return $CheckoutSessionResponseCopyWith<$Res>(_self.checkoutSession!, (value) {
+    return _then(_self.copyWith(checkoutSession: value));
+  });
+}/// Create a copy of PaymentState
+/// with the given fields replaced by the non-null parameter values.
+@override
+@pragma('vm:prefer-inline')
+$LatestPaymentResponseCopyWith<$Res>? get latestPayment {
+    if (_self.latestPayment == null) {
+    return null;
+  }
+
+  return $LatestPaymentResponseCopyWith<$Res>(_self.latestPayment!, (value) {
+    return _then(_self.copyWith(latestPayment: value));
+  });
+}
+}
+
+
+/// Adds pattern-matching-related methods to [PaymentState].
+extension PaymentStatePatterns on PaymentState {
+/// A variant of `map` that fallback to returning `orElse`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeMap<TResult extends Object?>(TResult Function( _PaymentState value)?  $default,{required TResult orElse(),}){
+final _that = this;
+switch (_that) {
+case _PaymentState() when $default != null:
+return $default(_that);case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// Callbacks receives the raw object, upcasted.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case final Subclass2 value:
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult map<TResult extends Object?>(TResult Function( _PaymentState value)  $default,){
+final _that = this;
+switch (_that) {
+case _PaymentState():
+return $default(_that);}
+}
+/// A variant of `map` that fallback to returning `null`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>(TResult? Function( _PaymentState value)?  $default,){
+final _that = this;
+switch (_that) {
+case _PaymentState() when $default != null:
+return $default(_that);case _:
+  return null;
+
+}
+}
+/// A variant of `when` that fallback to an `orElse` callback.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( PaymentStatus status,  String errorMessage,  PaymentIntentResponse? paymentIntent,  CheckoutSessionResponse? checkoutSession,  LatestPaymentResponse? latestPayment,  bool paymentSheetInitialized,  bool paymentSuccessful)?  $default,{required TResult orElse(),}) {final _that = this;
+switch (_that) {
+case _PaymentState() when $default != null:
+return $default(_that.status,_that.errorMessage,_that.paymentIntent,_that.checkoutSession,_that.latestPayment,_that.paymentSheetInitialized,_that.paymentSuccessful);case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// As opposed to `map`, this offers destructuring.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case Subclass2(:final field2):
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( PaymentStatus status,  String errorMessage,  PaymentIntentResponse? paymentIntent,  CheckoutSessionResponse? checkoutSession,  LatestPaymentResponse? latestPayment,  bool paymentSheetInitialized,  bool paymentSuccessful)  $default,) {final _that = this;
+switch (_that) {
+case _PaymentState():
+return $default(_that.status,_that.errorMessage,_that.paymentIntent,_that.checkoutSession,_that.latestPayment,_that.paymentSheetInitialized,_that.paymentSuccessful);}
+}
+/// A variant of `when` that fallback to returning `null`
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( PaymentStatus status,  String errorMessage,  PaymentIntentResponse? paymentIntent,  CheckoutSessionResponse? checkoutSession,  LatestPaymentResponse? latestPayment,  bool paymentSheetInitialized,  bool paymentSuccessful)?  $default,) {final _that = this;
+switch (_that) {
+case _PaymentState() when $default != null:
+return $default(_that.status,_that.errorMessage,_that.paymentIntent,_that.checkoutSession,_that.latestPayment,_that.paymentSheetInitialized,_that.paymentSuccessful);case _:
+  return null;
+
+}
+}
+
+}
+
+/// @nodoc
+@JsonSerializable()
+
+class _PaymentState implements PaymentState {
+  const _PaymentState({this.status = PaymentStatus.initial, this.errorMessage = '', this.paymentIntent, this.checkoutSession, this.latestPayment, this.paymentSheetInitialized = false, this.paymentSuccessful = false});
+  factory _PaymentState.fromJson(Map<String, dynamic> json) => _$PaymentStateFromJson(json);
+
+@override@JsonKey() final  PaymentStatus status;
+@override@JsonKey() final  String errorMessage;
+@override final  PaymentIntentResponse? paymentIntent;
+@override final  CheckoutSessionResponse? checkoutSession;
+@override final  LatestPaymentResponse? latestPayment;
+@override@JsonKey() final  bool paymentSheetInitialized;
+@override@JsonKey() final  bool paymentSuccessful;
+
+/// Create a copy of PaymentState
+/// with the given fields replaced by the non-null parameter values.
+@override @JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+_$PaymentStateCopyWith<_PaymentState> get copyWith => __$PaymentStateCopyWithImpl<_PaymentState>(this, _$identity);
+
+@override
+Map<String, dynamic> toJson() {
+  return _$PaymentStateToJson(this, );
+}
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _PaymentState&&(identical(other.status, status) || other.status == status)&&(identical(other.errorMessage, errorMessage) || other.errorMessage == errorMessage)&&(identical(other.paymentIntent, paymentIntent) || other.paymentIntent == paymentIntent)&&(identical(other.checkoutSession, checkoutSession) || other.checkoutSession == checkoutSession)&&(identical(other.latestPayment, latestPayment) || other.latestPayment == latestPayment)&&(identical(other.paymentSheetInitialized, paymentSheetInitialized) || other.paymentSheetInitialized == paymentSheetInitialized)&&(identical(other.paymentSuccessful, paymentSuccessful) || other.paymentSuccessful == paymentSuccessful));
+}
+
+@JsonKey(includeFromJson: false, includeToJson: false)
+@override
+int get hashCode => Object.hash(runtimeType,status,errorMessage,paymentIntent,checkoutSession,latestPayment,paymentSheetInitialized,paymentSuccessful);
+
+@override
+String toString() {
+  return 'PaymentState(status: $status, errorMessage: $errorMessage, paymentIntent: $paymentIntent, checkoutSession: $checkoutSession, latestPayment: $latestPayment, paymentSheetInitialized: $paymentSheetInitialized, paymentSuccessful: $paymentSuccessful)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class _$PaymentStateCopyWith<$Res> implements $PaymentStateCopyWith<$Res> {
+  factory _$PaymentStateCopyWith(_PaymentState value, $Res Function(_PaymentState) _then) = __$PaymentStateCopyWithImpl;
+@override @useResult
+$Res call({
+ PaymentStatus status, String errorMessage, PaymentIntentResponse? paymentIntent, CheckoutSessionResponse? checkoutSession, LatestPaymentResponse? latestPayment, bool paymentSheetInitialized, bool paymentSuccessful
+});
+
+
+@override $PaymentIntentResponseCopyWith<$Res>? get paymentIntent;@override $CheckoutSessionResponseCopyWith<$Res>? get checkoutSession;@override $LatestPaymentResponseCopyWith<$Res>? get latestPayment;
+
+}
+/// @nodoc
+class __$PaymentStateCopyWithImpl<$Res>
+    implements _$PaymentStateCopyWith<$Res> {
+  __$PaymentStateCopyWithImpl(this._self, this._then);
+
+  final _PaymentState _self;
+  final $Res Function(_PaymentState) _then;
+
+/// Create a copy of PaymentState
+/// with the given fields replaced by the non-null parameter values.
+@override @pragma('vm:prefer-inline') $Res call({Object? status = null,Object? errorMessage = null,Object? paymentIntent = freezed,Object? checkoutSession = freezed,Object? latestPayment = freezed,Object? paymentSheetInitialized = null,Object? paymentSuccessful = null,}) {
+  return _then(_PaymentState(
+status: null == status ? _self.status : status // ignore: cast_nullable_to_non_nullable
+as PaymentStatus,errorMessage: null == errorMessage ? _self.errorMessage : errorMessage // ignore: cast_nullable_to_non_nullable
+as String,paymentIntent: freezed == paymentIntent ? _self.paymentIntent : paymentIntent // ignore: cast_nullable_to_non_nullable
+as PaymentIntentResponse?,checkoutSession: freezed == checkoutSession ? _self.checkoutSession : checkoutSession // ignore: cast_nullable_to_non_nullable
+as CheckoutSessionResponse?,latestPayment: freezed == latestPayment ? _self.latestPayment : latestPayment // ignore: cast_nullable_to_non_nullable
+as LatestPaymentResponse?,paymentSheetInitialized: null == paymentSheetInitialized ? _self.paymentSheetInitialized : paymentSheetInitialized // ignore: cast_nullable_to_non_nullable
+as bool,paymentSuccessful: null == paymentSuccessful ? _self.paymentSuccessful : paymentSuccessful // ignore: cast_nullable_to_non_nullable
+as bool,
+  ));
+}
+
+/// Create a copy of PaymentState
+/// with the given fields replaced by the non-null parameter values.
+@override
+@pragma('vm:prefer-inline')
+$PaymentIntentResponseCopyWith<$Res>? get paymentIntent {
+    if (_self.paymentIntent == null) {
+    return null;
+  }
+
+  return $PaymentIntentResponseCopyWith<$Res>(_self.paymentIntent!, (value) {
+    return _then(_self.copyWith(paymentIntent: value));
+  });
+}/// Create a copy of PaymentState
+/// with the given fields replaced by the non-null parameter values.
+@override
+@pragma('vm:prefer-inline')
+$CheckoutSessionResponseCopyWith<$Res>? get checkoutSession {
+    if (_self.checkoutSession == null) {
+    return null;
+  }
+
+  return $CheckoutSessionResponseCopyWith<$Res>(_self.checkoutSession!, (value) {
+    return _then(_self.copyWith(checkoutSession: value));
+  });
+}/// Create a copy of PaymentState
+/// with the given fields replaced by the non-null parameter values.
+@override
+@pragma('vm:prefer-inline')
+$LatestPaymentResponseCopyWith<$Res>? get latestPayment {
+    if (_self.latestPayment == null) {
+    return null;
+  }
+
+  return $LatestPaymentResponseCopyWith<$Res>(_self.latestPayment!, (value) {
+    return _then(_self.copyWith(latestPayment: value));
+  });
+}
+}
+
+// dart format on

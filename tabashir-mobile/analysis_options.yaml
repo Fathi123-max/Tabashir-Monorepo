@@ -1,0 +1,129 @@
+include: package:very_good_analysis/analysis_options.yaml
+
+analyzer:
+  exclude:
+    - "**/*.g.dart"
+    - "**/*.freezed.dart"
+    - "lib/generated/*"
+    - "lib/l10n/*"
+    - "lib/**/*.gr.dart"
+    - "**/*.config.dart"
+    - "**/*.gen.dart"
+  strong-mode:
+    implicit-casts: false
+    implicit-dynamic: false
+
+linter:
+  rules:
+    # BLoC/Cubit specific rules from bloc_lint
+    - close_sinks
+    
+    # Additional BLoC/Cubit specific rules
+    - discarded_futures
+    - unawaited_futures
+    - use_build_context_synchronously
+    
+    # Documentation rules
+    - public_member_api_docs
+    
+    # Performance and best practices
+    - prefer_single_quotes
+    - avoid_redundant_argument_values
+    - sort_constructors_first
+    - sort_unnamed_constructors_first
+    - avoid_catches_without_on_clauses
+    - avoid_classes_with_only_static_members
+    - avoid_print
+    - avoid_slow_async_io
+    - cascade_invocations
+    - directives_ordering
+    - lines_longer_than_80_chars
+    - prefer_asserts_in_initializer_lists
+    - prefer_asserts_with_message
+    - prefer_const_constructors
+    - prefer_const_constructors_in_immutables
+    - prefer_const_declarations
+    - prefer_const_literals_to_create_immutables
+    - prefer_constructors_over_static_methods
+    - prefer_expression_function_bodies
+    - prefer_final_in_for_each
+    - prefer_final_locals
+    - prefer_foreach
+    - prefer_if_elements_to_conditional_expressions
+    - prefer_initializing_formals
+    - prefer_inlined_adds
+    - prefer_int_literals
+    - prefer_is_not_operator
+    - prefer_null_aware_method_calls
+    - prefer_void_to_null
+    - provide_deprecation_message
+    - sized_box_for_whitespace
+    - sort_pub_dependencies
+    - test_types_in_equals
+    - type_annotate_public_apis
+    - unnecessary_await_in_return
+    - unnecessary_null_aware_assignments
+    - unnecessary_overrides
+    - unnecessary_parenthesis
+    - unnecessary_raw_strings
+    - unnecessary_statements
+    - use_is_even_rather_than_modulo
+    - use_raw_strings
+    - use_setters_to_change_properties
+    - use_string_buffers
+    - use_to_and_as_if_applicable
+    - void_checks
+
+    # Basic rules
+    - always_declare_return_types
+    - always_put_control_body_on_new_line
+    - always_put_required_named_parameters_first
+    - always_require_non_null_named_parameters
+    - annotate_overrides
+    - avoid_init_to_null
+    - avoid_null_checks_in_equality_operators
+    - avoid_relative_lib_imports
+    - avoid_return_types_on_setters
+    - avoid_shadowing_type_parameters
+    - camel_case_extensions
+    - camel_case_types
+    - constant_identifier_names
+    - curly_braces_in_flow_control_structures
+    - empty_catches
+    - empty_constructor_bodies
+    - file_names
+    - hash_and_equals
+    - implementation_imports
+    - library_names
+    - library_prefixes
+    - non_constant_identifier_names
+    - null_closures
+    - omit_local_variable_types
+    - prefer_adjacent_string_concatenation
+    - prefer_collection_literals
+    - prefer_conditional_assignment
+    - prefer_contains
+    - prefer_equal_for_default_values
+    - prefer_final_fields
+    - prefer_for_elements_to_map_fromIterable
+    - prefer_function_declarations_over_variables
+    - prefer_generic_function_type_aliases
+    - prefer_if_null_operators
+    - prefer_interpolation_to_compose_strings
+    - prefer_null_aware_operators
+    - prefer_spread_collections
+    - prefer_typing_uninitialized_variables
+    - recursive_getters
+    - slash_for_doc_comments
+    - type_init_formals
+    - unnecessary_brace_in_string_interps
+    - unnecessary_const
+    - unnecessary_constructor_name
+    - unnecessary_getters_setters
+    - unnecessary_new
+    - unnecessary_null_in_if_null_operators
+    - unnecessary_this
+    - use_function_type_syntax_for_parameters
+    - use_rethrow_when_possible
+    - package_api_docs
+    - prefer_relative_imports

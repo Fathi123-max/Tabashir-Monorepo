@@ -1,0 +1,910 @@
+{
+    "swagger": "2.0",
+    "basePath": "/",
+    "paths": {
+        "/api/v1/resume/applied-jobs": {
+            "get": {
+                "responses": {
+                    "500": {
+                        "description": "Internal server error during processing"
+                    },
+                    "400": {
+                        "description": "Invalid input"
+                    },
+                    "200": {
+                        "description": "Successfully fetched jobs."
+                    }
+                },
+                "summary": "GET endpoint to fetch job application rankings for a given email",
+                "operationId": "get_applied_jobs",
+                "parameters": [
+                    {
+                        "name": "email",
+                        "in": "query",
+                        "type": "string",
+                        "required": true,
+                        "description": "User Email"
+                    }
+                ],
+                "tags": [
+                    "resume"
+                ]
+            }
+        },
+        "/api/v1/resume/applied-jobs-count": {
+            "post": {
+                "responses": {
+                    "200": {
+                        "description": "Success"
+                    }
+                },
+                "summary": "Get number of jobs applied by email (count of unique job_id entries)",
+                "operationId": "post_applied_jobs_count",
+                "parameters": [
+                    {
+                        "name": "payload",
+                        "required": true,
+                        "in": "body",
+                        "schema": {
+                            "$ref": "#/definitions/EmailModel"
+                        }
+                    }
+                ],
+                "tags": [
+                    "resume"
+                ]
+            }
+        },
+        "/api/v1/resume/apply": {
+            "post": {
+                "responses": {
+                    "500": {
+                        "description": "Internal server error during processing"
+                    },
+                    "400": {
+                        "description": "Invalid input"
+                    },
+                    "200": {
+                        "description": "Successfully matched and ranked jobs"
+                    }
+                },
+                "summary": "POST endpoint to process resume and find matching jobs with rankings",
+                "operationId": "post_apply_jobs",
+                "parameters": [
+                    {
+                        "name": "email",
+                        "in": "formData",
+                        "type": "string",
+                        "required": true,
+                        "description": "Email"
+                    },
+                    {
+                        "name": "file",
+                        "in": "formData",
+                        "type": "file",
+                        "required": true,
+                        "description": "Resume file"
+                    },
+                    {
+                        "name": "nationality",
+                        "in": "formData",
+                        "type": "string",
+                        "required": true,
+                        "description": "Nationality"
+                    },
+                    {
+                        "name": "gender",
+                        "in": "formData",
+                        "type": "string",
+                        "required": true,
+                        "description": "Gender"
+                    },
+                    {
+                        "name": "locations",
+                        "in": "formData",
+                        "type": "array",
+                        "required": true,
+                        "description": "Preferred locations (list)",
+                        "items": {
+                            "type": "string"
+                        },
+                        "collectionFormat": "multi"
+                    },
+                    {
+                        "name": "positions",
+                        "in": "formData",
+                        "type": "array",
+                        "required": true,
+                        "description": "Preferred positions (list)",
+                        "items": {
+                            "type": "string"
+                        },
+                        "collectionFormat": "multi"
+                    }
+                ],
+                "consumes": [
+                    "multipart/form-data"
+                ],
+                "tags": [
+                    "resume"
+                ]
+            }
+        },
+        "/api/v1/resume/format": {
+            "post": {
+                "responses": {
+                    "500": {
+                        "description": "Internal server error during processing"
+                    },
+                    "400": {
+                        "description": "Invalid input or unsupported file type"
+                    },
+                    "200": {
+                        "description": "Successfully processed and downloaded formatted CV"
+                    }
+                },
+                "summary": "POST endpoint to convert a CV to ats format and translate to Arabic if prompted",
+                "operationId": "post_format_cv",
+                "parameters": [
+                    {
+                        "name": "file",
+                        "in": "formData",
+                        "type": "file",
+                        "required": true,
+                        "description": "Upload CV file"
+                    },
+                    {
+                        "name": "output_language",
+                        "in": "formData",
+                        "type": "string",
+                        "description": "Output CV language type (e.g., arabic, regular)"
+                    }
+                ],
+                "consumes": [
+                    "multipart/form-data"
+                ],
+                "tags": [
+                    "resume"
+                ]
+            }
+        },
+        "/api/v1/resume/format-cv-object": {
+            "post": {
+                "responses": {
+                    "500": {
+                        "description": "Internal server error during processing"
+                    },
+                    "400": {
+                        "description": "Invalid input"
+                    },
+                    "200": {
+                        "description": "Successfully parsed CV and returned JSON"
+                    }
+                },
+                "summary": "POST endpoint to receive raw CV text and return structured JSON format",
+                "operationId": "post_format_from_raw_json",
+                "parameters": [
+                    {
+                        "name": "payload",
+                        "required": true,
+                        "in": "body",
+                        "schema": {
+                            "$ref": "#/definitions/RawCVInput"
+                        }
+                    }
+                ],
+                "tags": [
+                    "resume"
+                ]
+            }
+        },
+        "/api/v1/resume/format-from-raw": {
+            "post": {
+                "responses": {
+                    "500": {
+                        "description": "Internal server error during processing"
+                    },
+                    "400": {
+                        "description": "Invalid input"
+                    },
+                    "200": {
+                        "description": "Successfully generated formatted CV"
+                    }
+                },
+                "summary": "POST endpoint to receive raw CV text, format it, and optionally translate it to Arabic",
+                "operationId": "post_format_from_raw",
+                "parameters": [
+                    {
+                        "name": "payload",
+                        "required": true,
+                        "in": "body",
+                        "schema": {
+                            "$ref": "#/definitions/RawCVInput"
+                        }
+                    }
+                ],
+                "tags": [
+                    "resume"
+                ]
+            }
+        },
+        "/api/v1/resume/generate-docx-from-json": {
+            "post": {
+                "responses": {
+                    "500": {
+                        "description": "Internal server error during processing"
+                    },
+                    "400": {
+                        "description": "Invalid input"
+                    },
+                    "200": {
+                        "description": "Successfully generated formatted document"
+                    }
+                },
+                "summary": "POST endpoint to generate a DOCX resume from structured JSON",
+                "operationId": "post_generate_docx_from_json",
+                "parameters": [
+                    {
+                        "name": "payload",
+                        "required": true,
+                        "in": "body",
+                        "schema": {
+                            "$ref": "#/definitions/FormattedCVInput"
+                        }
+                    }
+                ],
+                "tags": [
+                    "resume"
+                ]
+            }
+        },
+        "/api/v1/resume/health": {
+            "get": {
+                "responses": {
+                    "200": {
+                        "description": "Success"
+                    }
+                },
+                "summary": "GET endpoint to check the health status of the API Server",
+                "operationId": "get_health_check",
+                "tags": [
+                    "resume"
+                ]
+            }
+        },
+        "/api/v1/resume/jobs": {
+            "post": {
+                "responses": {
+                    "200": {
+                        "description": "Success"
+                    }
+                },
+                "summary": "Create a JOb with Source Admin",
+                "description": ":",
+                "operationId": "post_jobs",
+                "parameters": [
+                    {
+                        "name": "payload",
+                        "required": true,
+                        "in": "body",
+                        "schema": {
+                            "$ref": "#/definitions/JobCreate"
+                        }
+                    }
+                ],
+                "tags": [
+                    "resume"
+                ]
+            },
+            "get": {
+                "responses": {
+                    "200": {
+                        "description": "Success"
+                    }
+                },
+                "summary": "Get Users Jobs With Searching Functionality",
+                "operationId": "get_jobs",
+                "parameters": [
+                    {
+                        "description": "User email to exclude already applied jobs",
+                        "name": "email",
+                        "type": "string",
+                        "in": "query"
+                    },
+                    {
+                        "description": "Search in job title or description",
+                        "name": "search",
+                        "type": "string",
+                        "in": "query"
+                    },
+                    {
+                        "description": "Filter by city (e.g. Dubai)",
+                        "name": "location",
+                        "type": "string",
+                        "in": "query"
+                    },
+                    {
+                        "description": "Filter by experience (e.g. 2 years)",
+                        "name": "experience",
+                        "type": "string",
+                        "in": "query"
+                    },
+                    {
+                        "description": "Match keyword in description (remote, hybrid, onsite)",
+                        "name": "attendance",
+                        "type": "string",
+                        "in": "query"
+                    },
+                    {
+                        "description": "Sort options: job_date_desc | job_date_asc | salary_desc | salary_asc",
+                        "name": "sort",
+                        "type": "string",
+                        "in": "query"
+                    },
+                    {
+                        "description": "Number of jobs per page (default 15)",
+                        "name": "limit",
+                        "type": "string",
+                        "in": "query"
+                    },
+                    {
+                        "description": "Page number (default 1)",
+                        "name": "page",
+                        "type": "string",
+                        "in": "query"
+                    },
+                    {
+                        "description": "Language: en (default) | ar",
+                        "name": "lang",
+                        "type": "string",
+                        "in": "query"
+                    }
+                ],
+                "tags": [
+                    "resume"
+                ]
+            }
+        },
+        "/api/v1/resume/jobs/count-by-city": {
+            "get": {
+                "responses": {
+                    "200": {
+                        "description": "Success"
+                    }
+                },
+                "summary": "Get counts of jobs grouped by vacancy_city for a given job title keyword",
+                "operationId": "get_jobs_count_by_city",
+                "parameters": [
+                    {
+                        "description": "Keyword to match in job title (case-insensitive, partial match)",
+                        "name": "job_title",
+                        "type": "string",
+                        "in": "query"
+                    }
+                ],
+                "tags": [
+                    "resume"
+                ]
+            }
+        },
+        "/api/v1/resume/jobs/match": {
+            "get": {
+                "responses": {
+                    "200": {
+                        "description": "Success"
+                    }
+                },
+                "summary": "Return jobs ranked by semantic match to user's profile",
+                "operationId": "get_matched_jobs",
+                "parameters": [
+                    {
+                        "description": "User email to match jobs against their profile",
+                        "name": "email",
+                        "type": "string",
+                        "in": "query"
+                    },
+                    {
+                        "description": "Number of jobs per page (default 15)",
+                        "name": "limit",
+                        "type": "string",
+                        "in": "query"
+                    },
+                    {
+                        "description": "Page number (default 1)",
+                        "name": "page",
+                        "type": "string",
+                        "in": "query"
+                    }
+                ],
+                "tags": [
+                    "resume"
+                ]
+            }
+        },
+        "/api/v1/resume/jobs/monthly-count": {
+            "get": {
+                "responses": {
+                    "200": {
+                        "description": "Success"
+                    }
+                },
+                "summary": "Get monthly job counts for the last 12 months for a given keyword",
+                "operationId": "get_jobs_monthly_count",
+                "parameters": [
+                    {
+                        "description": "Keyword to match in job description",
+                        "name": "keyword",
+                        "type": "string",
+                        "in": "query"
+                    }
+                ],
+                "tags": [
+                    "resume"
+                ]
+            }
+        },
+        "/api/v1/resume/jobs/{job_id}": {
+            "put": {
+                "responses": {
+                    "200": {
+                        "description": "Success"
+                    }
+                },
+                "summary": "Edit a specific Job by JobId",
+                "operationId": "put_job_by_id",
+                "parameters": [
+                    {
+                        "name": "job_id",
+                        "in": "path",
+                        "required": true,
+                        "type": "integer",
+                        "description": "ID of the job to edit"
+                    },
+                    {
+                        "name": "payload",
+                        "required": true,
+                        "in": "body",
+                        "schema": {
+                            "$ref": "#/definitions/JobUpdate"
+                        }
+                    }
+                ],
+                "tags": [
+                    "resume"
+                ]
+            },
+            "get": {
+                "responses": {
+                    "200": {
+                        "description": "Success"
+                    }
+                },
+                "summary": "Get a specific Job by JobId",
+                "description": "(for Liked Section handling)",
+                "operationId": "get_job_by_id",
+                "parameters": [
+                    {
+                        "name": "job_id",
+                        "in": "path",
+                        "required": true,
+                        "type": "integer",
+                        "description": "ID of the job to retrieve"
+                    },
+                    {
+                        "description": "Language: en (default) | ar",
+                        "name": "lang",
+                        "type": "string",
+                        "in": "query"
+                    }
+                ],
+                "tags": [
+                    "resume"
+                ]
+            }
+        },
+        "/api/v1/resume/jobs/{job_id}/applicants-count": {
+            "get": {
+                "responses": {
+                    "500": {
+                        "description": "Internal server error"
+                    },
+                    "404": {
+                        "description": "Job not found"
+                    },
+                    "200": {
+                        "description": "Successfully retrieved applicant count"
+                    }
+                },
+                "summary": "GET endpoint to retrieve the total number of applicants for a specific job",
+                "operationId": "get_job_applicants_count",
+                "parameters": [
+                    {
+                        "name": "job_id",
+                        "in": "path",
+                        "required": true,
+                        "type": "integer",
+                        "description": "ID of the job to get applicant count for"
+                    },
+                    {
+                        "description": "Status filter (applied, pending, all). Default: applied",
+                        "name": "status",
+                        "type": "string",
+                        "in": "query"
+                    }
+                ],
+                "tags": [
+                    "resume"
+                ]
+            }
+        },
+        "/api/v1/resume/send-linkedin-email": {
+            "post": {
+                "responses": {
+                    "200": {
+                        "description": "Success"
+                    }
+                },
+                "summary": "Send career onboarding email to a candidate",
+                "operationId": "post_send_email",
+                "parameters": [
+                    {
+                        "name": "payload",
+                        "required": true,
+                        "in": "body",
+                        "schema": {
+                            "$ref": "#/definitions/SendEmailModel"
+                        }
+                    }
+                ],
+                "tags": [
+                    "resume"
+                ]
+            }
+        },
+        "/api/v1/resume/translate": {
+            "post": {
+                "responses": {
+                    "500": {
+                        "description": "Internal server error during translation"
+                    },
+                    "400": {
+                        "description": "Invalid input or unsupported file type"
+                    },
+                    "200": {
+                        "description": "Successfully translated the CV"
+                    }
+                },
+                "summary": "POST endpoint to convert ATS docx CV to Arabic language",
+                "operationId": "post_translate_cv",
+                "parameters": [
+                    {
+                        "name": "file",
+                        "in": "formData",
+                        "type": "file",
+                        "required": true,
+                        "description": "Upload CV file"
+                    },
+                    {
+                        "name": "output_language",
+                        "in": "formData",
+                        "type": "string",
+                        "description": "Output CV language type (e.g., arabic, regular)"
+                    }
+                ],
+                "consumes": [
+                    "multipart/form-data"
+                ],
+                "tags": [
+                    "resume"
+                ]
+            }
+        },
+        "/api/v1/resume/{job_id}/apply": {
+            "parameters": [
+                {
+                    "name": "job_id",
+                    "in": "path",
+                    "required": true,
+                    "type": "integer"
+                }
+            ],
+            "post": {
+                "responses": {
+                    "200": {
+                        "description": "Successfully applied to specific job"
+                    }
+                },
+                "summary": "POST endpoint to process resume and apply to a specific job",
+                "operationId": "post_apply_to_specific_job",
+                "parameters": [
+                    {
+                        "name": "email",
+                        "in": "formData",
+                        "type": "string",
+                        "required": true,
+                        "description": "Email"
+                    },
+                    {
+                        "name": "file",
+                        "in": "formData",
+                        "type": "file",
+                        "required": true,
+                        "description": "Resume file"
+                    },
+                    {
+                        "name": "nationality",
+                        "in": "formData",
+                        "type": "string",
+                        "description": "Nationality"
+                    },
+                    {
+                        "name": "gender",
+                        "in": "formData",
+                        "type": "string",
+                        "description": "Gender"
+                    }
+                ],
+                "consumes": [
+                    "multipart/form-data"
+                ],
+                "tags": [
+                    "resume"
+                ]
+            }
+        }
+    },
+    "info": {
+        "title": "Tabashir - Resume Processing API",
+        "version": "1.0",
+        "description": "This is the AI powered backend for Tabashir that processes, formats, and enhances ATS-friendly resumes using natural language processing. It also supports resume translation, file management, and provides job-related information."
+    },
+    "produces": [
+        "application/json"
+    ],
+    "consumes": [
+        "application/json"
+    ],
+    "securityDefinitions": {
+        "apiKey": {
+            "type": "apiKey",
+            "in": "header",
+            "name": "X-API-TOKEN",
+            "description": "Custom API Token header"
+        }
+    },
+    "security": [
+        {
+            "apiKey": []
+        }
+    ],
+    "tags": [
+        {
+            "name": "resume",
+            "description": "Resume Processing Endpoints"
+        }
+    ],
+    "definitions": {
+        "RawCVInput": {
+            "required": [
+                "raw_data"
+            ],
+            "properties": {
+                "raw_data": {
+                    "type": "string",
+                    "description": "Raw text extracted from CV"
+                },
+                "output_language": {
+                    "type": "string",
+                    "description": "Output language: 'regular' or 'arabic'",
+                    "default": "regular"
+                }
+            },
+            "type": "object"
+        },
+        "FormattedCVInput": {
+            "required": [
+                "cv_data"
+            ],
+            "properties": {
+                "cv_data": {
+                    "type": "object",
+                    "description": "Structured Resume JSON data"
+                },
+                "output_language": {
+                    "type": "string",
+                    "description": "Output language: 'regular' or 'arabic'",
+                    "default": "regular"
+                }
+            },
+            "type": "object"
+        },
+        "JobCreate": {
+            "required": [
+                "job_date",
+                "job_title"
+            ],
+            "properties": {
+                "entity": {
+                    "type": "string",
+                    "description": "Entity"
+                },
+                "nationality": {
+                    "type": "string",
+                    "description": "Nationality"
+                },
+                "gender": {
+                    "type": "string",
+                    "description": "Gender"
+                },
+                "job_title": {
+                    "type": "string",
+                    "description": "Job title"
+                },
+                "academic_qualification": {
+                    "type": "string",
+                    "description": "Academic qualification"
+                },
+                "experience": {
+                    "type": "string",
+                    "description": "Experience"
+                },
+                "languages": {
+                    "type": "string",
+                    "description": "Languages"
+                },
+                "salary": {
+                    "type": "string",
+                    "description": "Salary"
+                },
+                "vacancy_city": {
+                    "type": "string",
+                    "description": "Vacancy city"
+                },
+                "working_hours": {
+                    "type": "string",
+                    "description": "Working hours"
+                },
+                "working_days": {
+                    "type": "string",
+                    "description": "Working days"
+                },
+                "application_email": {
+                    "type": "string",
+                    "description": "Application email"
+                },
+                "job_description": {
+                    "type": "string",
+                    "description": "Job description"
+                },
+                "job_date": {
+                    "type": "string",
+                    "description": "Job posting date YYYY-MM-DD"
+                },
+                "phone": {
+                    "type": "string",
+                    "description": "Phone"
+                },
+                "apply_url": {
+                    "type": "string",
+                    "description": "apply_url (previously link)"
+                },
+                "company_name": {
+                    "type": "string",
+                    "description": "Company Name"
+                },
+                "website_url": {
+                    "type": "string",
+                    "description": "Webste Url"
+                },
+                "job_type": {
+                    "type": "string",
+                    "description": "Job Type"
+                }
+            },
+            "type": "object"
+        },
+        "JobUpdate": {
+            "properties": {
+                "entity": {
+                    "type": "string"
+                },
+                "nationality": {
+                    "type": "string"
+                },
+                "gender": {
+                    "type": "string"
+                },
+                "job_title": {
+                    "type": "string"
+                },
+                "academic_qualification": {
+                    "type": "string"
+                },
+                "experience": {
+                    "type": "string"
+                },
+                "languages": {
+                    "type": "string"
+                },
+                "salary": {
+                    "type": "string"
+                },
+                "vacancy_city": {
+                    "type": "string"
+                },
+                "working_hours": {
+                    "type": "string"
+                },
+                "working_days": {
+                    "type": "string"
+                },
+                "application_email": {
+                    "type": "string"
+                },
+                "job_description": {
+                    "type": "string"
+                },
+                "job_date": {
+                    "type": "string",
+                    "description": "Format: YYYY-MM-DD"
+                },
+                "apply_url": {
+                    "type": "string"
+                },
+                "phone": {
+                    "type": "string"
+                },
+                "source": {
+                    "type": "string"
+                },
+                "company_name": {
+                    "type": "string"
+                },
+                "website_url": {
+                    "type": "string"
+                },
+                "job_type": {
+                    "type": "string"
+                }
+            },
+            "type": "object"
+        },
+        "EmailModel": {
+            "required": [
+                "email"
+            ],
+            "properties": {
+                "email": {
+                    "type": "string",
+                    "description": "Applicant's email"
+                }
+            },
+            "type": "object"
+        },
+        "SendEmailModel": {
+            "required": [
+                "recipient_email",
+                "recipient_name"
+            ],
+            "properties": {
+                "recipient_email": {
+                    "type": "string",
+                    "description": "Recipient email address"
+                },
+                "recipient_name": {
+                    "type": "string",
+                    "description": "Recipient name"
+                }
+            },
+            "type": "object"
+        }
+    },
+    "responses": {
+        "ParseError": {
+            "description": "When a mask can't be parsed"
+        },
+        "MaskError": {
+            "description": "When any error occurs on mask"
+        }
+    }
+}

@@ -1,0 +1,361 @@
+00:00 +0: loading /Users/Apple/Documents/tabashir/tabashir-mobile/test/saved_jobs_cubit_test.dart                                                                                                      00:01 +0: loading /Users/Apple/Documents/tabashir/tabashir-mobile/test/saved_jobs_cubit_test.dart                                                                                                      00:01 +0: SavedJobsCubit initial state is SavedJobsStateInitial                                                                                                                                        00:01 +0 -1: SavedJobsCubit initial state is SavedJobsStateInitial [E]                                                                                                                                 
+  MissingStubError: 'savedJobsStream'
+  No stub was found which matches the arguments of this method call:
+  savedJobsStream
+  
+  Add a stub for this method using Mockito's 'when' API, or generate the MockSavedJobsRepository mock with the @GenerateNiceMocks annotation (see https://pub.dev/documentation/mockito/latest/annotations/MockSpec-class.html).
+  package:mockito/src/mock.dart 200:7                                            Mock._noSuchMethod
+  package:mockito/src/mock.dart 194:47                                           Mock.noSuchMethod
+  test/saved_jobs_cubit_test.mocks.dart 37:7                                     MockSavedJobsRepository.savedJobsStream
+  package:tabashir/features/jobs/presentation/cubit/saved_jobs_cubit.dart 16:42  new SavedJobsCubit
+  test/saved_jobs_cubit_test.dart 88:13                                          main.<fn>
+  
+  LateInitializationError: Local 'cubit' has not been initialized.
+  dart:_internal                   LateError._throwLocalNotInitialized
+  test/saved_jobs_cubit_test.dart  main.<fn>
+  
+
+To run this test again: /Users/Apple/Documents/flutter/bin/cache/dart-sdk/bin/dart test /Users/Apple/Documents/tabashir/tabashir-mobile/test/saved_jobs_cubit_test.dart -p vm --plain-name 'SavedJobsCubit initial state is SavedJobsStateInitial'
+00:01 +0 -1: SavedJobsCubit loadSavedIds emits loaded state with saved IDs when state is initial                                                                                                       00:01 +0 -2: SavedJobsCubit loadSavedIds emits loaded state with saved IDs when state is initial [E]                                                                                                   
+  MissingStubError: 'savedJobsStream'
+  No stub was found which matches the arguments of this method call:
+  savedJobsStream
+  
+  Add a stub for this method using Mockito's 'when' API, or generate the MockSavedJobsRepository mock with the @GenerateNiceMocks annotation (see https://pub.dev/documentation/mockito/latest/annotations/MockSpec-class.html).
+  package:mockito/src/mock.dart 200:7                                            Mock._noSuchMethod
+  package:mockito/src/mock.dart 194:47                                           Mock.noSuchMethod
+  test/saved_jobs_cubit_test.mocks.dart 37:7                                     MockSavedJobsRepository.savedJobsStream
+  package:tabashir/features/jobs/presentation/cubit/saved_jobs_cubit.dart 16:42  new SavedJobsCubit
+  test/saved_jobs_cubit_test.dart 88:13                                          main.<fn>
+  
+  LateInitializationError: Local 'cubit' has not been initialized.
+  dart:_internal                   LateError._throwLocalNotInitialized
+  test/saved_jobs_cubit_test.dart  main.<fn>
+  
+
+To run this test again: /Users/Apple/Documents/flutter/bin/cache/dart-sdk/bin/dart test /Users/Apple/Documents/tabashir/tabashir-mobile/test/saved_jobs_cubit_test.dart -p vm --plain-name 'SavedJobsCubit loadSavedIds emits loaded state with saved IDs when state is initial'
+00:01 +0 -2: SavedJobsCubit loadSavedIds updates saved IDs when state is already loaded                                                                                                                00:01 +0 -3: SavedJobsCubit loadSavedIds updates saved IDs when state is already loaded [E]                                                                                                            
+  MissingStubError: 'savedJobsStream'
+  No stub was found which matches the arguments of this method call:
+  savedJobsStream
+  
+  Add a stub for this method using Mockito's 'when' API, or generate the MockSavedJobsRepository mock with the @GenerateNiceMocks annotation (see https://pub.dev/documentation/mockito/latest/annotations/MockSpec-class.html).
+  package:mockito/src/mock.dart 200:7                                            Mock._noSuchMethod
+  package:mockito/src/mock.dart 194:47                                           Mock.noSuchMethod
+  test/saved_jobs_cubit_test.mocks.dart 37:7                                     MockSavedJobsRepository.savedJobsStream
+  package:tabashir/features/jobs/presentation/cubit/saved_jobs_cubit.dart 16:42  new SavedJobsCubit
+  test/saved_jobs_cubit_test.dart 88:13                                          main.<fn>
+  
+  LateInitializationError: Local 'cubit' has not been initialized.
+  dart:_internal                   LateError._throwLocalNotInitialized
+  test/saved_jobs_cubit_test.dart  main.<fn>
+  
+
+To run this test again: /Users/Apple/Documents/flutter/bin/cache/dart-sdk/bin/dart test /Users/Apple/Documents/tabashir/tabashir-mobile/test/saved_jobs_cubit_test.dart -p vm --plain-name 'SavedJobsCubit loadSavedIds updates saved IDs when state is already loaded'
+00:01 +0 -3: SavedJobsCubit initializeSavedJobs emits SavedJobsStateLoaded when JobsCubit has loaded state and repository returns saved jobs                                                           00:01 +0 -4: SavedJobsCubit initializeSavedJobs emits SavedJobsStateLoaded when JobsCubit has loaded state and repository returns saved jobs [E]                                                       
+  MissingStubError: 'savedJobsStream'
+  No stub was found which matches the arguments of this method call:
+  savedJobsStream
+  
+  Add a stub for this method using Mockito's 'when' API, or generate the MockSavedJobsRepository mock with the @GenerateNiceMocks annotation (see https://pub.dev/documentation/mockito/latest/annotations/MockSpec-class.html).
+  package:mockito/src/mock.dart 200:7                                            Mock._noSuchMethod
+  package:mockito/src/mock.dart 194:47                                           Mock.noSuchMethod
+  test/saved_jobs_cubit_test.mocks.dart 37:7                                     MockSavedJobsRepository.savedJobsStream
+  package:tabashir/features/jobs/presentation/cubit/saved_jobs_cubit.dart 16:42  new SavedJobsCubit
+  test/saved_jobs_cubit_test.dart 88:13                                          main.<fn>
+  
+  LateInitializationError: Local 'cubit' has not been initialized.
+  dart:_internal                   LateError._throwLocalNotInitialized
+  test/saved_jobs_cubit_test.dart  main.<fn>
+  
+
+To run this test again: /Users/Apple/Documents/flutter/bin/cache/dart-sdk/bin/dart test /Users/Apple/Documents/tabashir/tabashir-mobile/test/saved_jobs_cubit_test.dart -p vm --plain-name 'SavedJobsCubit initializeSavedJobs emits SavedJobsStateLoaded when JobsCubit has loaded state and repository returns saved jobs'
+00:01 +0 -4: SavedJobsCubit initializeSavedJobs emits empty loaded state when JobsCubit is in initial state                                                                                            00:01 +0 -5: SavedJobsCubit initializeSavedJobs emits empty loaded state when JobsCubit is in initial state [E]                                                                                        
+  MissingStubError: 'savedJobsStream'
+  No stub was found which matches the arguments of this method call:
+  savedJobsStream
+  
+  Add a stub for this method using Mockito's 'when' API, or generate the MockSavedJobsRepository mock with the @GenerateNiceMocks annotation (see https://pub.dev/documentation/mockito/latest/annotations/MockSpec-class.html).
+  package:mockito/src/mock.dart 200:7                                            Mock._noSuchMethod
+  package:mockito/src/mock.dart 194:47                                           Mock.noSuchMethod
+  test/saved_jobs_cubit_test.mocks.dart 37:7                                     MockSavedJobsRepository.savedJobsStream
+  package:tabashir/features/jobs/presentation/cubit/saved_jobs_cubit.dart 16:42  new SavedJobsCubit
+  test/saved_jobs_cubit_test.dart 88:13                                          main.<fn>
+  
+  LateInitializationError: Local 'cubit' has not been initialized.
+  dart:_internal                   LateError._throwLocalNotInitialized
+  test/saved_jobs_cubit_test.dart  main.<fn>
+  
+
+To run this test again: /Users/Apple/Documents/flutter/bin/cache/dart-sdk/bin/dart test /Users/Apple/Documents/tabashir/tabashir-mobile/test/saved_jobs_cubit_test.dart -p vm --plain-name 'SavedJobsCubit initializeSavedJobs emits empty loaded state when JobsCubit is in initial state'
+00:01 +0 -5: SavedJobsCubit updateSearchQuery updates search query when state is loaded                                                                                                                00:01 +0 -6: SavedJobsCubit updateSearchQuery updates search query when state is loaded [E]                                                                                                            
+  MissingStubError: 'savedJobsStream'
+  No stub was found which matches the arguments of this method call:
+  savedJobsStream
+  
+  Add a stub for this method using Mockito's 'when' API, or generate the MockSavedJobsRepository mock with the @GenerateNiceMocks annotation (see https://pub.dev/documentation/mockito/latest/annotations/MockSpec-class.html).
+  package:mockito/src/mock.dart 200:7                                            Mock._noSuchMethod
+  package:mockito/src/mock.dart 194:47                                           Mock.noSuchMethod
+  test/saved_jobs_cubit_test.mocks.dart 37:7                                     MockSavedJobsRepository.savedJobsStream
+  package:tabashir/features/jobs/presentation/cubit/saved_jobs_cubit.dart 16:42  new SavedJobsCubit
+  test/saved_jobs_cubit_test.dart 88:13                                          main.<fn>
+  
+  LateInitializationError: Local 'cubit' has not been initialized.
+  dart:_internal                   LateError._throwLocalNotInitialized
+  test/saved_jobs_cubit_test.dart  main.<fn>
+  
+
+To run this test again: /Users/Apple/Documents/flutter/bin/cache/dart-sdk/bin/dart test /Users/Apple/Documents/tabashir/tabashir-mobile/test/saved_jobs_cubit_test.dart -p vm --plain-name 'SavedJobsCubit updateSearchQuery updates search query when state is loaded'
+00:01 +0 -6: SavedJobsCubit updateSearchQuery does nothing when state is initial                                                                                                                       00:01 +0 -7: SavedJobsCubit updateSearchQuery does nothing when state is initial [E]                                                                                                                   
+  MissingStubError: 'savedJobsStream'
+  No stub was found which matches the arguments of this method call:
+  savedJobsStream
+  
+  Add a stub for this method using Mockito's 'when' API, or generate the MockSavedJobsRepository mock with the @GenerateNiceMocks annotation (see https://pub.dev/documentation/mockito/latest/annotations/MockSpec-class.html).
+  package:mockito/src/mock.dart 200:7                                            Mock._noSuchMethod
+  package:mockito/src/mock.dart 194:47                                           Mock.noSuchMethod
+  test/saved_jobs_cubit_test.mocks.dart 37:7                                     MockSavedJobsRepository.savedJobsStream
+  package:tabashir/features/jobs/presentation/cubit/saved_jobs_cubit.dart 16:42  new SavedJobsCubit
+  test/saved_jobs_cubit_test.dart 88:13                                          main.<fn>
+  
+  LateInitializationError: Local 'cubit' has not been initialized.
+  dart:_internal                   LateError._throwLocalNotInitialized
+  test/saved_jobs_cubit_test.dart  main.<fn>
+  
+
+To run this test again: /Users/Apple/Documents/flutter/bin/cache/dart-sdk/bin/dart test /Users/Apple/Documents/tabashir/tabashir-mobile/test/saved_jobs_cubit_test.dart -p vm --plain-name 'SavedJobsCubit updateSearchQuery does nothing when state is initial'
+00:01 +0 -7: SavedJobsCubit updateCardStyle updates card style when state is loaded                                                                                                                    00:01 +0 -8: SavedJobsCubit updateCardStyle updates card style when state is loaded [E]                                                                                                                
+  MissingStubError: 'savedJobsStream'
+  No stub was found which matches the arguments of this method call:
+  savedJobsStream
+  
+  Add a stub for this method using Mockito's 'when' API, or generate the MockSavedJobsRepository mock with the @GenerateNiceMocks annotation (see https://pub.dev/documentation/mockito/latest/annotations/MockSpec-class.html).
+  package:mockito/src/mock.dart 200:7                                            Mock._noSuchMethod
+  package:mockito/src/mock.dart 194:47                                           Mock.noSuchMethod
+  test/saved_jobs_cubit_test.mocks.dart 37:7                                     MockSavedJobsRepository.savedJobsStream
+  package:tabashir/features/jobs/presentation/cubit/saved_jobs_cubit.dart 16:42  new SavedJobsCubit
+  test/saved_jobs_cubit_test.dart 88:13                                          main.<fn>
+  
+  LateInitializationError: Local 'cubit' has not been initialized.
+  dart:_internal                   LateError._throwLocalNotInitialized
+  test/saved_jobs_cubit_test.dart  main.<fn>
+  
+
+To run this test again: /Users/Apple/Documents/flutter/bin/cache/dart-sdk/bin/dart test /Users/Apple/Documents/tabashir/tabashir-mobile/test/saved_jobs_cubit_test.dart -p vm --plain-name 'SavedJobsCubit updateCardStyle updates card style when state is loaded'
+00:01 +0 -8: SavedJobsCubit updateCardStyle does nothing when state is initial                                                                                                                         00:01 +0 -9: SavedJobsCubit updateCardStyle does nothing when state is initial [E]                                                                                                                     
+  MissingStubError: 'savedJobsStream'
+  No stub was found which matches the arguments of this method call:
+  savedJobsStream
+  
+  Add a stub for this method using Mockito's 'when' API, or generate the MockSavedJobsRepository mock with the @GenerateNiceMocks annotation (see https://pub.dev/documentation/mockito/latest/annotations/MockSpec-class.html).
+  package:mockito/src/mock.dart 200:7                                            Mock._noSuchMethod
+  package:mockito/src/mock.dart 194:47                                           Mock.noSuchMethod
+  test/saved_jobs_cubit_test.mocks.dart 37:7                                     MockSavedJobsRepository.savedJobsStream
+  package:tabashir/features/jobs/presentation/cubit/saved_jobs_cubit.dart 16:42  new SavedJobsCubit
+  test/saved_jobs_cubit_test.dart 88:13                                          main.<fn>
+  
+  LateInitializationError: Local 'cubit' has not been initialized.
+  dart:_internal                   LateError._throwLocalNotInitialized
+  test/saved_jobs_cubit_test.dart  main.<fn>
+  
+
+To run this test again: /Users/Apple/Documents/flutter/bin/cache/dart-sdk/bin/dart test /Users/Apple/Documents/tabashir/tabashir-mobile/test/saved_jobs_cubit_test.dart -p vm --plain-name 'SavedJobsCubit updateCardStyle does nothing when state is initial'
+00:01 +0 -9: SavedJobsCubit setGridView updates view to grid when state is loaded                                                                                                                      00:01 +0 -10: SavedJobsCubit setGridView updates view to grid when state is loaded [E]                                                                                                                 
+  MissingStubError: 'savedJobsStream'
+  No stub was found which matches the arguments of this method call:
+  savedJobsStream
+  
+  Add a stub for this method using Mockito's 'when' API, or generate the MockSavedJobsRepository mock with the @GenerateNiceMocks annotation (see https://pub.dev/documentation/mockito/latest/annotations/MockSpec-class.html).
+  package:mockito/src/mock.dart 200:7                                            Mock._noSuchMethod
+  package:mockito/src/mock.dart 194:47                                           Mock.noSuchMethod
+  test/saved_jobs_cubit_test.mocks.dart 37:7                                     MockSavedJobsRepository.savedJobsStream
+  package:tabashir/features/jobs/presentation/cubit/saved_jobs_cubit.dart 16:42  new SavedJobsCubit
+  test/saved_jobs_cubit_test.dart 88:13                                          main.<fn>
+  
+  LateInitializationError: Local 'cubit' has not been initialized.
+  dart:_internal                   LateError._throwLocalNotInitialized
+  test/saved_jobs_cubit_test.dart  main.<fn>
+  
+
+To run this test again: /Users/Apple/Documents/flutter/bin/cache/dart-sdk/bin/dart test /Users/Apple/Documents/tabashir/tabashir-mobile/test/saved_jobs_cubit_test.dart -p vm --plain-name 'SavedJobsCubit setGridView updates view to grid when state is loaded'
+00:01 +0 -10: SavedJobsCubit setGridView does nothing when state is initial                                                                                                                            00:01 +0 -11: SavedJobsCubit setGridView does nothing when state is initial [E]                                                                                                                        
+  MissingStubError: 'savedJobsStream'
+  No stub was found which matches the arguments of this method call:
+  savedJobsStream
+  
+  Add a stub for this method using Mockito's 'when' API, or generate the MockSavedJobsRepository mock with the @GenerateNiceMocks annotation (see https://pub.dev/documentation/mockito/latest/annotations/MockSpec-class.html).
+  package:mockito/src/mock.dart 200:7                                            Mock._noSuchMethod
+  package:mockito/src/mock.dart 194:47                                           Mock.noSuchMethod
+  test/saved_jobs_cubit_test.mocks.dart 37:7                                     MockSavedJobsRepository.savedJobsStream
+  package:tabashir/features/jobs/presentation/cubit/saved_jobs_cubit.dart 16:42  new SavedJobsCubit
+  test/saved_jobs_cubit_test.dart 88:13                                          main.<fn>
+  
+  LateInitializationError: Local 'cubit' has not been initialized.
+  dart:_internal                   LateError._throwLocalNotInitialized
+  test/saved_jobs_cubit_test.dart  main.<fn>
+  
+
+To run this test again: /Users/Apple/Documents/flutter/bin/cache/dart-sdk/bin/dart test /Users/Apple/Documents/tabashir/tabashir-mobile/test/saved_jobs_cubit_test.dart -p vm --plain-name 'SavedJobsCubit setGridView does nothing when state is initial'
+00:01 +0 -11: SavedJobsCubit setListView updates view to list and sets minimal card style                                                                                                              00:01 +0 -12: SavedJobsCubit setListView updates view to list and sets minimal card style [E]                                                                                                          
+  MissingStubError: 'savedJobsStream'
+  No stub was found which matches the arguments of this method call:
+  savedJobsStream
+  
+  Add a stub for this method using Mockito's 'when' API, or generate the MockSavedJobsRepository mock with the @GenerateNiceMocks annotation (see https://pub.dev/documentation/mockito/latest/annotations/MockSpec-class.html).
+  package:mockito/src/mock.dart 200:7                                            Mock._noSuchMethod
+  package:mockito/src/mock.dart 194:47                                           Mock.noSuchMethod
+  test/saved_jobs_cubit_test.mocks.dart 37:7                                     MockSavedJobsRepository.savedJobsStream
+  package:tabashir/features/jobs/presentation/cubit/saved_jobs_cubit.dart 16:42  new SavedJobsCubit
+  test/saved_jobs_cubit_test.dart 88:13                                          main.<fn>
+  
+  LateInitializationError: Local 'cubit' has not been initialized.
+  dart:_internal                   LateError._throwLocalNotInitialized
+  test/saved_jobs_cubit_test.dart  main.<fn>
+  
+
+To run this test again: /Users/Apple/Documents/flutter/bin/cache/dart-sdk/bin/dart test /Users/Apple/Documents/tabashir/tabashir-mobile/test/saved_jobs_cubit_test.dart -p vm --plain-name 'SavedJobsCubit setListView updates view to list and sets minimal card style'
+00:01 +0 -12: SavedJobsCubit setListView does nothing when state is initial                                                                                                                            00:01 +0 -13: SavedJobsCubit setListView does nothing when state is initial [E]                                                                                                                        
+  MissingStubError: 'savedJobsStream'
+  No stub was found which matches the arguments of this method call:
+  savedJobsStream
+  
+  Add a stub for this method using Mockito's 'when' API, or generate the MockSavedJobsRepository mock with the @GenerateNiceMocks annotation (see https://pub.dev/documentation/mockito/latest/annotations/MockSpec-class.html).
+  package:mockito/src/mock.dart 200:7                                            Mock._noSuchMethod
+  package:mockito/src/mock.dart 194:47                                           Mock.noSuchMethod
+  test/saved_jobs_cubit_test.mocks.dart 37:7                                     MockSavedJobsRepository.savedJobsStream
+  package:tabashir/features/jobs/presentation/cubit/saved_jobs_cubit.dart 16:42  new SavedJobsCubit
+  test/saved_jobs_cubit_test.dart 88:13                                          main.<fn>
+  
+  LateInitializationError: Local 'cubit' has not been initialized.
+  dart:_internal                   LateError._throwLocalNotInitialized
+  test/saved_jobs_cubit_test.dart  main.<fn>
+  
+
+To run this test again: /Users/Apple/Documents/flutter/bin/cache/dart-sdk/bin/dart test /Users/Apple/Documents/tabashir/tabashir-mobile/test/saved_jobs_cubit_test.dart -p vm --plain-name 'SavedJobsCubit setListView does nothing when state is initial'
+00:01 +0 -13: SavedJobsCubit saveJob saves job and updates savedJobs set when state is loaded                                                                                                          00:01 +0 -14: SavedJobsCubit saveJob saves job and updates savedJobs set when state is loaded [E]                                                                                                      
+  MissingStubError: 'savedJobsStream'
+  No stub was found which matches the arguments of this method call:
+  savedJobsStream
+  
+  Add a stub for this method using Mockito's 'when' API, or generate the MockSavedJobsRepository mock with the @GenerateNiceMocks annotation (see https://pub.dev/documentation/mockito/latest/annotations/MockSpec-class.html).
+  package:mockito/src/mock.dart 200:7                                            Mock._noSuchMethod
+  package:mockito/src/mock.dart 194:47                                           Mock.noSuchMethod
+  test/saved_jobs_cubit_test.mocks.dart 37:7                                     MockSavedJobsRepository.savedJobsStream
+  package:tabashir/features/jobs/presentation/cubit/saved_jobs_cubit.dart 16:42  new SavedJobsCubit
+  test/saved_jobs_cubit_test.dart 88:13                                          main.<fn>
+  
+  LateInitializationError: Local 'cubit' has not been initialized.
+  dart:_internal                   LateError._throwLocalNotInitialized
+  test/saved_jobs_cubit_test.dart  main.<fn>
+  
+
+To run this test again: /Users/Apple/Documents/flutter/bin/cache/dart-sdk/bin/dart test /Users/Apple/Documents/tabashir/tabashir-mobile/test/saved_jobs_cubit_test.dart -p vm --plain-name 'SavedJobsCubit saveJob saves job and updates savedJobs set when state is loaded'
+00:01 +0 -14: SavedJobsCubit saveJob does nothing when state is initial                                                                                                                                00:01 +0 -15: SavedJobsCubit saveJob does nothing when state is initial [E]                                                                                                                            
+  MissingStubError: 'savedJobsStream'
+  No stub was found which matches the arguments of this method call:
+  savedJobsStream
+  
+  Add a stub for this method using Mockito's 'when' API, or generate the MockSavedJobsRepository mock with the @GenerateNiceMocks annotation (see https://pub.dev/documentation/mockito/latest/annotations/MockSpec-class.html).
+  package:mockito/src/mock.dart 200:7                                            Mock._noSuchMethod
+  package:mockito/src/mock.dart 194:47                                           Mock.noSuchMethod
+  test/saved_jobs_cubit_test.mocks.dart 37:7                                     MockSavedJobsRepository.savedJobsStream
+  package:tabashir/features/jobs/presentation/cubit/saved_jobs_cubit.dart 16:42  new SavedJobsCubit
+  test/saved_jobs_cubit_test.dart 88:13                                          main.<fn>
+  
+  LateInitializationError: Local 'cubit' has not been initialized.
+  dart:_internal                   LateError._throwLocalNotInitialized
+  test/saved_jobs_cubit_test.dart  main.<fn>
+  
+
+To run this test again: /Users/Apple/Documents/flutter/bin/cache/dart-sdk/bin/dart test /Users/Apple/Documents/tabashir/tabashir-mobile/test/saved_jobs_cubit_test.dart -p vm --plain-name 'SavedJobsCubit saveJob does nothing when state is initial'
+00:01 +0 -15: SavedJobsCubit unsaveJob removes job from savedJobs set when state is loaded                                                                                                             00:01 +0 -16: SavedJobsCubit unsaveJob removes job from savedJobs set when state is loaded [E]                                                                                                         
+  MissingStubError: 'savedJobsStream'
+  No stub was found which matches the arguments of this method call:
+  savedJobsStream
+  
+  Add a stub for this method using Mockito's 'when' API, or generate the MockSavedJobsRepository mock with the @GenerateNiceMocks annotation (see https://pub.dev/documentation/mockito/latest/annotations/MockSpec-class.html).
+  package:mockito/src/mock.dart 200:7                                            Mock._noSuchMethod
+  package:mockito/src/mock.dart 194:47                                           Mock.noSuchMethod
+  test/saved_jobs_cubit_test.mocks.dart 37:7                                     MockSavedJobsRepository.savedJobsStream
+  package:tabashir/features/jobs/presentation/cubit/saved_jobs_cubit.dart 16:42  new SavedJobsCubit
+  test/saved_jobs_cubit_test.dart 88:13                                          main.<fn>
+  
+  LateInitializationError: Local 'cubit' has not been initialized.
+  dart:_internal                   LateError._throwLocalNotInitialized
+  test/saved_jobs_cubit_test.dart  main.<fn>
+  
+
+To run this test again: /Users/Apple/Documents/flutter/bin/cache/dart-sdk/bin/dart test /Users/Apple/Documents/tabashir/tabashir-mobile/test/saved_jobs_cubit_test.dart -p vm --plain-name 'SavedJobsCubit unsaveJob removes job from savedJobs set when state is loaded'
+00:01 +0 -16: SavedJobsCubit unsaveJob does nothing when state is initial                                                                                                                              00:01 +0 -17: SavedJobsCubit unsaveJob does nothing when state is initial [E]                                                                                                                          
+  MissingStubError: 'savedJobsStream'
+  No stub was found which matches the arguments of this method call:
+  savedJobsStream
+  
+  Add a stub for this method using Mockito's 'when' API, or generate the MockSavedJobsRepository mock with the @GenerateNiceMocks annotation (see https://pub.dev/documentation/mockito/latest/annotations/MockSpec-class.html).
+  package:mockito/src/mock.dart 200:7                                            Mock._noSuchMethod
+  package:mockito/src/mock.dart 194:47                                           Mock.noSuchMethod
+  test/saved_jobs_cubit_test.mocks.dart 37:7                                     MockSavedJobsRepository.savedJobsStream
+  package:tabashir/features/jobs/presentation/cubit/saved_jobs_cubit.dart 16:42  new SavedJobsCubit
+  test/saved_jobs_cubit_test.dart 88:13                                          main.<fn>
+  
+  LateInitializationError: Local 'cubit' has not been initialized.
+  dart:_internal                   LateError._throwLocalNotInitialized
+  test/saved_jobs_cubit_test.dart  main.<fn>
+  
+
+To run this test again: /Users/Apple/Documents/flutter/bin/cache/dart-sdk/bin/dart test /Users/Apple/Documents/tabashir/tabashir-mobile/test/saved_jobs_cubit_test.dart -p vm --plain-name 'SavedJobsCubit unsaveJob does nothing when state is initial'
+00:01 +0 -17: SavedJobsCubit toggleSaveJob calls unsaveJob when job is already saved                                                                                                                   00:01 +0 -18: SavedJobsCubit toggleSaveJob calls unsaveJob when job is already saved [E]                                                                                                               
+  MissingStubError: 'savedJobsStream'
+  No stub was found which matches the arguments of this method call:
+  savedJobsStream
+  
+  Add a stub for this method using Mockito's 'when' API, or generate the MockSavedJobsRepository mock with the @GenerateNiceMocks annotation (see https://pub.dev/documentation/mockito/latest/annotations/MockSpec-class.html).
+  package:mockito/src/mock.dart 200:7                                            Mock._noSuchMethod
+  package:mockito/src/mock.dart 194:47                                           Mock.noSuchMethod
+  test/saved_jobs_cubit_test.mocks.dart 37:7                                     MockSavedJobsRepository.savedJobsStream
+  package:tabashir/features/jobs/presentation/cubit/saved_jobs_cubit.dart 16:42  new SavedJobsCubit
+  test/saved_jobs_cubit_test.dart 88:13                                          main.<fn>
+  
+  LateInitializationError: Local 'cubit' has not been initialized.
+  dart:_internal                   LateError._throwLocalNotInitialized
+  test/saved_jobs_cubit_test.dart  main.<fn>
+  
+
+To run this test again: /Users/Apple/Documents/flutter/bin/cache/dart-sdk/bin/dart test /Users/Apple/Documents/tabashir/tabashir-mobile/test/saved_jobs_cubit_test.dart -p vm --plain-name 'SavedJobsCubit toggleSaveJob calls unsaveJob when job is already saved'
+00:01 +0 -18: SavedJobsCubit toggleSaveJob calls saveJob when job is not saved                                                                                                                         00:01 +0 -19: SavedJobsCubit toggleSaveJob calls saveJob when job is not saved [E]                                                                                                                     
+  MissingStubError: 'savedJobsStream'
+  No stub was found which matches the arguments of this method call:
+  savedJobsStream
+  
+  Add a stub for this method using Mockito's 'when' API, or generate the MockSavedJobsRepository mock with the @GenerateNiceMocks annotation (see https://pub.dev/documentation/mockito/latest/annotations/MockSpec-class.html).
+  package:mockito/src/mock.dart 200:7                                            Mock._noSuchMethod
+  package:mockito/src/mock.dart 194:47                                           Mock.noSuchMethod
+  test/saved_jobs_cubit_test.mocks.dart 37:7                                     MockSavedJobsRepository.savedJobsStream
+  package:tabashir/features/jobs/presentation/cubit/saved_jobs_cubit.dart 16:42  new SavedJobsCubit
+  test/saved_jobs_cubit_test.dart 88:13                                          main.<fn>
+  
+  LateInitializationError: Local 'cubit' has not been initialized.
+  dart:_internal                   LateError._throwLocalNotInitialized
+  test/saved_jobs_cubit_test.dart  main.<fn>
+  
+
+To run this test again: /Users/Apple/Documents/flutter/bin/cache/dart-sdk/bin/dart test /Users/Apple/Documents/tabashir/tabashir-mobile/test/saved_jobs_cubit_test.dart -p vm --plain-name 'SavedJobsCubit toggleSaveJob calls saveJob when job is not saved'
+00:01 +0 -19: SavedJobsCubit toggleSaveJob does nothing when state is initial                                                                                                                          00:01 +0 -20: SavedJobsCubit toggleSaveJob does nothing when state is initial [E]                                                                                                                      
+  MissingStubError: 'savedJobsStream'
+  No stub was found which matches the arguments of this method call:
+  savedJobsStream
+  
+  Add a stub for this method using Mockito's 'when' API, or generate the MockSavedJobsRepository mock with the @GenerateNiceMocks annotation (see https://pub.dev/documentation/mockito/latest/annotations/MockSpec-class.html).
+  package:mockito/src/mock.dart 200:7                                            Mock._noSuchMethod
+  package:mockito/src/mock.dart 194:47                                           Mock.noSuchMethod
+  test/saved_jobs_cubit_test.mocks.dart 37:7                                     MockSavedJobsRepository.savedJobsStream
+  package:tabashir/features/jobs/presentation/cubit/saved_jobs_cubit.dart 16:42  new SavedJobsCubit
+  test/saved_jobs_cubit_test.dart 88:13                                          main.<fn>
+  
+  LateInitializationError: Local 'cubit' has not been initialized.
+  dart:_internal                   LateError._throwLocalNotInitialized
+  test/saved_jobs_cubit_test.dart  main.<fn>
+  
+
+To run this test again: /Users/Apple/Documents/flutter/bin/cache/dart-sdk/bin/dart test /Users/Apple/Documents/tabashir/tabashir-mobile/test/saved_jobs_cubit_test.dart -p vm --plain-name 'SavedJobsCubit toggleSaveJob does nothing when state is initial'
+00:01 +0 -20: Some tests failed.                                                                                                                                                                       

@@ -1,0 +1,27 @@
+name: pdf_text_example
+description: Demonstrates how to use the pdf_text plugin.
+publish_to: 'none'
+version: 1.0.0+1
+
+environment:
+  sdk: ">=3.0.0 <4.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  file_picker: ^8.0.3
+
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  pdf: ^3.0.1
+  uuid: ^4.4.0
+  optional: ^6.0.0-nullsafety.0
+  flutter_pdf_text:
+    path: ../
+
+flutter:
+  uses-material-design: true
+  assets:
+    - test/resources/encrypted.pdf
