@@ -64,7 +64,7 @@ lib/core/network/
 │   └── email_api_service.dart         # Email API
 ├── api_client.dart         # Main API client wrapper
 ├── dio_client.dart         # Dio HTTP client configuration
-├── auth_dio_client.dart    # Auth Dio client with API token
+├── auth_dio_client.dart    # Auth Dio client with JWT support
 ├── swagger_spec.json       # Local copy of API specification
 └── examples/
     └── auth_usage_example.dart  # Usage examples
@@ -83,7 +83,7 @@ final apiClient = GetIt.instance<ApiClient>();
 
 ### 2. Use the API service
 
-#### Authentication (localhost:5001)
+#### Authentication
 
 ```dart
 // Login user
@@ -93,7 +93,6 @@ final loginRequest = LoginRequest(
 );
 final loginResponse = await apiClient.authApiService.login(
   loginRequest,
-  apiToken: 'your-api-token', // Optional, already configured
 );
 
 // Register new user
@@ -105,7 +104,6 @@ final registerRequest = RegisterRequest(
 );
 final registerResponse = await apiClient.authApiService.register(
   registerRequest,
-  apiToken: 'your-api-token', // Optional, already configured
 );
 ```
 
@@ -200,7 +198,7 @@ final aiResumeResponse = await apiClient.aiResumeApiService.createAiResume(
 );
 ```
 
-#### Resume & Job Processing (backend.tabashir.ae)
+#### Resume & Job Processing
 
 ```dart
 // Get applied jobs for a user
@@ -239,53 +237,51 @@ final applyResponse = await apiClient.tabashirApiService.applyJobs(
 
 The service provides the following endpoints:
 
-### Authentication Endpoints (localhost:5001)
-- `POST /auth/login` - Login user with email and password
-- `POST /auth/register` - Register new user
-- `GET /verify-email` - Email verification
+### Authentication Endpoints
+- `POST /api/v1/auth/login` - Login user with email and password
+- `POST /api/v1/auth/register` - Register new user
+- `GET /api/v1/auth/verify-email` - Email verification
 
-**Note:** The auth endpoints use a different base URL (http://localhost:5001) and require an API token in the x-api-token header.
+### User Management Endpoints
+- `GET /api/v1/user/mobile/me` - Get user profile data
+- `POST /api/v1/mobile/candidate/onboarding/personal-info` - Update personal info
+- `POST /api/v1/mobile/candidate/onboarding/professional-info` - Update professional info
 
-### User Management Endpoints (localhost:5001)
-- `GET /user/profile` - Get user profile data
-- `POST /candidate/onboarding/personal-info` - Update personal info
-- `POST /candidate/onboarding/professional-info` - Update professional info
+### Subscription Endpoints
+- `GET /api/v1/mobile/subscription/latest` - Get latest subscription
+- `GET /api/v1/mobile/subscription/debug` - Debug subscription data
+- `GET /api/v1/mobile/subscription/test` - Test subscription endpoints
 
-### Subscription Endpoints (localhost:5001)
-- `GET /subscription/latest` - Get latest subscription
-- `GET /subscription/debug` - Debug subscription data
-- `GET /subscription/test` - Test subscription endpoints
+### Payment Endpoints
+- `POST /api/v1/mobile/payment-intent` - Create payment intent
+- `POST /api/v1/mobile/stripe/create-checkout-session` - Create Stripe checkout session
+- `GET /api/v1/mobile/payments/latest` - Get latest payment
 
-### Payment Endpoints (localhost:5001)
-- `POST /payment-intent` - Create payment intent
-- `POST /stripe/create-checkout-session` - Create Stripe checkout session
-- `GET /payments/latest` - Get latest payment
+### File Upload Endpoints
+- `POST /api/v1/mobile/uploadthing` - File upload handling
 
-### File Upload Endpoints (localhost:5001)
-- `POST /uploadthing` - File upload handling
+### AI Resume Endpoints
+- `POST /api/v1/mobile/ai-resume/create` - Create AI resume
 
-### AI Resume Endpoints (localhost:5001)
-- `POST /ai-resume/create` - Create AI resume
+### Resume Processing Endpoints
+- `GET /api/v1/resume/applied-jobs` - Get applied jobs for a user
+- `POST /api/v1/resume/applied-jobs-count` - Get count of applied jobs
+- `POST /api/v1/resume/apply` - Process resume and find matching jobs
+- `POST /api/v1/resume/format` - Convert CV to ATS format
+- `POST /api/v1/resume/format-cv-object` - Parse raw CV text
+- `POST /api/v1/resume/translate` - Translate CV to Arabic
+- `POST /api/v1/resume/send-linkedin-email` - Send LinkedIn email
+- `GET /api/v1/resume/health` - Health check
 
-### Resume Processing Endpoints (backend.tabashir.ae)
-- `GET /applied-jobs` - Get applied jobs for a user
-- `POST /applied-jobs-count` - Get count of applied jobs
-- `POST /apply` - Process resume and find matching jobs
-- `POST /format` - Convert CV to ATS format
-- `POST /format-cv-object` - Parse raw CV text
-- `POST /translate` - Translate CV to Arabic
-- `POST /send-linkedin-email` - Send LinkedIn email
-- `GET /health` - Health check
-
-### Job Endpoints (backend.tabashir.ae)
-- `GET /jobs` - Get all jobs
-- `GET /jobs/count-by-city` - Get job counts by city
-- `GET /jobs/monthly-count` - Get monthly job counts
-- `GET /jobs/{job_id}` - Get job details
-- `GET /jobs/{job_id}/applicants-count` - Get applicant count
-- `POST /jobs` - Create a new job
-- `PUT /jobs/{job_id}` - Update a job
-- `POST /{job_id}/apply` - Apply to a specific job
+### Job Endpoints
+- `GET /api/v1/resume/jobs` - Get all jobs
+- `GET /api/v1/resume/jobs/count-by-city` - Get job counts by city
+- `GET /api/v1/resume/jobs/monthly-count` - Get monthly job counts
+- `GET /api/v1/resume/jobs/{job_id}` - Get job details
+- `GET /api/v1/resume/jobs/{job_id}/applicants-count` - Get applicant count
+- `POST /api/v1/resume/jobs` - Create a new job
+- `PUT /api/v1/resume/jobs/{job_id}` - Update a job
+- `POST /api/v1/resume/{job_id}/apply` - Apply to a specific job
 
 ## Error Handling
 
@@ -352,5 +348,5 @@ apiClient.tabashirApiService;     // Resume & jobs
 - All models use `freezed` for immutability and pattern matching
 - Generated files (`.g.dart`, `.freezed.dart`) are committed to git
 - The API service uses multipart form data for file uploads
-- Two base URLs are used: localhost:5001 (auth & user) and backend.tabashir.ae (resume & jobs)
-- Authentication endpoints require an API token in the x-api-token header
+- All services connect to the unified Python backend via the base URL configured in `.env`
+- Authentication is handled exclusively via JWT Bearer tokens in the `Authorization` header

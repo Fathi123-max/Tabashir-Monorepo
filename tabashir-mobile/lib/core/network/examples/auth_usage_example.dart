@@ -33,7 +33,6 @@ Future<void> loginExample(ApiClient apiClient) async {
     // Make login request
     final response = await apiClient.authApiService.login(
       loginRequest,
-      'a5c3b58a2d0f49b1949ef70c5e91710b8e04e88ab62cc4f814d388d6e3910ae5',
     );
 
     // Check response
@@ -67,7 +66,6 @@ Future<void> registerExample(ApiClient apiClient) async {
     // Make register request
     final response = await apiClient.authApiService.register(
       registerRequest,
-      'a5c3b58a2d0f49b1949ef70c5e91710b8e04e88ab62cc4f814d388d6e3910ae5',
     );
 
     // Check response

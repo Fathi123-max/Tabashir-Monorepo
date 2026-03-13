@@ -32,7 +32,6 @@ class AuthRepositoryImpl implements AuthRepository {
 
       final response = await _authApiService.login(
         request,
-        ApiConfig.appApiToken,
       );
 
       // Debug: Log the raw response
@@ -77,7 +76,6 @@ class AuthRepositoryImpl implements AuthRepository {
 
       final response = await _authApiService.register(
         request,
-        ApiConfig.appApiToken,
       );
 
       if (response.response.statusCode == 200 ||
