@@ -48,10 +48,5 @@ class Config:
     ARABIC_TEMPLATE_PATH = BASE_DIR / os.getenv('TEMPLATE_FOLDER', 'templates') / "Arabic Docxtpl Compatible CV Template.docx"
     REGULAR_TEMPLATE_PATH = BASE_DIR / os.getenv('TEMPLATE_FOLDER', 'templates') / "Docxtpl Compatible CV Template.docx"
     
-    BASE_DIR = Path(
-        os.getenv(
-            "D:\R2oya\Backups\AI_Job_Matching_Last_Version",
-            Path(__file__).resolve().parent.parent
-        )
-    )  # adjust if needed
+    # Path for storing uploaded resumes permanently
     CV_STORAGE_PATH = BASE_DIR / "CVs"

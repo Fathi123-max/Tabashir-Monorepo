@@ -12,7 +12,7 @@ part of 'subscription_api_service.dart';
 
 class _SubscriptionApiService implements SubscriptionApiService {
   _SubscriptionApiService(this._dio, {this.baseUrl, this.errorLogger}) {
-    baseUrl ??= '/api/v1/mobile';
+    baseUrl ??= '/api/v1/subscriptions';
   }
 
   final Dio _dio;

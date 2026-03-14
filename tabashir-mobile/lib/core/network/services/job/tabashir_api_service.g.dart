@@ -12,7 +12,7 @@ part of 'tabashir_api_service.dart';
 
 class _TabashirApiService implements TabashirApiService {
   _TabashirApiService(this._dio, {this.baseUrl, this.errorLogger}) {
-    baseUrl ??= '/api/v1/resume';
+    baseUrl ??= '/api/v1/resumes';
   }
 
   final Dio _dio;

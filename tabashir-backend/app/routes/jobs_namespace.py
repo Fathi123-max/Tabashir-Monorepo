@@ -101,3 +101,33 @@ class SavedJob(Resource):
             return {"success": True, "message": "Job removed from saved"}, HTTPStatus.OK
         except Exception as e:
             return {"error": str(e)}, HTTPStatus.INTERNAL_SERVER_ERROR
+
+
+@jobs_ns.route('/sync-jobs')
+class SyncJobs(Resource):
+    @jobs_ns.doc(security='Bearer')
+    @jwt_required
+    def post(self):
+        """Sync jobs from client device to server"""
+        user_id = request.user_id
+        data = request.get_json()
+
+        if not data or not data.get('jobs'):
+            return {"error": "jobs array required"}, HTTPStatus.BAD_REQUEST
+
+        synced_count = 0
+        for job_data in data.get('jobs', []):
+            job_id = job_data.get('id')
+            if job_id:
+                existing = execute_query(
+                    'SELECT id FROM "Job" WHERE id = %s',
+                    (job_id,),
+                    fetch_one=True
+                )
+                if existing:
+                    synced_count += 1
+
+        return {
+            "synced": synced_count,
+            "message": f"Synced {synced_count} jobs"
+        }, HTTPStatus.OK

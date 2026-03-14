@@ -22,7 +22,7 @@ part 'resume_api_service.g.dart';
 /// - TabashirApiService → backend.tabashir.ae/api (processing)
 ///
 /// See: lib/core/network/services/job/tabashir_api_service.dart for production API
-@RestApi(baseUrl: '/api/v1/mobile')
+@RestApi(baseUrl: '/api/v1/resumes')
 abstract class ResumeApiService {
   @factoryMethod
   factory ResumeApiService(Dio dio) = _ResumeApiService;

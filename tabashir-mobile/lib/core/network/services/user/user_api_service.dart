@@ -17,24 +17,24 @@ part 'user_api_service.g.dart';
 abstract class UserApiService {
   factory UserApiService(Dio dio) = _UserApiService;
 
-  /// Get comprehensive user profile data from mobile API
-  @GET('/user/mobile/me')
+  /// Get comprehensive user profile data from unified API
+  @GET('/users/me')
   Future<HttpResponse<UserProfileResponse>> getUserProfile();
 
   /// Update user profile (name, email, phone, etc.)
-  @PUT('/user/mobile/profile')
+  @PUT('/users/profile')
   Future<HttpResponse<ProfileUpdateResponse>> updateProfile(
     @Body() ProfileUpdateRequest profileUpdate,
   );
 
   /// Update candidate personal info
-  @POST('/mobile/candidate/onboarding/personal-info')
+  @POST('/candidates/onboarding/personal-info')
   Future<HttpResponse<OnboardingResponse>> updatePersonalInfo(
     @Body() PersonalInfoRequest personalInfo,
   );
 
   /// Update candidate professional info
-  @POST('/mobile/candidate/onboarding/professional-info')
+  @POST('/candidates/onboarding/professional-info')
   Future<HttpResponse<OnboardingResponse>> updateProfessionalInfo(
     @Body() ProfessionalInfoRequest professionalInfo,
   );

@@ -8,7 +8,7 @@ import '../../models/subscription/subscription_debug_response.dart';
 part 'subscription_api_service.g.dart';
 
 /// Subscription API client
-@RestApi(baseUrl: '/api/v1/mobile')
+@RestApi(baseUrl: '/api/v1/subscriptions')
 abstract class SubscriptionApiService {
   factory SubscriptionApiService(Dio dio) = _SubscriptionApiService;
 

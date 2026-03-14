@@ -22,37 +22,37 @@ class ApiEndpoints {
   // ==========================================
   // User Management Endpoints
   // ==========================================
-  static const String userProfile = '/api/v1/user/profile';
-  static const String userMobileMe = '/api/v1/user/mobile/me';
+  static const String userProfile = '/api/v1/users/profile';
+  static const String userMobileMe = '/api/v1/users/me';
   static const String candidatePersonalInfo =
-      '/api/v1/mobile/candidate/onboarding/personal-info';
+      '/api/v1/candidates/onboarding/personal-info';
   static const String candidateProfessionalInfo =
-      '/api/v1/mobile/candidate/onboarding/professional-info';
+      '/api/v1/candidates/onboarding/professional-info';
 
   // ==========================================
   // Subscription Endpoints
   // ==========================================
-  static const String subscriptionLatest = '/api/v1/mobile/subscription/latest';
-  static const String subscriptionDebug = '/api/v1/mobile/subscription/debug';
-  static const String subscriptionTest = '/api/v1/mobile/subscription/test';
+  static const String subscriptionLatest = '/api/v1/subscriptions/latest';
+  static const String subscriptionDebug = '/api/v1/subscriptions/debug';
+  static const String subscriptionTest = '/api/v1/subscriptions/test';
 
   // ==========================================
   // Payment Endpoints
   // ==========================================
-  static const String paymentIntent = '/api/v1/mobile/payment-intent';
+  static const String paymentIntent = '/api/v1/payments/payment-intent';
   static const String stripeCheckoutSession =
-      '/api/v1/mobile/stripe/create-checkout-session';
-  static const String paymentLatest = '/api/v1/mobile/payments/latest';
+      '/api/v1/payments/stripe/create-checkout-session';
+  static const String paymentLatest = '/api/v1/payments/latest';
 
   // ==========================================
   // File Upload Endpoints
   // ==========================================
-  static const String uploadThing = '/api/v1/mobile/uploadthing';
+  static const String uploadThing = '/api/v1/uploads/uploadthing';
 
   // ==========================================
   // AI Resume Endpoints
   // ==========================================
-  static const String aiResumeCreate = '/api/v1/mobile/ai-resume/create';
+  static const String aiResumeCreate = '/api/v1/resumes/ai-resume/create';
 
   // ==========================================
   // Resume & Job Processing Endpoints

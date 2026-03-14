@@ -12,7 +12,7 @@ part of 'upload_api_service.dart';
 
 class _UploadApiService implements UploadApiService {
   _UploadApiService(this._dio, {this.baseUrl, this.errorLogger}) {
-    baseUrl ??= '/api/v1/mobile';
+    baseUrl ??= '/api/v1/uploads';
   }
 
   final Dio _dio;

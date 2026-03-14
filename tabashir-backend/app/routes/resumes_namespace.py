@@ -1,4 +1,293 @@
 import os
+import uuid
+from flask_restx import Namespace, Resource, reqparse
+from flask import request
+from werkzeug.datastructures import FileStorage
+from werkzeug.utils import secure_filename
+from http import HTTPStatus
+from app.config import Config
+from app.database.db import execute_query
+from app.routes.middleware import jwt_required
+from app.utils.file_utils import allowed_file
+
+resume_mobile_ns = Namespace('resume_mobile', description='Mobile Resume Operations')
+
+# Parser for file upload
+upload_parser = reqparse.RequestParser()
+upload_parser.add_argument('file', location='files', type=FileStorage, required=True, help='Resume PDF/DOCX file')
+
+
+@resumes_ns.route('')
+class ResumeList(Resource):
+    @resumes_ns.doc(security='Bearer')
+    @resumes_ns.expect(upload_parser)
+    @jwt_required
+    def post(self):
+        """Upload a new resume"""
+        user_id = request.user_id
+        
+        if 'file' not in request.files:
+            return {"success": False, "message": "No file part"}, HTTPStatus.BAD_REQUEST
+
+        file = request.files['file']
+        if file.filename == '':
+            return {"success": False, "message": "No selected file"}, HTTPStatus.BAD_REQUEST
+
+        if file and allowed_file(file.filename):
+            # 1. Ensure Candidate exists for this user
+            candidate = execute_query(
+                'SELECT id FROM "Candidate" WHERE "userId" = %s',
+                (user_id,),
+                fetch_one=True
+            )
+            
+            if not candidate:
+                candidate_id = str(uuid.uuid4())
+                execute_query(
+                    'INSERT INTO "Candidate" (id, "userId", "createdAt", "updatedAt") VALUES (%s, %s, NOW(), NOW())',
+                    (candidate_id, user_id),
+                    commit=True
+                )
+            else:
+                candidate_id = candidate['id']
+
+            # 2. Save file to dedicated storage
+            filename = secure_filename(file.filename)
+            # Add uuid to avoid collisions
+            unique_filename = f"{uuid.uuid4()}_{filename}"
+            
+            # Ensure storage directory exists
+            os.makedirs(Config.CV_STORAGE_PATH, exist_ok=True)
+            
+            file_path = Config.CV_STORAGE_PATH / unique_filename
+            file.save(str(file_path))
+
+            # 3. Create Resume record
+            resume_id = str(uuid.uuid4())
+            # originalUrl stores the filename/relative path on the dedicated server
+            original_url = unique_filename 
+            
+            try:
+                execute_query(
+                    """INSERT INTO "Resume" 
+                       (id, "candidateId", filename, "originalUrl", "isAiResume", "createdAt", "updatedAt") 
+                       VALUES (%s, %s, %s, %s, %s, NOW(), NOW())""",
+                    (resume_id, candidate_id, filename, original_url, False),
+                    commit=True
+                )
+            except Exception as db_err:
+                # Cleanup saved file if DB fails
+                if os.path.exists(file_path):
+                    os.remove(file_path)
+                return {"success": False, "message": f"Database error: {str(db_err)}"}, HTTPStatus.INTERNAL_SERVER_ERROR
+
+            return {
+                "success": True,
+                "message": "Resume uploaded successfully to dedicated server",
+                "resume": {
+                    "id": resume_id,
+                    "filename": filename,
+                    "url": original_url
+                }
+            }, HTTPStatus.CREATED
+        
+        return {"success": False, "message": "File type not allowed"}, HTTPStatus.BAD_REQUEST
+
+    @resumes_ns.doc(security='Bearer')
+    @jwt_required
+    def get(self):
+        """List all resumes for the user"""
+        user_id = request.user_id
+        
+        resumes = execute_query(
+            """SELECT r.id, r.filename, r."originalUrl" as url, r."createdAt"
+               FROM "Resume" r
+               JOIN "Candidate" c ON r."candidateId" = c.id
+               WHERE c."userId" = %s
+               ORDER BY r."createdAt" DESC""",
+            (user_id,),
+            fetch_all=True
+        )
+        
+        # Convert to list of dicts and handle datetime
+        resume_list = []
+        for r in resumes:
+            r_dict = dict(r)
+            if r_dict.get('createdAt'):
+                r_dict['createdAt'] = r_dict['createdAt'].isoformat()
+            resume_list.append(r_dict)
+            
+        return {
+            "success": True,
+            "resumes": resume_list
+        }, HTTPStatus.OK
+
+
+@resumes_ns.route('/<resume_id>')
+class ResumeDetail(Resource):
+    @resumes_ns.doc(security='Bearer')
+    @jwt_required
+    def get(self, resume_id):
+        """Get resume details"""
+        user_id = request.user_id
+        
+        resume = execute_query(
+            """SELECT r.* 
+               FROM "Resume" r
+               JOIN "Candidate" c ON r."candidateId" = c.id
+               WHERE r.id = %s AND c."userId" = %s""",
+            (resume_id, user_id),
+            fetch_one=True
+        )
+        
+        if not resume:
+            return {"success": False, "message": "Resume not found"}, HTTPStatus.NOT_FOUND
+            
+        resume_dict = dict(resume)
+        for key in ['createdAt', 'updatedAt']:
+            if resume_dict.get(key):
+                resume_dict[key] = resume_dict[key].isoformat()
+                
+        return {
+            "success": True,
+            "resume": resume_dict
+        }, HTTPStatus.OK
+
+    @resumes_ns.doc(security='Bearer')
+    @jwt_required
+    def delete(self, resume_id):
+        """Delete a resume"""
+        user_id = request.user_id
+        
+        # Verify ownership
+        resume = execute_query(
+            """SELECT r.id, r."originalUrl" 
+               FROM "Resume" r
+               JOIN "Candidate" c ON r."candidateId" = c.id
+               WHERE r.id = %s AND c."userId" = %s""",
+            (resume_id, user_id),
+            fetch_one=True
+        )
+        
+        if not resume:
+            return {"success": False, "message": "Resume not found or unauthorized"}, HTTPStatus.NOT_FOUND
+            
+        # Delete file from storage
+        try:
+            file_path = os.path.join(Config.CV_STORAGE_PATH, resume['originalUrl'])
+            if os.path.exists(file_path):
+                os.remove(file_path)
+        except Exception as e:
+            print(f"Error deleting file: {e}")
+
+        # Delete record from DB
+        execute_query('DELETE FROM "Resume" WHERE id = %s', (resume_id,), commit=True)
+        
+        return {
+            "success": True,
+            "message": "Resume deleted successfully"
+        }, HTTPStatus.OK
+
+
+@resumes_ns.route('/<resume_id>/download')
+class ResumeDownload(Resource):
+    @resumes_ns.doc(security='Bearer')
+    @jwt_required
+    def get(self, resume_id):
+        """Download the resume file"""
+        user_id = request.user_id
+        
+        resume = execute_query(
+            """SELECT r.filename, r."originalUrl" 
+               FROM "Resume" r
+               JOIN "Candidate" c ON r."candidateId" = c.id
+               WHERE r.id = %s AND c."userId" = %s""",
+            (resume_id, user_id),
+            fetch_one=True
+        )
+        
+        if not resume:
+            return {"success": False, "message": "Resume not found"}, HTTPStatus.NOT_FOUND
+            
+        file_path = Config.CV_STORAGE_PATH / resume['originalUrl']
+        
+        if not os.path.exists(file_path):
+            return {"success": False, "message": "File not found on server"}, HTTPStatus.NOT_FOUND
+            
+        from flask import send_file
+        return send_file(
+            str(file_path),
+            as_attachment=True,
+            download_name=resume['filename']
+        )
+
+
+@resumes_ns.route('/<resume_id>/duplicate')
+class ResumeDuplicate(Resource):
+    @resumes_ns.doc(security='Bearer')
+    @jwt_required
+    def post(self, resume_id):
+        """Create a copy of an existing resume - MOCK for testing"""
+        return {
+            "success": True,
+            "message": "Resume duplicated successfully (mock)",
+            "resume": {
+                "id": f"{resume_id}-copy",
+                "title": "Resume (Copy)"
+            }
+        }, HTTPStatus.CREATED
+
+
+@resumes_ns.route('/<resume_id>/translate')
+class ResumeTranslate(Resource):
+    @resumes_ns.doc(security='Bearer')
+    @jwt_required
+    def post(self, resume_id):
+        """Translate resume content to Arabic - MOCK for testing"""
+        data = request.get_json()
+        target_language = data.get('targetLanguage', 'ar') if data else 'ar'
+
+        return {
+            "success": True,
+            "message": f"Resume translated to {target_language} (mock)",
+            "translated": {
+                "summary": "Translated summary content",
+                "experience": "Translated experience content",
+                "education": "Translated education content"
+            },
+            "targetLanguage": target_language
+        }, HTTPStatus.OK
+
+
+@resumes_ns.route('/<resume_id>/export/pdf')
+class ResumeExportPDF(Resource):
+    @resumes_ns.doc(security='Bearer')
+    @jwt_required
+    def post(self, resume_id):
+        """Export resume as PDF - MOCK for testing"""
+        return {
+            "success": True,
+            "message": "PDF export initiated (mock)",
+            "resume": {"title": "Resume", "id": resume_id},
+            "format": "pdf",
+            "downloadUrl": f"/api/v1/mobile/resumes/{resume_id}/download/pdf"
+        }, HTTPStatus.OK
+
+
+@resumes_ns.route('/<resume_id>/export/word')
+class ResumeExportWord(Resource):
+    @resumes_ns.doc(security='Bearer')
+    @jwt_required
+    def post(self, resume_id):
+        """Export resume as Word document - MOCK for testing"""
+        return {
+            "success": True,
+            "message": "Word export initiated (mock)",
+            "resume": {"title": "Resume", "id": resume_id},
+            "format": "word",
+            "downloadUrl": f"/api/v1/mobile/resumes/{resume_id}/download/word"
+        }, HTTPStatus.OK
+import os
 import re
 from datetime import datetime, timedelta
 from dateutil.relativedelta import relativedelta
@@ -25,7 +314,7 @@ from app.services.text_extract_PyMuPDF import extract_text
 from app.services.send_linkedin_email import send_email
 from app.services.job_apply.ai_matching import title_position_match, calculate_skills_match, semantic_location_match
 
-resume_ns = Namespace('resume', description='Resume Processing Endpoints')
+resumes_ns = Namespace('resumes', description='Resume Management and AI Processing')
 
 
 upload_parser = reqparse.RequestParser()
@@ -33,7 +322,7 @@ upload_parser.add_argument('file', location='files', type=FileStorage, required=
 upload_parser.add_argument('output_language', location='form', required=False, help='Output CV language type (e.g., arabic, regular)')
 
 
-@resume_ns.route('/health')
+@resumes_ns.route('/health')
 class HealthCheck(Resource):
     def get(self):
         """
@@ -42,12 +331,12 @@ class HealthCheck(Resource):
         return {"status": "healthy", "message": "CV Processing API is running"}, HTTPStatus.OK.value
 
 
-@resume_ns.route('/format')
+@resumes_ns.route('/format')
 class FormatCV(Resource):
-    @resume_ns.expect(upload_parser)
-    @resume_ns.response(HTTPStatus.OK.value, 'Successfully processed and downloaded formatted CV')
-    @resume_ns.response(HTTPStatus.BAD_REQUEST.value, 'Invalid input or unsupported file type')
-    @resume_ns.response(HTTPStatus.INTERNAL_SERVER_ERROR.value, 'Internal server error during processing')
+    @resumes_ns.expect(upload_parser)
+    @resumes_ns.response(HTTPStatus.OK.value, 'Successfully processed and downloaded formatted CV')
+    @resumes_ns.response(HTTPStatus.BAD_REQUEST.value, 'Invalid input or unsupported file type')
+    @resumes_ns.response(HTTPStatus.INTERNAL_SERVER_ERROR.value, 'Internal server error during processing')
     def post(self):
         """
         POST endpoint to convert a CV to ats format and translate to Arabic if prompted.
@@ -124,12 +413,12 @@ class FormatCV(Resource):
         return make_response(response, status_code)
 
 
-@resume_ns.route('/translate')
+@resumes_ns.route('/translate')
 class TranslateCV(Resource):
-    @resume_ns.expect(upload_parser)
-    @resume_ns.response(HTTPStatus.OK.value, 'Successfully translated the CV')
-    @resume_ns.response(HTTPStatus.BAD_REQUEST.value, 'Invalid input or unsupported file type')
-    @resume_ns.response(HTTPStatus.INTERNAL_SERVER_ERROR.value, 'Internal server error during translation')
+    @resumes_ns.expect(upload_parser)
+    @resumes_ns.response(HTTPStatus.OK.value, 'Successfully translated the CV')
+    @resumes_ns.response(HTTPStatus.BAD_REQUEST.value, 'Invalid input or unsupported file type')
+    @resumes_ns.response(HTTPStatus.INTERNAL_SERVER_ERROR.value, 'Internal server error during translation')
     def post(self):
         """
         POST endpoint to convert ATS docx CV to Arabic language.
@@ -185,15 +474,15 @@ class TranslateCV(Resource):
         return make_response(response, status_code)
 
 
-@resume_ns.route('/format-from-raw')
+@resumes_ns.route('/format-from-raw')
 class FormatFromRaw(Resource):
-    @resume_ns.expect(resume_ns.model('RawCVInput', {
+    @resumes_ns.expect(resume_ns.model('RawCVInput', {
         'raw_data': fields.String(required=True, description='Raw text extracted from CV'),
         'output_language': fields.String(required=False, default='regular', description="Output language: 'regular' or 'arabic'")
     }))
-    @resume_ns.response(HTTPStatus.OK.value, 'Successfully generated formatted CV')
-    @resume_ns.response(HTTPStatus.BAD_REQUEST.value, 'Invalid input')
-    @resume_ns.response(HTTPStatus.INTERNAL_SERVER_ERROR.value, 'Internal server error during processing')
+    @resumes_ns.response(HTTPStatus.OK.value, 'Successfully generated formatted CV')
+    @resumes_ns.response(HTTPStatus.BAD_REQUEST.value, 'Invalid input')
+    @resumes_ns.response(HTTPStatus.INTERNAL_SERVER_ERROR.value, 'Internal server error during processing')
     @cross_origin(origins="*")
     def post(self):
         """
@@ -245,15 +534,15 @@ class FormatFromRaw(Resource):
         return make_response(response, status_code)
 
 
-@resume_ns.route('/generate-docx-from-json')
+@resumes_ns.route('/generate-docx-from-json')
 class GenerateDocxFromJson(Resource):
-    @resume_ns.expect(resume_ns.model('FormattedCVInput', {
+    @resumes_ns.expect(resume_ns.model('FormattedCVInput', {
         'cv_data': fields.Raw(required=True, description='Structured Resume JSON data'),
         'output_language': fields.String(required=False, default='regular', description="Output language: 'regular' or 'arabic'")
     }))
-    @resume_ns.response(HTTPStatus.OK.value, 'Successfully generated formatted document')
-    @resume_ns.response(HTTPStatus.BAD_REQUEST.value, 'Invalid input')
-    @resume_ns.response(HTTPStatus.INTERNAL_SERVER_ERROR.value, 'Internal server error during processing')
+    @resumes_ns.response(HTTPStatus.OK.value, 'Successfully generated formatted document')
+    @resumes_ns.response(HTTPStatus.BAD_REQUEST.value, 'Invalid input')
+    @resumes_ns.response(HTTPStatus.INTERNAL_SERVER_ERROR.value, 'Internal server error during processing')
     @cross_origin(origins="*")
     def post(self):
         """
@@ -348,15 +637,15 @@ class GenerateDocxFromJson(Resource):
         return make_response(response, status_code)
 
 
-@resume_ns.route('/format-cv-object')
+@resumes_ns.route('/format-cv-object')
 class FormatFromRawJSON(Resource):
-    @resume_ns.expect(resume_ns.model('RawCVInput', {
+    @resumes_ns.expect(resume_ns.model('RawCVInput', {
         'raw_data': fields.String(required=True, description='Raw text extracted from CV'),
         'output_language': fields.String(required=False, default='regular', description="Output language: 'regular' or 'arabic'")
     }))
-    @resume_ns.response(HTTPStatus.OK.value, 'Successfully parsed CV and returned JSON')
-    @resume_ns.response(HTTPStatus.BAD_REQUEST.value, 'Invalid input')
-    @resume_ns.response(HTTPStatus.INTERNAL_SERVER_ERROR.value, 'Internal server error during processing')
+    @resumes_ns.response(HTTPStatus.OK.value, 'Successfully parsed CV and returned JSON')
+    @resumes_ns.response(HTTPStatus.BAD_REQUEST.value, 'Invalid input')
+    @resumes_ns.response(HTTPStatus.INTERNAL_SERVER_ERROR.value, 'Internal server error during processing')
     @cross_origin(origins="*")
     def post(self):
         """
@@ -420,12 +709,12 @@ apply_parser.add_argument('locations', type=str, location='form', action='append
 apply_parser.add_argument('positions', type=str, location='form', action='append', required=True, help='Preferred positions (list)')
 
 
-@resume_ns.route('/apply')
+@resumes_ns.route('/apply')
 class ApplyJobs(Resource):
-    @resume_ns.expect(apply_parser)
-    @resume_ns.response(HTTPStatus.OK.value, 'Successfully matched and ranked jobs')
-    @resume_ns.response(HTTPStatus.BAD_REQUEST.value, 'Invalid input')
-    @resume_ns.response(HTTPStatus.INTERNAL_SERVER_ERROR.value, 'Internal server error during processing')
+    @resumes_ns.expect(apply_parser)
+    @resumes_ns.response(HTTPStatus.OK.value, 'Successfully matched and ranked jobs')
+    @resumes_ns.response(HTTPStatus.BAD_REQUEST.value, 'Invalid input')
+    @resumes_ns.response(HTTPStatus.INTERNAL_SERVER_ERROR.value, 'Internal server error during processing')
     def post(self):
         """
         POST endpoint to process resume and find matching jobs with rankings.
@@ -525,12 +814,12 @@ apply_specific_parser.add_argument('file', type=FileStorage, location='files', r
 apply_specific_parser.add_argument('nationality', type=str, location='form', required=False, help='Nationality')
 apply_specific_parser.add_argument('gender', type=str, location='form', required=False, help='Gender')
 
-@resume_ns.route('/add_client')
+@resumes_ns.route('/add_client')
 class AddClient(Resource):
-    @resume_ns.expect(apply_parser)
-    @resume_ns.response(HTTPStatus.OK.value, 'Successfully matched and ranked jobs')
-    @resume_ns.response(HTTPStatus.BAD_REQUEST.value, 'Invalid input')
-    @resume_ns.response(HTTPStatus.INTERNAL_SERVER_ERROR.value, 'Internal server error during processing')
+    @resumes_ns.expect(apply_parser)
+    @resumes_ns.response(HTTPStatus.OK.value, 'Successfully matched and ranked jobs')
+    @resumes_ns.response(HTTPStatus.BAD_REQUEST.value, 'Invalid input')
+    @resumes_ns.response(HTTPStatus.INTERNAL_SERVER_ERROR.value, 'Internal server error during processing')
     def post(self):
         """
         POST endpoint to process resume and find matching jobs with rankings.
@@ -681,10 +970,10 @@ def format_cv_from_path(input_path: Path, output_language: str = "regular"):
     return formatted_path
 
 
-@resume_ns.route('/activate-job-apply')
+@resumes_ns.route('/activate-job-apply')
 class ActivateJobApply(Resource):
 
-    @resume_ns.expect(activate_job_apply_parser)
+    @resumes_ns.expect(activate_job_apply_parser)
     def post(self):
         try:
             args = activate_job_apply_parser.parse_args()
@@ -745,10 +1034,10 @@ class ActivateJobApply(Resource):
 
 
 
-@resume_ns.route('/<int:job_id>/apply')
+@resumes_ns.route('/<int:job_id>/apply')
 class ApplyToSpecificJob(Resource):
-    @resume_ns.expect(apply_specific_parser)
-    @resume_ns.response(HTTPStatus.OK.value, 'Successfully applied to specific job')
+    @resumes_ns.expect(apply_specific_parser)
+    @resumes_ns.response(HTTPStatus.OK.value, 'Successfully applied to specific job')
     def post(self, job_id):
         """
         POST endpoint to process resume and apply to a specific job.
@@ -826,12 +1115,12 @@ class ApplyToSpecificJob(Resource):
 applied_jobs = reqparse.RequestParser()
 applied_jobs.add_argument('email', type=str, location='args', required=True, help='User Email')
 
-@resume_ns.route('/applied-jobs')
+@resumes_ns.route('/applied-jobs')
 class AppliedJobs(Resource):
-    @resume_ns.expect(applied_jobs)
-    @resume_ns.response(HTTPStatus.OK.value, 'Successfully fetched jobs.')
-    @resume_ns.response(HTTPStatus.BAD_REQUEST.value, 'Invalid input')
-    @resume_ns.response(HTTPStatus.INTERNAL_SERVER_ERROR.value, 'Internal server error during processing')
+    @resumes_ns.expect(applied_jobs)
+    @resumes_ns.response(HTTPStatus.OK.value, 'Successfully fetched jobs.')
+    @resumes_ns.response(HTTPStatus.BAD_REQUEST.value, 'Invalid input')
+    @resumes_ns.response(HTTPStatus.INTERNAL_SERVER_ERROR.value, 'Internal server error during processing')
     def get(self):
         """
         GET endpoint to fetch job application rankings for a given email.
@@ -893,9 +1182,9 @@ class AppliedJobs(Resource):
             conn.close()
 
 
-@resume_ns.route('/jobs')
+@resumes_ns.route('/jobs')
 class Jobs(Resource):
-    @resume_ns.doc(params={
+    @resumes_ns.doc(params={
         'email': 'User email to exclude already applied jobs',
         'search': 'Search in job title or description',
         'location': 'Filter by city (e.g. Dubai)',
@@ -1153,7 +1442,7 @@ class Jobs(Resource):
             cursor.close()
             conn.close()
 
-    @resume_ns.expect(resume_ns.model('JobCreate', {
+    @resumes_ns.expect(resume_ns.model('JobCreate', {
         'entity': fields.String(description='Entity'),
         'nationality': fields.String(description='Nationality'),
         'gender': fields.String(description='Gender'),
@@ -1287,9 +1576,9 @@ job_update_model = resume_ns.model('JobUpdate', {
     'job_type': fields.String(required=False),
 })
 
-@resume_ns.route('/jobs/<int:job_id>')
+@resumes_ns.route('/jobs/<int:job_id>')
 class JobById(Resource):
-    @resume_ns.doc(params={
+    @resumes_ns.doc(params={
         'job_id': 'ID of the job to retrieve',
         'lang': 'Language: en (default) | ar'
     })
@@ -1400,8 +1689,8 @@ class JobById(Resource):
             cursor.close()
             conn.close()
     
-    @resume_ns.doc(params={'job_id': 'ID of the job to edit'})
-    @resume_ns.expect(job_update_model, validate=True)
+    @resumes_ns.doc(params={'job_id': 'ID of the job to edit'})
+    @resumes_ns.expect(job_update_model, validate=True)
     def put(self, job_id):
         """
         Edit a specific Job by JobId.
@@ -1480,9 +1769,9 @@ class JobById(Resource):
 email_model = resume_ns.model('EmailModel', {
     'email': fields.String(required=True, description="Applicant's email")
 })
-@resume_ns.route('/applied-jobs-count')
+@resumes_ns.route('/applied-jobs-count')
 class AppliedJobsCount(Resource):
-    @resume_ns.expect(email_model, validate=True)
+    @resumes_ns.expect(email_model, validate=True)
     def post(self):
         """
         Get number of jobs applied by email (count of unique job_id entries)
@@ -1530,9 +1819,9 @@ send_email_model = resume_ns.model('SendEmailModel', {
     'recipient_email': fields.String(required=True, description='Recipient email address'),
     'recipient_name': fields.String(required=True, description='Recipient name')
 })
-@resume_ns.route('/send-linkedin-email')
+@resumes_ns.route('/send-linkedin-email')
 class SendEmail(Resource):
-    @resume_ns.expect(send_email_model, validate=True)
+    @resumes_ns.expect(send_email_model, validate=True)
     def post(self):
         """
         Send career onboarding email to a candidate.
@@ -1561,9 +1850,9 @@ class SendEmail(Resource):
             }, HTTPStatus.INTERNAL_SERVER_ERROR
 
 
-@resume_ns.route('/jobs/monthly-count')
+@resumes_ns.route('/jobs/monthly-count')
 class JobsMonthlyCount(Resource):
-    @resume_ns.doc(params={
+    @resumes_ns.doc(params={
         'keyword': 'Keyword to match in job description',
     })
     def get(self):
@@ -1625,9 +1914,9 @@ class JobsMonthlyCount(Resource):
             conn.close()
 
 
-@resume_ns.route('/jobs/count-by-city')
+@resumes_ns.route('/jobs/count-by-city')
 class JobsCountByCity(Resource):
-    @resume_ns.doc(params={
+    @resumes_ns.doc(params={
         'job_title': 'Keyword to match in job title (case-insensitive, partial match)'
     })
     def get(self):
@@ -1677,9 +1966,9 @@ class JobsCountByCity(Resource):
             conn.close()
 
 
-@resume_ns.route('/jobs/match')
+@resumes_ns.route('/jobs/match')
 class MatchedJobs(Resource):
-    @resume_ns.doc(params={
+    @resumes_ns.doc(params={
         'email': 'User email to match jobs against their profile',
         'limit': 'Number of jobs per page (default 15)',
         'page': 'Page number (default 1)',
@@ -1770,9 +2059,9 @@ class MatchedJobs(Resource):
             cursor.close()
             conn.close()
 
-@resume_ns.route('/jobs/matched')
+@resumes_ns.route('/jobs/matched')
 class MatchedJobsPerClient(Resource):
-    @resume_ns.doc(params={
+    @resumes_ns.doc(params={
         'email': 'User email to fetch matched jobs',
         'limit': 'Number of jobs per page (default 15)',
         'page': 'Page number (default 1)',
@@ -1864,12 +2153,12 @@ suggest_job_titles_parser.add_argument(
 )
 
 
-@resume_ns.route('/suggest-job-titles')
+@resumes_ns.route('/suggest-job-titles')
 class SuggestJobTitles(Resource):
-    @resume_ns.expect(suggest_job_titles_parser)
-    @resume_ns.response(200, 'Job titles suggested successfully')
-    @resume_ns.response(400, 'Invalid input')
-    @resume_ns.response(500, 'Internal server error')
+    @resumes_ns.expect(suggest_job_titles_parser)
+    @resumes_ns.response(200, 'Job titles suggested successfully')
+    @resumes_ns.response(400, 'Invalid input')
+    @resumes_ns.response(500, 'Internal server error')
     def post(self):
         """
         Suggest job titles based only on resume
@@ -1920,15 +2209,15 @@ class SuggestJobTitles(Resource):
 
 
 
-@resume_ns.route('/jobs/<int:job_id>/applicants-count')
+@resumes_ns.route('/jobs/<int:job_id>/applicants-count')
 class JobApplicantsCount(Resource):
-    @resume_ns.doc(params={
+    @resumes_ns.doc(params={
         'job_id': 'ID of the job to get applicant count for',
         'status': 'Status filter (applied, pending, all). Default: applied'
     })
-    @resume_ns.response(HTTPStatus.OK.value, 'Successfully retrieved applicant count')
-    @resume_ns.response(HTTPStatus.NOT_FOUND.value, 'Job not found')
-    @resume_ns.response(HTTPStatus.INTERNAL_SERVER_ERROR.value, 'Internal server error')
+    @resumes_ns.response(HTTPStatus.OK.value, 'Successfully retrieved applicant count')
+    @resumes_ns.response(HTTPStatus.NOT_FOUND.value, 'Job not found')
+    @resumes_ns.response(HTTPStatus.INTERNAL_SERVER_ERROR.value, 'Internal server error')
     def get(self, job_id):
         """
         GET endpoint to retrieve the total number of applicants for a specific job.
@@ -1994,10 +2283,10 @@ analyze_client_ranking_parser.add_argument(
 # Endpoint
 # ================================
 
-@resume_ns.route('/analyze-client-ranking')
+@resumes_ns.route('/analyze-client-ranking')
 class AnalyzeClientRanking(Resource):
 
-    @resume_ns.expect(analyze_client_ranking_parser)
+    @resumes_ns.expect(analyze_client_ranking_parser)
     def post(self):
         try:
             args = analyze_client_ranking_parser.parse_args()

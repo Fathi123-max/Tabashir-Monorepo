@@ -5,9 +5,9 @@ from http import HTTPStatus
 from app.database.db import execute_query
 from app.routes.middleware import jwt_required
 
-profile_ns = Namespace('user', description='User Profile Endpoints')
+users_ns = Namespace('user', description='User Profile Endpoints')
 
-update_profile_model = profile_ns.model('UpdateProfile', {
+update_profile_model = users_ns.model('UpdateProfile', {
     'name': fields.String(description='Full name'),
     'phone': fields.String(description='Phone number'),
     'nationality': fields.String(description='Nationality'),
@@ -21,12 +21,12 @@ update_profile_model = profile_ns.model('UpdateProfile', {
     'degree': fields.String(description='Degree'),
 })
 
-@profile_ns.route('/profile')
+@users_ns.route('/profile')
 class Profile(Resource):
-    @profile_ns.doc(security='Bearer', description='Get the authenticated user profile')
-    @profile_ns.response(200, 'Success')
-    @profile_ns.response(401, 'Unauthorized')
-    @profile_ns.response(404, 'User not found')
+    @users_ns.doc(security='Bearer', description='Get the authenticated user profile')
+    @users_ns.response(200, 'Success')
+    @users_ns.response(401, 'Unauthorized')
+    @users_ns.response(404, 'User not found')
     @jwt_required
     def get(self):
         """Get user profile"""
@@ -76,11 +76,11 @@ class Profile(Resource):
             }
         }, HTTPStatus.OK
 
-    @profile_ns.doc(security='Bearer', description='Update the authenticated user profile. All fields are optional.')
-    @profile_ns.expect(update_profile_model)
-    @profile_ns.response(200, 'Profile updated')
-    @profile_ns.response(400, 'Request body required')
-    @profile_ns.response(401, 'Unauthorized')
+    @users_ns.doc(security='Bearer', description='Update the authenticated user profile. All fields are optional.')
+    @users_ns.expect(update_profile_model)
+    @users_ns.response(200, 'Profile updated')
+    @users_ns.response(400, 'Request body required')
+    @users_ns.response(401, 'Unauthorized')
     @jwt_required
     def put(self):
         """Update user profile"""
@@ -150,9 +150,9 @@ class Profile(Resource):
         return {"message": "Profile updated", "success": True, "userId": user_id}, HTTPStatus.OK
 
 
-@profile_ns.route('/mobile/me')
+@users_ns.route('/me')
 class MobileMe(Resource):
-    @profile_ns.doc(security='Bearer')
+    @users_ns.doc(security='Bearer')
     @jwt_required
     def get(self):
         """Get the mobile user profile (includes subscription & counts)"""
@@ -243,11 +243,3 @@ class MobileMe(Resource):
         }, HTTPStatus.OK
 
 
-@profile_ns.route('/mobile/profile')
-class MobileProfile(Resource):
-    @profile_ns.doc(security='Bearer')
-    @profile_ns.expect(update_profile_model)
-    @jwt_required
-    def put(self):
-        """Update profile (mobile app endpoint)"""
-        return Profile().put()

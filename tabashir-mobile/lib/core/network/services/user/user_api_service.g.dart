@@ -31,7 +31,7 @@ class _UserApiService implements UserApiService {
       Options(method: 'GET', headers: _headers, extra: _extra)
           .compose(
             _dio.options,
-            '/user/mobile/me',
+            '/users/me',
             queryParameters: queryParameters,
             data: _data,
           )
@@ -61,7 +61,7 @@ class _UserApiService implements UserApiService {
       Options(method: 'PUT', headers: _headers, extra: _extra)
           .compose(
             _dio.options,
-            '/user/mobile/profile',
+            '/users/profile',
             queryParameters: queryParameters,
             data: _data,
           )
@@ -91,7 +91,7 @@ class _UserApiService implements UserApiService {
       Options(method: 'POST', headers: _headers, extra: _extra)
           .compose(
             _dio.options,
-            '/mobile/candidate/onboarding/personal-info',
+            '/candidates/onboarding/personal-info',
             queryParameters: queryParameters,
             data: _data,
           )
@@ -121,7 +121,7 @@ class _UserApiService implements UserApiService {
       Options(method: 'POST', headers: _headers, extra: _extra)
           .compose(
             _dio.options,
-            '/mobile/candidate/onboarding/professional-info',
+            '/candidates/onboarding/professional-info',
             queryParameters: queryParameters,
             data: _data,
           )

@@ -12,7 +12,7 @@ part of 'payment_api_service.dart';
 
 class _PaymentApiService implements PaymentApiService {
   _PaymentApiService(this._dio, {this.baseUrl, this.errorLogger}) {
-    baseUrl ??= '/api/v1/mobile';
+    baseUrl ??= '/api/v1/payments';
   }
 
   final Dio _dio;
