@@ -1,16 +1,40 @@
 import os
 import uuid
-from flask_restx import Namespace, Resource, reqparse
-from flask import request
+import shutil
+import re
+from datetime import datetime, timedelta
+from dateutil.relativedelta import relativedelta
+from flask import request, send_file, jsonify, make_response
+from flask_restx import Namespace, Resource, reqparse, fields
+from flask_cors import cross_origin
 from werkzeug.datastructures import FileStorage
 from werkzeug.utils import secure_filename
 from http import HTTPStatus
+from pathlib import Path
+import psycopg2
 from app.config import Config
-from app.database.db import execute_query
+from app.database.db import execute_query, get_ai_db_connection
 from app.routes.middleware import jwt_required
 from app.utils.file_utils import allowed_file
+from app.models.cv_models import (
+    Resume, Header, CareerObjective, EducationExperience, 
+    WorkAndLeadershipExperience, Project, Skills, Languages, format_languages
+)
+from app.services.text_extract_PyMuPDF import extract_text
+from app.services.cv_processor import cv_formatter
+from app.services.arabic_translator import translate_docx_to_arabic
+from app.services.job_apply import (
+    process_ai_job_input, process_ai_job_input_not_active, serialize_row,
+    get_client_job_settings, activate_client_job_apply, suggest_job_titles_from_resume,
+    get_client_cv_filename, convert_docx_to_pdf, update_client_cv_filename,
+    main as run_ranking_main, apply_single_job, apply as apply_jobs
+)
+from app.services.send_linkedin_email import send_email
+from app.services.job_apply.ai_matching import (
+    title_position_match, calculate_skills_match, semantic_location_match
+)
 
-resume_mobile_ns = Namespace('resume_mobile', description='Mobile Resume Operations')
+resumes_ns = Namespace('resumes', description='Resume Management and AI Processing')
 
 # Parser for file upload
 upload_parser = reqparse.RequestParser()
@@ -287,41 +311,6 @@ class ResumeExportWord(Resource):
             "format": "word",
             "downloadUrl": f"/api/v1/mobile/resumes/{resume_id}/download/word"
         }, HTTPStatus.OK
-import os
-import re
-from datetime import datetime, timedelta
-from dateutil.relativedelta import relativedelta
-from http import HTTPStatus
-from math import ceil
-import shutil
-from flask import request, send_file, jsonify, make_response
-from flask_restx import Namespace, Resource, reqparse, fields
-from werkzeug.datastructures import FileStorage
-from werkzeug.utils import secure_filename
-from flask_cors import cross_origin
-from werkzeug.datastructures import FileStorage
-import psycopg2
-from app import Config
-from app.models.cv_models import *
-from app.database.db import get_ai_db_connection
-from app.services.arabic_translator import translate_docx_to_arabic
-from app.services.cv_processor import cv_formatter
-from app.services.job_apply import process_ai_job_input,process_ai_job_input_not_active,serialize_row,get_client_job_settings,activate_client_job_apply, suggest_job_titles_from_resume,get_client_cv_filename, convert_docx_to_pdf, update_client_cv_filename, main as run_ranking_main
-from app.services.job_apply import apply_single_job, apply as apply_jobs
-from app.utils.db_utils import insert_user_resume_document, user_exists
-from app.utils.file_utils import allowed_file
-from app.services.text_extract_PyMuPDF import extract_text
-from app.services.send_linkedin_email import send_email
-from app.services.job_apply.ai_matching import title_position_match, calculate_skills_match, semantic_location_match
-
-resumes_ns = Namespace('resumes', description='Resume Management and AI Processing')
-
-
-upload_parser = reqparse.RequestParser()
-upload_parser.add_argument('file', location='files', type=FileStorage, required=True, help='Upload CV file')
-upload_parser.add_argument('output_language', location='form', required=False, help='Output CV language type (e.g., arabic, regular)')
-
-
 @resumes_ns.route('/health')
 class HealthCheck(Resource):
     def get(self):
@@ -476,7 +465,7 @@ class TranslateCV(Resource):
 
 @resumes_ns.route('/format-from-raw')
 class FormatFromRaw(Resource):
-    @resumes_ns.expect(resume_ns.model('RawCVInput', {
+    @resumes_ns.expect(resumes_ns.model('RawCVInput', {
         'raw_data': fields.String(required=True, description='Raw text extracted from CV'),
         'output_language': fields.String(required=False, default='regular', description="Output language: 'regular' or 'arabic'")
     }))
@@ -536,7 +525,7 @@ class FormatFromRaw(Resource):
 
 @resumes_ns.route('/generate-docx-from-json')
 class GenerateDocxFromJson(Resource):
-    @resumes_ns.expect(resume_ns.model('FormattedCVInput', {
+    @resumes_ns.expect(resumes_ns.model('FormattedCVInput', {
         'cv_data': fields.Raw(required=True, description='Structured Resume JSON data'),
         'output_language': fields.String(required=False, default='regular', description="Output language: 'regular' or 'arabic'")
     }))
@@ -639,7 +628,7 @@ class GenerateDocxFromJson(Resource):
 
 @resumes_ns.route('/format-cv-object')
 class FormatFromRawJSON(Resource):
-    @resumes_ns.expect(resume_ns.model('RawCVInput', {
+    @resumes_ns.expect(resumes_ns.model('RawCVInput', {
         'raw_data': fields.String(required=True, description='Raw text extracted from CV'),
         'output_language': fields.String(required=False, default='regular', description="Output language: 'regular' or 'arabic'")
     }))
@@ -1442,7 +1431,7 @@ class Jobs(Resource):
             cursor.close()
             conn.close()
 
-    @resumes_ns.expect(resume_ns.model('JobCreate', {
+    @resumes_ns.expect(resumes_ns.model('JobCreate', {
         'entity': fields.String(description='Entity'),
         'nationality': fields.String(description='Nationality'),
         'gender': fields.String(description='Gender'),
@@ -1553,7 +1542,7 @@ class Jobs(Resource):
             conn.close()
 
 
-job_update_model = resume_ns.model('JobUpdate', {
+job_update_model = resumes_ns.model('JobUpdate', {
     'entity': fields.String(required=False),
     'nationality': fields.String(required=False),
     'gender': fields.String(required=False),
@@ -1766,7 +1755,7 @@ class JobById(Resource):
             conn.close()
 
 
-email_model = resume_ns.model('EmailModel', {
+email_model = resumes_ns.model('EmailModel', {
     'email': fields.String(required=True, description="Applicant's email")
 })
 @resumes_ns.route('/applied-jobs-count')
@@ -1815,7 +1804,7 @@ class AppliedJobsCount(Resource):
             conn.close()
 
 
-send_email_model = resume_ns.model('SendEmailModel', {
+send_email_model = resumes_ns.model('SendEmailModel', {
     'recipient_email': fields.String(required=True, description='Recipient email address'),
     'recipient_name': fields.String(required=True, description='Recipient name')
 })

@@ -31,7 +31,7 @@ class _ResumeApiService implements ResumeApiService {
       Options(method: 'GET', headers: _headers, extra: _extra)
           .compose(
             _dio.options,
-            '/resumes',
+            '',
             queryParameters: queryParameters,
             data: _data,
           )
@@ -64,7 +64,7 @@ class _ResumeApiService implements ResumeApiService {
           )
           .compose(
             _dio.options,
-            '/resumes',
+            '',
             queryParameters: queryParameters,
             data: _data,
           )
@@ -91,7 +91,7 @@ class _ResumeApiService implements ResumeApiService {
       Options(method: 'GET', headers: _headers, extra: _extra)
           .compose(
             _dio.options,
-            '/resumes/${resumeId}',
+            '/${resumeId}',
             queryParameters: queryParameters,
             data: _data,
           )
@@ -127,7 +127,7 @@ class _ResumeApiService implements ResumeApiService {
           )
           .compose(
             _dio.options,
-            '/resumes/${resumeId}',
+            '/${resumeId}',
             queryParameters: queryParameters,
             data: _data,
           )
@@ -154,7 +154,7 @@ class _ResumeApiService implements ResumeApiService {
       Options(method: 'DELETE', headers: _headers, extra: _extra)
           .compose(
             _dio.options,
-            '/resumes/${resumeId}',
+            '/${resumeId}',
             queryParameters: queryParameters,
             data: _data,
           )
@@ -181,7 +181,7 @@ class _ResumeApiService implements ResumeApiService {
       Options(method: 'POST', headers: _headers, extra: _extra)
           .compose(
             _dio.options,
-            '/resumes/${resumeId}/duplicate',
+            '/${resumeId}/duplicate',
             queryParameters: queryParameters,
             data: _data,
           )
@@ -208,7 +208,7 @@ class _ResumeApiService implements ResumeApiService {
       Options(method: 'POST', headers: _headers, extra: _extra)
           .compose(
             _dio.options,
-            '/resumes/${resumeId}/export/pdf',
+            '/${resumeId}/export/pdf',
             queryParameters: queryParameters,
             data: _data,
           )
@@ -235,7 +235,7 @@ class _ResumeApiService implements ResumeApiService {
       Options(method: 'POST', headers: _headers, extra: _extra)
           .compose(
             _dio.options,
-            '/resumes/${resumeId}/export/word',
+            '/${resumeId}/export/word',
             queryParameters: queryParameters,
             data: _data,
           )
@@ -261,7 +261,7 @@ class _ResumeApiService implements ResumeApiService {
       Options(method: 'POST', headers: _headers, extra: _extra)
           .compose(
             _dio.options,
-            '/resumes/${resumeId}/translate',
+            '/${resumeId}/translate',
             queryParameters: queryParameters,
             data: _data,
           )

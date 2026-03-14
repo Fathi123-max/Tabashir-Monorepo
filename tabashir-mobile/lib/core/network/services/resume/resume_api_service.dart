@@ -29,20 +29,20 @@ abstract class ResumeApiService {
 
   /// GET /resumes
   /// List all resumes for the authenticated user
-  @GET('/resumes')
+  @GET('')
   Future<ResumeListResponse> getResumes();
 
   /// POST /resumes
   /// Upload a new resume file
   @MultiPart()
-  @POST('/resumes')
+  @POST('')
   Future<ResumeUploadResponse> uploadResume(
     @Part(name: 'file') MultipartFile file,
   );
 
   /// GET /resumes/{id}
   /// Get specific resume details
-  @GET('/resumes/{id}')
+  @GET('/{id}')
   Future<ResumeDetailsResponse> getResume(
     @Path('id') String resumeId,
   );
@@ -50,7 +50,7 @@ abstract class ResumeApiService {
   /// PUT /resumes/{id}
   /// Update a resume (re-upload file)
   @MultiPart()
-  @PUT('/resumes/{id}')
+  @PUT('/{id}')
   Future<ResumeUploadResponse> updateResume(
     @Path('id') String resumeId,
     @Part(name: 'file') MultipartFile file,
@@ -58,35 +58,35 @@ abstract class ResumeApiService {
 
   /// DELETE /resumes/{id}
   /// Delete a resume
-  @DELETE('/resumes/{id}')
+  @DELETE('/{id}')
   Future<ResumeDeleteResponse> deleteResume(
     @Path('id') String resumeId,
   );
 
   /// POST /resumes/{id}/duplicate
   /// Duplicate a resume
-  @POST('/resumes/{id}/duplicate')
+  @POST('/{id}/duplicate')
   Future<ResumeDuplicateResponse> duplicateResume(
     @Path('id') String resumeId,
   );
 
   /// POST /resumes/{id}/export/pdf
   /// Export resume as PDF
-  @POST('/resumes/{id}/export/pdf')
+  @POST('/{id}/export/pdf')
   Future<ResumeExportResponse> exportResumeAsPdf(
     @Path('id') String resumeId,
   );
 
   /// POST /resumes/{id}/export/word
   /// Export resume as Word document
-  @POST('/resumes/{id}/export/word')
+  @POST('/{id}/export/word')
   Future<HttpResponse> exportResumeAsWord(
     @Path('id') String resumeId,
   );
 
   /// POST /resumes/{id}/translate
   /// Translate resume to another language
-  @POST('/resumes/{id}/translate')
+  @POST('/{id}/translate')
   Future<ResumeTranslateResponse> translateResume(
     @Path('id') String resumeId,
     @Body() Map<String, dynamic> request,

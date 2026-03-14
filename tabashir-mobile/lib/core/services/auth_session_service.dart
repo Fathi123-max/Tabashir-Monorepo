@@ -146,7 +146,6 @@ class AuthSessionService {
           baseUrl: '${dotenv.env['API_BASE_URL']}',
           headers: {
             'Content-Type': 'application/json',
-            'x-api-token': ApiConfig.appApiToken,
           },
         ),
       );
@@ -156,7 +155,7 @@ class AuthSessionService {
       print('[AUTH_SESSION] Refresh token (first 20 chars): ${currentRefreshToken.substring(0, 20)}...');
 
       final response = await dio.post(
-        '/mobile/auth/refresh',
+        '/api/v1/auth/refresh',
         data: {'refreshToken': currentRefreshToken},
       );
 
