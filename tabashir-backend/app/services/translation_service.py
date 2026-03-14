@@ -1,22 +1,18 @@
 """
-Job Translation Service using DeepSeek API
+Job Translation Service using LLM API
 Handles translation of job fields from English to Arabic
 """
 
 from typing import Dict, Optional
-from openai import OpenAI
+from app.services.cv_processor import get_openai_client
 from app.config import Config
 
 class JobTranslationService:
-    """Service for translating job fields using DeepSeek API"""
+    """Service for translating job fields using LLM API"""
     
     def __init__(self):
-        """Initialize the translation service with DeepSeek API"""
-        self.client = OpenAI(
-            api_key=Config.DEEPSEEK_API_KEY,
-            base_url="https://api.deepseek.com"
-        )
-        
+        """Initialize the translation service"""
+        # We don't instantiate the client here, we will fetch it dynamically per request
         self.translatable_fields = [
             'job_title', 'job_description', 'academic_qualification',
             'experience', 'languages', 'salary', 'working_hours', 
@@ -53,7 +49,7 @@ class JobTranslationService:
     
     def translate_text(self, text: str, context: str = "") -> str:
         """
-        Translate text using DeepSeek API
+        Translate text using LLM API
         
         Args:
             text: Text to translate
@@ -68,8 +64,9 @@ class JobTranslationService:
         prompt = self._create_translation_prompt(text, context)
         
         try:
-            response = self.client.chat.completions.create(
-                model="deepseek-chat",
+            client, model = get_openai_client()
+            response = client.chat.completions.create(
+                model=model,
                 messages=[{"role": "user", "content": prompt}],
                 max_tokens=2000,
                 temperature=0.3,
@@ -84,7 +81,7 @@ class JobTranslationService:
             return translated_text
             
         except Exception as e:
-            print(f"DeepSeek API error for text '{text[:50]}...': {e}")
+            print(f"LLM API error for text '{text[:50]}...': {e}")
             raise
     
     def _create_translation_prompt(self, text: str, context: str) -> str:

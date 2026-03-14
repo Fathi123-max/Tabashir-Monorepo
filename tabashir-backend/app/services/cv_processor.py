@@ -8,16 +8,32 @@ from app.models.cv_models import *
 
 
 def get_openai_client():
-    config = current_app.config
-    provider = config.get('LLM_PROVIDER', 'openai').lower()
+    import os
+    from openai import OpenAI
+    
+    # Read from environment variables with defaults for InceptionLabs AI
+    api_key = os.environ.get("LLM_API_KEY", os.environ.get("OPENAI_API_KEY"))
+    base_url = os.environ.get("LLM_BASE_URL", "https://api.inceptionlabs.ai/v1")
+    model = os.environ.get("LLM_MODEL", "mercury-2")
+    
+    if not api_key:
+        # Fallback to current app config if env vars are missing
+        config = current_app.config
+        provider = config.get('LLM_PROVIDER', 'openai').lower()
 
-    if provider == 'deepseek':
-        return OpenAI(
-            api_key=config['DEEPSEEK_API_KEY'],
-            base_url="https://api.deepseek.com"
-        ), "deepseek-chat"
-    else:
-        return OpenAI(api_key=config['OPENAI_API_KEY']), "gpt-4o"
+        if provider == 'deepseek':
+            return OpenAI(
+                api_key=config['DEEPSEEK_API_KEY'],
+                base_url="https://api.deepseek.com"
+            ), "deepseek-chat"
+        else:
+            return OpenAI(api_key=config['OPENAI_API_KEY']), "gpt-4o"
+        
+    client = OpenAI(
+        api_key=api_key,
+        base_url=base_url
+    )
+    return client, model
 
 def chat_with_model(messages) -> str:
     """Helper function to create a conversation and get AI-generated responses."""
