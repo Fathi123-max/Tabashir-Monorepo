@@ -112,7 +112,7 @@ class ResumeList(Resource):
                 "resume": {
                     "id": resume_id,
                     "filename": filename,
-                    "originalUrl": original_url,
+                    "originalUrl": f"{request.host_url.rstrip('/')}/api/v1/resumes/{resume_id}/download",
                     "formatedUrl": None,
                     "isAiResume": False,
                     "createdAt": datetime.utcnow().isoformat(),
@@ -140,9 +140,15 @@ class ResumeList(Resource):
         
         # Convert to list of dicts and handle datetime
         resume_list = []
+        base_url = request.host_url.rstrip('/')
         for r in resumes:
             r_dict = dict(r)
             r_dict['isAiResume'] = bool(r_dict.get('isAiResume', False))
+            
+            # Construct download URL if originalUrl is just a filename
+            if r_dict.get('originalUrl') and not r_dict['originalUrl'].startswith('http'):
+                r_dict['originalUrl'] = f"{base_url}/api/v1/resumes/{r_dict['id']}/download"
+                
             for key in ['createdAt', 'updatedAt']:
                 if r_dict.get(key):
                     r_dict[key] = r_dict[key].isoformat()
@@ -175,6 +181,12 @@ class ResumeDetail(Resource):
             return {"success": False, "message": "Resume not found"}, HTTPStatus.NOT_FOUND
             
         resume_dict = dict(resume)
+        
+        # Construct download URL if originalUrl is just a filename
+        if resume_dict.get('originalUrl') and not resume_dict['originalUrl'].startswith('http'):
+            base_url = request.host_url.rstrip('/')
+            resume_dict['originalUrl'] = f"{base_url}/api/v1/resumes/{resume_id}/download"
+            
         for key in ['createdAt', 'updatedAt']:
             if resume_dict.get(key):
                 resume_dict[key] = resume_dict[key].isoformat()
