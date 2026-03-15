@@ -23,7 +23,7 @@ class HomeApiService {
   final AuthDioClient _authDioClient;
   final LocalStorageService _localStorageService;
 
-  static const String _homeBaseUrl = '/api/v1/home';
+  static const String _homeBaseUrl = '/v1/home';
 
   /// Fetch home dashboard data including featured jobs and user statistics
   Future<HomeDashboardResponse> getHomeDashboardData({

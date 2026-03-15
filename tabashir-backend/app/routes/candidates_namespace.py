@@ -36,16 +36,16 @@ class PersonalInfo(Resource):
         user_id = request.user_id
         data = request.json
         
-        # 1. Update basic User info
+        # 1. Update basic User info (using 'users' table name)
         execute_query(
-            '''UPDATE "User" 
+            '''UPDATE users 
                SET name = %s, "updatedAt" = NOW() 
                WHERE id = %s''',
             (data.get('fullName'), user_id),
             commit=True
         )
 
-        # 2. Upsert Candidate profile
+        # 2. Ensure Candidate record exists
         candidate = execute_query(
             'SELECT id FROM "Candidate" WHERE "userId" = %s',
             (user_id,),
@@ -55,18 +55,37 @@ class PersonalInfo(Resource):
         if not candidate:
             candidate_id = str(uuid.uuid4())
             execute_query(
-                '''INSERT INTO "Candidate" 
-                   (id, "userId", phone, country, city, "createdAt", "updatedAt") 
-                   VALUES (%s, %s, %s, %s, %s, NOW(), NOW())''',
-                (candidate_id, user_id, data.get('phone'), data.get('country'), data.get('city')),
+                '''INSERT INTO "Candidate" (id, "userId", "createdAt", "updatedAt") 
+                   VALUES (%s, %s, NOW(), NOW())''',
+                (candidate_id, user_id),
+                commit=True
+            )
+        else:
+            candidate_id = candidate['id']
+
+        # 3. Upsert CandidateProfile info
+        location = f"{data.get('city', '')}, {data.get('country', '')}".strip(', ')
+        
+        profile = execute_query(
+            'SELECT id FROM "CandidateProfile" WHERE "candidateId" = %s',
+            (candidate_id,),
+            fetch_one=True
+        )
+
+        if not profile:
+            execute_query(
+                '''INSERT INTO "CandidateProfile" 
+                   (id, "candidateId", phone, location, "createdAt", "updatedAt") 
+                   VALUES (%s, %s, %s, %s, NOW(), NOW())''',
+                (str(uuid.uuid4()), candidate_id, data.get('phone'), location),
                 commit=True
             )
         else:
             execute_query(
-                '''UPDATE "Candidate" 
-                   SET phone = %s, country = %s, city = %s, "updatedAt" = NOW() 
-                   WHERE "userId" = %s''',
-                (data.get('phone'), data.get('country'), data.get('city'), user_id),
+                '''UPDATE "CandidateProfile" 
+                   SET phone = %s, location = %s, "updatedAt" = NOW() 
+                   WHERE "candidateId" = %s''',
+                (data.get('phone'), location, candidate_id),
                 commit=True
             )
 
@@ -99,15 +118,30 @@ class ProfessionalInfo(Resource):
 
         candidate_id = candidate['id']
 
-        # 2. Update candidate with professional info
-        execute_query(
-            '''UPDATE "Candidate" 
-               SET summary = %s, "jobType" = %s, experience = %s, 
-                   "onboardingCompleted" = true, "updatedAt" = NOW() 
-               WHERE id = %s''',
-            (data.get('summary'), data.get('jobType'), data.get('experience'), candidate_id),
-            commit=True
+        # 2. Update candidate profile with professional info
+        profile = execute_query(
+            'SELECT id FROM "CandidateProfile" WHERE "candidateId" = %s',
+            (candidate_id,),
+            fetch_one=True
         )
+
+        if not profile:
+            execute_query(
+                '''INSERT INTO "CandidateProfile" 
+                   (id, "candidateId", "jobType", experience, skills, languages, "onboardingCompleted", "createdAt", "updatedAt") 
+                   VALUES (%s, %s, %s, %s, %s, %s, true, NOW(), NOW())''',
+                (str(uuid.uuid4()), candidate_id, data.get('jobType'), data.get('experience'), data.get('skills', []), data.get('languages', [])),
+                commit=True
+            )
+        else:
+            execute_query(
+                '''UPDATE "CandidateProfile" 
+                   SET "jobType" = %s, experience = %s, skills = %s, languages = %s,
+                       "onboardingCompleted" = true, "updatedAt" = NOW() 
+                   WHERE "candidateId" = %s''',
+                (data.get('jobType'), data.get('experience'), data.get('skills', []), data.get('languages', []), candidate_id),
+                commit=True
+            )
 
         return {
             "success": True,

@@ -2,6 +2,7 @@ import os
 import uuid
 import shutil
 import re
+from math import ceil
 from datetime import datetime, timedelta
 from dateutil.relativedelta import relativedelta
 from flask import request, send_file, jsonify, make_response
@@ -128,7 +129,7 @@ class ResumeList(Resource):
         user_id = request.user_id
         
         resumes = execute_query(
-            """SELECT r.id, r.filename, r."originalUrl" as url, r."createdAt"
+            """SELECT r.id, r.filename, r."originalUrl", r."formatedUrl", r."isAiResume", r."createdAt", r."updatedAt"
                FROM "Resume" r
                JOIN "Candidate" c ON r."candidateId" = c.id
                WHERE c."userId" = %s
@@ -141,8 +142,10 @@ class ResumeList(Resource):
         resume_list = []
         for r in resumes:
             r_dict = dict(r)
-            if r_dict.get('createdAt'):
-                r_dict['createdAt'] = r_dict['createdAt'].isoformat()
+            r_dict['isAiResume'] = bool(r_dict.get('isAiResume', False))
+            for key in ['createdAt', 'updatedAt']:
+                if r_dict.get(key):
+                    r_dict[key] = r_dict[key].isoformat()
             resume_list.append(r_dict)
             
         return {

@@ -34,7 +34,7 @@ class Profile(Resource):
 
         user = execute_query(
             """SELECT u.id, u.email, u.name, u."userType", u."createdAt",
-                      cp.phone, cp.nationality, cp.gender, cp.languages, cp.age,
+                      cp.id as profile_id, cp.phone, cp.nationality, cp.gender, cp.languages, cp.age,
                       cp."profilePicture", cp."jobType", cp.skills, cp.experience,
                       cp.education, cp.degree,
                       cp."onboardingCompleted"
@@ -61,6 +61,7 @@ class Profile(Resource):
                 "userType": user_dict.get('userType')
             },
             "profile": {
+                "id": user_dict.get('profile_id') or '',
                 "phone": user_dict.get('phone'),
                 "nationality": user_dict.get('nationality'),
                 "gender": user_dict.get('gender'),
@@ -160,7 +161,7 @@ class MobileMe(Resource):
 
         user = execute_query(
             """SELECT u.id, u.email, u.name, u."userType",
-                      cp.phone, cp.nationality, cp.gender, cp.languages, cp.age,
+                      cp.id as profile_id, cp.phone, cp.nationality, cp.gender, cp.languages, cp.age,
                       cp."profilePicture", cp."jobType", cp.skills, cp.experience,
                       cp.education, cp.degree, cp."onboardingCompleted"
                FROM users u
@@ -172,6 +173,7 @@ class MobileMe(Resource):
         )
 
         counts = {
+            "totalResumes": 0,
             "totalApplications": 0,
             "savedJobs": 0,
             "inReview": 0,
@@ -181,6 +183,16 @@ class MobileMe(Resource):
         }
 
         if user:
+            try:
+                # Get resume count
+                res_row = execute_query(
+                    'SELECT COUNT(*) as count FROM "Resume" r JOIN "Candidate" c ON r."candidateId" = c.id WHERE c."userId" = %s',
+                    (user_id,), fetch_one=True
+                )
+                if res_row:
+                    counts['totalResumes'] = res_row.get('count', 0)
+            except Exception:
+                pass
             try:
                 row = execute_query(
                     'SELECT COUNT(*) as count FROM "SavedJobPost" WHERE "userId" = %s',
@@ -218,18 +230,19 @@ class MobileMe(Resource):
                 "name": user['name'] if user else '',
                 "userType": user.get('userType', 'CANDIDATE') if user else 'CANDIDATE'
             },
-            "profile": {
-                "phone": user.get('phone') if user else None,
-                "nationality": user.get('nationality') if user else None,
-                "gender": user.get('gender') if user else None,
+            "candidateProfile": {
+                "id": user.get('profile_id') if user else '',
+                "phone": user.get('phone') if user else '',
+                "nationality": user.get('nationality') if user else '',
+                "gender": user.get('gender') if user else '',
                 "languages": user.get('languages') or [] if user else [],
                 "age": user.get('age') if user else None,
                 "profilePicture": user.get('profilePicture') if user else None,
-                "jobType": user.get('jobType') if user else None,
+                "jobType": user.get('jobType') if user else '',
                 "skills": user.get('skills') or [] if user else [],
-                "experience": user.get('experience') if user else None,
-                "education": user.get('education') if user else None,
-                "degree": user.get('degree') if user else None,
+                "experience": user.get('experience') if user else '',
+                "education": user.get('education') if user else '',
+                "degree": user.get('degree') if user else '',
                 "onboardingCompleted": user.get('onboardingCompleted', False) if user else False
             },
             "subscription": {
