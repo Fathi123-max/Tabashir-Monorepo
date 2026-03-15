@@ -523,6 +523,50 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             }
                           },
                         ),
+                        SizedBox(height: AppTheme.spacingSm.h),
+                        MenuTile(
+                          icon: Icons.delete_outline,
+                          text: 'Delete Account'.tr(),
+                          showLogoutColor: true,
+                          trailing: const SizedBox(),
+                          onTap: () async {
+                            final shouldDelete = await showDialog<bool>(
+                              context: context,
+                              builder: (context) => AlertDialog(
+                                title: Text(
+                                  'Delete Account'.tr(),
+                                  style: const TextStyle(color: Colors.red),
+                                ),
+                                content: Text(
+                                  'Are you sure you want to delete your account? This action cannot be undone and all your data will be permanently removed.'
+                                      .tr(),
+                                ),
+                                actions: [
+                                  TextButton(
+                                    onPressed: () =>
+                                        Navigator.of(context).pop(false),
+                                    child: Text('Cancel'.tr()),
+                                  ),
+                                  TextButton(
+                                    onPressed: () =>
+                                        Navigator.of(context).pop(true),
+                                    style: TextButton.styleFrom(
+                                      foregroundColor: Colors.red,
+                                    ),
+                                    child: Text('Delete'.tr()),
+                                  ),
+                                ],
+                              ),
+                            );
+
+                            if (shouldDelete ?? false) {
+                              await _profileCubit.deleteAccount();
+                              if (mounted) {
+                                context.go(RouteNames.login);
+                              }
+                            }
+                          },
+                        ),
                       ],
 
                       SizedBox(

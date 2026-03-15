@@ -8,6 +8,7 @@ import 'package:tabashir/core/network/models/candidate/professional_info_request
 import 'package:tabashir/core/network/models/candidate/onboarding_response.dart';
 import 'package:tabashir/core/network/models/profile/profile_update_request.dart';
 import 'package:tabashir/core/network/services/user/user_api_service.dart';
+import 'package:tabashir/core/network/services/auth/auth_api_service.dart';
 import 'package:tabashir/features/profile/domain/repositories/profile_repository.dart';
 
 /// Implementation of [ProfileRepository]
@@ -16,10 +17,12 @@ import 'package:tabashir/features/profile/domain/repositories/profile_repository
 class ProfileRepositoryImpl implements ProfileRepository {
   ProfileRepositoryImpl(
     this._userApiService,
+    this._authApiService,
     this._profileIsarRepository,
   );
 
   final UserApiService _userApiService;
+  final AuthApiService _authApiService;
   final ProfileIsarRepository _profileIsarRepository;
 
   @override
@@ -224,6 +227,52 @@ class ProfileRepositoryImpl implements ProfileRepository {
       print('\n[PROFILE_REPO] ❌ Unexpected exception: $e');
       print('########## [PROFILE_REPO] FAILED ##########\n\n');
       throw Exception('Failed to update profile: $e');
+    }
+  }
+
+  @override
+  Future<void> deleteAccount() async {
+    print('\n\n########## [PROFILE_REPO] DELETE ACCOUNT CALLED ##########');
+    try {
+      print('[PROFILE_REPO] Calling AuthApiService.deleteAccount()...');
+      final response = await _authApiService.deleteAccount();
+
+      print('\n[PROFILE_REPO] ✅ API call completed');
+      print('[PROFILE_REPO] Response status: ${response.response.statusCode}');
+
+      if (response.response.statusCode == 200 ||
+          response.response.statusCode == 201) {
+        print('[PROFILE_REPO] ✅ Account deleted successfully');
+
+        // Clear local cache
+        print('[PROFILE_REPO] Clearing local profile cache...');
+        await _profileIsarRepository.clearCache();
+        print('[PROFILE_REPO] ✅ Cache cleared');
+
+        print('########## [PROFILE_REPO] SUCCESS ##########\n\n');
+        return;
+      } else {
+        print(
+          '[PROFILE_REPO] ❌ API returned error status: ${response.response.statusCode}',
+        );
+        throw Exception(
+          'Failed to delete account with status: ${response.response.statusCode}',
+        );
+      }
+    } on DioException catch (e) {
+      print('\n[PROFILE_REPO] ❌ DioException occurred during account deletion');
+      print('[PROFILE_REPO] Type: ${e.type}');
+      print('[PROFILE_REPO] Message: ${e.message}');
+      if (e.response != null) {
+        print('[PROFILE_REPO] Response status: ${e.response?.statusCode}');
+        print('[PROFILE_REPO] Response data: ${e.response?.data}');
+      }
+      print('########## [PROFILE_REPO] FAILED ##########\n\n');
+      throw _handleDioError(e);
+    } catch (e) {
+      print('\n[PROFILE_REPO] ❌ Unexpected exception during account deletion: $e');
+      print('########## [PROFILE_REPO] FAILED ##########\n\n');
+      throw Exception('Failed to delete account: $e');
     }
   }
 

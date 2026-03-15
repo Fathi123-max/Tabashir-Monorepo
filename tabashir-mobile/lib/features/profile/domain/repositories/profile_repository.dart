@@ -28,4 +28,7 @@ abstract class ProfileRepository {
   Future<OnboardingResponse> updateProfessionalInfo({
     required ProfessionalInfoRequest professionalInfo,
   });
+
+  /// Delete user account
+  Future<void> deleteAccount();
 }

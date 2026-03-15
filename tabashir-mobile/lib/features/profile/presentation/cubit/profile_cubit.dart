@@ -171,6 +171,40 @@ class ProfileCubit extends Cubit<ProfileState> {
     }
   }
 
+  Future<void> deleteAccount() async {
+    emit(state.copyWith(status: ProfileStatus.loading));
+
+    try {
+      // Call repository to delete account
+      await _repository.deleteAccount();
+
+      // Clear authentication state
+      await AuthSessionService.instance.setLoggedOut();
+
+      // Clear profile data
+      emit(
+        state.copyWith(
+          status: ProfileStatus.success,
+          profile: null,
+        ),
+      );
+    } on Exception catch (e) {
+      emit(
+        state.copyWith(
+          status: ProfileStatus.failure,
+          errorMessage: e.toString().replaceFirst('Exception: ', ''),
+        ),
+      );
+    } catch (e) {
+      emit(
+        state.copyWith(
+          status: ProfileStatus.failure,
+          errorMessage: 'An unexpected error occurred while deleting your account.',
+        ),
+      );
+    }
+  }
+
   Future<void> navigateToScreen(String screen) async {
     // Handle navigation to different profile-related screens
     // This would typically trigger navigation events

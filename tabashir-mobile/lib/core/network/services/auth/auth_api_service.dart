@@ -38,4 +38,8 @@ abstract class AuthApiService {
   Future<HttpResponse<AuthResponse>> appleSignIn(
     @Body() Map<String, dynamic> request,
   );
+
+  /// Delete user account
+  @DELETE('/auth/account')
+  Future<HttpResponse<Map<String, dynamic>>> deleteAccount();
 }
