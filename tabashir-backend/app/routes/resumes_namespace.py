@@ -111,7 +111,11 @@ class ResumeList(Resource):
                 "resume": {
                     "id": resume_id,
                     "filename": filename,
-                    "url": original_url
+                    "originalUrl": original_url,
+                    "formatedUrl": None,
+                    "isAiResume": False,
+                    "createdAt": datetime.utcnow().isoformat(),
+                    "updatedAt": datetime.utcnow().isoformat()
                 }
             }, HTTPStatus.CREATED
         
