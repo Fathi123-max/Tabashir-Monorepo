@@ -41,5 +41,5 @@ abstract class AuthApiService {
 
   /// Delete user account
   @DELETE('/auth/account')
-  Future<HttpResponse<Map<String, dynamic>>> deleteAccount();
+  Future<void> deleteAccount();
 }

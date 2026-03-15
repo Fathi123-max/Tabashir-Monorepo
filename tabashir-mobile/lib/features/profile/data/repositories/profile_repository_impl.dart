@@ -235,30 +235,17 @@ class ProfileRepositoryImpl implements ProfileRepository {
     print('\n\n########## [PROFILE_REPO] DELETE ACCOUNT CALLED ##########');
     try {
       print('[PROFILE_REPO] Calling AuthApiService.deleteAccount()...');
-      final response = await _authApiService.deleteAccount();
+      await _authApiService.deleteAccount();
 
       print('\n[PROFILE_REPO] ✅ API call completed');
-      print('[PROFILE_REPO] Response status: ${response.response.statusCode}');
 
-      if (response.response.statusCode == 200 ||
-          response.response.statusCode == 201) {
-        print('[PROFILE_REPO] ✅ Account deleted successfully');
+      // Clear local cache
+      print('[PROFILE_REPO] Clearing local profile cache...');
+      await _profileIsarRepository.clearAllProfiles();
+      print('[PROFILE_REPO] ✅ Cache cleared');
 
-        // Clear local cache
-        print('[PROFILE_REPO] Clearing local profile cache...');
-        await _profileIsarRepository.clearCache();
-        print('[PROFILE_REPO] ✅ Cache cleared');
-
-        print('########## [PROFILE_REPO] SUCCESS ##########\n\n');
-        return;
-      } else {
-        print(
-          '[PROFILE_REPO] ❌ API returned error status: ${response.response.statusCode}',
-        );
-        throw Exception(
-          'Failed to delete account with status: ${response.response.statusCode}',
-        );
-      }
+      print('########## [PROFILE_REPO] SUCCESS ##########\n\n');
+      return;
     } on DioException catch (e) {
       print('\n[PROFILE_REPO] ❌ DioException occurred during account deletion');
       print('[PROFILE_REPO] Type: ${e.type}');
