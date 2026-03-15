@@ -7,7 +7,7 @@ import 'package:tabashir/core/network/models/_base/api_response.dart';
 part 'notification_api_service.g.dart';
 part 'notification_api_service.freezed.dart';
 
-@RestApi(baseUrl: '/api/v1/mobile')
+@RestApi(baseUrl: '/api/v1/home')
 abstract class NotificationApiService {
   factory NotificationApiService(Dio dio, {String baseUrl}) = _NotificationApiService;
 

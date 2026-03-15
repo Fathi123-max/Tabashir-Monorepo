@@ -37,7 +37,7 @@ class ProfileRepositoryImpl implements ProfileRepository {
 
       // Fetch from API
       print('[PROFILE_REPO] Calling UserApiService.getUserProfile()...');
-      print('[PROFILE_REPO] Using comprehensive mobile API: /api/mobile/me');
+      print('[PROFILE_REPO] Using comprehensive unified API: /api/v1/users/me');
       final response = await _userApiService.getUserProfile();
 
       print('\n[PROFILE_REPO] ✅ API call completed');

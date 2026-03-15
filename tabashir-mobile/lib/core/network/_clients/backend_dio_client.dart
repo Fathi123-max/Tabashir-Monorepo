@@ -49,11 +49,11 @@ class BackendDioClient {
             print('[BACKEND_DIO] 401 Unauthorized for path: $requestPath');
 
             // Check if this is an auth endpoint
-            // For auth endpoints (/mobile/auth/login, /mobile/auth/register), 401 means invalid credentials - clear state
+            // For auth endpoints (/api/v1/auth/login, /api/v1/auth/register), 401 means invalid credentials - clear state
             final authEndpoints = [
-              '/mobile/auth/login',
-              '/mobile/auth/register',
-              '/mobile/auth/refresh',
+              '/api/v1/auth/login',
+              '/api/v1/auth/register',
+              '/api/v1/auth/refresh',
             ];
 
             final isAuthEndpoint = authEndpoints.any(

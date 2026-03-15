@@ -8,12 +8,10 @@ class ApiConstants {
   /// Production Backend URL for CV processing and job matching
   /// Used by TabashirApiService for: format, translate, apply, jobs
   static String get productionBackendUrl =>
-      '$baseUrl/api/v1/resume';
+      '$baseUrl/api/v1/resumes';
 
-  /// Development Backend URL for resume CRUD operations (testing only)
-  /// Used by ResumeApiService for: upload, list, get, update, delete
-  /// NOTE: Only available in development environment
-  static String get devBackendUrl => '$baseUrl/api/v1/mobile';
+  /// Development Backend URL for generic CRUD operations
+  static String get devBackendUrl => '$baseUrl/api/v1';
 
   /// Authentication endpoints
   static const String loginEndpoint = '/auth/login';

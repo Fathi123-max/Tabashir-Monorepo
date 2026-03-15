@@ -5,7 +5,7 @@ from http import HTTPStatus
 from app.database.db import execute_query
 from app.routes.middleware import jwt_required
 
-users_ns = Namespace('user', description='User Profile Endpoints')
+users_ns = Namespace('users', description='User Profile Endpoints')
 
 update_profile_model = users_ns.model('UpdateProfile', {
     'name': fields.String(description='Full name'),
@@ -14,7 +14,7 @@ update_profile_model = users_ns.model('UpdateProfile', {
     'gender': fields.String(description='Gender'),
     'age': fields.Integer(description='Age'),
     'jobType': fields.String(description='Job type'),
-    'jobTitle': fields.String(description='Current job title (alias for jobType)'),
+    'jobTitle': fields.String(description='Current Job title (alias for jobType)'),
     'skills': fields.List(fields.String(), description='Skills'),
     'experience': fields.String(description='Experience'),
     'education': fields.String(description='Education'),
@@ -50,14 +50,16 @@ class Profile(Resource):
             return {"error": "User not found"}, HTTPStatus.NOT_FOUND
 
         user_dict = dict(user)
-        if user_dict.get('createdAt'):
-            user_dict['createdAt'] = user_dict['createdAt'].isoformat()
+        # Convert date objects to strings
+        for key in list(user_dict.keys()):
+            if hasattr(user_dict[key], 'isoformat'):
+                user_dict[key] = user_dict[key].isoformat()
 
         return {
             "user": {
-                "id": user_dict['id'],
-                "email": user_dict['email'],
-                "name": user_dict['name'],
+                "id": user_dict.get('id'),
+                "email": user_dict.get('email'),
+                "name": user_dict.get('name'),
                 "userType": user_dict.get('userType')
             },
             "profile": {
@@ -211,6 +213,22 @@ class MobileMe(Resource):
             except Exception:
                 pass
 
+        # Prepare user profile data safely
+        profile_data = {
+            "phone": user.get('phone') if user else None,
+            "nationality": user.get('nationality') if user else None,
+            "gender": user.get('gender') if user else None,
+            "languages": user.get('languages') or [] if user else [],
+            "age": user.get('age') if user else None,
+            "profilePicture": user.get('profilePicture') if user else None,
+            "jobType": user.get('jobType') if user else None,
+            "skills": user.get('skills') or [] if user else [],
+            "experience": user.get('experience') if user else None,
+            "education": user.get('education') if user else None,
+            "degree": user.get('degree') if user else None,
+            "onboardingCompleted": user.get('onboardingCompleted', False) if user else False
+        }
+
         return {
             "user": {
                 "id": user['id'] if user else user_id,
@@ -218,20 +236,7 @@ class MobileMe(Resource):
                 "name": user['name'] if user else '',
                 "userType": user.get('userType', 'CANDIDATE') if user else 'CANDIDATE'
             },
-            "profile": {
-                "phone": user.get('phone') if user else None,
-                "nationality": user.get('nationality') if user else None,
-                "gender": user.get('gender') if user else None,
-                "languages": user.get('languages') or [] if user else [],
-                "age": user.get('age') if user else None,
-                "profilePicture": user.get('profilePicture') if user else None,
-                "jobType": user.get('jobType') if user else None,
-                "skills": user.get('skills') or [] if user else [],
-                "experience": user.get('experience') if user else None,
-                "education": user.get('education') if user else None,
-                "degree": user.get('degree') if user else None,
-                "onboardingCompleted": user.get('onboardingCompleted', False) if user else False
-            },
+            "profile": profile_data,
             "subscription": {
                 "plan": "free",
                 "status": "active",
@@ -241,5 +246,3 @@ class MobileMe(Resource):
             },
             "counts": counts
         }, HTTPStatus.OK
-
-

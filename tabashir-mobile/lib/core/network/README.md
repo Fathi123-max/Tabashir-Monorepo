@@ -243,45 +243,45 @@ The service provides the following endpoints:
 - `GET /api/v1/auth/verify-email` - Email verification
 
 ### User Management Endpoints
-- `GET /api/v1/user/mobile/me` - Get user profile data
-- `POST /api/v1/mobile/candidate/onboarding/personal-info` - Update personal info
-- `POST /api/v1/mobile/candidate/onboarding/professional-info` - Update professional info
+- `GET /api/v1/users/me` - Get user profile data
+- `POST /api/v1/candidates/onboarding/personal-info` - Update personal info
+- `POST /api/v1/candidates/onboarding/professional-info` - Update professional info
 
 ### Subscription Endpoints
-- `GET /api/v1/mobile/subscription/latest` - Get latest subscription
-- `GET /api/v1/mobile/subscription/debug` - Debug subscription data
-- `GET /api/v1/mobile/subscription/test` - Test subscription endpoints
+- `GET /api/v1/subscriptions/latest` - Get latest subscription
+- `GET /api/v1/subscriptions/debug` - Debug subscription data
+- `GET /api/v1/subscriptions/test` - Test subscription endpoints
 
 ### Payment Endpoints
-- `POST /api/v1/mobile/payment-intent` - Create payment intent
-- `POST /api/v1/mobile/stripe/create-checkout-session` - Create Stripe checkout session
-- `GET /api/v1/mobile/payments/latest` - Get latest payment
+- `POST /api/v1/payments/payment-intent` - Create payment intent
+- `POST /api/v1/payments/stripe/create-checkout-session` - Create Stripe checkout session
+- `GET /api/v1/payments/latest` - Get latest payment
 
 ### File Upload Endpoints
-- `POST /api/v1/mobile/uploadthing` - File upload handling
+- `POST /api/v1/uploads/uploadthing` - File upload handling
 
 ### AI Resume Endpoints
-- `POST /api/v1/mobile/ai-resume/create` - Create AI resume
+- `POST /api/v1/resumes/ai-resume/create` - Create AI resume
 
 ### Resume Processing Endpoints
-- `GET /api/v1/resume/applied-jobs` - Get applied jobs for a user
-- `POST /api/v1/resume/applied-jobs-count` - Get count of applied jobs
-- `POST /api/v1/resume/apply` - Process resume and find matching jobs
-- `POST /api/v1/resume/format` - Convert CV to ATS format
-- `POST /api/v1/resume/format-cv-object` - Parse raw CV text
-- `POST /api/v1/resume/translate` - Translate CV to Arabic
-- `POST /api/v1/resume/send-linkedin-email` - Send LinkedIn email
-- `GET /api/v1/resume/health` - Health check
+- `GET /api/v1/resumes/applied-jobs` - Get applied jobs for a user
+- `POST /api/v1/resumes/applied-jobs-count` - Get count of applied jobs
+- `POST /api/v1/resumes/apply` - Process resume and find matching jobs
+- `POST /api/v1/resumes/format` - Convert CV to ATS format
+- `POST /api/v1/resumes/format-cv-object` - Parse raw CV text
+- `POST /api/v1/resumes/translate` - Translate CV to Arabic
+- `POST /api/v1/resumes/send-linkedin-email` - Send LinkedIn email
+- `GET /api/v1/resumes/health` - Health check
 
 ### Job Endpoints
-- `GET /api/v1/resume/jobs` - Get all jobs
-- `GET /api/v1/resume/jobs/count-by-city` - Get job counts by city
-- `GET /api/v1/resume/jobs/monthly-count` - Get monthly job counts
-- `GET /api/v1/resume/jobs/{job_id}` - Get job details
-- `GET /api/v1/resume/jobs/{job_id}/applicants-count` - Get applicant count
-- `POST /api/v1/resume/jobs` - Create a new job
-- `PUT /api/v1/resume/jobs/{job_id}` - Update a job
-- `POST /api/v1/resume/{job_id}/apply` - Apply to a specific job
+- `GET /api/v1/resumes/jobs` - Get all jobs
+- `GET /api/v1/resumes/jobs/count-by-city` - Get job counts by city
+- `GET /api/v1/resumes/jobs/monthly-count` - Get monthly job counts
+- `GET /api/v1/resumes/jobs/{job_id}` - Get job details
+- `GET /api/v1/resumes/jobs/{job_id}/applicants-count` - Get applicant count
+- `POST /api/v1/resumes/jobs` - Create a new job
+- `PUT /api/v1/resumes/jobs/{job_id}` - Update a job
+- `POST /api/v1/resumes/{job_id}/apply` - Apply to a specific job
 
 ## Error Handling
 

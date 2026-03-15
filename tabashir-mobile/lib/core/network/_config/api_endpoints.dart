@@ -58,27 +58,27 @@ class ApiEndpoints {
   // Resume & Job Processing Endpoints
   // (backend.tabashir.ae)
   // ==========================================
-  static const String resumeAppliedJobs = '/api/v1/resume/applied-jobs';
+  static const String resumeAppliedJobs = '/api/v1/resumes/applied-jobs';
   static const String resumeAppliedJobsCount =
-      '/api/v1/resume/applied-jobs-count';
-  static const String resumeApply = '/api/v1/resume/apply';
-  static const String resumeFormat = '/api/v1/resume/format';
-  static const String resumeFormatCvObject = '/api/v1/resume/format-cv-object';
-  static const String resumeTranslate = '/api/v1/resume/translate';
+      '/api/v1/resumes/applied-jobs-count';
+  static const String resumeApply = '/api/v1/resumes/apply';
+  static const String resumeFormat = '/api/v1/resumes/format';
+  static const String resumeFormatCvObject = '/api/v1/resumes/format-cv-object';
+  static const String resumeTranslate = '/api/v1/resumes/translate';
   static const String resumeSendLinkedInEmail =
-      '/api/v1/resume/send-linkedin-email';
-  static const String resumeHealth = '/api/v1/resume/health';
+      '/api/v1/resumes/send-linkedin-email';
+  static const String resumeHealth = '/api/v1/resumes/health';
 
   // ==========================================
   // Job Endpoints
   // ==========================================
-  static const String jobs = '/api/v1/resume/jobs';
-  static const String jobsCountByCity = '/api/v1/resume/jobs/count-by-city';
-  static const String jobsMonthlyCount = '/api/v1/resume/jobs/monthly-count';
-  static String jobsById(String jobId) => '/api/v1/resume/jobs/$jobId';
+  static const String jobs = '/api/v1/resumes/jobs';
+  static const String jobsCountByCity = '/api/v1/resumes/jobs/count-by-city';
+  static const String jobsMonthlyCount = '/api/v1/resumes/jobs/monthly-count';
+  static String jobsById(String jobId) => '/api/v1/resumes/jobs/$jobId';
   static String jobsApplicantsCount(String jobId) =>
-      '/api/v1/resume/jobs/$jobId/applicants-count';
-  static const String jobsCreate = '/api/v1/resume/jobs';
-  static String jobsUpdate(String jobId) => '/api/v1/resume/jobs/$jobId';
-  static String jobApply(String jobId) => '/api/v1/resume/$jobId/apply';
+      '/api/v1/resumes/jobs/$jobId/applicants-count';
+  static const String jobsCreate = '/api/v1/resumes/jobs';
+  static String jobsUpdate(String jobId) => '/api/v1/resumes/jobs/$jobId';
+  static String jobApply(String jobId) => '/api/v1/resumes/$jobId/apply';
 }

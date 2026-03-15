@@ -114,7 +114,7 @@ class _SavedJobsApiService implements SavedJobsApiService {
       Options(method: 'POST', headers: _headers, extra: _extra)
           .compose(
             _dio.options,
-            '/mobile/sync-jobs',
+            '/jobs/sync-jobs',
             queryParameters: queryParameters,
             data: _data,
           )

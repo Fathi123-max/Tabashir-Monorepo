@@ -37,10 +37,10 @@ abstract class SavedJobsApiService {
     @Path('jobId') String jobId,
   );
 
-  /// POST /mobile/sync-jobs
+  /// POST /jobs/sync-jobs
   /// Sync jobs from external API to local database
   /// Body: { jobs: Array<{id: string, title: string, ...}> }
-  @POST('/mobile/sync-jobs')
+  @POST('/jobs/sync-jobs')
   Future<dynamic> syncJobs(
     @Body() Map<String, dynamic> requestBody,
   );

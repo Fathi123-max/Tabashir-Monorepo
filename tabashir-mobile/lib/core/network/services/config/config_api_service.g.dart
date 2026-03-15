@@ -12,7 +12,7 @@ part of 'config_api_service.dart';
 
 class _ConfigApiService implements ConfigApiService {
   _ConfigApiService(this._dio, {this.baseUrl, this.errorLogger}) {
-    baseUrl ??= '/api/v1';
+    baseUrl ??= '/api/v1/home';
   }
 
   final Dio _dio;
@@ -31,7 +31,7 @@ class _ConfigApiService implements ConfigApiService {
       Options(method: 'GET', headers: _headers, extra: _extra)
           .compose(
             _dio.options,
-            '/mobile/ai-job-apply/config',
+            '/ai-job-apply/config',
             queryParameters: queryParameters,
             data: _data,
           )

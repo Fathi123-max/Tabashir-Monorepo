@@ -54,6 +54,7 @@ class Dashboard(Resource):
             )
         except Exception:
             try:
+                # Fallback to legacy jobs table if mobile Job table doesn't have data
                 recent_jobs = execute_query(
                     """SELECT id, job_title as title, company_name as company, NULL as "companyLogo", job_type as "jobType", vacancy_city as location
                        FROM jobs
@@ -91,15 +92,16 @@ class Trending(Resource):
         try:
             jobs = execute_query(
                 """SELECT id, title, company, "companyLogo", "jobType",
-                          "salaryMin", "salaryMax", location, "views"
+                          "salaryMin", "salaryMax", location, views
                    FROM "Job"
                    WHERE status = 'ACTIVE'
-                   ORDER BY "views" DESC, "createdAt" DESC
+                   ORDER BY views DESC, "createdAt" DESC
                    LIMIT 10""",
                 fetch_all=True
             )
             return {"trending": jobs or []}, HTTPStatus.OK
-        except Exception:
+        except Exception as e:
+            print(f"Error in trending: {e}")
             return {"trending": []}, HTTPStatus.OK
 
 
@@ -119,7 +121,8 @@ class Recommendations(Resource):
                 fetch_all=True
             )
             return {"recommendations": jobs or []}, HTTPStatus.OK
-        except Exception:
+        except Exception as e:
+            print(f"Error in recommendations: {e}")
             return {"recommendations": []}, HTTPStatus.OK
 
 
@@ -201,7 +204,7 @@ class MarketInsights(Resource):
 
             top_locations = execute_query(
                 """SELECT location, COUNT(*) as count
-                   FROM "Job"
+                   FROM \"Job\"
                    WHERE status = 'ACTIVE'
                    GROUP BY location
                    ORDER BY count DESC
@@ -210,10 +213,10 @@ class MarketInsights(Resource):
             )
 
             job_types = execute_query(
-                """SELECT "jobType", COUNT(*) as count
-                   FROM "Job"
-                   WHERE status = 'ACTIVE' AND "jobType" IS NOT NULL
-                   GROUP BY "jobType"
+                """SELECT \"jobType\", COUNT(*) as count
+                   FROM \"Job\"
+                   WHERE status = 'ACTIVE' AND \"jobType\" IS NOT NULL
+                   GROUP BY \"jobType\"
                    ORDER BY count DESC""",
                 fetch_all=True
             )
@@ -251,6 +254,7 @@ class MarketInsights(Resource):
                 }
             }, HTTPStatus.OK
         except Exception as e:
+            print(f"Error in market insights: {e}")
             return {
                 "totalJobs": 0,
                 "newJobsThisWeek": 0,
@@ -281,8 +285,8 @@ class AIJobApplyConfig(Resource):
         user_id = request.user_id
 
         user = execute_query(
-            """SELECT "aiJobApplyCount", "jobCount"
-               FROM "User"
+            """SELECT \"aiJobApplyCount\", \"jobCount\"
+               FROM users
                WHERE id = %s""",
             (user_id,),
             fetch_one=True

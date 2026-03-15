@@ -10,15 +10,13 @@ The `tabashir-backend` is an AI-powered Python backend application designed to p
   - **NLP & Documents:** PyMuPDF, PyPDF2, SpaCy (`en_core_web_sm`), `docxtpl` (Word template rendering).
   - **Database:** PostgreSQL (Neon) accessed via `psycopg2` (RealDictCursor).
 - **Authentication:**
-  - Inter-service endpoints (e.g. `/api/v1/resume/*`) require an `X-API-TOKEN`.
-  - User-facing mobile endpoints (e.g. `/api/mobile/*`) require a Bearer JWT.
+  - User-facing endpoints (e.g. `/api/v1/*`) require a Bearer JWT.
 
 ## Architecture
 
-The backend operates two main entry points, utilizing Flask Blueprints and Namespaces:
+The backend operates a unified entry point, utilizing Flask Blueprints and Namespaces:
 
-1. **Core Resume Processing (`run_root.py` - Port 5001/5050):** Handles heavy NLP tasks, AI transformation, text extraction, and Word/PDF generation.
-2. **Mobile API Layer (`run_new.py` - Port 5051):** Endpoints specifically designed for mobile authentication, home dashboard, and user profiles.
+1. **Unified API (`run.py` - Port 5050):** Handles all NLP tasks, user management, jobs, and candidate onboarding.
 
 ### Key Directories
 - `app/routes/`: API endpoint definitions (Flask-RestX Namespaces).
@@ -56,11 +54,8 @@ python -m spacy download en_core_web_sm
 
 ### Run the Servers
 ```bash
-# Run the core resume API (Port 5001)
-python run_root.py
-
-# Run the mobile API layer (Port 5051)
-python run_new.py
+# Run the unified API (Port 5050)
+python run.py
 ```
 
 ### Background Tasks

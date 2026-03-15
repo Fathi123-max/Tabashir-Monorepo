@@ -8,12 +8,12 @@ import '../../models/config/ai_job_apply_config_response.dart';
 part 'config_api_service.g.dart';
 
 /// Configuration API client for fetching app configuration
-@RestApi(baseUrl: '/api/v1')
+@RestApi(baseUrl: '/api/v1/home')
 abstract class ConfigApiService {
   factory ConfigApiService(Dio dio) = _ConfigApiService;
 
   /// Get AI Job Apply configuration from backend
   /// Returns roles, locations, nationalities, and settings
-  @GET('/mobile/ai-job-apply/config')
+  @GET('/ai-job-apply/config')
   Future<HttpResponse<AiJobApplyConfigResponse>> getAiJobApplyConfig();
 }
