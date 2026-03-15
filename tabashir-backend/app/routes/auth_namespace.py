@@ -177,6 +177,11 @@ class Account(Resource):
                 
             email = user['email']
 
+            # Execute deletion across tables.
+            # Using execute_query sequentially but it ideally should be a single transaction
+            # db.py's execute_query connects and disconnects per call, so we'll do them one by one.
+            # A failure midway might leave orphaned data, but we'll try to delete dependents first.
+
             # 2. Delete Saved Jobs & Job Applications
             execute_query('DELETE FROM "SavedJobPost" WHERE "userId" = %s', (user_id,), commit=True)
             execute_query('DELETE FROM "JobApplication" WHERE "userId" = %s', (user_id,), commit=True)

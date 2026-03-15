@@ -38,7 +38,7 @@ class PersonalInfo(Resource):
         
         # 1. Update basic User info
         execute_query(
-            '''UPDATE users 
+            '''UPDATE "User" 
                SET name = %s, "updatedAt" = NOW() 
                WHERE id = %s''',
             (data.get('fullName'), user_id),
@@ -56,35 +56,17 @@ class PersonalInfo(Resource):
             candidate_id = str(uuid.uuid4())
             execute_query(
                 '''INSERT INTO "Candidate" 
-                   (id, "userId", "createdAt", "updatedAt") 
-                   VALUES (%s, %s, NOW(), NOW())''',
-                (candidate_id, user_id),
-                commit=True
-            )
-        else:
-            candidate_id = candidate['id']
-
-        # 3. Create or Update CandidateProfile
-        existing_profile = execute_query(
-            'SELECT id FROM "CandidateProfile" WHERE "candidateId" = %s',
-            (candidate_id,),
-            fetch_one=True
-        )
-
-        if existing_profile:
-            execute_query(
-                '''UPDATE "CandidateProfile" 
-                   SET phone = %s, country = %s, city = %s, "updatedAt" = NOW() 
-                   WHERE "candidateId" = %s''',
-                (data.get('phone'), data.get('country'), data.get('city'), candidate_id),
-                commit=True
-            )
-        else:
-            execute_query(
-                '''INSERT INTO "CandidateProfile" 
-                   (id, "candidateId", phone, country, city, "createdAt", "updatedAt") 
+                   (id, "userId", phone, country, city, "createdAt", "updatedAt") 
                    VALUES (%s, %s, %s, %s, %s, NOW(), NOW())''',
-                (str(uuid.uuid4()), candidate_id, data.get('phone'), data.get('country'), data.get('city')),
+                (candidate_id, user_id, data.get('phone'), data.get('country'), data.get('city')),
+                commit=True
+            )
+        else:
+            execute_query(
+                '''UPDATE "Candidate" 
+                   SET phone = %s, country = %s, city = %s, "updatedAt" = NOW() 
+                   WHERE "userId" = %s''',
+                (data.get('phone'), data.get('country'), data.get('city'), user_id),
                 commit=True
             )
 
@@ -117,12 +99,12 @@ class ProfessionalInfo(Resource):
 
         candidate_id = candidate['id']
 
-        # 2. Update candidate profile with professional info
+        # 2. Update candidate with professional info
         execute_query(
-            '''UPDATE "CandidateProfile" 
+            '''UPDATE "Candidate" 
                SET summary = %s, "jobType" = %s, experience = %s, 
                    "onboardingCompleted" = true, "updatedAt" = NOW() 
-               WHERE "candidateId" = %s''',
+               WHERE id = %s''',
             (data.get('summary'), data.get('jobType'), data.get('experience'), candidate_id),
             commit=True
         )

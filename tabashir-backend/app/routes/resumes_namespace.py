@@ -137,10 +137,8 @@ class ResumeList(Resource):
         resume_list = []
         for r in resumes:
             r_dict = dict(r)
-            # Handle camelCase quoted keys returned by RealDictCursor if applicable
-            for key in list(r_dict.keys()):
-                if hasattr(r_dict[key], 'isoformat'):
-                    r_dict[key] = r_dict[key].isoformat()
+            if r_dict.get('createdAt'):
+                r_dict['createdAt'] = r_dict['createdAt'].isoformat()
             resume_list.append(r_dict)
             
         return {
@@ -170,8 +168,8 @@ class ResumeDetail(Resource):
             return {"success": False, "message": "Resume not found"}, HTTPStatus.NOT_FOUND
             
         resume_dict = dict(resume)
-        for key in list(resume_dict.keys()):
-            if hasattr(resume_dict[key], 'isoformat'):
+        for key in ['createdAt', 'updatedAt']:
+            if resume_dict.get(key):
                 resume_dict[key] = resume_dict[key].isoformat()
                 
         return {
@@ -200,7 +198,7 @@ class ResumeDetail(Resource):
             
         # Delete file from storage
         try:
-            file_path = Config.CV_STORAGE_PATH / resume['originalUrl']
+            file_path = os.path.join(Config.CV_STORAGE_PATH, resume['originalUrl'])
             if os.path.exists(file_path):
                 os.remove(file_path)
         except Exception as e:
@@ -296,7 +294,7 @@ class ResumeExportPDF(Resource):
             "message": "PDF export initiated (mock)",
             "resume": {"title": "Resume", "id": resume_id},
             "format": "pdf",
-            "downloadUrl": f"/api/v1/resumes/{resume_id}/download/pdf"
+            "downloadUrl": f"/api/v1/mobile/resumes/{resume_id}/download/pdf"
         }, HTTPStatus.OK
 
 
@@ -311,9 +309,8 @@ class ResumeExportWord(Resource):
             "message": "Word export initiated (mock)",
             "resume": {"title": "Resume", "id": resume_id},
             "format": "word",
-            "downloadUrl": f"/api/v1/resumes/{resume_id}/download/word"
+            "downloadUrl": f"/api/v1/mobile/resumes/{resume_id}/download/word"
         }, HTTPStatus.OK
-
 @resumes_ns.route('/health')
 class HealthCheck(Resource):
     def get(self):
@@ -538,7 +535,7 @@ class GenerateDocxFromJson(Resource):
     @cross_origin(origins="*")
     def post(self):
         """
-        POST endpoint to generate a DOCX Resume from structured JSON.
+        POST endpoint to generate a DOCX resume from structured JSON.
         """
         try:
             data = request.json
@@ -709,7 +706,7 @@ class ApplyJobs(Resource):
     @resumes_ns.response(HTTPStatus.INTERNAL_SERVER_ERROR.value, 'Internal server error during processing')
     def post(self):
         """
-        POST endpoint to process Resume and find matching jobs with rankings.
+        POST endpoint to process resume and find matching jobs with rankings.
         """
         temp_input_path = None
         try:
@@ -814,7 +811,7 @@ class AddClient(Resource):
     @resumes_ns.response(HTTPStatus.INTERNAL_SERVER_ERROR.value, 'Internal server error during processing')
     def post(self):
         """
-        POST endpoint to process Resume and find matching jobs with rankings.
+        POST endpoint to process resume and find matching jobs with rankings.
         """
         temp_input_path = None
         try:
@@ -1032,7 +1029,7 @@ class ApplyToSpecificJob(Resource):
     @resumes_ns.response(HTTPStatus.OK.value, 'Successfully applied to specific job')
     def post(self, job_id):
         """
-        POST endpoint to process Resume and apply to a specific job.
+        POST endpoint to process resume and apply to a specific job.
         """
         temp_input_path = None
         try:
@@ -1055,11 +1052,11 @@ class ApplyToSpecificJob(Resource):
 
             apply_result = apply_single_job(email=email, file_path=temp_input_path, job_id=job_id)
             if not apply_result:
-                raise ValueError(f"Failed to apply for Job {job_id}")
+                raise ValueError(f"Failed to apply for job {job_id}")
 
             return jsonify({
                 "success": True,
-                "message": f"Successfully applied to Job {job_id}",
+                "message": f"Successfully applied to job {job_id}",
                 "email": email,
                 "applied_job_id": job_id,
                 "summary": apply_result
@@ -1104,12 +1101,12 @@ class ApplyToSpecificJob(Resource):
 
 
 
-applied_jobs_parser = reqparse.RequestParser()
-applied_jobs_parser.add_argument('email', type=str, location='args', required=True, help='User Email')
+applied_jobs = reqparse.RequestParser()
+applied_jobs.add_argument('email', type=str, location='args', required=True, help='User Email')
 
 @resumes_ns.route('/applied-jobs')
 class AppliedJobs(Resource):
-    @resumes_ns.expect(applied_jobs_parser)
+    @resumes_ns.expect(applied_jobs)
     @resumes_ns.response(HTTPStatus.OK.value, 'Successfully fetched jobs.')
     @resumes_ns.response(HTTPStatus.BAD_REQUEST.value, 'Invalid input')
     @resumes_ns.response(HTTPStatus.INTERNAL_SERVER_ERROR.value, 'Internal server error during processing')
@@ -1121,7 +1118,7 @@ class AppliedJobs(Resource):
         conn = get_ai_db_connection()
         cursor = conn.cursor()
         try:
-            args = applied_jobs_parser.parse_args()
+            args = applied_jobs.parse_args()
             email = args['email']
 
             query = """
@@ -1175,10 +1172,10 @@ class AppliedJobs(Resource):
 
 
 @resumes_ns.route('/jobs')
-class JobsList(Resource):
+class Jobs(Resource):
     @resumes_ns.doc(params={
         'email': 'User email to exclude already applied jobs',
-        'search': 'Search in Job title or description',
+        'search': 'Search in job title or description',
         'location': 'Filter by city (e.g. Dubai)',
         'experience': 'Filter by experience (e.g. 2 years)',
         'attendance': 'Match keyword in description (remote, hybrid, onsite)',
@@ -1457,7 +1454,7 @@ class JobsList(Resource):
     }))
     def post(self):
         """
-        Create a job with Source Admin.:
+        Create a JOb with Source Admin.:
         """
         conn = get_ai_db_connection()
         cursor = conn.cursor()
@@ -1576,7 +1573,7 @@ class JobById(Resource):
     })
     def get(self, job_id):
         """
-        Get a specific job by JobId. (for Liked Section handling)
+        Get a specific Job by JobId. (for Liked Section handling)
         """
         conn = get_ai_db_connection()
         cursor = conn.cursor()
@@ -1685,7 +1682,7 @@ class JobById(Resource):
     @resumes_ns.expect(job_update_model, validate=True)
     def put(self, job_id):
         """
-        Edit a specific job by JobId.
+        Edit a specific Job by JobId.
         """
         conn = get_ai_db_connection()
         cursor = conn.cursor()
@@ -2138,8 +2135,8 @@ class MatchedJobsPerClient(Resource):
 suggest_job_titles_parser = reqparse.RequestParser()
 suggest_job_titles_parser.add_argument(
     'file',
-    type=FileStorage,   
-    location='files',   
+    type=FileStorage,   # ✅ correct
+    location='files',   # ✅ correct
     required=True,
     help='Resume file (PDF, DOCX, RTF)'
 )
@@ -2284,7 +2281,7 @@ class AnalyzeClientRanking(Resource):
             args = analyze_client_ranking_parser.parse_args()
             email = args['email']
 
-            # 1 Connect to PostgreSQL
+            # 1️⃣ Connect to PostgreSQL
             conn = psycopg2.connect(
                 dbname=Config.AI_POSTGRES_DB,
                 user=Config.AI_POSTGRES_USER,
@@ -2304,14 +2301,14 @@ class AnalyzeClientRanking(Resource):
 
             conn.close()
 
-            # 2 Validate Data
+            # 2️⃣ Validate Data
             if not records:
                 return {
                     "success": False,
                     "message": "No ranking records found for this client"
                 }, HTTPStatus.NOT_FOUND.value
 
-            # 3 Extract Scores
+            # 3️⃣ Extract Scores
             scores = [r['score'] for r in records if r['score'] is not None]
 
             if not scores:
@@ -2325,7 +2322,7 @@ class AnalyzeClientRanking(Resource):
             highest_score = max(scores)
             lowest_score = min(scores)
 
-            # 4 Performance Classification
+            # 4️⃣ Performance Classification
             if average_score >= 85:
                 performance = "Excellent Match Profile"
                 recommendation = "Client profile is highly optimized. Continue applying to similar job categories."
@@ -2339,7 +2336,7 @@ class AnalyzeClientRanking(Resource):
                 performance = "Needs CV Optimization"
                 recommendation = "Major CV restructuring recommended. Improve job-title alignment and measurable results."
 
-            # 5 Return Analysis
+            # 5️⃣ Return Analysis
             return {
                 "success": True,
                 "email": email,
@@ -2413,7 +2410,7 @@ class AnalyzeClientRanking(Resource):
         elif avg_score >= 50:
             return "CV requires optimization in skills alignment and experience targeting."
         else:
-            return "Major CV restructuring recommended. Improve job-title alignment and measurable results."
+            return "Major CV restructuring recommended. Improve job-title alignment and measurable achievements."
 
 
     def _error_response(self, message, error_detail, status_code):

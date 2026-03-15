@@ -17,8 +17,8 @@ class RecommendedJobs(Resource):
         try:
             jobs = execute_query(
                 """SELECT id, title, company, "companyLogo", "jobType", "salaryMin",
-                          "salaryMax", location, description, requirements, benefits,
-                          views, "applicationsCount", "createdAt"
+                          "salaryMax", location, description, requirements, "benefits",
+                          "views", "applicationsCount", "createdAt"
                    FROM "Job"
                    WHERE status = 'ACTIVE' AND "isActive" = true
                    ORDER BY "createdAt" DESC
@@ -26,8 +26,7 @@ class RecommendedJobs(Resource):
                 fetch_all=True
             )
             return {"jobs": jobs or [], "total": len(jobs or [])}, HTTPStatus.OK
-        except Exception as e:
-            print(f"Error in recommended jobs: {e}")
+        except Exception:
             return {"jobs": [], "total": 0}, HTTPStatus.OK
 
 
@@ -55,8 +54,7 @@ class SavedJobs(Resource):
                     if job.get('savedAt') and hasattr(job['savedAt'], 'isoformat'):
                         job['savedAt'] = job['savedAt'].isoformat()
             return {"savedJobs": jobs or []}, HTTPStatus.OK
-        except Exception as e:
-            print(f"Error in get saved jobs: {e}")
+        except Exception:
             return {"savedJobs": []}, HTTPStatus.OK
 
     @jobs_ns.doc(security='Bearer')
@@ -77,7 +75,7 @@ class SavedJobs(Resource):
             execute_query(
                 """INSERT INTO "SavedJobPost" (id, "jobId", "userId", "createdAt", "updatedAt")
                    VALUES (%s, %s, %s, NOW(), NOW())
-                   ON CONFLICT ("jobId", "userId") DO NOTHING""",
+                   ON CONFLICT DO NOTHING""",
                 (str(uuid.uuid4()), job_id, user_id),
                 commit=True
             )
