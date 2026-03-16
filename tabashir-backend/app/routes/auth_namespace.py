@@ -1,7 +1,7 @@
 import uuid
 from flask_restx import Namespace, Resource
 from http import HTTPStatus
-from app.database.db import execute_query
+from app.database.db import execute_query, execute_ai_query
 from app.services.jwt_service import create_access_token, create_refresh_token, verify_refresh_token
 from app.services.password_service import verify_password, hash_password
 from app.routes.middleware import jwt_required
@@ -193,12 +193,16 @@ class Account(Resource):
                 execute_query('DELETE FROM "CandidateProfile" WHERE "candidateId" = %s', (candidate_id,), commit=True)
                 execute_query('DELETE FROM "Candidate" WHERE id = %s', (candidate_id,), commit=True)
 
-            # 4. Delete legacy clients and rankings entry based on email
+            # 4. Delete legacy clients and rankings entry based on email in AI database
             if email:
-                execute_query("DELETE FROM clients WHERE email = %s", (email,), commit=True)
-                execute_query("DELETE FROM rankings WHERE email = %s", (email,), commit=True)
+                try:
+                    execute_ai_query("DELETE FROM clients WHERE email = %s", (email,), commit=True)
+                    execute_ai_query("DELETE FROM rankings WHERE email = %s", (email,), commit=True)
+                except Exception as ai_e:
+                    # Log but continue to ensure main account deletion proceeds
+                    print(f"Non-critical: Failed to delete legacy AI records for {email}: {ai_e}")
 
-            # 5. Finally, delete the user
+            # 5. Finally, delete the user from Main Database
             execute_query("DELETE FROM users WHERE id = %s", (user_id,), commit=True)
 
             return {"message": "Account deleted successfully"}, HTTPStatus.OK

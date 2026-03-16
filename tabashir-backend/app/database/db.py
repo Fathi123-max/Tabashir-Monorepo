@@ -40,6 +40,24 @@ def get_ai_db_connection():
 
 
 
+def execute_ai_query(query, params=None, fetch_one=False, fetch_all=False, commit=False):
+    """Execute a query on the AI database."""
+    conn = get_ai_db_connection()
+    cursor = conn.cursor(cursor_factory=RealDictCursor)
+    try:
+        cursor.execute(query, params)
+        if commit:
+            conn.commit()
+        if fetch_one:
+            return cursor.fetchone()
+        if fetch_all:
+            return cursor.fetchall()
+        return None
+    finally:
+        cursor.close()
+        conn.close()
+
+
 def execute_query(query, params=None, fetch_one=False, fetch_all=False, commit=False):
     """Execute a query on the main database (replaces execute_prisma_query)."""
     conn = get_db_connection()
