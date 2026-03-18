@@ -239,7 +239,10 @@ class UserPreferencesService {
       final profileNationality = await syncNationalityFromProfile();
 
       if (profileNationality != null) {
-        await saveNationality(nationality: profileNationality, syncToProfile: false);
+        await saveNationality(
+          nationality: profileNationality,
+          syncToProfile: false,
+        );
         if (kDebugMode) {
           print(
             '[UserPreferences] Initialized from profile: $profileNationality',

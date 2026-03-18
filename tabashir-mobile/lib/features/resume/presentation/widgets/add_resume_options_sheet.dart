@@ -175,7 +175,7 @@ class AddResumeOptionsSheet extends StatelessWidget {
 
       if (fileSize > 10 * 1024 * 1024) {
         print(
-          '🟢 [ADD_RESUME_SHEET] File too large (${fileSize} bytes > 10MB)',
+          '🟢 [ADD_RESUME_SHEET] File too large ($fileSize bytes > 10MB)',
         );
         // File too large, nothing to upload
         return;

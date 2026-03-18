@@ -1400,7 +1400,7 @@ $ApplicationStatusCountsCopyWith<$Res>? get applicationsByStatus {
 /// @nodoc
 mixin _$CandidateProfileData {
 
- String get id; String? get phone; String? get nationality; String? get gender; List<String>? get languages; int? get age; String? get profilePicture; String? get jobType; List<String>? get skills; String? get experience; String? get education; String? get degree; String? get location; String? get linkedin; bool? get onboardingCompleted; String? get createdAt; String? get updatedAt;
+ String? get id; String? get phone; String? get nationality; String? get gender; List<String>? get languages; int? get age; String? get profilePicture; String? get jobType; List<String>? get skills; String? get experience; String? get education; String? get degree; String? get location; String? get linkedin; bool? get onboardingCompleted; String? get createdAt; String? get updatedAt;
 /// Create a copy of CandidateProfileData
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -1433,7 +1433,7 @@ abstract mixin class $CandidateProfileDataCopyWith<$Res>  {
   factory $CandidateProfileDataCopyWith(CandidateProfileData value, $Res Function(CandidateProfileData) _then) = _$CandidateProfileDataCopyWithImpl;
 @useResult
 $Res call({
- String id, String? phone, String? nationality, String? gender, List<String>? languages, int? age, String? profilePicture, String? jobType, List<String>? skills, String? experience, String? education, String? degree, String? location, String? linkedin, bool? onboardingCompleted, String? createdAt, String? updatedAt
+ String? id, String? phone, String? nationality, String? gender, List<String>? languages, int? age, String? profilePicture, String? jobType, List<String>? skills, String? experience, String? education, String? degree, String? location, String? linkedin, bool? onboardingCompleted, String? createdAt, String? updatedAt
 });
 
 
@@ -1450,10 +1450,10 @@ class _$CandidateProfileDataCopyWithImpl<$Res>
 
 /// Create a copy of CandidateProfileData
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? phone = freezed,Object? nationality = freezed,Object? gender = freezed,Object? languages = freezed,Object? age = freezed,Object? profilePicture = freezed,Object? jobType = freezed,Object? skills = freezed,Object? experience = freezed,Object? education = freezed,Object? degree = freezed,Object? location = freezed,Object? linkedin = freezed,Object? onboardingCompleted = freezed,Object? createdAt = freezed,Object? updatedAt = freezed,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? id = freezed,Object? phone = freezed,Object? nationality = freezed,Object? gender = freezed,Object? languages = freezed,Object? age = freezed,Object? profilePicture = freezed,Object? jobType = freezed,Object? skills = freezed,Object? experience = freezed,Object? education = freezed,Object? degree = freezed,Object? location = freezed,Object? linkedin = freezed,Object? onboardingCompleted = freezed,Object? createdAt = freezed,Object? updatedAt = freezed,}) {
   return _then(_self.copyWith(
-id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
-as String,phone: freezed == phone ? _self.phone : phone // ignore: cast_nullable_to_non_nullable
+id: freezed == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
+as String?,phone: freezed == phone ? _self.phone : phone // ignore: cast_nullable_to_non_nullable
 as String?,nationality: freezed == nationality ? _self.nationality : nationality // ignore: cast_nullable_to_non_nullable
 as String?,gender: freezed == gender ? _self.gender : gender // ignore: cast_nullable_to_non_nullable
 as String?,languages: freezed == languages ? _self.languages : languages // ignore: cast_nullable_to_non_nullable
@@ -1551,7 +1551,7 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String? phone,  String? nationality,  String? gender,  List<String>? languages,  int? age,  String? profilePicture,  String? jobType,  List<String>? skills,  String? experience,  String? education,  String? degree,  String? location,  String? linkedin,  bool? onboardingCompleted,  String? createdAt,  String? updatedAt)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String? id,  String? phone,  String? nationality,  String? gender,  List<String>? languages,  int? age,  String? profilePicture,  String? jobType,  List<String>? skills,  String? experience,  String? education,  String? degree,  String? location,  String? linkedin,  bool? onboardingCompleted,  String? createdAt,  String? updatedAt)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _CandidateProfileData() when $default != null:
 return $default(_that.id,_that.phone,_that.nationality,_that.gender,_that.languages,_that.age,_that.profilePicture,_that.jobType,_that.skills,_that.experience,_that.education,_that.degree,_that.location,_that.linkedin,_that.onboardingCompleted,_that.createdAt,_that.updatedAt);case _:
@@ -1572,7 +1572,7 @@ return $default(_that.id,_that.phone,_that.nationality,_that.gender,_that.langua
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String? phone,  String? nationality,  String? gender,  List<String>? languages,  int? age,  String? profilePicture,  String? jobType,  List<String>? skills,  String? experience,  String? education,  String? degree,  String? location,  String? linkedin,  bool? onboardingCompleted,  String? createdAt,  String? updatedAt)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String? id,  String? phone,  String? nationality,  String? gender,  List<String>? languages,  int? age,  String? profilePicture,  String? jobType,  List<String>? skills,  String? experience,  String? education,  String? degree,  String? location,  String? linkedin,  bool? onboardingCompleted,  String? createdAt,  String? updatedAt)  $default,) {final _that = this;
 switch (_that) {
 case _CandidateProfileData():
 return $default(_that.id,_that.phone,_that.nationality,_that.gender,_that.languages,_that.age,_that.profilePicture,_that.jobType,_that.skills,_that.experience,_that.education,_that.degree,_that.location,_that.linkedin,_that.onboardingCompleted,_that.createdAt,_that.updatedAt);}
@@ -1589,7 +1589,7 @@ return $default(_that.id,_that.phone,_that.nationality,_that.gender,_that.langua
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String? phone,  String? nationality,  String? gender,  List<String>? languages,  int? age,  String? profilePicture,  String? jobType,  List<String>? skills,  String? experience,  String? education,  String? degree,  String? location,  String? linkedin,  bool? onboardingCompleted,  String? createdAt,  String? updatedAt)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String? id,  String? phone,  String? nationality,  String? gender,  List<String>? languages,  int? age,  String? profilePicture,  String? jobType,  List<String>? skills,  String? experience,  String? education,  String? degree,  String? location,  String? linkedin,  bool? onboardingCompleted,  String? createdAt,  String? updatedAt)?  $default,) {final _that = this;
 switch (_that) {
 case _CandidateProfileData() when $default != null:
 return $default(_that.id,_that.phone,_that.nationality,_that.gender,_that.languages,_that.age,_that.profilePicture,_that.jobType,_that.skills,_that.experience,_that.education,_that.degree,_that.location,_that.linkedin,_that.onboardingCompleted,_that.createdAt,_that.updatedAt);case _:
@@ -1604,10 +1604,10 @@ return $default(_that.id,_that.phone,_that.nationality,_that.gender,_that.langua
 @JsonSerializable()
 
 class _CandidateProfileData implements CandidateProfileData {
-  const _CandidateProfileData({required this.id, this.phone, this.nationality, this.gender, final  List<String>? languages, this.age, this.profilePicture, this.jobType, final  List<String>? skills, this.experience, this.education, this.degree, this.location, this.linkedin, this.onboardingCompleted, this.createdAt, this.updatedAt}): _languages = languages,_skills = skills;
+  const _CandidateProfileData({this.id, this.phone, this.nationality, this.gender, final  List<String>? languages, this.age, this.profilePicture, this.jobType, final  List<String>? skills, this.experience, this.education, this.degree, this.location, this.linkedin, this.onboardingCompleted, this.createdAt, this.updatedAt}): _languages = languages,_skills = skills;
   factory _CandidateProfileData.fromJson(Map<String, dynamic> json) => _$CandidateProfileDataFromJson(json);
 
-@override final  String id;
+@override final  String? id;
 @override final  String? phone;
 @override final  String? nationality;
 @override final  String? gender;
@@ -1674,7 +1674,7 @@ abstract mixin class _$CandidateProfileDataCopyWith<$Res> implements $CandidateP
   factory _$CandidateProfileDataCopyWith(_CandidateProfileData value, $Res Function(_CandidateProfileData) _then) = __$CandidateProfileDataCopyWithImpl;
 @override @useResult
 $Res call({
- String id, String? phone, String? nationality, String? gender, List<String>? languages, int? age, String? profilePicture, String? jobType, List<String>? skills, String? experience, String? education, String? degree, String? location, String? linkedin, bool? onboardingCompleted, String? createdAt, String? updatedAt
+ String? id, String? phone, String? nationality, String? gender, List<String>? languages, int? age, String? profilePicture, String? jobType, List<String>? skills, String? experience, String? education, String? degree, String? location, String? linkedin, bool? onboardingCompleted, String? createdAt, String? updatedAt
 });
 
 
@@ -1691,10 +1691,10 @@ class __$CandidateProfileDataCopyWithImpl<$Res>
 
 /// Create a copy of CandidateProfileData
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? phone = freezed,Object? nationality = freezed,Object? gender = freezed,Object? languages = freezed,Object? age = freezed,Object? profilePicture = freezed,Object? jobType = freezed,Object? skills = freezed,Object? experience = freezed,Object? education = freezed,Object? degree = freezed,Object? location = freezed,Object? linkedin = freezed,Object? onboardingCompleted = freezed,Object? createdAt = freezed,Object? updatedAt = freezed,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? id = freezed,Object? phone = freezed,Object? nationality = freezed,Object? gender = freezed,Object? languages = freezed,Object? age = freezed,Object? profilePicture = freezed,Object? jobType = freezed,Object? skills = freezed,Object? experience = freezed,Object? education = freezed,Object? degree = freezed,Object? location = freezed,Object? linkedin = freezed,Object? onboardingCompleted = freezed,Object? createdAt = freezed,Object? updatedAt = freezed,}) {
   return _then(_CandidateProfileData(
-id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
-as String,phone: freezed == phone ? _self.phone : phone // ignore: cast_nullable_to_non_nullable
+id: freezed == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
+as String?,phone: freezed == phone ? _self.phone : phone // ignore: cast_nullable_to_non_nullable
 as String?,nationality: freezed == nationality ? _self.nationality : nationality // ignore: cast_nullable_to_non_nullable
 as String?,gender: freezed == gender ? _self.gender : gender // ignore: cast_nullable_to_non_nullable
 as String?,languages: freezed == languages ? _self._languages : languages // ignore: cast_nullable_to_non_nullable
@@ -1721,7 +1721,7 @@ as String?,
 /// @nodoc
 mixin _$OwnerProfileData {
 
- String get id; String? get phone; String? get createdAt; String? get updatedAt;
+ String? get id; String? get phone; String? get createdAt; String? get updatedAt;
 /// Create a copy of OwnerProfileData
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -1754,7 +1754,7 @@ abstract mixin class $OwnerProfileDataCopyWith<$Res>  {
   factory $OwnerProfileDataCopyWith(OwnerProfileData value, $Res Function(OwnerProfileData) _then) = _$OwnerProfileDataCopyWithImpl;
 @useResult
 $Res call({
- String id, String? phone, String? createdAt, String? updatedAt
+ String? id, String? phone, String? createdAt, String? updatedAt
 });
 
 
@@ -1771,10 +1771,10 @@ class _$OwnerProfileDataCopyWithImpl<$Res>
 
 /// Create a copy of OwnerProfileData
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? phone = freezed,Object? createdAt = freezed,Object? updatedAt = freezed,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? id = freezed,Object? phone = freezed,Object? createdAt = freezed,Object? updatedAt = freezed,}) {
   return _then(_self.copyWith(
-id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
-as String,phone: freezed == phone ? _self.phone : phone // ignore: cast_nullable_to_non_nullable
+id: freezed == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
+as String?,phone: freezed == phone ? _self.phone : phone // ignore: cast_nullable_to_non_nullable
 as String?,createdAt: freezed == createdAt ? _self.createdAt : createdAt // ignore: cast_nullable_to_non_nullable
 as String?,updatedAt: freezed == updatedAt ? _self.updatedAt : updatedAt // ignore: cast_nullable_to_non_nullable
 as String?,
@@ -1859,7 +1859,7 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String? phone,  String? createdAt,  String? updatedAt)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String? id,  String? phone,  String? createdAt,  String? updatedAt)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _OwnerProfileData() when $default != null:
 return $default(_that.id,_that.phone,_that.createdAt,_that.updatedAt);case _:
@@ -1880,7 +1880,7 @@ return $default(_that.id,_that.phone,_that.createdAt,_that.updatedAt);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String? phone,  String? createdAt,  String? updatedAt)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String? id,  String? phone,  String? createdAt,  String? updatedAt)  $default,) {final _that = this;
 switch (_that) {
 case _OwnerProfileData():
 return $default(_that.id,_that.phone,_that.createdAt,_that.updatedAt);}
@@ -1897,7 +1897,7 @@ return $default(_that.id,_that.phone,_that.createdAt,_that.updatedAt);}
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String? phone,  String? createdAt,  String? updatedAt)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String? id,  String? phone,  String? createdAt,  String? updatedAt)?  $default,) {final _that = this;
 switch (_that) {
 case _OwnerProfileData() when $default != null:
 return $default(_that.id,_that.phone,_that.createdAt,_that.updatedAt);case _:
@@ -1912,10 +1912,10 @@ return $default(_that.id,_that.phone,_that.createdAt,_that.updatedAt);case _:
 @JsonSerializable()
 
 class _OwnerProfileData implements OwnerProfileData {
-  const _OwnerProfileData({required this.id, this.phone, this.createdAt, this.updatedAt});
+  const _OwnerProfileData({this.id, this.phone, this.createdAt, this.updatedAt});
   factory _OwnerProfileData.fromJson(Map<String, dynamic> json) => _$OwnerProfileDataFromJson(json);
 
-@override final  String id;
+@override final  String? id;
 @override final  String? phone;
 @override final  String? createdAt;
 @override final  String? updatedAt;
@@ -1953,7 +1953,7 @@ abstract mixin class _$OwnerProfileDataCopyWith<$Res> implements $OwnerProfileDa
   factory _$OwnerProfileDataCopyWith(_OwnerProfileData value, $Res Function(_OwnerProfileData) _then) = __$OwnerProfileDataCopyWithImpl;
 @override @useResult
 $Res call({
- String id, String? phone, String? createdAt, String? updatedAt
+ String? id, String? phone, String? createdAt, String? updatedAt
 });
 
 
@@ -1970,10 +1970,10 @@ class __$OwnerProfileDataCopyWithImpl<$Res>
 
 /// Create a copy of OwnerProfileData
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? phone = freezed,Object? createdAt = freezed,Object? updatedAt = freezed,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? id = freezed,Object? phone = freezed,Object? createdAt = freezed,Object? updatedAt = freezed,}) {
   return _then(_OwnerProfileData(
-id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
-as String,phone: freezed == phone ? _self.phone : phone // ignore: cast_nullable_to_non_nullable
+id: freezed == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
+as String?,phone: freezed == phone ? _self.phone : phone // ignore: cast_nullable_to_non_nullable
 as String?,createdAt: freezed == createdAt ? _self.createdAt : createdAt // ignore: cast_nullable_to_non_nullable
 as String?,updatedAt: freezed == updatedAt ? _self.updatedAt : updatedAt // ignore: cast_nullable_to_non_nullable
 as String?,
@@ -1987,7 +1987,7 @@ as String?,
 /// @nodoc
 mixin _$RecruiterProfileData {
 
- String get id; String? get companyName; String? get contactPersonName; String? get phone; String? get createdAt; String? get updatedAt;
+ String? get id; String? get companyName; String? get contactPersonName; String? get phone; String? get createdAt; String? get updatedAt;
 /// Create a copy of RecruiterProfileData
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -2020,7 +2020,7 @@ abstract mixin class $RecruiterProfileDataCopyWith<$Res>  {
   factory $RecruiterProfileDataCopyWith(RecruiterProfileData value, $Res Function(RecruiterProfileData) _then) = _$RecruiterProfileDataCopyWithImpl;
 @useResult
 $Res call({
- String id, String? companyName, String? contactPersonName, String? phone, String? createdAt, String? updatedAt
+ String? id, String? companyName, String? contactPersonName, String? phone, String? createdAt, String? updatedAt
 });
 
 
@@ -2037,10 +2037,10 @@ class _$RecruiterProfileDataCopyWithImpl<$Res>
 
 /// Create a copy of RecruiterProfileData
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? companyName = freezed,Object? contactPersonName = freezed,Object? phone = freezed,Object? createdAt = freezed,Object? updatedAt = freezed,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? id = freezed,Object? companyName = freezed,Object? contactPersonName = freezed,Object? phone = freezed,Object? createdAt = freezed,Object? updatedAt = freezed,}) {
   return _then(_self.copyWith(
-id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
-as String,companyName: freezed == companyName ? _self.companyName : companyName // ignore: cast_nullable_to_non_nullable
+id: freezed == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
+as String?,companyName: freezed == companyName ? _self.companyName : companyName // ignore: cast_nullable_to_non_nullable
 as String?,contactPersonName: freezed == contactPersonName ? _self.contactPersonName : contactPersonName // ignore: cast_nullable_to_non_nullable
 as String?,phone: freezed == phone ? _self.phone : phone // ignore: cast_nullable_to_non_nullable
 as String?,createdAt: freezed == createdAt ? _self.createdAt : createdAt // ignore: cast_nullable_to_non_nullable
@@ -2127,7 +2127,7 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String? companyName,  String? contactPersonName,  String? phone,  String? createdAt,  String? updatedAt)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String? id,  String? companyName,  String? contactPersonName,  String? phone,  String? createdAt,  String? updatedAt)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _RecruiterProfileData() when $default != null:
 return $default(_that.id,_that.companyName,_that.contactPersonName,_that.phone,_that.createdAt,_that.updatedAt);case _:
@@ -2148,7 +2148,7 @@ return $default(_that.id,_that.companyName,_that.contactPersonName,_that.phone,_
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String? companyName,  String? contactPersonName,  String? phone,  String? createdAt,  String? updatedAt)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String? id,  String? companyName,  String? contactPersonName,  String? phone,  String? createdAt,  String? updatedAt)  $default,) {final _that = this;
 switch (_that) {
 case _RecruiterProfileData():
 return $default(_that.id,_that.companyName,_that.contactPersonName,_that.phone,_that.createdAt,_that.updatedAt);}
@@ -2165,7 +2165,7 @@ return $default(_that.id,_that.companyName,_that.contactPersonName,_that.phone,_
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String? companyName,  String? contactPersonName,  String? phone,  String? createdAt,  String? updatedAt)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String? id,  String? companyName,  String? contactPersonName,  String? phone,  String? createdAt,  String? updatedAt)?  $default,) {final _that = this;
 switch (_that) {
 case _RecruiterProfileData() when $default != null:
 return $default(_that.id,_that.companyName,_that.contactPersonName,_that.phone,_that.createdAt,_that.updatedAt);case _:
@@ -2180,10 +2180,10 @@ return $default(_that.id,_that.companyName,_that.contactPersonName,_that.phone,_
 @JsonSerializable()
 
 class _RecruiterProfileData implements RecruiterProfileData {
-  const _RecruiterProfileData({required this.id, this.companyName, this.contactPersonName, this.phone, this.createdAt, this.updatedAt});
+  const _RecruiterProfileData({this.id, this.companyName, this.contactPersonName, this.phone, this.createdAt, this.updatedAt});
   factory _RecruiterProfileData.fromJson(Map<String, dynamic> json) => _$RecruiterProfileDataFromJson(json);
 
-@override final  String id;
+@override final  String? id;
 @override final  String? companyName;
 @override final  String? contactPersonName;
 @override final  String? phone;
@@ -2223,7 +2223,7 @@ abstract mixin class _$RecruiterProfileDataCopyWith<$Res> implements $RecruiterP
   factory _$RecruiterProfileDataCopyWith(_RecruiterProfileData value, $Res Function(_RecruiterProfileData) _then) = __$RecruiterProfileDataCopyWithImpl;
 @override @useResult
 $Res call({
- String id, String? companyName, String? contactPersonName, String? phone, String? createdAt, String? updatedAt
+ String? id, String? companyName, String? contactPersonName, String? phone, String? createdAt, String? updatedAt
 });
 
 
@@ -2240,10 +2240,10 @@ class __$RecruiterProfileDataCopyWithImpl<$Res>
 
 /// Create a copy of RecruiterProfileData
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? companyName = freezed,Object? contactPersonName = freezed,Object? phone = freezed,Object? createdAt = freezed,Object? updatedAt = freezed,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? id = freezed,Object? companyName = freezed,Object? contactPersonName = freezed,Object? phone = freezed,Object? createdAt = freezed,Object? updatedAt = freezed,}) {
   return _then(_RecruiterProfileData(
-id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
-as String,companyName: freezed == companyName ? _self.companyName : companyName // ignore: cast_nullable_to_non_nullable
+id: freezed == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
+as String?,companyName: freezed == companyName ? _self.companyName : companyName // ignore: cast_nullable_to_non_nullable
 as String?,contactPersonName: freezed == contactPersonName ? _self.contactPersonName : contactPersonName // ignore: cast_nullable_to_non_nullable
 as String?,phone: freezed == phone ? _self.phone : phone // ignore: cast_nullable_to_non_nullable
 as String?,createdAt: freezed == createdAt ? _self.createdAt : createdAt // ignore: cast_nullable_to_non_nullable

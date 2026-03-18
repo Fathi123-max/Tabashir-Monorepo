@@ -23,7 +23,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
   bool _pushNotificationsEnabled = true;
   bool _emailNotificationsEnabled = true;
   bool _smsNotificationsEnabled = false;
-  bool _biometricEnabled = true;
+  final bool _biometricEnabled = true;
   late final ThemeManager _themeManager;
 
   @override

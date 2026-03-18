@@ -52,9 +52,13 @@ class AuthSessionService {
   Future<String?> get refreshToken async {
     try {
       final token = await _secureStorage.read(key: StorageKeys.refreshToken);
-      print('[AUTH_SESSION] Reading refresh token from storage: ${token != null ? "present (${token.length} chars)" : "NULL"}');
+      print(
+        '[AUTH_SESSION] Reading refresh token from storage: ${token != null ? "present (${token.length} chars)" : "NULL"}',
+      );
       if (token == null) {
-        print('[AUTH_SESSION] ⚠️ WARNING: refreshToken is NULL in secure storage');
+        print(
+          '[AUTH_SESSION] ⚠️ WARNING: refreshToken is NULL in secure storage',
+        );
       }
       return token;
     } on Exception catch (e) {
@@ -78,8 +82,12 @@ class AuthSessionService {
 
     // Debug logging
     print('[AUTH_SESSION] Storing tokens:');
-    print('[AUTH_SESSION] - accessToken: ${token != null ? "present (${token.length} chars)" : "NULL"}');
-    print('[AUTH_SESSION] - refreshToken: ${refreshToken != null ? "present (${refreshToken.length} chars)" : "NULL"}');
+    print(
+      '[AUTH_SESSION] - accessToken: ${token != null ? "present (${token.length} chars)" : "NULL"}',
+    );
+    print(
+      '[AUTH_SESSION] - refreshToken: ${refreshToken != null ? "present (${refreshToken.length} chars)" : "NULL"}',
+    );
 
     // Store tokens securely using flutter_secure_storage (encrypted)
     if (token != null) {
@@ -151,8 +159,12 @@ class AuthSessionService {
       );
 
       print('[AUTH_SESSION] Sending refresh request to backend...');
-      print('[AUTH_SESSION] Refresh token length: ${currentRefreshToken.length} chars');
-      print('[AUTH_SESSION] Refresh token (first 20 chars): ${currentRefreshToken.substring(0, 20)}...');
+      print(
+        '[AUTH_SESSION] Refresh token length: ${currentRefreshToken.length} chars',
+      );
+      print(
+        '[AUTH_SESSION] Refresh token (first 20 chars): ${currentRefreshToken.substring(0, 20)}...',
+      );
 
       final response = await dio.post(
         '/api/v1/auth/refresh',

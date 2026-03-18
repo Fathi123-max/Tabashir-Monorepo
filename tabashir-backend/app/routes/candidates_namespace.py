@@ -3,7 +3,7 @@ from flask import request
 from http import HTTPStatus
 import uuid
 import datetime
-from app.database.db import execute_query
+from app.database.db import execute_query, execute_ai_query
 from app.routes.middleware import jwt_required
 
 candidates_ns = Namespace('candidates', description='Candidate Onboarding and Profile Management')
@@ -15,6 +15,8 @@ personal_info_model = candidates_ns.model('PersonalInfo', {
     'phone': fields.String(required=False, description='Phone number'),
     'country': fields.String(required=False, description='Country'),
     'city': fields.String(required=False, description='City'),
+    'nationality': fields.String(required=False, description='Nationality'),
+    'gender': fields.String(required=False, description='Gender'),
 })
 
 professional_info_model = candidates_ns.model('ProfessionalInfo', {
@@ -35,13 +37,18 @@ class PersonalInfo(Resource):
         """Submit personal info during candidate onboarding"""
         user_id = request.user_id
         data = request.json
+        email = data.get('email')
+        full_name = data.get('fullName')
+        phone = data.get('phone')
+        nationality = data.get('nationality')
+        gender = data.get('gender')
         
         # 1. Update basic User info (using 'users' table name)
         execute_query(
             '''UPDATE users 
                SET name = %s, "updatedAt" = NOW() 
                WHERE id = %s''',
-            (data.get('fullName'), user_id),
+            (full_name, user_id),
             commit=True
         )
 
@@ -75,19 +82,36 @@ class PersonalInfo(Resource):
         if not profile:
             execute_query(
                 '''INSERT INTO "CandidateProfile" 
-                   (id, "candidateId", phone, location, "createdAt", "updatedAt") 
-                   VALUES (%s, %s, %s, %s, NOW(), NOW())''',
-                (str(uuid.uuid4()), candidate_id, data.get('phone'), location),
+                   (id, "candidateId", phone, location, nationality, gender, "createdAt", "updatedAt") 
+                   VALUES (%s, %s, %s, %s, %s, %s, NOW(), NOW())''',
+                (str(uuid.uuid4()), candidate_id, phone, location, nationality, gender),
                 commit=True
             )
         else:
             execute_query(
                 '''UPDATE "CandidateProfile" 
-                   SET phone = %s, location = %s, "updatedAt" = NOW() 
+                   SET phone = %s, location = %s, nationality = %s, gender = %s, "updatedAt" = NOW() 
                    WHERE "candidateId" = %s''',
-                (data.get('phone'), location, candidate_id),
+                (phone, location, nationality, gender, candidate_id),
                 commit=True
             )
+
+        # 4. Sync to AI DB Clients table
+        try:
+            execute_ai_query(
+                """INSERT INTO clients (name, email, phone_number, location, nationality, gender, date_in)
+                   VALUES (%s, %s, %s, %s, %s, %s, NOW())
+                   ON CONFLICT (email) DO UPDATE 
+                   SET name = EXCLUDED.name, 
+                       phone_number = EXCLUDED.phone_number, 
+                       location = EXCLUDED.location,
+                       nationality = EXCLUDED.nationality,
+                       gender = EXCLUDED.gender""",
+                (full_name, email, phone, location, nationality, gender),
+                commit=True
+            )
+        except Exception as e:
+            print(f"Failed to sync personal info to AI DB: {e}")
 
         return {
             "success": True,
@@ -118,19 +142,28 @@ class ProfessionalInfo(Resource):
 
         candidate_id = candidate['id']
 
-        # 2. Update candidate profile with professional info
+        # 2. Get user email for AI DB sync
+        user = execute_query('SELECT email FROM users WHERE id = %s', (user_id,), fetch_one=True)
+        email = user['email'] if user else None
+
+        # 3. Update candidate profile with professional info
         profile = execute_query(
             'SELECT id FROM "CandidateProfile" WHERE "candidateId" = %s',
             (candidate_id,),
             fetch_one=True
         )
 
+        job_type = data.get('jobType')
+        skills_list = data.get('skills', [])
+        skills_str = ", ".join(skills_list) if isinstance(skills_list, list) else skills_list
+        experience = data.get('experience')
+
         if not profile:
             execute_query(
                 '''INSERT INTO "CandidateProfile" 
                    (id, "candidateId", "jobType", experience, skills, languages, "onboardingCompleted", "createdAt", "updatedAt") 
                    VALUES (%s, %s, %s, %s, %s, %s, true, NOW(), NOW())''',
-                (str(uuid.uuid4()), candidate_id, data.get('jobType'), data.get('experience'), data.get('skills', []), data.get('languages', [])),
+                (str(uuid.uuid4()), candidate_id, job_type, experience, skills_list, data.get('languages', [])),
                 commit=True
             )
         else:
@@ -139,9 +172,24 @@ class ProfessionalInfo(Resource):
                    SET "jobType" = %s, experience = %s, skills = %s, languages = %s,
                        "onboardingCompleted" = true, "updatedAt" = NOW() 
                    WHERE "candidateId" = %s''',
-                (data.get('jobType'), data.get('experience'), data.get('skills', []), data.get('languages', []), candidate_id),
+                (job_type, experience, skills_list, data.get('languages', []), candidate_id),
                 commit=True
             )
+
+        # 4. Sync professional info to AI DB Clients table
+        if email:
+            try:
+                execute_ai_query(
+                    """INSERT INTO clients (email, positions, skills, date_in)
+                       VALUES (%s, %s, %s, NOW())
+                       ON CONFLICT (email) DO UPDATE 
+                       SET positions = EXCLUDED.positions, 
+                           skills = EXCLUDED.skills""",
+                    (email, job_type, skills_str),
+                    commit=True
+                )
+            except Exception as e:
+                print(f"Failed to sync professional info to AI DB: {e}")
 
         return {
             "success": True,
@@ -149,3 +197,4 @@ class ProfessionalInfo(Resource):
             "step": "professional-info",
             "onboardingCompleted": True
         }, HTTPStatus.OK
+

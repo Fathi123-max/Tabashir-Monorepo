@@ -41,7 +41,7 @@ class DeviceCapabilityService {
         final sdkInt = androidInfo.version.sdkInt;
 
         // Get approximate tier based on SDK version and model
-        DeviceTier tier = _classifyAndroidDevice(
+        final tier = _classifyAndroidDevice(
           sdkInt: sdkInt,
           model: androidInfo.model,
           hardware: androidInfo.hardware,
@@ -53,7 +53,7 @@ class DeviceCapabilityService {
         final iosInfo = await deviceInfo.iosInfo;
 
         // Determine tier based on device model
-        DeviceTier tier = _classifyIOSDevice(
+        final tier = _classifyIOSDevice(
           model: iosInfo.model,
           version: iosInfo.systemVersion,
         );
@@ -80,32 +80,36 @@ class DeviceCapabilityService {
   }) {
     // High-end devices: Recent Android version (30+) with modern hardware
     // Snapdragon 8 series, MediaTek Dimensity, Exynos high-end, etc.
-    final String modelLower = model.toLowerCase();
-    final String hardwareLower = hardware.toLowerCase();
+    final modelLower = model.toLowerCase();
+    final hardwareLower = hardware.toLowerCase();
 
     // Check for high-end indicators
-    final bool isHighEndProcessor = hardwareLower.contains('kona') || // Snapdragon 8
+    final isHighEndProcessor =
+        hardwareLower.contains('kona') || // Snapdragon 8
         hardwareLower.contains('lahaina') || // Snapdragon 7
         hardwareLower.contains('pineapple') || // Snapdragon 6
         hardwareLower.contains('dimensity') || // MediaTek high-end
-        hardwareLower.contains('exynos') && !hardwareLower.contains('7870') && !hardwareLower.contains('7580'); // Exynos high-end
+        hardwareLower.contains('exynos') &&
+            !hardwareLower.contains('7870') &&
+            !hardwareLower.contains('7580'); // Exynos high-end
 
-    final bool isRecentAndroid = sdkInt >= 30; // Android 11+
-    final bool isVeryRecentAndroid = sdkInt >= 33; // Android 13+
+    final isRecentAndroid = sdkInt >= 30; // Android 11+
+    final isVeryRecentAndroid = sdkInt >= 33; // Android 13+
 
     if ((isHighEndProcessor && isRecentAndroid) || isVeryRecentAndroid) {
       return DeviceTier.high;
     }
 
     // Low-end devices: Old Android version or low-end hardware
-    final bool isLowEndProcessor = hardwareLower.contains('msm8916') ||
+    final isLowEndProcessor =
+        hardwareLower.contains('msm8916') ||
         hardwareLower.contains('msm8937') ||
         hardwareLower.contains('mt6737') ||
         hardwareLower.contains('mt6580') ||
         hardwareLower.contains('sc7731') ||
         hardwareLower.contains('sc9832');
 
-    final bool isOldAndroid = sdkInt < 26; // Android 8.0-
+    final isOldAndroid = sdkInt < 26; // Android 8.0-
 
     if (isLowEndProcessor || isOldAndroid) {
       return DeviceTier.low;

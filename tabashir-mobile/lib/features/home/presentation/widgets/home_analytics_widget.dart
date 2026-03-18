@@ -8,11 +8,6 @@ import 'package:tabashir/features/home/presentation/widgets/bar_chart_widget.dar
 import 'package:tabashir/features/home/presentation/widgets/line_chart_widget.dart';
 
 class HomeAnalyticsWidget extends StatelessWidget {
-  final List<Map<String, dynamic>> applicationStatusChart;
-  final List<Map<String, dynamic>> matchScoreDistribution;
-  final List<Map<String, dynamic>> monthlyApplications;
-  final List<Map<String, dynamic>> skillsDemand;
-
   const HomeAnalyticsWidget({
     super.key,
     this.applicationStatusChart = const [],
@@ -20,6 +15,10 @@ class HomeAnalyticsWidget extends StatelessWidget {
     this.monthlyApplications = const [],
     this.skillsDemand = const [],
   });
+  final List<Map<String, dynamic>> applicationStatusChart;
+  final List<Map<String, dynamic>> matchScoreDistribution;
+  final List<Map<String, dynamic>> monthlyApplications;
+  final List<Map<String, dynamic>> skillsDemand;
 
   @override
   Widget build(BuildContext context) {
@@ -163,16 +162,15 @@ class HomeAnalyticsWidget extends StatelessWidget {
       color: AppTheme.accentGreen,
     );
 
-    final titles = matchScoreDistribution.map((item) {
-      return item['range']?.toString() ?? '';
-    }).toList();
+    final titles = matchScoreDistribution
+        .map((item) => item['range']?.toString() ?? '')
+        .toList();
 
     return SizedBox(
       height: 150.h,
       child: BarChartWidget(
         groups: groups,
         titles: titles,
-        isVertical: true,
       ),
     );
   }
@@ -196,9 +194,9 @@ class HomeAnalyticsWidget extends StatelessWidget {
       'count',
     );
 
-    final xTitles = monthlyApplications.map((item) {
-      return item['month']?.toString() ?? '';
-    }).toList();
+    final xTitles = monthlyApplications
+        .map((item) => item['month']?.toString() ?? '')
+        .toList();
 
     return SizedBox(
       height: 150.h,
@@ -230,8 +228,8 @@ class HomeAnalyticsWidget extends StatelessWidget {
         itemCount: skillsDemand.length,
         itemBuilder: (context, index) {
           final skill = skillsDemand[index];
-          final String skillName = (skill['skill'] as String?) ?? '';
-          final int demand = (skill['demand'] as int?) ?? 0;
+          final skillName = (skill['skill'] as String?) ?? '';
+          final demand = (skill['demand'] as int?) ?? 0;
 
           return Container(
             width: 120.w,
@@ -274,45 +272,43 @@ class HomeAnalyticsWidget extends StatelessWidget {
     );
   }
 
-  Widget _buildLegend(List<Map<String, dynamic>> data) {
-    return Wrap(
-      spacing: AppTheme.spacingMd.w,
-      runSpacing: AppTheme.spacingSm.h,
-      children: data.map((item) {
-        final String name = (item['name'] as String?) ?? '';
-        final String? colorString = item['color'] as String?;
-        final Color color = colorString != null
-            ? _parseColor(colorString)
-            : AppTheme.primaryBlue;
+  Widget _buildLegend(List<Map<String, dynamic>> data) => Wrap(
+    spacing: AppTheme.spacingMd.w,
+    runSpacing: AppTheme.spacingSm.h,
+    children: data.map((item) {
+      final name = (item['name'] as String?) ?? '';
+      final colorString = item['color'] as String?;
+      final color = colorString != null
+          ? _parseColor(colorString)
+          : AppTheme.primaryBlue;
 
-        return Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Container(
-              width: 12.w,
-              height: 12.h,
-              decoration: BoxDecoration(
-                color: color,
-                shape: BoxShape.circle,
-              ),
+      return Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Container(
+            width: 12.w,
+            height: 12.h,
+            decoration: BoxDecoration(
+              color: color,
+              shape: BoxShape.circle,
             ),
-            SizedBox(width: AppTheme.spacingXs.w),
-            Text(
-              name,
-              style: TextStyle(
-                fontSize: 12.sp,
-                color: Colors.grey,
-              ),
+          ),
+          SizedBox(width: AppTheme.spacingXs.w),
+          Text(
+            name,
+            style: TextStyle(
+              fontSize: 12.sp,
+              color: Colors.grey,
             ),
-          ],
-        );
-      }).toList(),
-    );
-  }
+          ),
+        ],
+      );
+    }).toList(),
+  );
 
   Color _parseColor(String colorString) {
     try {
-      final String hexString = colorString.replaceAll('#', '');
+      final hexString = colorString.replaceAll('#', '');
       return Color(int.parse('FF$hexString', radix: 16));
     } catch (e) {
       return Colors.grey;

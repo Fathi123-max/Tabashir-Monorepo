@@ -13,9 +13,9 @@ sealed class ProfileUpdateRequest with _$ProfileUpdateRequest {
     required String nationality,
     required String gender,
     required String jobTitle,
-    String? location,
     required String company,
     required String education,
+    String? location,
     String? linkedin,
   }) = _ProfileUpdateRequest;
 

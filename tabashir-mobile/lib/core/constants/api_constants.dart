@@ -3,12 +3,12 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 /// API constants for the application
 class ApiConstants {
   /// Base API URL (Main API) - Using Flask for local development
-  static String get baseUrl => dotenv.env['API_BASE_URL'] ?? 'http://10.0.2.2:5050';
+  static String get baseUrl =>
+      dotenv.env['API_BASE_URL'] ?? 'http://10.0.2.2:5050';
 
   /// Production Backend URL for CV processing and job matching
   /// Used by TabashirApiService for: format, translate, apply, jobs
-  static String get productionBackendUrl =>
-      '$baseUrl/api/v1/resumes';
+  static String get productionBackendUrl => '$baseUrl/api/v1/resumes';
 
   /// Development Backend URL for generic CRUD operations
   static String get devBackendUrl => '$baseUrl/api/v1';

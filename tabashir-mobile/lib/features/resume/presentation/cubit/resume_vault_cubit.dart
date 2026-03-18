@@ -25,7 +25,9 @@ class ResumeVaultCubit extends Cubit<ResumeVaultState> {
       return;
     }
 
-    print('🔵 [RESUME_VAULT_CUBIT] Initializing with ${resumes.length} resumes from shared data');
+    print(
+      '🔵 [RESUME_VAULT_CUBIT] Initializing with ${resumes.length} resumes from shared data',
+    );
     emit(
       state.copyWith(
         status: ResumeVaultStatus.success,
@@ -33,7 +35,9 @@ class ResumeVaultCubit extends Cubit<ResumeVaultState> {
       ),
     );
     _isInitialized = true;
-    print('🔵 [RESUME_VAULT_CUBIT] ✅ Resume vault initialized with shared data');
+    print(
+      '🔵 [RESUME_VAULT_CUBIT] ✅ Resume vault initialized with shared data',
+    );
   }
 
   Future<void> loadResumes({bool force = false}) async {
@@ -44,14 +48,18 @@ class ResumeVaultCubit extends Cubit<ResumeVaultState> {
     }
 
     // Skip if already loaded and not forced
-    if (!force && state.status == ResumeVaultStatus.success && state.resumes.isNotEmpty) {
+    if (!force &&
+        state.status == ResumeVaultStatus.success &&
+        state.resumes.isNotEmpty) {
       print('🔵 [RESUME_VAULT_CUBIT] Already loaded, skipping');
       return;
     }
 
     // If not initialized yet, don't auto-load - wait for initializeWithResumes
     if (!_isInitialized && !force) {
-      print('🔵 [RESUME_VAULT_CUBIT] Not initialized yet, skipping auto-load. Call initializeWithResumes() first.');
+      print(
+        '🔵 [RESUME_VAULT_CUBIT] Not initialized yet, skipping auto-load. Call initializeWithResumes() first.',
+      );
       return;
     }
 

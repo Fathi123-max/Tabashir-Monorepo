@@ -19,6 +19,8 @@ import 'package:tabashir/features/jobs/presentation/widgets/card_styles.dart';
 import 'package:tabashir/features/jobs/presentation/widgets/sort_option.dart';
 import 'package:tabashir/features/jobs/presentation/widgets/job_filter_bottom_sheet.dart';
 import 'package:tabashir/shared/widgets/components/standard_fab.dart';
+import 'package:tabashir/shared/widgets/cv_required_blur.dart';
+import 'package:tabashir/features/resume/presentation/cubit/resume_vault_cubit.dart';
 
 class JobsScreen extends StatelessWidget {
   const JobsScreen({super.key});
@@ -42,7 +44,7 @@ class _JobsViewState extends State<JobsView> {
   late final JobsRepository _jobsRepository;
 
   // Loading states
-  Set<String> _applyingJobs = <String>{};
+  final Set<String> _applyingJobs = <String>{};
   Set<String> _appliedJobs = <String>{};
   bool _isFetchingAppliedJobs = false;
 
@@ -195,50 +197,48 @@ class _JobsViewState extends State<JobsView> {
   }
 
   @override
-  Widget build(BuildContext context) {
-    return MultiBlocProvider(
-      providers: [
-        BlocProvider.value(value: _aiJobApplyCubit),
-        BlocProvider.value(value: _profileCubit),
-      ],
-      child: MultiBlocListener(
-        listeners: [
-          // Listen to AI job apply state for application feedback
-          BlocListener<AiJobApplyCubit, AiJobApplyState>(
-            listener: (context, state) {
-              if (state?.submissionResult != null) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text('Application submitted successfully!'.tr()),
-                    backgroundColor: Colors.green,
-                  ),
-                );
-              } else if (state?.submissionError?.isNotEmpty == true) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text(state!.submissionError),
-                    backgroundColor: Colors.red,
-                  ),
-                );
-              }
-            },
-          ),
-        ],
-        child: BlocBuilder<JobsCubit, JobsState>(
-          builder: (context, state) => _buildContent(context, state),
+  Widget build(BuildContext context) => MultiBlocProvider(
+    providers: [
+      BlocProvider.value(value: _aiJobApplyCubit),
+      BlocProvider.value(value: _profileCubit),
+    ],
+    child: MultiBlocListener(
+      listeners: [
+        // Listen to AI job apply state for application feedback
+        BlocListener<AiJobApplyCubit, AiJobApplyState>(
+          listener: (context, state) {
+            if (state.submissionResult != null) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text('Application submitted successfully!'.tr()),
+                  backgroundColor: Colors.green,
+                ),
+              );
+            } else if (state.submissionError.isNotEmpty ?? false) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text(state.submissionError),
+                  backgroundColor: Colors.red,
+                ),
+              );
+            }
+          },
         ),
+      ],
+      child: BlocBuilder<JobsCubit, JobsState>(
+        builder: _buildContent,
       ),
-    );
-  }
+    ),
+  );
 
   Widget _buildContent(BuildContext context, JobsState state) {
     // Extract state data with defaults
-    bool showBanner = true;
-    List<JobUI> jobs = [];
-    Set<String> savedJobs = <String>{};
-    bool isLoadingMore = false;
-    bool hasActiveFilters = false;
-    int activeFilterCount = 0;
+    var showBanner = true;
+    var jobs = <JobUI>[];
+    var savedJobs = <String>{};
+    var isLoadingMore = false;
+    var hasActiveFilters = false;
+    var activeFilterCount = 0;
 
     if (state is JobsStateLoaded) {
       showBanner = state.showBanner;
@@ -263,45 +263,56 @@ class _JobsViewState extends State<JobsView> {
           (state.maxSalary < 500000 ? 1 : 0);
     }
 
-    return Scaffold(
-      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-      body: SafeArea(
-        child: Column(
-          children: [
-            // Header
-            _buildHeader(context, Theme.of(context)),
+    return BlocBuilder<ResumeVaultCubit, ResumeVaultState>(
+      builder: (context, resumeState) {
+        final hasNoCv =
+            resumeState.status == ResumeVaultStatus.success &&
+            resumeState.resumes.isEmpty;
 
-            // Search Bar
-            _buildSearchBar(
-              context,
-              Theme.of(context),
-              hasActiveFilters: hasActiveFilters,
-              activeFilterCount: activeFilterCount,
+        return CvRequiredBlur(
+          isBlurred: hasNoCv,
+          child: Scaffold(
+            backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+            body: SafeArea(
+              child: Column(
+                children: [
+                  // Header
+                  _buildHeader(context, Theme.of(context)),
+
+                  // Search Bar
+                  _buildSearchBar(
+                    context,
+                    Theme.of(context),
+                    hasActiveFilters: hasActiveFilters,
+                    activeFilterCount: activeFilterCount,
+                  ),
+
+                  // AI Banner (if shown)
+                  if (showBanner) _buildAIBanner(context, Theme.of(context)),
+
+                  // Jobs List or Empty State
+                  if (jobs.isEmpty)
+                    _buildEmptyState(context)
+                  else
+                    _buildJobsList(
+                      context,
+                      jobs,
+                      isLoadingMore,
+                      savedJobs,
+                    ),
+                ],
+              ),
             ),
 
-            // AI Banner (if shown)
-            if (showBanner) _buildAIBanner(context, Theme.of(context)),
-
-            // Jobs List or Empty State
-            if (jobs.isEmpty)
-              _buildEmptyState(context)
-            else
-              _buildJobsList(
-                context,
-                jobs,
-                isLoadingMore,
-                savedJobs,
-              ),
-          ],
-        ),
-      ),
-
-      // Floating Action Button
-      floatingActionButton: StandardFAB(
-        icon: Icons.auto_awesome,
-        onPressed: () => context.push(RouteNames.aiJobApply),
-        useDefaultPositioning: false,
-      ),
+            // Floating Action Button
+            floatingActionButton: StandardFAB(
+              icon: Icons.auto_awesome,
+              onPressed: () => context.push(RouteNames.aiJobApply),
+              useDefaultPositioning: false,
+            ),
+          ),
+        );
+      },
     );
   }
 
@@ -343,11 +354,9 @@ class _JobsViewState extends State<JobsView> {
   );
 
   // Empty State
-  Widget _buildEmptyState(BuildContext context) {
-    return const Center(
-      child: Text('No jobs found'),
-    );
-  }
+  Widget _buildEmptyState(BuildContext context) => const Center(
+    child: Text('No jobs found'),
+  );
 
   // Jobs List
   Widget _buildJobsList(
@@ -355,49 +364,47 @@ class _JobsViewState extends State<JobsView> {
     List<JobUI> jobs,
     bool isLoadingMore,
     Set<String> savedJobs,
-  ) {
-    return Expanded(
-      child: RefreshIndicator(
-        onRefresh: () async {
-          await context.read<JobsCubit>().refreshJobs();
+  ) => Expanded(
+    child: RefreshIndicator(
+      onRefresh: () async {
+        await context.read<JobsCubit>().refreshJobs();
+      },
+      color: AppTheme.primaryColor,
+      child: ListView.builder(
+        physics: const AlwaysScrollableScrollPhysics(),
+        itemCount: jobs.length + (isLoadingMore ? 1 : 0),
+        itemBuilder: (context, index) {
+          if (index == jobs.length) {
+            return const Center(child: CircularProgressIndicator());
+          }
+
+          final job = jobs[index];
+          final jobId = job.id;
+
+          return Column(
+            children: [
+              JobCard(
+                title: job.title,
+                company: job.company,
+                location: job.location,
+                salary: job.salary,
+                matchPercentage: job.matchPercentage,
+                tags: job.tags,
+                skillsMatch: job.skillsMatch,
+                isSaved: savedJobs.contains(jobId),
+                jobId: jobId,
+                onSave: () => context.read<JobsCubit>().toggleSaveJob(jobId),
+                onApply: () => _applyToJob(jobId),
+                isApplied: job.isApplied || _appliedJobs.contains(jobId),
+                isLoading: _applyingJobs.contains(jobId),
+              ),
+              SizedBox(height: AppTheme.spacingMd.h),
+            ],
+          );
         },
-        color: AppTheme.primaryColor,
-        child: ListView.builder(
-          physics: const AlwaysScrollableScrollPhysics(),
-          itemCount: jobs.length + (isLoadingMore ? 1 : 0),
-          itemBuilder: (context, index) {
-            if (index == jobs.length) {
-              return const Center(child: CircularProgressIndicator());
-            }
-
-            final job = jobs[index];
-            final jobId = job.id;
-
-            return Column(
-              children: [
-                JobCard(
-                  title: job.title,
-                  company: job.company,
-                  location: job.location,
-                  salary: job.salary,
-                  matchPercentage: job.matchPercentage,
-                  tags: job.tags,
-                  skillsMatch: job.skillsMatch,
-                  isSaved: savedJobs.contains(jobId),
-                  jobId: jobId,
-                  onSave: () => context.read<JobsCubit>().toggleSaveJob(jobId),
-                  onApply: () => _applyToJob(jobId),
-                  isApplied: job.isApplied || _appliedJobs.contains(jobId),
-                  isLoading: _applyingJobs.contains(jobId),
-                ),
-                SizedBox(height: AppTheme.spacingMd.h),
-              ],
-            );
-          },
-        ),
       ),
-    );
-  }
+    ),
+  );
 
   // Search Bar
   Widget _buildSearchBar(

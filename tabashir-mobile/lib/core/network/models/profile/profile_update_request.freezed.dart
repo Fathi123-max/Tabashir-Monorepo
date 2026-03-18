@@ -15,7 +15,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$ProfileUpdateRequest {
 
- String get name; String get email; String get phone; String get nationality; String get gender; String get jobTitle; String? get location; String get company; String get education; String? get linkedin;
+ String get name; String get email; String get phone; String get nationality; String get gender; String get jobTitle; String get company; String get education; String? get location; String? get linkedin;
 /// Create a copy of ProfileUpdateRequest
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -28,16 +28,16 @@ $ProfileUpdateRequestCopyWith<ProfileUpdateRequest> get copyWith => _$ProfileUpd
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is ProfileUpdateRequest&&(identical(other.name, name) || other.name == name)&&(identical(other.email, email) || other.email == email)&&(identical(other.phone, phone) || other.phone == phone)&&(identical(other.nationality, nationality) || other.nationality == nationality)&&(identical(other.gender, gender) || other.gender == gender)&&(identical(other.jobTitle, jobTitle) || other.jobTitle == jobTitle)&&(identical(other.location, location) || other.location == location)&&(identical(other.company, company) || other.company == company)&&(identical(other.education, education) || other.education == education)&&(identical(other.linkedin, linkedin) || other.linkedin == linkedin));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is ProfileUpdateRequest&&(identical(other.name, name) || other.name == name)&&(identical(other.email, email) || other.email == email)&&(identical(other.phone, phone) || other.phone == phone)&&(identical(other.nationality, nationality) || other.nationality == nationality)&&(identical(other.gender, gender) || other.gender == gender)&&(identical(other.jobTitle, jobTitle) || other.jobTitle == jobTitle)&&(identical(other.company, company) || other.company == company)&&(identical(other.education, education) || other.education == education)&&(identical(other.location, location) || other.location == location)&&(identical(other.linkedin, linkedin) || other.linkedin == linkedin));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,name,email,phone,nationality,gender,jobTitle,location,company,education,linkedin);
+int get hashCode => Object.hash(runtimeType,name,email,phone,nationality,gender,jobTitle,company,education,location,linkedin);
 
 @override
 String toString() {
-  return 'ProfileUpdateRequest(name: $name, email: $email, phone: $phone, nationality: $nationality, gender: $gender, jobTitle: $jobTitle, location: $location, company: $company, education: $education, linkedin: $linkedin)';
+  return 'ProfileUpdateRequest(name: $name, email: $email, phone: $phone, nationality: $nationality, gender: $gender, jobTitle: $jobTitle, company: $company, education: $education, location: $location, linkedin: $linkedin)';
 }
 
 
@@ -48,7 +48,7 @@ abstract mixin class $ProfileUpdateRequestCopyWith<$Res>  {
   factory $ProfileUpdateRequestCopyWith(ProfileUpdateRequest value, $Res Function(ProfileUpdateRequest) _then) = _$ProfileUpdateRequestCopyWithImpl;
 @useResult
 $Res call({
- String name, String email, String phone, String nationality, String gender, String jobTitle, String? location, String company, String education, String? linkedin
+ String name, String email, String phone, String nationality, String gender, String jobTitle, String company, String education, String? location, String? linkedin
 });
 
 
@@ -65,7 +65,7 @@ class _$ProfileUpdateRequestCopyWithImpl<$Res>
 
 /// Create a copy of ProfileUpdateRequest
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? name = null,Object? email = null,Object? phone = null,Object? nationality = null,Object? gender = null,Object? jobTitle = null,Object? location = freezed,Object? company = null,Object? education = null,Object? linkedin = freezed,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? name = null,Object? email = null,Object? phone = null,Object? nationality = null,Object? gender = null,Object? jobTitle = null,Object? company = null,Object? education = null,Object? location = freezed,Object? linkedin = freezed,}) {
   return _then(_self.copyWith(
 name: null == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
 as String,email: null == email ? _self.email : email // ignore: cast_nullable_to_non_nullable
@@ -73,10 +73,10 @@ as String,phone: null == phone ? _self.phone : phone // ignore: cast_nullable_to
 as String,nationality: null == nationality ? _self.nationality : nationality // ignore: cast_nullable_to_non_nullable
 as String,gender: null == gender ? _self.gender : gender // ignore: cast_nullable_to_non_nullable
 as String,jobTitle: null == jobTitle ? _self.jobTitle : jobTitle // ignore: cast_nullable_to_non_nullable
-as String,location: freezed == location ? _self.location : location // ignore: cast_nullable_to_non_nullable
-as String?,company: null == company ? _self.company : company // ignore: cast_nullable_to_non_nullable
+as String,company: null == company ? _self.company : company // ignore: cast_nullable_to_non_nullable
 as String,education: null == education ? _self.education : education // ignore: cast_nullable_to_non_nullable
-as String,linkedin: freezed == linkedin ? _self.linkedin : linkedin // ignore: cast_nullable_to_non_nullable
+as String,location: freezed == location ? _self.location : location // ignore: cast_nullable_to_non_nullable
+as String?,linkedin: freezed == linkedin ? _self.linkedin : linkedin // ignore: cast_nullable_to_non_nullable
 as String?,
   ));
 }
@@ -159,10 +159,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String name,  String email,  String phone,  String nationality,  String gender,  String jobTitle,  String? location,  String company,  String education,  String? linkedin)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String name,  String email,  String phone,  String nationality,  String gender,  String jobTitle,  String company,  String education,  String? location,  String? linkedin)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _ProfileUpdateRequest() when $default != null:
-return $default(_that.name,_that.email,_that.phone,_that.nationality,_that.gender,_that.jobTitle,_that.location,_that.company,_that.education,_that.linkedin);case _:
+return $default(_that.name,_that.email,_that.phone,_that.nationality,_that.gender,_that.jobTitle,_that.company,_that.education,_that.location,_that.linkedin);case _:
   return orElse();
 
 }
@@ -180,10 +180,10 @@ return $default(_that.name,_that.email,_that.phone,_that.nationality,_that.gende
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String name,  String email,  String phone,  String nationality,  String gender,  String jobTitle,  String? location,  String company,  String education,  String? linkedin)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String name,  String email,  String phone,  String nationality,  String gender,  String jobTitle,  String company,  String education,  String? location,  String? linkedin)  $default,) {final _that = this;
 switch (_that) {
 case _ProfileUpdateRequest():
-return $default(_that.name,_that.email,_that.phone,_that.nationality,_that.gender,_that.jobTitle,_that.location,_that.company,_that.education,_that.linkedin);}
+return $default(_that.name,_that.email,_that.phone,_that.nationality,_that.gender,_that.jobTitle,_that.company,_that.education,_that.location,_that.linkedin);}
 }
 /// A variant of `when` that fallback to returning `null`
 ///
@@ -197,10 +197,10 @@ return $default(_that.name,_that.email,_that.phone,_that.nationality,_that.gende
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String name,  String email,  String phone,  String nationality,  String gender,  String jobTitle,  String? location,  String company,  String education,  String? linkedin)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String name,  String email,  String phone,  String nationality,  String gender,  String jobTitle,  String company,  String education,  String? location,  String? linkedin)?  $default,) {final _that = this;
 switch (_that) {
 case _ProfileUpdateRequest() when $default != null:
-return $default(_that.name,_that.email,_that.phone,_that.nationality,_that.gender,_that.jobTitle,_that.location,_that.company,_that.education,_that.linkedin);case _:
+return $default(_that.name,_that.email,_that.phone,_that.nationality,_that.gender,_that.jobTitle,_that.company,_that.education,_that.location,_that.linkedin);case _:
   return null;
 
 }
@@ -212,7 +212,7 @@ return $default(_that.name,_that.email,_that.phone,_that.nationality,_that.gende
 @JsonSerializable()
 
 class _ProfileUpdateRequest implements ProfileUpdateRequest {
-  const _ProfileUpdateRequest({required this.name, required this.email, required this.phone, required this.nationality, required this.gender, required this.jobTitle, this.location, required this.company, required this.education, this.linkedin});
+  const _ProfileUpdateRequest({required this.name, required this.email, required this.phone, required this.nationality, required this.gender, required this.jobTitle, required this.company, required this.education, this.location, this.linkedin});
   factory _ProfileUpdateRequest.fromJson(Map<String, dynamic> json) => _$ProfileUpdateRequestFromJson(json);
 
 @override final  String name;
@@ -221,9 +221,9 @@ class _ProfileUpdateRequest implements ProfileUpdateRequest {
 @override final  String nationality;
 @override final  String gender;
 @override final  String jobTitle;
-@override final  String? location;
 @override final  String company;
 @override final  String education;
+@override final  String? location;
 @override final  String? linkedin;
 
 /// Create a copy of ProfileUpdateRequest
@@ -239,16 +239,16 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _ProfileUpdateRequest&&(identical(other.name, name) || other.name == name)&&(identical(other.email, email) || other.email == email)&&(identical(other.phone, phone) || other.phone == phone)&&(identical(other.nationality, nationality) || other.nationality == nationality)&&(identical(other.gender, gender) || other.gender == gender)&&(identical(other.jobTitle, jobTitle) || other.jobTitle == jobTitle)&&(identical(other.location, location) || other.location == location)&&(identical(other.company, company) || other.company == company)&&(identical(other.education, education) || other.education == education)&&(identical(other.linkedin, linkedin) || other.linkedin == linkedin));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _ProfileUpdateRequest&&(identical(other.name, name) || other.name == name)&&(identical(other.email, email) || other.email == email)&&(identical(other.phone, phone) || other.phone == phone)&&(identical(other.nationality, nationality) || other.nationality == nationality)&&(identical(other.gender, gender) || other.gender == gender)&&(identical(other.jobTitle, jobTitle) || other.jobTitle == jobTitle)&&(identical(other.company, company) || other.company == company)&&(identical(other.education, education) || other.education == education)&&(identical(other.location, location) || other.location == location)&&(identical(other.linkedin, linkedin) || other.linkedin == linkedin));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,name,email,phone,nationality,gender,jobTitle,location,company,education,linkedin);
+int get hashCode => Object.hash(runtimeType,name,email,phone,nationality,gender,jobTitle,company,education,location,linkedin);
 
 @override
 String toString() {
-  return 'ProfileUpdateRequest(name: $name, email: $email, phone: $phone, nationality: $nationality, gender: $gender, jobTitle: $jobTitle, location: $location, company: $company, education: $education, linkedin: $linkedin)';
+  return 'ProfileUpdateRequest(name: $name, email: $email, phone: $phone, nationality: $nationality, gender: $gender, jobTitle: $jobTitle, company: $company, education: $education, location: $location, linkedin: $linkedin)';
 }
 
 
@@ -259,7 +259,7 @@ abstract mixin class _$ProfileUpdateRequestCopyWith<$Res> implements $ProfileUpd
   factory _$ProfileUpdateRequestCopyWith(_ProfileUpdateRequest value, $Res Function(_ProfileUpdateRequest) _then) = __$ProfileUpdateRequestCopyWithImpl;
 @override @useResult
 $Res call({
- String name, String email, String phone, String nationality, String gender, String jobTitle, String? location, String company, String education, String? linkedin
+ String name, String email, String phone, String nationality, String gender, String jobTitle, String company, String education, String? location, String? linkedin
 });
 
 
@@ -276,7 +276,7 @@ class __$ProfileUpdateRequestCopyWithImpl<$Res>
 
 /// Create a copy of ProfileUpdateRequest
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? name = null,Object? email = null,Object? phone = null,Object? nationality = null,Object? gender = null,Object? jobTitle = null,Object? location = freezed,Object? company = null,Object? education = null,Object? linkedin = freezed,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? name = null,Object? email = null,Object? phone = null,Object? nationality = null,Object? gender = null,Object? jobTitle = null,Object? company = null,Object? education = null,Object? location = freezed,Object? linkedin = freezed,}) {
   return _then(_ProfileUpdateRequest(
 name: null == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
 as String,email: null == email ? _self.email : email // ignore: cast_nullable_to_non_nullable
@@ -284,10 +284,10 @@ as String,phone: null == phone ? _self.phone : phone // ignore: cast_nullable_to
 as String,nationality: null == nationality ? _self.nationality : nationality // ignore: cast_nullable_to_non_nullable
 as String,gender: null == gender ? _self.gender : gender // ignore: cast_nullable_to_non_nullable
 as String,jobTitle: null == jobTitle ? _self.jobTitle : jobTitle // ignore: cast_nullable_to_non_nullable
-as String,location: freezed == location ? _self.location : location // ignore: cast_nullable_to_non_nullable
-as String?,company: null == company ? _self.company : company // ignore: cast_nullable_to_non_nullable
+as String,company: null == company ? _self.company : company // ignore: cast_nullable_to_non_nullable
 as String,education: null == education ? _self.education : education // ignore: cast_nullable_to_non_nullable
-as String,linkedin: freezed == linkedin ? _self.linkedin : linkedin // ignore: cast_nullable_to_non_nullable
+as String,location: freezed == location ? _self.location : location // ignore: cast_nullable_to_non_nullable
+as String?,linkedin: freezed == linkedin ? _self.linkedin : linkedin // ignore: cast_nullable_to_non_nullable
 as String?,
   ));
 }

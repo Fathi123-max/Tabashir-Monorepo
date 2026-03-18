@@ -130,7 +130,7 @@ class _TabashirApiService implements TabashirApiService {
   }
 
   @override
-  Future<HttpResponse<void>> formatCV(
+  Future<HttpResponse<List<int>>> formatCV(
     MultipartFile file,
     String? outputLanguage,
   ) async {
@@ -143,12 +143,13 @@ class _TabashirApiService implements TabashirApiService {
     if (outputLanguage != null) {
       _data.fields.add(MapEntry('output_language', outputLanguage));
     }
-    final _options = _setStreamType<HttpResponse<void>>(
+    final _options = _setStreamType<HttpResponse<List<int>>>(
       Options(
             method: 'POST',
             headers: _headers,
             extra: _extra,
             contentType: 'multipart/form-data',
+            responseType: ResponseType.bytes,
           )
           .compose(
             _dio.options,
@@ -158,8 +159,15 @@ class _TabashirApiService implements TabashirApiService {
           )
           .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
     );
-    final _result = await _dio.fetch<void>(_options);
-    final httpResponse = HttpResponse(null, _result);
+    final _result = await _dio.fetch<List<dynamic>>(_options);
+    late List<int> _value;
+    try {
+      _value = _result.data!.cast<int>();
+    } on Object catch (e, s) {
+      errorLogger?.logError(e, s, _options);
+      rethrow;
+    }
+    final httpResponse = HttpResponse(_value, _result);
     return httpResponse;
   }
 
@@ -194,18 +202,19 @@ class _TabashirApiService implements TabashirApiService {
   }
 
   @override
-  Future<HttpResponse<void>> translateCV(MultipartFile file) async {
+  Future<HttpResponse<List<int>>> translateCV(MultipartFile file) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
     final _data = FormData();
     _data.files.add(MapEntry('file', file));
-    final _options = _setStreamType<HttpResponse<void>>(
+    final _options = _setStreamType<HttpResponse<List<int>>>(
       Options(
             method: 'POST',
             headers: _headers,
             extra: _extra,
             contentType: 'multipart/form-data',
+            responseType: ResponseType.bytes,
           )
           .compose(
             _dio.options,
@@ -215,8 +224,15 @@ class _TabashirApiService implements TabashirApiService {
           )
           .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
     );
-    final _result = await _dio.fetch<void>(_options);
-    final httpResponse = HttpResponse(null, _result);
+    final _result = await _dio.fetch<List<dynamic>>(_options);
+    late List<int> _value;
+    try {
+      _value = _result.data!.cast<int>();
+    } on Object catch (e, s) {
+      errorLogger?.logError(e, s, _options);
+      rethrow;
+    }
+    final httpResponse = HttpResponse(_value, _result);
     return httpResponse;
   }
 

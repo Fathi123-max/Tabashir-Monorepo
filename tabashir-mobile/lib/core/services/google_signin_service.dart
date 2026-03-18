@@ -29,7 +29,7 @@ class GoogleSignInService {
   Future<String> signIn() async {
     try {
       // Trigger the Google Sign-In flow
-      final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
+      final googleUser = await _googleSignIn.signIn();
 
       if (googleUser == null) {
         // User cancelled the sign-in
@@ -37,8 +37,7 @@ class GoogleSignInService {
       }
 
       // Obtain the auth details from the request
-      final GoogleSignInAuthentication googleAuth =
-          await googleUser.authentication;
+      final googleAuth = await googleUser.authentication;
 
       final idToken = googleAuth.idToken;
       if (idToken == null) {
@@ -63,9 +62,7 @@ class GoogleSignInService {
   }
 
   /// Check if user is currently signed in with Google
-  bool get isSignedIn {
-    return _googleSignIn.currentUser != null;
-  }
+  bool get isSignedIn => _googleSignIn.currentUser != null;
 
   /// Get current Firebase user
   GoogleSignInAccount? get currentUser => _googleSignIn.currentUser;

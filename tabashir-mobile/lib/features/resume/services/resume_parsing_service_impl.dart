@@ -111,7 +111,7 @@ class ResumeParsingServiceImpl implements ResumeParsingService {
       final responseJson = jsonEncode(response.data);
       print('🔍 [RESUME_PARSING] START FULL RESPONSE');
       // Print in chunks of 800 characters to avoid console truncation
-      for (int i = 0; i < responseJson.length; i += 800) {
+      for (var i = 0; i < responseJson.length; i += 800) {
         print(
           responseJson.substring(
             i,
@@ -171,7 +171,7 @@ class ResumeParsingServiceImpl implements ResumeParsingService {
       if (response.response.statusCode == 200 ||
           response.response.statusCode == 201) {
         // Download and save the formatted CV
-        final bytes = response.data as List<int>;
+        final bytes = response.data;
         final timestamp = DateTime.now().millisecondsSinceEpoch;
         final fileName = 'formatted_resume_$timestamp.docx';
         await _fileService.saveFile(
@@ -257,7 +257,7 @@ class ResumeParsingServiceImpl implements ResumeParsingService {
               ...softskills,
               ...training,
             ]
-            .map((s) => s.replaceAll(RegExp(r'^- '), '').trim())
+            .map((s) => s.replaceAll(RegExp('^- '), '').trim())
             .where((s) => s.isNotEmpty)
             .toSet()
             .toList();
@@ -343,8 +343,8 @@ class ResumeParsingServiceImpl implements ResumeParsingService {
           (edu) {
             final institution = edu['institution'];
             final degree = edu['degree'];
-            return (institution != null && institution.toString().isNotEmpty) ||
-                (degree != null && degree.toString().isNotEmpty);
+            return (institution != null && institution.isNotEmpty) ||
+                (degree != null && degree.isNotEmpty);
           },
         )
         .toList();

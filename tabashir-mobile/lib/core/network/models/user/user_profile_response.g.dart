@@ -151,7 +151,7 @@ Map<String, dynamic> _$ProfileCountsToJson(_ProfileCounts instance) =>
 _CandidateProfileData _$CandidateProfileDataFromJson(
   Map<String, dynamic> json,
 ) => _CandidateProfileData(
-  id: json['id'] as String,
+  id: json['id'] as String?,
   phone: json['phone'] as String?,
   nationality: json['nationality'] as String?,
   gender: json['gender'] as String?,
@@ -196,7 +196,7 @@ Map<String, dynamic> _$CandidateProfileDataToJson(
 
 _OwnerProfileData _$OwnerProfileDataFromJson(Map<String, dynamic> json) =>
     _OwnerProfileData(
-      id: json['id'] as String,
+      id: json['id'] as String?,
       phone: json['phone'] as String?,
       createdAt: json['createdAt'] as String?,
       updatedAt: json['updatedAt'] as String?,
@@ -213,7 +213,7 @@ Map<String, dynamic> _$OwnerProfileDataToJson(_OwnerProfileData instance) =>
 _RecruiterProfileData _$RecruiterProfileDataFromJson(
   Map<String, dynamic> json,
 ) => _RecruiterProfileData(
-  id: json['id'] as String,
+  id: json['id'] as String?,
   companyName: json['companyName'] as String?,
   contactPersonName: json['contactPersonName'] as String?,
   phone: json['phone'] as String?,

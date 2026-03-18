@@ -5,13 +5,6 @@ import 'package:iconsax/iconsax.dart';
 import 'package:tabashir/core/theme/app_theme.dart';
 
 class HomeMarketInsightsWidget extends StatelessWidget {
-  final List<Map<String, dynamic>> trendingSkills;
-  final List<Map<String, dynamic>> topLocations;
-  final int totalJobs;
-  final int newJobsThisWeek;
-  final double averageApplicationsPerJob;
-  final int totalApplications;
-
   const HomeMarketInsightsWidget({
     super.key,
     this.trendingSkills = const [],
@@ -21,6 +14,12 @@ class HomeMarketInsightsWidget extends StatelessWidget {
     this.averageApplicationsPerJob = 0.0,
     this.totalApplications = 0,
   });
+  final List<Map<String, dynamic>> trendingSkills;
+  final List<Map<String, dynamic>> topLocations;
+  final int totalJobs;
+  final int newJobsThisWeek;
+  final double averageApplicationsPerJob;
+  final int totalApplications;
 
   @override
   Widget build(BuildContext context) {
@@ -68,10 +67,15 @@ class HomeMarketInsightsWidget extends StatelessWidget {
             context,
             'Jobs Near You',
             Iconsax.location,
-            topLocations.take(3).map((loc) => MapEntry<String, String>(
-                  (loc['location'] as String?) ?? '',
-                  '${(loc['count'] as int?) ?? 0} jobs',
-                )).toList(),
+            topLocations
+                .take(3)
+                .map(
+                  (loc) => MapEntry<String, String>(
+                    (loc['location'] as String?) ?? '',
+                    '${(loc['count'] as int?) ?? 0} jobs',
+                  ),
+                )
+                .toList(),
           ),
           SizedBox(height: AppTheme.spacingMd.h),
 
@@ -81,8 +85,8 @@ class HomeMarketInsightsWidget extends StatelessWidget {
             'Skills in Demand',
             Iconsax.code,
             trendingSkills.take(5).map((skill) {
-              final String skillName = (skill['skill'] as String?) ?? '';
-              final int growth = (skill['growth'] as int?) ?? 0;
+              final skillName = (skill['skill'] as String?) ?? '';
+              final growth = (skill['growth'] as int?) ?? 0;
               return MapEntry(
                 skillName,
                 '+$growth%',
@@ -126,25 +130,27 @@ class HomeMarketInsightsWidget extends StatelessWidget {
           ],
         ),
         SizedBox(height: AppTheme.spacingSm.h),
-        ...items.map((item) => Padding(
-              padding: EdgeInsets.symmetric(vertical: AppTheme.spacingXs.h),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    item.key,
-                    style: theme.textTheme.bodyMedium,
+        ...items.map(
+          (item) => Padding(
+            padding: EdgeInsets.symmetric(vertical: AppTheme.spacingXs.h),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  item.key,
+                  style: theme.textTheme.bodyMedium,
+                ),
+                Text(
+                  item.value,
+                  style: theme.textTheme.bodyMedium?.copyWith(
+                    color: AppTheme.primaryBlue,
+                    fontWeight: FontWeight.w600,
                   ),
-                  Text(
-                    item.value,
-                    style: theme.textTheme.bodyMedium?.copyWith(
-                      color: AppTheme.primaryBlue,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                ],
-              ),
-            )),
+                ),
+              ],
+            ),
+          ),
+        ),
       ],
     );
   }

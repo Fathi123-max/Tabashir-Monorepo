@@ -263,13 +263,12 @@ class CompanyDetailsWidget extends StatelessWidget {
           Expanded(
             child: Text(
               companyName,
-              style: Theme.of(context).textTheme.titleLarge
-                  ?.copyWith(
-                    fontWeight: FontWeight.bold,
-                    color: Theme.of(
-                      context,
-                    ).textTheme.titleLarge?.color,
-                  ),
+              style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                fontWeight: FontWeight.bold,
+                color: Theme.of(
+                  context,
+                ).textTheme.titleLarge?.color,
+              ),
             ),
           ),
         ],
@@ -693,7 +692,7 @@ class JobDetailsFooter extends StatelessWidget {
                       ? SizedBox(
                           width: 20.w,
                           height: 20.w,
-                          child: CircularProgressIndicator(
+                          child: const CircularProgressIndicator(
                             strokeWidth: 2,
                             valueColor: AlwaysStoppedAnimation<Color>(
                               Colors.white,

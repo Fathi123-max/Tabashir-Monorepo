@@ -12,7 +12,8 @@ sealed class JobsMatchListResponse with _$JobsMatchListResponse {
     required bool success,
 
     /// Matched jobs (note: field name from API)
-    @JsonKey(name: 'matched_jobs') required List<JobDetailsResponse> matchedJobs,
+    @JsonKey(name: 'matched_jobs')
+    required List<JobDetailsResponse> matchedJobs,
 
     /// Pagination info
     required Map<String, dynamic> pagination,

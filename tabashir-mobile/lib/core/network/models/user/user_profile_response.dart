@@ -80,7 +80,7 @@ sealed class ProfileCounts with _$ProfileCounts {
 @freezed
 sealed class CandidateProfileData with _$CandidateProfileData {
   const factory CandidateProfileData({
-    required String id,
+    String? id,
     String? phone,
     String? nationality,
     String? gender,
@@ -107,7 +107,7 @@ sealed class CandidateProfileData with _$CandidateProfileData {
 @freezed
 sealed class OwnerProfileData with _$OwnerProfileData {
   const factory OwnerProfileData({
-    required String id,
+    String? id,
     String? phone,
     String? createdAt,
     String? updatedAt,
@@ -121,7 +121,7 @@ sealed class OwnerProfileData with _$OwnerProfileData {
 @freezed
 sealed class RecruiterProfileData with _$RecruiterProfileData {
   const factory RecruiterProfileData({
-    required String id,
+    String? id,
     String? companyName,
     String? contactPersonName,
     String? phone,

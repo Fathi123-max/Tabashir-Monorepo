@@ -20,11 +20,11 @@ mixin _$JobUI {
  String get title;/// Company name
  String get company;/// Job location
  String get location;/// Salary information (formatted string)
- String get salary;/// Numeric salary value for filtering
- int get salaryValue;/// Match percentage (e.g., "90% Match")
- String get matchPercentage;/// Job tags (jobType, experience, languages)
- List<String> get tags;/// Skills match description
- String get skillsMatch;/// Whether job is saved by user
+ String get salary;/// Match percentage (e.g., "90% Match")
+ String get matchPercentage;/// Skills match description
+ String get skillsMatch;/// Numeric salary value for filtering
+ int get salaryValue;/// Job tags (jobType, experience, languages)
+ List<String> get tags;/// Whether job is saved by user
  bool get isSaved;/// Whether user has already applied to this job
  bool get isApplied;/// Job type (Full-time, Part-time, etc.)
  String? get jobType;/// Experience level required
@@ -47,16 +47,16 @@ $JobUICopyWith<JobUI> get copyWith => _$JobUICopyWithImpl<JobUI>(this as JobUI, 
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is JobUI&&(identical(other.id, id) || other.id == id)&&(identical(other.title, title) || other.title == title)&&(identical(other.company, company) || other.company == company)&&(identical(other.location, location) || other.location == location)&&(identical(other.salary, salary) || other.salary == salary)&&(identical(other.salaryValue, salaryValue) || other.salaryValue == salaryValue)&&(identical(other.matchPercentage, matchPercentage) || other.matchPercentage == matchPercentage)&&const DeepCollectionEquality().equals(other.tags, tags)&&(identical(other.skillsMatch, skillsMatch) || other.skillsMatch == skillsMatch)&&(identical(other.isSaved, isSaved) || other.isSaved == isSaved)&&(identical(other.isApplied, isApplied) || other.isApplied == isApplied)&&(identical(other.jobType, jobType) || other.jobType == jobType)&&(identical(other.experienceLevel, experienceLevel) || other.experienceLevel == experienceLevel)&&const DeepCollectionEquality().equals(other.skills, skills)&&(identical(other.workMode, workMode) || other.workMode == workMode)&&(identical(other.description, description) || other.description == description)&&const DeepCollectionEquality().equals(other.requirements, requirements)&&(identical(other.postedDate, postedDate) || other.postedDate == postedDate)&&(identical(other.workingDays, workingDays) || other.workingDays == workingDays));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is JobUI&&(identical(other.id, id) || other.id == id)&&(identical(other.title, title) || other.title == title)&&(identical(other.company, company) || other.company == company)&&(identical(other.location, location) || other.location == location)&&(identical(other.salary, salary) || other.salary == salary)&&(identical(other.matchPercentage, matchPercentage) || other.matchPercentage == matchPercentage)&&(identical(other.skillsMatch, skillsMatch) || other.skillsMatch == skillsMatch)&&(identical(other.salaryValue, salaryValue) || other.salaryValue == salaryValue)&&const DeepCollectionEquality().equals(other.tags, tags)&&(identical(other.isSaved, isSaved) || other.isSaved == isSaved)&&(identical(other.isApplied, isApplied) || other.isApplied == isApplied)&&(identical(other.jobType, jobType) || other.jobType == jobType)&&(identical(other.experienceLevel, experienceLevel) || other.experienceLevel == experienceLevel)&&const DeepCollectionEquality().equals(other.skills, skills)&&(identical(other.workMode, workMode) || other.workMode == workMode)&&(identical(other.description, description) || other.description == description)&&const DeepCollectionEquality().equals(other.requirements, requirements)&&(identical(other.postedDate, postedDate) || other.postedDate == postedDate)&&(identical(other.workingDays, workingDays) || other.workingDays == workingDays));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hashAll([runtimeType,id,title,company,location,salary,salaryValue,matchPercentage,const DeepCollectionEquality().hash(tags),skillsMatch,isSaved,isApplied,jobType,experienceLevel,const DeepCollectionEquality().hash(skills),workMode,description,const DeepCollectionEquality().hash(requirements),postedDate,workingDays]);
+int get hashCode => Object.hashAll([runtimeType,id,title,company,location,salary,matchPercentage,skillsMatch,salaryValue,const DeepCollectionEquality().hash(tags),isSaved,isApplied,jobType,experienceLevel,const DeepCollectionEquality().hash(skills),workMode,description,const DeepCollectionEquality().hash(requirements),postedDate,workingDays]);
 
 @override
 String toString() {
-  return 'JobUI(id: $id, title: $title, company: $company, location: $location, salary: $salary, salaryValue: $salaryValue, matchPercentage: $matchPercentage, tags: $tags, skillsMatch: $skillsMatch, isSaved: $isSaved, isApplied: $isApplied, jobType: $jobType, experienceLevel: $experienceLevel, skills: $skills, workMode: $workMode, description: $description, requirements: $requirements, postedDate: $postedDate, workingDays: $workingDays)';
+  return 'JobUI(id: $id, title: $title, company: $company, location: $location, salary: $salary, matchPercentage: $matchPercentage, skillsMatch: $skillsMatch, salaryValue: $salaryValue, tags: $tags, isSaved: $isSaved, isApplied: $isApplied, jobType: $jobType, experienceLevel: $experienceLevel, skills: $skills, workMode: $workMode, description: $description, requirements: $requirements, postedDate: $postedDate, workingDays: $workingDays)';
 }
 
 
@@ -67,7 +67,7 @@ abstract mixin class $JobUICopyWith<$Res>  {
   factory $JobUICopyWith(JobUI value, $Res Function(JobUI) _then) = _$JobUICopyWithImpl;
 @useResult
 $Res call({
- String id, String title, String company, String location, String salary, int salaryValue, String matchPercentage, List<String> tags, String skillsMatch, bool isSaved, bool isApplied, String? jobType, String? experienceLevel, List<String> skills, String? workMode, String? description, List<String> requirements, String? postedDate, String? workingDays
+ String id, String title, String company, String location, String salary, String matchPercentage, String skillsMatch, int salaryValue, List<String> tags, bool isSaved, bool isApplied, String? jobType, String? experienceLevel, List<String> skills, String? workMode, String? description, List<String> requirements, String? postedDate, String? workingDays
 });
 
 
@@ -84,18 +84,18 @@ class _$JobUICopyWithImpl<$Res>
 
 /// Create a copy of JobUI
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? title = null,Object? company = null,Object? location = null,Object? salary = null,Object? salaryValue = null,Object? matchPercentage = null,Object? tags = null,Object? skillsMatch = null,Object? isSaved = null,Object? isApplied = null,Object? jobType = freezed,Object? experienceLevel = freezed,Object? skills = null,Object? workMode = freezed,Object? description = freezed,Object? requirements = null,Object? postedDate = freezed,Object? workingDays = freezed,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? title = null,Object? company = null,Object? location = null,Object? salary = null,Object? matchPercentage = null,Object? skillsMatch = null,Object? salaryValue = null,Object? tags = null,Object? isSaved = null,Object? isApplied = null,Object? jobType = freezed,Object? experienceLevel = freezed,Object? skills = null,Object? workMode = freezed,Object? description = freezed,Object? requirements = null,Object? postedDate = freezed,Object? workingDays = freezed,}) {
   return _then(_self.copyWith(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,title: null == title ? _self.title : title // ignore: cast_nullable_to_non_nullable
 as String,company: null == company ? _self.company : company // ignore: cast_nullable_to_non_nullable
 as String,location: null == location ? _self.location : location // ignore: cast_nullable_to_non_nullable
 as String,salary: null == salary ? _self.salary : salary // ignore: cast_nullable_to_non_nullable
+as String,matchPercentage: null == matchPercentage ? _self.matchPercentage : matchPercentage // ignore: cast_nullable_to_non_nullable
+as String,skillsMatch: null == skillsMatch ? _self.skillsMatch : skillsMatch // ignore: cast_nullable_to_non_nullable
 as String,salaryValue: null == salaryValue ? _self.salaryValue : salaryValue // ignore: cast_nullable_to_non_nullable
-as int,matchPercentage: null == matchPercentage ? _self.matchPercentage : matchPercentage // ignore: cast_nullable_to_non_nullable
-as String,tags: null == tags ? _self.tags : tags // ignore: cast_nullable_to_non_nullable
-as List<String>,skillsMatch: null == skillsMatch ? _self.skillsMatch : skillsMatch // ignore: cast_nullable_to_non_nullable
-as String,isSaved: null == isSaved ? _self.isSaved : isSaved // ignore: cast_nullable_to_non_nullable
+as int,tags: null == tags ? _self.tags : tags // ignore: cast_nullable_to_non_nullable
+as List<String>,isSaved: null == isSaved ? _self.isSaved : isSaved // ignore: cast_nullable_to_non_nullable
 as bool,isApplied: null == isApplied ? _self.isApplied : isApplied // ignore: cast_nullable_to_non_nullable
 as bool,jobType: freezed == jobType ? _self.jobType : jobType // ignore: cast_nullable_to_non_nullable
 as String?,experienceLevel: freezed == experienceLevel ? _self.experienceLevel : experienceLevel // ignore: cast_nullable_to_non_nullable
@@ -187,10 +187,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String title,  String company,  String location,  String salary,  int salaryValue,  String matchPercentage,  List<String> tags,  String skillsMatch,  bool isSaved,  bool isApplied,  String? jobType,  String? experienceLevel,  List<String> skills,  String? workMode,  String? description,  List<String> requirements,  String? postedDate,  String? workingDays)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String title,  String company,  String location,  String salary,  String matchPercentage,  String skillsMatch,  int salaryValue,  List<String> tags,  bool isSaved,  bool isApplied,  String? jobType,  String? experienceLevel,  List<String> skills,  String? workMode,  String? description,  List<String> requirements,  String? postedDate,  String? workingDays)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _JobUI() when $default != null:
-return $default(_that.id,_that.title,_that.company,_that.location,_that.salary,_that.salaryValue,_that.matchPercentage,_that.tags,_that.skillsMatch,_that.isSaved,_that.isApplied,_that.jobType,_that.experienceLevel,_that.skills,_that.workMode,_that.description,_that.requirements,_that.postedDate,_that.workingDays);case _:
+return $default(_that.id,_that.title,_that.company,_that.location,_that.salary,_that.matchPercentage,_that.skillsMatch,_that.salaryValue,_that.tags,_that.isSaved,_that.isApplied,_that.jobType,_that.experienceLevel,_that.skills,_that.workMode,_that.description,_that.requirements,_that.postedDate,_that.workingDays);case _:
   return orElse();
 
 }
@@ -208,10 +208,10 @@ return $default(_that.id,_that.title,_that.company,_that.location,_that.salary,_
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String title,  String company,  String location,  String salary,  int salaryValue,  String matchPercentage,  List<String> tags,  String skillsMatch,  bool isSaved,  bool isApplied,  String? jobType,  String? experienceLevel,  List<String> skills,  String? workMode,  String? description,  List<String> requirements,  String? postedDate,  String? workingDays)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String title,  String company,  String location,  String salary,  String matchPercentage,  String skillsMatch,  int salaryValue,  List<String> tags,  bool isSaved,  bool isApplied,  String? jobType,  String? experienceLevel,  List<String> skills,  String? workMode,  String? description,  List<String> requirements,  String? postedDate,  String? workingDays)  $default,) {final _that = this;
 switch (_that) {
 case _JobUI():
-return $default(_that.id,_that.title,_that.company,_that.location,_that.salary,_that.salaryValue,_that.matchPercentage,_that.tags,_that.skillsMatch,_that.isSaved,_that.isApplied,_that.jobType,_that.experienceLevel,_that.skills,_that.workMode,_that.description,_that.requirements,_that.postedDate,_that.workingDays);}
+return $default(_that.id,_that.title,_that.company,_that.location,_that.salary,_that.matchPercentage,_that.skillsMatch,_that.salaryValue,_that.tags,_that.isSaved,_that.isApplied,_that.jobType,_that.experienceLevel,_that.skills,_that.workMode,_that.description,_that.requirements,_that.postedDate,_that.workingDays);}
 }
 /// A variant of `when` that fallback to returning `null`
 ///
@@ -225,10 +225,10 @@ return $default(_that.id,_that.title,_that.company,_that.location,_that.salary,_
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String title,  String company,  String location,  String salary,  int salaryValue,  String matchPercentage,  List<String> tags,  String skillsMatch,  bool isSaved,  bool isApplied,  String? jobType,  String? experienceLevel,  List<String> skills,  String? workMode,  String? description,  List<String> requirements,  String? postedDate,  String? workingDays)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String title,  String company,  String location,  String salary,  String matchPercentage,  String skillsMatch,  int salaryValue,  List<String> tags,  bool isSaved,  bool isApplied,  String? jobType,  String? experienceLevel,  List<String> skills,  String? workMode,  String? description,  List<String> requirements,  String? postedDate,  String? workingDays)?  $default,) {final _that = this;
 switch (_that) {
 case _JobUI() when $default != null:
-return $default(_that.id,_that.title,_that.company,_that.location,_that.salary,_that.salaryValue,_that.matchPercentage,_that.tags,_that.skillsMatch,_that.isSaved,_that.isApplied,_that.jobType,_that.experienceLevel,_that.skills,_that.workMode,_that.description,_that.requirements,_that.postedDate,_that.workingDays);case _:
+return $default(_that.id,_that.title,_that.company,_that.location,_that.salary,_that.matchPercentage,_that.skillsMatch,_that.salaryValue,_that.tags,_that.isSaved,_that.isApplied,_that.jobType,_that.experienceLevel,_that.skills,_that.workMode,_that.description,_that.requirements,_that.postedDate,_that.workingDays);case _:
   return null;
 
 }
@@ -240,7 +240,7 @@ return $default(_that.id,_that.title,_that.company,_that.location,_that.salary,_
 @JsonSerializable()
 
 class _JobUI implements JobUI {
-  const _JobUI({required this.id, required this.title, required this.company, required this.location, required this.salary, this.salaryValue = 0, required this.matchPercentage, final  List<String> tags = const [], required this.skillsMatch, this.isSaved = false, this.isApplied = false, this.jobType, this.experienceLevel, final  List<String> skills = const [], this.workMode, this.description, final  List<String> requirements = const [], this.postedDate, this.workingDays}): _tags = tags,_skills = skills,_requirements = requirements;
+  const _JobUI({required this.id, required this.title, required this.company, required this.location, required this.salary, required this.matchPercentage, required this.skillsMatch, this.salaryValue = 0, final  List<String> tags = const [], this.isSaved = false, this.isApplied = false, this.jobType, this.experienceLevel, final  List<String> skills = const [], this.workMode, this.description, final  List<String> requirements = const [], this.postedDate, this.workingDays}): _tags = tags,_skills = skills,_requirements = requirements;
   factory _JobUI.fromJson(Map<String, dynamic> json) => _$JobUIFromJson(json);
 
 /// Unique job identifier
@@ -253,10 +253,12 @@ class _JobUI implements JobUI {
 @override final  String location;
 /// Salary information (formatted string)
 @override final  String salary;
-/// Numeric salary value for filtering
-@override@JsonKey() final  int salaryValue;
 /// Match percentage (e.g., "90% Match")
 @override final  String matchPercentage;
+/// Skills match description
+@override final  String skillsMatch;
+/// Numeric salary value for filtering
+@override@JsonKey() final  int salaryValue;
 /// Job tags (jobType, experience, languages)
  final  List<String> _tags;
 /// Job tags (jobType, experience, languages)
@@ -266,8 +268,6 @@ class _JobUI implements JobUI {
   return EqualUnmodifiableListView(_tags);
 }
 
-/// Skills match description
-@override final  String skillsMatch;
 /// Whether job is saved by user
 @override@JsonKey() final  bool isSaved;
 /// Whether user has already applied to this job
@@ -316,16 +316,16 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _JobUI&&(identical(other.id, id) || other.id == id)&&(identical(other.title, title) || other.title == title)&&(identical(other.company, company) || other.company == company)&&(identical(other.location, location) || other.location == location)&&(identical(other.salary, salary) || other.salary == salary)&&(identical(other.salaryValue, salaryValue) || other.salaryValue == salaryValue)&&(identical(other.matchPercentage, matchPercentage) || other.matchPercentage == matchPercentage)&&const DeepCollectionEquality().equals(other._tags, _tags)&&(identical(other.skillsMatch, skillsMatch) || other.skillsMatch == skillsMatch)&&(identical(other.isSaved, isSaved) || other.isSaved == isSaved)&&(identical(other.isApplied, isApplied) || other.isApplied == isApplied)&&(identical(other.jobType, jobType) || other.jobType == jobType)&&(identical(other.experienceLevel, experienceLevel) || other.experienceLevel == experienceLevel)&&const DeepCollectionEquality().equals(other._skills, _skills)&&(identical(other.workMode, workMode) || other.workMode == workMode)&&(identical(other.description, description) || other.description == description)&&const DeepCollectionEquality().equals(other._requirements, _requirements)&&(identical(other.postedDate, postedDate) || other.postedDate == postedDate)&&(identical(other.workingDays, workingDays) || other.workingDays == workingDays));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _JobUI&&(identical(other.id, id) || other.id == id)&&(identical(other.title, title) || other.title == title)&&(identical(other.company, company) || other.company == company)&&(identical(other.location, location) || other.location == location)&&(identical(other.salary, salary) || other.salary == salary)&&(identical(other.matchPercentage, matchPercentage) || other.matchPercentage == matchPercentage)&&(identical(other.skillsMatch, skillsMatch) || other.skillsMatch == skillsMatch)&&(identical(other.salaryValue, salaryValue) || other.salaryValue == salaryValue)&&const DeepCollectionEquality().equals(other._tags, _tags)&&(identical(other.isSaved, isSaved) || other.isSaved == isSaved)&&(identical(other.isApplied, isApplied) || other.isApplied == isApplied)&&(identical(other.jobType, jobType) || other.jobType == jobType)&&(identical(other.experienceLevel, experienceLevel) || other.experienceLevel == experienceLevel)&&const DeepCollectionEquality().equals(other._skills, _skills)&&(identical(other.workMode, workMode) || other.workMode == workMode)&&(identical(other.description, description) || other.description == description)&&const DeepCollectionEquality().equals(other._requirements, _requirements)&&(identical(other.postedDate, postedDate) || other.postedDate == postedDate)&&(identical(other.workingDays, workingDays) || other.workingDays == workingDays));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hashAll([runtimeType,id,title,company,location,salary,salaryValue,matchPercentage,const DeepCollectionEquality().hash(_tags),skillsMatch,isSaved,isApplied,jobType,experienceLevel,const DeepCollectionEquality().hash(_skills),workMode,description,const DeepCollectionEquality().hash(_requirements),postedDate,workingDays]);
+int get hashCode => Object.hashAll([runtimeType,id,title,company,location,salary,matchPercentage,skillsMatch,salaryValue,const DeepCollectionEquality().hash(_tags),isSaved,isApplied,jobType,experienceLevel,const DeepCollectionEquality().hash(_skills),workMode,description,const DeepCollectionEquality().hash(_requirements),postedDate,workingDays]);
 
 @override
 String toString() {
-  return 'JobUI(id: $id, title: $title, company: $company, location: $location, salary: $salary, salaryValue: $salaryValue, matchPercentage: $matchPercentage, tags: $tags, skillsMatch: $skillsMatch, isSaved: $isSaved, isApplied: $isApplied, jobType: $jobType, experienceLevel: $experienceLevel, skills: $skills, workMode: $workMode, description: $description, requirements: $requirements, postedDate: $postedDate, workingDays: $workingDays)';
+  return 'JobUI(id: $id, title: $title, company: $company, location: $location, salary: $salary, matchPercentage: $matchPercentage, skillsMatch: $skillsMatch, salaryValue: $salaryValue, tags: $tags, isSaved: $isSaved, isApplied: $isApplied, jobType: $jobType, experienceLevel: $experienceLevel, skills: $skills, workMode: $workMode, description: $description, requirements: $requirements, postedDate: $postedDate, workingDays: $workingDays)';
 }
 
 
@@ -336,7 +336,7 @@ abstract mixin class _$JobUICopyWith<$Res> implements $JobUICopyWith<$Res> {
   factory _$JobUICopyWith(_JobUI value, $Res Function(_JobUI) _then) = __$JobUICopyWithImpl;
 @override @useResult
 $Res call({
- String id, String title, String company, String location, String salary, int salaryValue, String matchPercentage, List<String> tags, String skillsMatch, bool isSaved, bool isApplied, String? jobType, String? experienceLevel, List<String> skills, String? workMode, String? description, List<String> requirements, String? postedDate, String? workingDays
+ String id, String title, String company, String location, String salary, String matchPercentage, String skillsMatch, int salaryValue, List<String> tags, bool isSaved, bool isApplied, String? jobType, String? experienceLevel, List<String> skills, String? workMode, String? description, List<String> requirements, String? postedDate, String? workingDays
 });
 
 
@@ -353,18 +353,18 @@ class __$JobUICopyWithImpl<$Res>
 
 /// Create a copy of JobUI
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? title = null,Object? company = null,Object? location = null,Object? salary = null,Object? salaryValue = null,Object? matchPercentage = null,Object? tags = null,Object? skillsMatch = null,Object? isSaved = null,Object? isApplied = null,Object? jobType = freezed,Object? experienceLevel = freezed,Object? skills = null,Object? workMode = freezed,Object? description = freezed,Object? requirements = null,Object? postedDate = freezed,Object? workingDays = freezed,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? title = null,Object? company = null,Object? location = null,Object? salary = null,Object? matchPercentage = null,Object? skillsMatch = null,Object? salaryValue = null,Object? tags = null,Object? isSaved = null,Object? isApplied = null,Object? jobType = freezed,Object? experienceLevel = freezed,Object? skills = null,Object? workMode = freezed,Object? description = freezed,Object? requirements = null,Object? postedDate = freezed,Object? workingDays = freezed,}) {
   return _then(_JobUI(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,title: null == title ? _self.title : title // ignore: cast_nullable_to_non_nullable
 as String,company: null == company ? _self.company : company // ignore: cast_nullable_to_non_nullable
 as String,location: null == location ? _self.location : location // ignore: cast_nullable_to_non_nullable
 as String,salary: null == salary ? _self.salary : salary // ignore: cast_nullable_to_non_nullable
+as String,matchPercentage: null == matchPercentage ? _self.matchPercentage : matchPercentage // ignore: cast_nullable_to_non_nullable
+as String,skillsMatch: null == skillsMatch ? _self.skillsMatch : skillsMatch // ignore: cast_nullable_to_non_nullable
 as String,salaryValue: null == salaryValue ? _self.salaryValue : salaryValue // ignore: cast_nullable_to_non_nullable
-as int,matchPercentage: null == matchPercentage ? _self.matchPercentage : matchPercentage // ignore: cast_nullable_to_non_nullable
-as String,tags: null == tags ? _self._tags : tags // ignore: cast_nullable_to_non_nullable
-as List<String>,skillsMatch: null == skillsMatch ? _self.skillsMatch : skillsMatch // ignore: cast_nullable_to_non_nullable
-as String,isSaved: null == isSaved ? _self.isSaved : isSaved // ignore: cast_nullable_to_non_nullable
+as int,tags: null == tags ? _self._tags : tags // ignore: cast_nullable_to_non_nullable
+as List<String>,isSaved: null == isSaved ? _self.isSaved : isSaved // ignore: cast_nullable_to_non_nullable
 as bool,isApplied: null == isApplied ? _self.isApplied : isApplied // ignore: cast_nullable_to_non_nullable
 as bool,jobType: freezed == jobType ? _self.jobType : jobType // ignore: cast_nullable_to_non_nullable
 as String?,experienceLevel: freezed == experienceLevel ? _self.experienceLevel : experienceLevel // ignore: cast_nullable_to_non_nullable

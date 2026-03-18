@@ -8,7 +8,8 @@ part 'generate_docx_from_json_request.g.dart';
 sealed class GenerateDocxFromJsonRequest with _$GenerateDocxFromJsonRequest {
   const factory GenerateDocxFromJsonRequest({
     /// Structured resume data in JSON format
-    @JsonKey(name: 'formatted_resume') required Map<String, dynamic> formattedResume,
+    @JsonKey(name: 'formatted_resume')
+    required Map<String, dynamic> formattedResume,
 
     /// Output language: 'regular' or 'arabic'
     @Default('regular') String? outputLanguage,

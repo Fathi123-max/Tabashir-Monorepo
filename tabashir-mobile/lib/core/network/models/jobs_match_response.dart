@@ -111,10 +111,12 @@ sealed class RankingResult with _$RankingResult {
     @JsonKey(name: 'clients_processed') required int clientsProcessed,
 
     /// Execution time in seconds
-    @JsonKey(name: 'execution_time_seconds') required double executionTimeSeconds,
+    @JsonKey(name: 'execution_time_seconds')
+    required double executionTimeSeconds,
 
     /// Number of existing matches skipped
-    @JsonKey(name: 'existing_matches_skipped') required int existingMatchesSkipped,
+    @JsonKey(name: 'existing_matches_skipped')
+    required int existingMatchesSkipped,
 
     /// Number of jobs processed
     @JsonKey(name: 'jobs_processed') required int jobsProcessed,

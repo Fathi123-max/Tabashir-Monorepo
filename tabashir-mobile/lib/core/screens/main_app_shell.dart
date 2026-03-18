@@ -47,14 +47,7 @@ class _MainAppShellState extends State<MainAppShell> {
       },
       child: const JobsScreen(),
     ),
-    BlocProvider(
-      create: (context) {
-        final cubit = getIt<ResumeVaultCubit>();
-        cubit.loadResumes();
-        return cubit;
-      },
-      child: const ResumeVaultScreen(),
-    ),
+    const ResumeVaultScreen(),
     const ServicesScreen(),
     const ProfileScreen(),
   ];

@@ -11,8 +11,8 @@ import '../../../../core/theme/app_theme.dart';
 
 class ResumePreviewScreen extends StatefulWidget {
   const ResumePreviewScreen({
-    super.key,
     required this.resume,
+    super.key,
   });
 
   final ResumeItem resume;
@@ -205,7 +205,6 @@ class _ResumePreviewScreenState extends State<ResumePreviewScreen> {
     return PdfView(
       controller: _pdfController!,
       scrollDirection: Axis.vertical,
-      pageSnapping: true,
       physics: const BouncingScrollPhysics(),
     );
   }

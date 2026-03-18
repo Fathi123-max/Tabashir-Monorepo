@@ -63,87 +63,85 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
             padding: EdgeInsets.only(right: AppTheme.spacingMd.w),
             child: Center(
               child: BlocBuilder<ProfileCubit, ProfileState>(
-                builder: (context, state) {
-                  return _isUpdating
-                      ? SizedBox(
-                          height: 20.h,
-                          width: 20.w,
-                          child: CircularProgressIndicator(
-                            strokeWidth: 2,
-                            valueColor: AlwaysStoppedAnimation<Color>(
-                              AppTheme.primaryColor,
-                            ),
+                builder: (context, state) => _isUpdating
+                    ? SizedBox(
+                        height: 20.h,
+                        width: 20.w,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                          valueColor: AlwaysStoppedAnimation<Color>(
+                            AppTheme.primaryColor,
                           ),
-                        )
-                      : TextButton(
-                          onPressed: (_form?.valid ?? false) && !_isUpdating
-                              ? () async {
+                        ),
+                      )
+                    : TextButton(
+                        onPressed: (_form?.valid ?? false) && !_isUpdating
+                            ? () async {
+                                print(
+                                  '\n\n########## [EDIT_PROFILE] APPBAR SAVE BUTTON CLICKED ##########',
+                                );
+                                print(
+                                  '[EDIT_PROFILE] Form valid: ${_form?.valid}',
+                                );
+                                if (_form != null) {
                                   print(
-                                    '\n\n########## [EDIT_PROFILE] APPBAR SAVE BUTTON CLICKED ##########',
+                                    '[EDIT_PROFILE] Form values: ${_form!.value}',
                                   );
                                   print(
-                                    '[EDIT_PROFILE] Form valid: ${_form?.valid}',
+                                    '[EDIT_PROFILE] Form errors: ${_form!.errors}',
                                   );
-                                  if (_form != null) {
-                                    print(
-                                      '[EDIT_PROFILE] Form values: ${_form!.value}',
-                                    );
-                                    print(
-                                      '[EDIT_PROFILE] Form errors: ${_form!.errors}',
-                                    );
-                                  }
-
-                                  setState(() {
-                                    _isUpdating = true;
-                                  });
-                                  try {
-                                    await cubit.updateProfile(_form!);
-                                    print(
-                                      '[EDIT_PROFILE] ✅ AppBar: Profile update completed successfully',
-                                    );
-                                    print(
-                                      '[EDIT_PROFILE] Current cubit state: ${cubit.state.profile?.name}',
-                                    );
-
-                                    // Navigate back after successful save
-                                    print(
-                                      '[EDIT_PROFILE] Navigating back to profile screen...',
-                                    );
-                                    if (mounted) {
-                                      Navigator.of(context).pop();
-                                    }
-                                  } catch (e) {
-                                    print(
-                                      '[EDIT_PROFILE] ❌ AppBar: Profile update error: $e',
-                                    );
-                                    print(
-                                      '[EDIT_PROFILE] Stack trace: ${StackTrace.current}',
-                                    );
-                                  } finally {
-                                    if (mounted) {
-                                      setState(() {
-                                        _isUpdating = false;
-                                      });
-                                    }
-                                    print(
-                                      '########## [EDIT_PROFILE] APPBAR SAVE FLOW COMPLETE ##########\n\n',
-                                    );
-                                  }
                                 }
-                              : null,
-                          child: Text(
-                            'Save'.tr(),
-                            style: theme.textTheme.titleMedium?.copyWith(
-                              color: (_form?.valid ?? false) && !_isUpdating
-                                  ? AppTheme.primaryColor
-                                  : theme.colorScheme.onSurface.withValues(
-                                      alpha: 0.4,
-                                    ),
-                              fontWeight: FontWeight.w600,
-                            ),
+
+                                setState(() {
+                                  _isUpdating = true;
+                                });
+                                try {
+                                  await cubit.updateProfile(_form!);
+                                  print(
+                                    '[EDIT_PROFILE] ✅ AppBar: Profile update completed successfully',
+                                  );
+                                  print(
+                                    '[EDIT_PROFILE] Current cubit state: ${cubit.state.profile?.name}',
+                                  );
+
+                                  // Navigate back after successful save
+                                  print(
+                                    '[EDIT_PROFILE] Navigating back to profile screen...',
+                                  );
+                                  if (mounted) {
+                                    Navigator.of(context).pop();
+                                  }
+                                } catch (e) {
+                                  print(
+                                    '[EDIT_PROFILE] ❌ AppBar: Profile update error: $e',
+                                  );
+                                  print(
+                                    '[EDIT_PROFILE] Stack trace: ${StackTrace.current}',
+                                  );
+                                } finally {
+                                  if (mounted) {
+                                    setState(() {
+                                      _isUpdating = false;
+                                    });
+                                  }
+                                  print(
+                                    '########## [EDIT_PROFILE] APPBAR SAVE FLOW COMPLETE ##########\n\n',
+                                  );
+                                }
+                              }
+                            : null,
+                        child: Text(
+                          'Save'.tr(),
+                          style: theme.textTheme.titleMedium?.copyWith(
+                            color: (_form?.valid ?? false) && !_isUpdating
+                                ? AppTheme.primaryColor
+                                : theme.colorScheme.onSurface.withValues(
+                                    alpha: 0.4,
+                                  ),
+                            fontWeight: FontWeight.w600,
                           ),
-                        );
-                },
+                        ),
+                      ),
               ),
             ),
           ),
@@ -177,9 +175,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
           }
 
           // Fallback to empty form if something went wrong
-          if (_form == null) {
-            _form = _createBasicForm();
-          }
+          _form ??= _createBasicForm();
 
           return ReactiveForm(
             // Removed BlocBuilder since we're not using cubit state

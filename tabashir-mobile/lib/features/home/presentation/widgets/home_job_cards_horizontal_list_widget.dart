@@ -28,7 +28,7 @@ class _HomeJobCardsHorizontalListWidgetState
   late final JobsRepository _jobsRepository;
 
   // Loading states
-  Set<String> _applyingJobs = <String>{};
+  final Set<String> _applyingJobs = <String>{};
   Set<String> _appliedJobs = <String>{};
   bool _isFetchingAppliedJobs = false;
 
@@ -212,12 +212,15 @@ class _HomeJobCardsHorizontalListWidgetState
               children: featuredJobs.asMap().entries.map((entry) {
                 final index = entry.key;
                 final job = entry.value;
-                final isPrimary = index < 2; // First 2 cards show "Apply Now", rest show "View Details"
+                final isPrimary =
+                    index <
+                    2; // First 2 cards show "Apply Now", rest show "View Details"
 
                 return HomeJobCardWidget(
                   title: job['title'] as String? ?? 'Untitled Position',
                   company: job['company'] as String? ?? 'Unknown Company',
-                  employmentType: job['employmentType'] as String? ?? 'Full-time',
+                  employmentType:
+                      job['employmentType'] as String? ?? 'Full-time',
                   level: job['level'] as String? ?? 'Not specified',
                   matchPercentage: job['matchPercentage'] as String? ?? 'N/A',
                   isBookmarked: savedJobs.contains(job['id']),

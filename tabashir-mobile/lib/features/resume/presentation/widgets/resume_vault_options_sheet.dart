@@ -230,7 +230,7 @@ class ResumeVaultOptionsSheet extends StatelessWidget {
     );
   }
 
-  void _shareResume(BuildContext context) async {
+  Future<void> _shareResume(BuildContext context) async {
     try {
       final scaffoldMessenger = ScaffoldMessenger.of(context);
 
@@ -271,7 +271,7 @@ class ResumeVaultOptionsSheet extends StatelessWidget {
 
       scaffoldMessenger.showSnackBar(
         SnackBar(
-          content: Text('Resume ready to share'),
+          content: const Text('Resume ready to share'),
           backgroundColor: AppTheme.successColor,
         ),
       );

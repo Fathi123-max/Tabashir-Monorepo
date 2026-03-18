@@ -191,10 +191,7 @@ class JobsRepositoryImpl implements JobsRepository {
       if (response.response.statusCode == 200 ||
           response.response.statusCode == 201) {
         // Convert ApplyToJobResponse to JobsMatchResponse for UI compatibility
-        return JobsMatchResponse(
-          matchedJobs: null,
-          total: null,
-        );
+        return const JobsMatchResponse();
       } else {
         throw Exception(
           'Failed to apply to job with status: ${response.response.statusCode}',

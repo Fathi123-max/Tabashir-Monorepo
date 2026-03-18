@@ -135,24 +135,18 @@ class AiJobApplyConfigService {
   /// Returns roles in order based on test variant
   static Future<List<String>> getPopularRolesWithABTesting({
     String? userId,
-  }) async {
-    return await ABTestingService.getPopularRoles(userId: userId);
-  }
+  }) async => ABTestingService.getPopularRoles(userId: userId);
 
   /// Get popular locations with A/B testing support
   /// Returns locations in order based on test variant
   static Future<List<String>> getPopularLocationsWithABTesting({
     String? userId,
-  }) async {
-    return await ABTestingService.getPopularLocations(userId: userId);
-  }
+  }) async => ABTestingService.getPopularLocations(userId: userId);
 
   /// Get default AI confidence with A/B testing support
   static Future<int> getDefaultAiConfidenceWithABTesting({
     String? userId,
-  }) async {
-    return await ABTestingService.getDefaultAiConfidence(userId: userId);
-  }
+  }) async => ABTestingService.getDefaultAiConfidence(userId: userId);
 
   /// Get nationalities with search support
   /// In future, this could fetch from backend based on region
@@ -166,14 +160,11 @@ class AiJobApplyConfigService {
   }
 
   /// Check if a role is in the popular list
-  static bool isPopularRole(String role) {
-    return _popularRoles.contains(role);
-  }
+  static bool isPopularRole(String role) => _popularRoles.contains(role);
 
   /// Check if a location is in the popular list
-  static bool isPopularLocation(String location) {
-    return _popularLocations.contains(location);
-  }
+  static bool isPopularLocation(String location) =>
+      _popularLocations.contains(location);
 
   /// Get role match score (for future AI enhancement)
   /// Returns a score between 0-100 based on role popularity
@@ -193,23 +184,18 @@ class AiJobApplyConfigService {
   }
 
   /// Validate role name
-  static bool isValidRole(String role) {
-    return role.isNotEmpty && role.length >= 2 && role.length <= 100;
-  }
+  static bool isValidRole(String role) =>
+      role.isNotEmpty && role.length >= 2 && role.length <= 100;
 
   /// Validate location name
-  static bool isValidLocation(String location) {
-    return location.isNotEmpty &&
-        location.length >= 2 &&
-        location.length <= 100;
-  }
+  static bool isValidLocation(String location) =>
+      location.isNotEmpty && location.length >= 2 && location.length <= 100;
 
   /// Validate nationality name
-  static bool isValidNationality(String nationality) {
-    return nationality.isNotEmpty &&
-        nationality.length >= 2 &&
-        nationality.length <= 100;
-  }
+  static bool isValidNationality(String nationality) =>
+      nationality.isNotEmpty &&
+      nationality.length >= 2 &&
+      nationality.length <= 100;
 
   /// Fetch configuration from backend
   /// This allows dynamic updates without app releases
@@ -236,9 +222,9 @@ class AiJobApplyConfigService {
       final service = apiService ?? ConfigApiService(Dio());
       final response = await service.getAiJobApplyConfig();
 
-      if (response.response.statusCode == 200 && response.data != null) {
-        _updateConfigFromResponse(response.data!);
-        await _saveConfigToCache(response.data!);
+      if (response.response.statusCode == 200) {
+        _updateConfigFromResponse(response.data);
+        await _saveConfigToCache(response.data);
 
         // Track successful config fetch
         await AnalyticsService.trackEvent(
@@ -367,16 +353,14 @@ class AiJobApplyConfigService {
   }
 
   /// Get configuration as JSON (for debugging/testing)
-  static Map<String, dynamic> getConfigAsJson() {
-    return {
-      'popularRoles': _popularRoles,
-      'popularLocations': _popularLocations,
-      'nationalities': _nationalities,
-      'maxRolesToShow': _maxRolesToShow,
-      'maxLocationsToShow': _maxLocationsToShow,
-      'defaultAiConfidence': _defaultAiConfidence,
-    };
-  }
+  static Map<String, dynamic> getConfigAsJson() => {
+    'popularRoles': _popularRoles,
+    'popularLocations': _popularLocations,
+    'nationalities': _nationalities,
+    'maxRolesToShow': _maxRolesToShow,
+    'maxLocationsToShow': _maxLocationsToShow,
+    'defaultAiConfidence': _defaultAiConfidence,
+  };
 
   /// Clear configuration cache
   static Future<void> clearCache() async {

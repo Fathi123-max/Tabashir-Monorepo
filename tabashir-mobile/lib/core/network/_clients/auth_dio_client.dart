@@ -56,7 +56,7 @@ class AuthDioClient {
             ];
 
             final isAuthEndpoint = authEndpoints.any(
-              (endpoint) => requestPath.contains(endpoint),
+              requestPath.contains,
             );
 
             if (isAuthEndpoint) {

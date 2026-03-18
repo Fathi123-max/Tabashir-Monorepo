@@ -57,7 +57,7 @@ class BackendDioClient {
             ];
 
             final isAuthEndpoint = authEndpoints.any(
-              (endpoint) => requestPath.contains(endpoint),
+              requestPath.contains,
             );
 
             if (isAuthEndpoint) {
@@ -112,7 +112,7 @@ class BackendDioClient {
     headers: {
       'Content-Type': 'application/json',
     },
-    );
+  );
 
   void _logRequest(String method, String url, Map<String, dynamic>? headers) {
     print('\n========== [BACKEND_DIO] API REQUEST ==========');

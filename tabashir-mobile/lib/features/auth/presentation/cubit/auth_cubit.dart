@@ -45,8 +45,12 @@ class AuthCubit extends Cubit<AuthState> {
 
       // Debug logging to verify refresh token is received
       print('[AUTH_CUBIT] Login response received:');
-      print('[AUTH_CUBIT] - accessToken: ${tokenToStore != null ? "present (${tokenToStore.length} chars)" : "NULL"}');
-      print('[AUTH_CUBIT] - refreshToken: ${refreshTokenToStore != null ? "present (${refreshTokenToStore.length} chars)" : "NULL"}');
+      print(
+        '[AUTH_CUBIT] - accessToken: ${tokenToStore != null ? "present (${tokenToStore.length} chars)" : "NULL"}',
+      );
+      print(
+        '[AUTH_CUBIT] - refreshToken: ${refreshTokenToStore != null ? "present (${refreshTokenToStore.length} chars)" : "NULL"}',
+      );
       print('[AUTH_CUBIT] - user: ${response.user?.email}');
 
       if (tokenToStore != null) {

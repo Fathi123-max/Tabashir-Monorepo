@@ -42,7 +42,8 @@ class SyncHybridResumeRepository implements ResumeVaultRepository {
         final title = _extractTitleFromFileName(backendResume.filename);
 
         // Use title as display name if name is empty or equals filename (technical name)
-        final displayName = (backendResume.name.isEmpty ||
+        final displayName =
+            (backendResume.name.isEmpty ||
                 backendResume.name == backendResume.filename)
             ? title
             : backendResume.name;
@@ -65,7 +66,7 @@ class SyncHybridResumeRepository implements ResumeVaultRepository {
       );
 
       return enrichedResumes;
-    } catch (e, stackTrace) {
+    } catch (e) {
       print('⚠️  [SYNC_REPO] ⚠️  Backend error: $e');
       print('🔄 [SYNC_REPO] 🔄 Falling back to local cache...');
 
@@ -87,7 +88,6 @@ class SyncHybridResumeRepository implements ResumeVaultRepository {
                 isAiResume: false,
                 createdAt: local.createdAt,
                 updatedAt: local.createdAt,
-                formatedContent: null,
                 // UI-specific properties
                 name: local.name,
                 filePath: local.filePath,
@@ -176,7 +176,7 @@ class SyncHybridResumeRepository implements ResumeVaultRepository {
       );
 
       return enrichedResume;
-    } catch (e, stackTrace) {
+    } catch (e) {
       print('❌ [SYNC_REPO] ❌ Upload failed: $e');
       rethrow;
     }
@@ -194,7 +194,7 @@ class SyncHybridResumeRepository implements ResumeVaultRepository {
       // Delete from local cache
       await _localRepository.deleteResume(resumeId);
       print('💾 [SYNC_REPO] ✅ Deleted from local cache');
-    } catch (e, stackTrace) {
+    } catch (e) {
       print('❌ [SYNC_REPO] ❌ Delete failed: $e');
       rethrow;
     }
@@ -208,7 +208,7 @@ class SyncHybridResumeRepository implements ResumeVaultRepository {
       // Update local cache (backend doesn't track default status)
       await _localRepository.setDefaultResume(resumeId);
       print('💾 [SYNC_REPO] ✅ Updated default in local cache');
-    } catch (e, stackTrace) {
+    } catch (e) {
       print('❌ [SYNC_REPO] ❌ Set default failed: $e');
       rethrow;
     }
@@ -241,7 +241,7 @@ class SyncHybridResumeRepository implements ResumeVaultRepository {
       );
 
       return enrichedResume;
-    } catch (e, stackTrace) {
+    } catch (e) {
       print('❌ [SYNC_REPO] ❌ Duplicate failed: $e');
       rethrow;
     }
@@ -280,7 +280,6 @@ class SyncHybridResumeRepository implements ResumeVaultRepository {
         isAiResume: false,
         createdAt: updatedLocal.createdAt,
         updatedAt: DateTime.now(),
-        formatedContent: null,
         // UI-specific properties
         name: updatedLocal.name,
         filePath: updatedLocal.filePath,
@@ -290,7 +289,7 @@ class SyncHybridResumeRepository implements ResumeVaultRepository {
         isDefault: updatedLocal.isDefault,
         title: updatedLocal.title,
       );
-    } catch (e, stackTrace) {
+    } catch (e) {
       print('❌ [SYNC_REPO] ❌ Rename failed: $e');
       rethrow;
     }
@@ -318,9 +317,12 @@ class SyncHybridResumeRepository implements ResumeVaultRepository {
     final nameWithoutExt = fileName.split('.').first;
 
     // Remove common suffixes and IDs
-    String cleanName = nameWithoutExt
+    final cleanName = nameWithoutExt
         .replaceAll(RegExp(r'_resume$'), '') // Remove '_resume' suffix
-        .replaceAll(RegExp(r'_[a-f0-9]{10,}$'), ''); // Remove ID suffix (10+ hex chars)
+        .replaceAll(
+          RegExp(r'_[a-f0-9]{10,}$'),
+          '',
+        ); // Remove ID suffix (10+ hex chars)
 
     // Capitalize
     final formatted = cleanName

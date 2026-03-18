@@ -7,7 +7,8 @@ sealed class ProfileState with _$ProfileState {
   const factory ProfileState({
     @Default(ProfileStatus.initial) ProfileStatus status,
     ProfileData? profile,
-    UserProfileResponse? userProfileResponse, // Raw API response with candidateProfile
+    UserProfileResponse?
+    userProfileResponse, // Raw API response with candidateProfile
     String? errorMessage,
     @Default(false) bool requiresReauth,
   }) = _ProfileState;

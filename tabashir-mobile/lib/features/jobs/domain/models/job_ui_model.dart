@@ -23,17 +23,17 @@ sealed class JobUI with _$JobUI {
     /// Salary information (formatted string)
     required String salary,
 
-    /// Numeric salary value for filtering
-    @Default(0) int salaryValue,
-
     /// Match percentage (e.g., "90% Match")
     required String matchPercentage,
 
-    /// Job tags (jobType, experience, languages)
-    @Default([]) List<String> tags,
-
     /// Skills match description
     required String skillsMatch,
+
+    /// Numeric salary value for filtering
+    @Default(0) int salaryValue,
+
+    /// Job tags (jobType, experience, languages)
+    @Default([]) List<String> tags,
 
     /// Whether job is saved by user
     @Default(false) bool isSaved,

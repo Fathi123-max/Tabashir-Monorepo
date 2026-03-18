@@ -4,23 +4,22 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:tabashir/core/theme/app_theme.dart';
 
 class LineChartWidget extends StatelessWidget {
+  const LineChartWidget({
+    required this.spots,
+    required this.xTitles,
+    super.key,
+    this.height,
+    this.lineColor,
+  });
   final List<FlSpot> spots;
   final List<String> xTitles;
   final double? height;
   final Color? lineColor;
 
-  const LineChartWidget({
-    super.key,
-    required this.spots,
-    required this.xTitles,
-    this.height,
-    this.lineColor,
-  });
-
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final Color color = lineColor ?? AppTheme.primaryBlue;
+    final color = lineColor ?? AppTheme.primaryBlue;
 
     return SizedBox(
       height: height ?? 200.h,
@@ -30,20 +29,15 @@ class LineChartWidget extends StatelessWidget {
             show: false,
           ),
           titlesData: FlTitlesData(
-            show: true,
-            rightTitles: const AxisTitles(
-              sideTitles: SideTitles(showTitles: false),
-            ),
-            topTitles: const AxisTitles(
-              sideTitles: SideTitles(showTitles: false),
-            ),
+            rightTitles: const AxisTitles(),
+            topTitles: const AxisTitles(),
             bottomTitles: AxisTitles(
               sideTitles: SideTitles(
                 showTitles: true,
                 reservedSize: 30,
                 interval: 1,
                 getTitlesWidget: (value, meta) {
-                  final int index = value.toInt();
+                  final index = value.toInt();
                   if (index >= 0 && index < xTitles.length) {
                     return SideTitleWidget(
                       axisSide: meta.axisSide,
@@ -65,18 +59,16 @@ class LineChartWidget extends StatelessWidget {
                 showTitles: true,
                 reservedSize: 40,
                 interval: _getInterval(),
-                getTitlesWidget: (value, meta) {
-                  return SideTitleWidget(
-                    axisSide: meta.axisSide,
-                    child: Text(
-                      value.toInt().toString(),
-                      style: TextStyle(
-                        color: Colors.grey,
-                        fontSize: 10.sp,
-                      ),
+                getTitlesWidget: (value, meta) => SideTitleWidget(
+                  axisSide: meta.axisSide,
+                  child: Text(
+                    value.toInt().toString(),
+                    style: TextStyle(
+                      color: Colors.grey,
+                      fontSize: 10.sp,
                     ),
-                  );
-                },
+                  ),
+                ),
               ),
             ),
           ),
@@ -88,20 +80,20 @@ class LineChartWidget extends StatelessWidget {
           minY: 0,
           maxY: _getMaxY() * 1.2,
           lineTouchData: LineTouchData(
-            enabled: true,
-            touchCallback: (FlTouchEvent event, LineTouchResponse? touchResponse) {
-              // Handle touch events if needed
-            },
+            touchCallback:
+                (FlTouchEvent event, LineTouchResponse? touchResponse) {
+                  // Handle touch events if needed
+                },
             touchTooltipData: LineTouchTooltipData(
               tooltipBgColor: Colors.blueAccent,
-              getTooltipItems: (touchedSpots) {
-                return touchedSpots.map((touchedSpot) {
-                  return LineTooltipItem(
-                    '${touchedSpot.y.toInt()}',
-                    const TextStyle(color: Colors.white),
-                  );
-                }).toList();
-              },
+              getTooltipItems: (touchedSpots) => touchedSpots
+                  .map(
+                    (touchedSpot) => LineTooltipItem(
+                      '${touchedSpot.y.toInt()}',
+                      const TextStyle(color: Colors.white),
+                    ),
+                  )
+                  .toList(),
             ),
           ),
           lineBarsData: [
@@ -111,9 +103,6 @@ class LineChartWidget extends StatelessWidget {
               color: color,
               barWidth: 3,
               isStrokeCapRound: true,
-              dotData: const FlDotData(
-                show: true,
-              ),
               belowBarData: BarAreaData(
                 show: true,
                 gradient: LinearGradient(
@@ -144,7 +133,7 @@ class LineChartWidget extends StatelessWidget {
   }
 
   double _getInterval() {
-    final double maxY = _getMaxY();
+    final maxY = _getMaxY();
     if (maxY <= 10) return 2;
     if (maxY <= 50) return 10;
     if (maxY <= 100) return 20;
@@ -154,13 +143,15 @@ class LineChartWidget extends StatelessWidget {
 
 /// Helper class to create line chart data
 class LineChartHelper {
-  static List<FlSpot> createSpots(List<Map<String, dynamic>> data, String xKey, String yKey) {
-    return List.generate(data.length, (index) {
-      final item = data[index];
-      // Use index as x-coordinate to handle string values like month names
-      final double x = index.toDouble();
-      final double y = (item[yKey] as num? ?? 0).toDouble();
-      return FlSpot(x, y);
-    });
-  }
+  static List<FlSpot> createSpots(
+    List<Map<String, dynamic>> data,
+    String xKey,
+    String yKey,
+  ) => List.generate(data.length, (index) {
+    final item = data[index];
+    // Use index as x-coordinate to handle string values like month names
+    final x = index.toDouble();
+    final y = (item[yKey] as num? ?? 0).toDouble();
+    return FlSpot(x, y);
+  });
 }

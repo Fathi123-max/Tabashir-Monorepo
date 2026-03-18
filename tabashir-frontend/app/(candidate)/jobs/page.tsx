@@ -12,6 +12,8 @@ import { getAiJobApplyStatus } from "@/actions/ai-resume"
 import { useSession } from "next-auth/react"
 import { transformJobs } from "@/lib/transformJobs"
 import { useTranslation } from "@/lib/use-translation"
+import { useHasResume } from "@/hooks/use-has-resume"
+import { CVRequiredBlur } from "@/components/shared/cv-required-blur"
 
 export default function JobsPage() {
   const session = useSession();
@@ -21,17 +23,9 @@ export default function JobsPage() {
   const [jobs, setJobs] = useState<Job[]>([])
   const [loading, setLoading] = useState(true)
   const [showFilters, setShowFilters] = useState(false)
+  const { hasResume, loading: resumeLoading } = useHasResume()
   const [location, setLocation] = useState(searchParams.get("location") || "")
-  const [jobType, setJobType] = useState(searchParams.get("jobType") || "")
-  const [salaryMin, setSalaryMin] = useState(searchParams.get("salaryMin") || "")
-  const [salaryMax, setSalaryMax] = useState(searchParams.get("salaryMax") || "")
-  const [experience, setExperience] = useState(searchParams.get("experience") || "")
-  const [attendance, setAttendance] = useState(searchParams.get("attendance") || "")
-  const [query, setQuery] = useState(searchParams.get("query") || "")
-  const [jobApplyCount, setJobApplyCount] = useState(0)
-  const [sort, setSort] = useState<"job_date_desc" | "job_date_asc" | "salary_desc" | "salary_asc">(
-    (searchParams.get("sort") as "job_date_desc" | "job_date_asc" | "salary_asc" | "salary_desc") || "job_date_desc"
-  )
+// ... (rest of states)
   const { t, isRTL, loading: translationLoading } = useTranslation()
 
   // Pagination
@@ -72,10 +66,11 @@ export default function JobsPage() {
   useEffect(() => {
     if (session.status === "loading") return
     if (translationLoading) return
+    if (resumeLoading) return
 
     fetchJobs()
     fetchJobApplyStatus()
-  }, [session.status, location, jobType, salaryMin, salaryMax, experience, attendance, query, sort, page, translationLoading])
+  }, [session.status, location, jobType, salaryMin, salaryMax, experience, attendance, query, sort, page, translationLoading, resumeLoading])
 
   useEffect(() => {
     const params = new URLSearchParams()
@@ -121,6 +116,14 @@ export default function JobsPage() {
     setShowFilters(!showFilters)
   }
 
+  if (resumeLoading) {
+    return (
+      <div className={`flex items-center justify-center min-h-[400px] ${isRTL ? 'text-right' : ''}`}>
+        <p className="text-gray-500">{t('loading')}</p>
+      </div>
+    )
+  }
+
   return (
     <div className={`flex gap-6 h-[calc(100vh-35px)] max-md:flex-col max-w-[90vw] ${isRTL ? 'flex-row-reverse' : ''}`}>
       {/* First column: Search preferences */}
@@ -138,21 +141,23 @@ export default function JobsPage() {
 
       {/* Second column: Job listings */}
       <div className="flex-1 bg-white rounded-lg shadow-sm overflow-y-auto">
-        <JobListings
-          jobs={jobs}
-          selectedJob={selectedJob as any}
-          onSelectJob={handleJobSelect}
-          loading={loading}
-          showFilters={showFilters}
-          setShowFilter={handleFilterToggle}
-          currentPage={page}
-          totalPages={totalPages}
-          onPageChange={handlePageChange}
-          query={query}
-          onQueryChange={handleSearch}
-          sort={sort}
-          onSortChange={setSort}
-        />
+        <CVRequiredBlur hasResume={hasResume}>
+          <JobListings
+            jobs={jobs}
+            selectedJob={selectedJob as any}
+            onSelectJob={handleJobSelect}
+            loading={loading}
+            showFilters={showFilters}
+            setShowFilter={handleFilterToggle}
+            currentPage={page}
+            totalPages={totalPages}
+            onPageChange={handlePageChange}
+            query={query}
+            onQueryChange={handleSearch}
+            sort={sort}
+            onSortChange={setSort}
+          />
+        </CVRequiredBlur>
       </div>
 
       {/* Third column: Job details (conditionally rendered) */}

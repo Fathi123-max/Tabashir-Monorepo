@@ -32,17 +32,17 @@ sealed class HomeDashboardResponse with _$HomeDashboardResponse {
     /// Distribution of matches (format: "active | interviewing | offered")
     required String matchDistribution,
 
-    /// Job counts by city for location-based statistics
-    Map<String, int>? jobsByCity,
-
-    /// Monthly job counts for trends
-    Map<String, int>? monthlyJobCounts,
-
     /// Profile completion percentage (0-100)
     required int profileCompletionPercentage,
 
     /// Application success rate percentage (0-100)
     required int applicationSuccessRate,
+
+    /// Job counts by city for location-based statistics
+    Map<String, int>? jobsByCity,
+
+    /// Monthly job counts for trends
+    Map<String, int>? monthlyJobCounts,
   }) = _HomeDashboardResponse;
 
   factory HomeDashboardResponse.fromJson(Map<String, dynamic> json) =>

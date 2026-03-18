@@ -380,6 +380,38 @@ export async function onCandidatePersonalInfoOnboarding(data: CandidatePersonalI
       }
     }
 
+    // Sync to Python Backend
+    try {
+      const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL;
+      const apiToken = process.env.NEXT_PUBLIC_API_TOKEN;
+      
+      if (backendUrl && session.user.email) {
+        const syncResponse = await fetch(`${backendUrl}/api/v1/candidates/onboarding/personal-info`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-API-TOKEN': apiToken || '',
+            // Since it's a server action calling another backend, we might need a separate auth mechanism 
+            // but for now let's assume it accepts the API token or we pass the session token
+          },
+          body: JSON.stringify({
+            fullName: session.user.name,
+            email: session.user.email,
+            phone,
+            nationality,
+            gender,
+            // Add city/country if available in session or profile, but for now we just pass what we have
+          })
+        });
+        
+        if (!syncResponse.ok) {
+          console.error("Failed to sync personal info to AI DB:", await syncResponse.text());
+        }
+      }
+    } catch (e) {
+      console.error("Error during personal info sync to AI DB:", e);
+    }
+
     return {
       error: false,
       message: "Personal information updated successfully",
@@ -476,6 +508,36 @@ export async function onCandidateProfessionalInfoOnboarding(data: CandidateProfe
         error: true,
         message: "Failed to update professional information"
       }
+    }
+
+    // Sync to Python Backend
+    try {
+      const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL;
+      const apiToken = process.env.NEXT_PUBLIC_API_TOKEN;
+      
+      if (backendUrl && session.user.email) {
+        const syncResponse = await fetch(`${backendUrl}/api/v1/candidates/onboarding/professional-info`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-API-TOKEN': apiToken || '',
+          },
+          body: JSON.stringify({
+            email: session.user.email,
+            degree,
+            education,
+            experience,
+            jobType,
+            skills,
+          })
+        });
+        
+        if (!syncResponse.ok) {
+          console.error("Failed to sync professional info to AI DB:", await syncResponse.text());
+        }
+      }
+    } catch (e) {
+      console.error("Error during professional info sync to AI DB:", e);
     }
 
     return {

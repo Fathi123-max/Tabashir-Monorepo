@@ -35,7 +35,9 @@ class AiJobApplyCubit extends Cubit<AiJobApplyState> {
   String get _currentUserId {
     final userId = _profileCubit.currentUserId;
     if (userId == null || userId.isEmpty) {
-      throw Exception('User ID not available. Please ensure you are logged in.');
+      throw Exception(
+        'User ID not available. Please ensure you are logged in.',
+      );
     }
     return userId;
   }

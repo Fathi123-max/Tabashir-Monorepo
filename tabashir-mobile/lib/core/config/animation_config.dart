@@ -1,6 +1,8 @@
 /// Centralized animation configuration for the app
 /// This allows for easy tuning of animation timings and values
 /// without searching through multiple files
+library;
+
 import 'package:tabashir/core/services/device_capability_service.dart';
 
 class AnimationConfig {
@@ -57,47 +59,45 @@ class AnimationConfig {
 
   /// Get navigation delay as Duration
   static Duration get navigationDelay =>
-      Duration(milliseconds: navigationDelayMs);
+      const Duration(milliseconds: navigationDelayMs);
 
   /// Get transition delay as Duration
   static Duration get transitionDelay =>
-      Duration(milliseconds: transitionDelayMs);
+      const Duration(milliseconds: transitionDelayMs);
 
   /// Get transition duration as Duration
   static Duration get transitionDuration =>
-      Duration(milliseconds: transitionDurationMs);
+      const Duration(milliseconds: transitionDurationMs);
 
   /// Get next animation delay as Duration
   static Duration get nextAnimationDelay =>
-      Duration(milliseconds: nextAnimationDelayMs);
+      const Duration(milliseconds: nextAnimationDelayMs);
 
   /// Get AI processing delay as Duration
   static Duration get aiProcessingDelay =>
-      Duration(seconds: aiProcessingDelaySeconds);
+      const Duration(seconds: aiProcessingDelaySeconds);
 
   /// Get resume expiration as Duration
-  static Duration get resumeExpiration => Duration(days: resumeExpirationDays);
+  static Duration get resumeExpiration =>
+      const Duration(days: resumeExpirationDays);
 
   /// Get all animation timings as a map (for debugging/testing)
-  static Map<String, dynamic> getAllTimings() {
-    return {
-      'navigationDelayMs': navigationDelayMs,
-      'transitionDelayMs': transitionDelayMs,
-      'transitionDurationMs': transitionDurationMs,
-      'nextAnimationDelayMs': nextAnimationDelayMs,
-      'animationFactor': animationFactor,
-      'glowFactor': glowFactor,
-      'aiJobApplySteps': aiJobApplySteps,
-      'aiProcessingDelaySeconds': aiProcessingDelaySeconds,
-      'resumeExpirationDays': resumeExpirationDays,
-    };
-  }
+  static Map<String, dynamic> getAllTimings() => {
+    'navigationDelayMs': navigationDelayMs,
+    'transitionDelayMs': transitionDelayMs,
+    'transitionDurationMs': transitionDurationMs,
+    'nextAnimationDelayMs': nextAnimationDelayMs,
+    'animationFactor': animationFactor,
+    'glowFactor': glowFactor,
+    'aiJobApplySteps': aiJobApplySteps,
+    'aiProcessingDelaySeconds': aiProcessingDelaySeconds,
+    'resumeExpirationDays': resumeExpirationDays,
+  };
 
   /// Check if animations should be optimized for low-end devices
   /// Uses DeviceCapabilityService for detection
-  static Future<bool> isLowEndDevice() async {
-    return await DeviceCapabilityService.isLowEndDevice();
-  }
+  static Future<bool> isLowEndDevice() async =>
+      DeviceCapabilityService.isLowEndDevice();
 
   /// Get optimized timings for low-end devices
   /// Automatically detects device capability and adjusts timings

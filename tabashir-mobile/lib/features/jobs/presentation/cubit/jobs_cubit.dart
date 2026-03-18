@@ -527,11 +527,13 @@ class JobsCubit extends Cubit<JobsState> {
   void _updateJobsWithSavedStatus(Set<String> savedIds) {
     if (state is JobsStateLoaded) {
       final loadedState = state as JobsStateLoaded;
-      final updatedJobs = loadedState.jobs.map((job) {
-        return job.copyWith(
-          isSaved: savedIds.contains(job.id),
-        );
-      }).toList();
+      final updatedJobs = loadedState.jobs
+          .map(
+            (job) => job.copyWith(
+              isSaved: savedIds.contains(job.id),
+            ),
+          )
+          .toList();
 
       emit(loadedState.copyWith(jobs: updatedJobs));
     }
@@ -553,11 +555,13 @@ class JobsCubit extends Cubit<JobsState> {
   void _updateJobsWithAppliedStatus() {
     if (state is JobsStateLoaded) {
       final loadedState = state as JobsStateLoaded;
-      final updatedJobs = loadedState.jobs.map((job) {
-        return job.copyWith(
-          isApplied: _appliedJobIds.contains(job.id),
-        );
-      }).toList();
+      final updatedJobs = loadedState.jobs
+          .map(
+            (job) => job.copyWith(
+              isApplied: _appliedJobIds.contains(job.id),
+            ),
+          )
+          .toList();
 
       emit(loadedState.copyWith(jobs: updatedJobs));
     }

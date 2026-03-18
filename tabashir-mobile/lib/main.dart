@@ -9,6 +9,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:tabashir/core/di/injection.dart';
 import 'package:tabashir/features/jobs/presentation/cubit/saved_jobs_cubit.dart';
 import 'package:tabashir/features/profile/presentation/cubit/profile_cubit.dart';
+import 'package:tabashir/features/resume/presentation/cubit/resume_vault_cubit.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'core/services/apple_signin_service.dart';
 
@@ -90,6 +91,9 @@ class _AppState extends State<App> {
           ),
           BlocProvider(
             create: (context) => getIt<ProfileCubit>(),
+          ),
+          BlocProvider(
+            create: (context) => getIt<ResumeVaultCubit>()..loadResumes(),
           ),
         ],
         child: AnimatedBuilder(

@@ -96,7 +96,7 @@ class ResumeImportScreen extends StatelessWidget {
                 loading: () => true,
                 orElse: () => false,
               ))
-                Container(
+                ColoredBox(
                   color: Colors.black.withOpacity(0.3),
                   child: const Center(
                     child: CircularProgressIndicator(),
@@ -157,7 +157,6 @@ class ResumeImportScreen extends StatelessWidget {
         borderRadius: BorderRadius.circular(AppTheme.radiusLarge.r),
         border: Border.all(
           color: AppTheme.primaryColor.withOpacity(0.3),
-          width: 1,
         ),
         boxShadow: [
           BoxShadow(
@@ -191,7 +190,7 @@ class ResumeImportScreen extends StatelessWidget {
           ),
           SizedBox(height: AppTheme.spacingSm.h),
           Text(
-            fileName.toString(),
+            fileName,
             style: theme.textTheme.bodyMedium?.copyWith(
               color: theme.textTheme.bodyMedium?.color?.withOpacity(0.7),
             ),
@@ -292,7 +291,6 @@ class ResumeImportScreen extends StatelessWidget {
       borderRadius: BorderRadius.circular(AppTheme.radiusMedium.r),
       border: Border.all(
         color: AppTheme.primaryColor.withOpacity(0.2),
-        width: 1,
       ),
       boxShadow: [
         BoxShadow(
@@ -540,15 +538,15 @@ class ResumeImportScreen extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      (proj['title'] ?? "") as String,
+                      (proj['title'] ?? '') as String,
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: 13.sp,
                       ),
                     ),
-                    if (proj['description']?.toString().isNotEmpty == true)
+                    if (proj['description']?.toString().isNotEmpty ?? false)
                       Text(
-                        (proj['description'] ?? "") as String,
+                        (proj['description'] ?? '') as String,
                         style: TextStyle(
                           fontSize: 12.sp,
                           color: AppTheme.textMutedLight,
@@ -579,8 +577,9 @@ class ResumeImportScreen extends StatelessWidget {
       start,
       end,
       description,
-    ].every((element) => (element?.isEmpty ?? true)))
+    ].every((element) => element?.isEmpty ?? true)) {
       return const SizedBox.shrink();
+    }
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [

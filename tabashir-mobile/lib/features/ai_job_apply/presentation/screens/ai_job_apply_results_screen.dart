@@ -130,7 +130,6 @@ class AiJobApplyResultsScreen extends StatelessWidget {
             border: Border(
               bottom: BorderSide(
                 color: theme.dividerTheme.color ?? AppTheme.borderLight,
-                width: 1,
               ),
             ),
           ),

@@ -40,9 +40,8 @@ class SavedJobsScreen extends StatelessWidget {
       ],
       child: BlocListener<JobsCubit, JobsState>(
         // Only trigger when JobsCubit is loaded for the first time
-        listenWhen: (previous, current) {
-          return previous is! JobsStateLoaded && current is JobsStateLoaded;
-        },
+        listenWhen: (previous, current) =>
+            previous is! JobsStateLoaded && current is JobsStateLoaded,
         listener: (context, state) {
           print('[SAVED_JOBS] JobsCubit loaded, initializing saved jobs...');
           // Get JobsCubit from the widget tree to ensure we have the correct instance

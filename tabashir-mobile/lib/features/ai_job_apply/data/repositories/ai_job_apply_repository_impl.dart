@@ -305,9 +305,9 @@ class AiJobApplyRepositoryImpl implements AiJobApplyRepository {
       );
 
       if (response.data is Uint8List) {
-        return response.data as Uint8List;
+        return response.data!;
       } else {
-        return Uint8List.fromList(response.data as List<int>);
+        return Uint8List.fromList(response.data! as List<int>);
       }
     } on DioException catch (e) {
       throw Exception('Failed to download resume from cloud: ${e.message}');
@@ -350,10 +350,6 @@ class AiJobApplyRepositoryImpl implements AiJobApplyRepository {
         matchedJobs: [
           MatchedJob(
             jobId: jobId,
-            jobTitle: null, // Not provided in this response
-            companyName: null, // Not provided in this response
-            matchScore: null,
-            matchPercentage: null,
           ),
         ],
         total: 1, // Applied to one job

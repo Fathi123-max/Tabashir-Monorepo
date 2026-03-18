@@ -143,7 +143,6 @@ abstract class BaseJobCard extends StatelessWidget {
             ],
           )
         : Row(
-            mainAxisAlignment: MainAxisAlignment.start,
             children: [
               IconButton(
                 onPressed: onSave ?? () {},

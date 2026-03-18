@@ -50,12 +50,12 @@ class ProfileCubit extends Cubit<ProfileState> {
 
   /// Get the current user ID from the loaded profile
   /// Returns null if profile is not loaded yet
-  String? get currentUserId {
-    return state.userProfileResponse?.user?.id;
-  }
+  String? get currentUserId => state.userProfileResponse?.user.id;
 
   /// Initialize profile data (called once, typically from AppInitializationCubit)
-  Future<void> initializeWithProfileData(UserProfileResponse profileData) async {
+  Future<void> initializeWithProfileData(
+    UserProfileResponse profileData,
+  ) async {
     if (_isInitialized) {
       print('[PROFILE_CUBIT] Already initialized, skipping');
       return;
@@ -86,7 +86,9 @@ class ProfileCubit extends Cubit<ProfileState> {
 
     // If not initialized yet, don't auto-load - wait for initializeWithProfileData
     if (!_isInitialized && !force) {
-      print('[PROFILE_CUBIT] Not initialized yet, skipping auto-load. Call initializeWithProfileData() first.');
+      print(
+        '[PROFILE_CUBIT] Not initialized yet, skipping auto-load. Call initializeWithProfileData() first.',
+      );
       return;
     }
 
@@ -199,7 +201,8 @@ class ProfileCubit extends Cubit<ProfileState> {
       emit(
         state.copyWith(
           status: ProfileStatus.failure,
-          errorMessage: 'An unexpected error occurred while deleting your account.',
+          errorMessage:
+              'An unexpected error occurred while deleting your account.',
         ),
       );
     }
@@ -231,13 +234,13 @@ class ProfileCubit extends Cubit<ProfileState> {
       // 2. Create profile update request (Basic Info)
       final experienceList = (parsedData['experience'] as List?)
           ?.cast<Map<String, dynamic>>();
-      final experience = experienceList?.isNotEmpty == true
+      final experience = experienceList?.isNotEmpty ?? false
           ? experienceList!.first
           : null;
 
       final educationList = (parsedData['education'] as List?)
           ?.cast<Map<String, dynamic>>();
-      final firstEducation = educationList?.isNotEmpty == true
+      final firstEducation = educationList?.isNotEmpty ?? false
           ? educationList!.first
           : null;
 
@@ -277,7 +280,9 @@ class ProfileCubit extends Cubit<ProfileState> {
         if (e.toString().contains('Email already in use') ||
             e.toString().contains('duplicate') ||
             e.toString().contains('unique constraint')) {
-          print('[PROFILE_CUBIT] ⚠️ Email already in use, updating profile without email');
+          print(
+            '[PROFILE_CUBIT] ⚠️ Email already in use, updating profile without email',
+          );
           // Create a new request without the email
           final updateRequestWithoutEmail = ProfileUpdateRequest(
             name: updateRequest.name,
@@ -291,7 +296,9 @@ class ProfileCubit extends Cubit<ProfileState> {
             education: updateRequest.education,
             linkedin: updateRequest.linkedin,
           );
-          await _repository.updateProfile(profileUpdate: updateRequestWithoutEmail);
+          await _repository.updateProfile(
+            profileUpdate: updateRequestWithoutEmail,
+          );
           print('[PROFILE_CUBIT] ✅ Basic profile updated (without email)');
         } else {
           // Re-throw if it's a different error
@@ -305,27 +312,31 @@ class ProfileCubit extends Cubit<ProfileState> {
           .map((s) => SkillItem(category: 'General', name: s))
           .toList();
 
-      final employmentHistory = experienceList?.map((e) {
-        return EmploymentHistoryItem(
-          company: e['company'] as String?,
-          position: e['position'] as String?,
-          startDate: e['startDate'] as String?,
-          endDate: e['endDate'] as String?,
-          description: e['description'] as String?,
-          // Defaulting to false if not specified, logic can be improved if data has "current"
-          current: false,
-        );
-      }).toList();
+      final employmentHistory = experienceList
+          ?.map(
+            (e) => EmploymentHistoryItem(
+              company: e['company'] as String?,
+              position: e['position'] as String?,
+              startDate: e['startDate'] as String?,
+              endDate: e['endDate'] as String?,
+              description: e['description'] as String?,
+              // Defaulting to false if not specified, logic can be improved if data has "current"
+              current: false,
+            ),
+          )
+          .toList();
 
-      final educationItems = educationList?.map((e) {
-        return EducationItem(
-          institution: e['institution'] as String?,
-          degree: e['degree'] as String?,
-          // Mapping other fields if available in parsed data, otherwise null
-          startDate: e['startDate'] as String?,
-          endDate: e['endDate'] as String?,
-        );
-      }).toList();
+      final educationItems = educationList
+          ?.map(
+            (e) => EducationItem(
+              institution: e['institution'] as String?,
+              degree: e['degree'] as String?,
+              // Mapping other fields if available in parsed data, otherwise null
+              startDate: e['startDate'] as String?,
+              endDate: e['endDate'] as String?,
+            ),
+          )
+          .toList();
 
       final professionalInfo = ProfessionalInfoRequest(
         summary: parsedData['summary'] as String? ?? '',
@@ -349,7 +360,9 @@ class ProfileCubit extends Cubit<ProfileState> {
         );
         print('[PROFILE_CUBIT] ✅ Professional info updated');
       } catch (e) {
-        print('[PROFILE_CUBIT] ⚠️ Professional info update failed (non-critical): $e');
+        print(
+          '[PROFILE_CUBIT] ⚠️ Professional info update failed (non-critical): $e',
+        );
       }
 
       // 4. Reload profile data to get the updated values
@@ -361,11 +374,13 @@ class ProfileCubit extends Cubit<ProfileState> {
       print('[PROFILE_CUBIT] Stack trace: $stackTrace');
 
       // Extract meaningful error message
-      String errorMessage = e.toString();
+      var errorMessage = e.toString();
       if (errorMessage.contains('Email already in use')) {
-        errorMessage = 'The email from the resume is already registered. Other details have been updated.';
+        errorMessage =
+            'The email from the resume is already registered. Other details have been updated.';
       } else if (errorMessage.contains('Connection timeout')) {
-        errorMessage = 'Connection timeout. Please check your internet and try again.';
+        errorMessage =
+            'Connection timeout. Please check your internet and try again.';
       }
 
       emit(
@@ -416,7 +431,9 @@ class ProfileCubit extends Cubit<ProfileState> {
       'location': FormControl<String>(value: cleanValue(profile.location)),
       'email': FormControl<String>(value: cleanValue(profile.email)),
       'phone': FormControl<String>(value: cleanValue(profile.phone)),
-      'nationality': FormControl<String>(value: cleanValue(profile.nationality)),
+      'nationality': FormControl<String>(
+        value: cleanValue(profile.nationality),
+      ),
       'gender': FormControl<String>(value: cleanValue(profile.gender)),
       'company': FormControl<String>(value: cleanValue(profile.company)),
       'education': FormControl<String>(value: cleanValue(profile.education)),
@@ -552,7 +569,7 @@ class ProfileCubit extends Cubit<ProfileState> {
     }
 
     // Get profile image from user data first, then candidate profile if needed
-    String? profileImage = user.image;
+    var profileImage = user.image;
     if (profileImage == null || profileImage.isEmpty) {
       profileImage = candidateProfile?.profilePicture;
     }

@@ -1,5 +1,4 @@
 import 'dart:developer' as developer;
-import 'dart:ffi';
 import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -78,9 +77,8 @@ class PerformanceMonitoringService {
       final prefs = await SharedPreferences.getInstance();
       final metricsHistory = prefs.getString(_metricsHistoryKey);
 
-      final Map<String, dynamic> history = metricsHistory != null
-          ? _parseJson(metricsHistory)
-          : {};
+      final history =
+          metricsHistory != null ? _parseJson(metricsHistory) : <String, dynamic>{};
 
       if (!history.containsKey(operationName)) {
         history[operationName] = {'durations': [], 'count': 0, 'total': 0};
@@ -129,7 +127,7 @@ class PerformanceMonitoringService {
         return 0.0;
       }
 
-      final Map<String, dynamic> history = _parseJson(metricsHistory);
+      final history = _parseJson(metricsHistory);
       if (!history.containsKey(operationName)) {
         return 0.0;
       }
@@ -160,7 +158,7 @@ class PerformanceMonitoringService {
         return 0;
       }
 
-      final Map<String, dynamic> history = _parseJson(metricsHistory);
+      final history = _parseJson(metricsHistory);
       if (!history.containsKey(operationName)) {
         return 0;
       }
@@ -190,7 +188,7 @@ class PerformanceMonitoringService {
         return [];
       }
 
-      final Map<String, dynamic> history = _parseJson(metricsHistory);
+      final history = _parseJson(metricsHistory);
       if (!history.containsKey(operationName)) {
         return [];
       }
@@ -279,8 +277,8 @@ class PerformanceMonitoringService {
         return {};
       }
 
-      final Map<String, dynamic> history = _parseJson(metricsHistory);
-      final Map<String, dynamic> summary = {};
+      final history = _parseJson(metricsHistory);
+      final summary = <String, dynamic>{};
 
       for (final entry in history.entries) {
         final operationName = entry.key;
@@ -393,7 +391,7 @@ class PerformanceMonitoringService {
   /// Get slow operations (poorer performance)
   static Future<List<Map<String, dynamic>>> getSlowOperations() async {
     final summary = await getPerformanceSummary();
-    final List<Map<String, dynamic>> slowOps = [];
+    final slowOps = <Map<String, dynamic>>[];
 
     for (final entry in summary.entries) {
       final data = entry.value as Map<String, dynamic>;

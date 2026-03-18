@@ -1,5 +1,7 @@
 /// API configuration settings
 /// Contains timeout values, headers, and other configuration
+library;
+
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class ApiConfig {

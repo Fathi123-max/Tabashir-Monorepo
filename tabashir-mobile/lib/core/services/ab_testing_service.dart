@@ -5,12 +5,6 @@ import 'ai_job_apply_config_service.dart';
 
 /// A/B Test configuration
 class ABTestConfig {
-  final String testName;
-  final String variantA;
-  final String variantB;
-  final double variantAPercentage; // 0.0 to 1.0
-  final bool enabled;
-
   const ABTestConfig({
     required this.testName,
     required this.variantA,
@@ -19,21 +13,26 @@ class ABTestConfig {
     this.enabled = true,
   });
 
-  Map<String, dynamic> toJson() => {
-        'testName': testName,
-        'variantA': variantA,
-        'variantB': variantB,
-        'variantAPercentage': variantAPercentage,
-        'enabled': enabled,
-      };
-
   factory ABTestConfig.fromJson(Map<String, dynamic> json) => ABTestConfig(
-        testName: (json['testName'] as String?) ?? '',
-        variantA: (json['variantA'] as String?) ?? '',
-        variantB: (json['variantB'] as String?) ?? '',
-        variantAPercentage: (json['variantAPercentage'] as double?) ?? 0.5,
-        enabled: (json['enabled'] as bool?) ?? true,
-      );
+    testName: (json['testName'] as String?) ?? '',
+    variantA: (json['variantA'] as String?) ?? '',
+    variantB: (json['variantB'] as String?) ?? '',
+    variantAPercentage: (json['variantAPercentage'] as double?) ?? 0.5,
+    enabled: (json['enabled'] as bool?) ?? true,
+  );
+  final String testName;
+  final String variantA;
+  final String variantB;
+  final double variantAPercentage; // 0.0 to 1.0
+  final bool enabled;
+
+  Map<String, dynamic> toJson() => {
+    'testName': testName,
+    'variantA': variantA,
+    'variantB': variantB,
+    'variantAPercentage': variantAPercentage,
+    'enabled': enabled,
+  };
 }
 
 /// A/B Testing service for dynamic configuration testing
@@ -70,7 +69,8 @@ class ABTestingService {
   }) async {
     try {
       final prefs = await SharedPreferences.getInstance();
-      final variantKey = '$_userVariantKey\_$testName\_${userId ?? 'default'}';
+      final variantKey =
+          '${_userVariantKey}_${testName}_${userId ?? 'default'}';
 
       final savedVariant = prefs.getString(variantKey);
       if (savedVariant != null) {
@@ -88,7 +88,6 @@ class ABTestingService {
         testName: testName,
         variantA: 'A',
         variantB: 'B',
-        variantAPercentage: 0.5,
       );
 
       // Assign variant based on percentage
@@ -128,7 +127,7 @@ class ABTestingService {
 
   /// Get maximum roles to show based on A/B test
   static Future<int> getMaxRolesToShow({String? userId}) async =>
-      await getVariantValue(
+      getVariantValue(
         'max_roles_display',
         6, // Variant A: 6 roles
         8, // Variant B: 8 roles
@@ -137,7 +136,7 @@ class ABTestingService {
 
   /// Get maximum locations to show based on A/B test
   static Future<int> getMaxLocationsToShow({String? userId}) async =>
-      await getVariantValue(
+      getVariantValue(
         'max_locations_display',
         5, // Variant A: 5 locations
         7, // Variant B: 7 locations
@@ -146,7 +145,7 @@ class ABTestingService {
 
   /// Get default AI confidence based on A/B test
   static Future<int> getDefaultAiConfidence({String? userId}) async =>
-      await getVariantValue(
+      getVariantValue(
         'ai_confidence',
         85, // Variant A: 85
         90, // Variant B: 90
@@ -155,7 +154,7 @@ class ABTestingService {
 
   /// Get animation quality based on A/B test
   static Future<String> getAnimationQuality({String? userId}) async =>
-      await getVariantValue(
+      getVariantValue(
         'animation_quality',
         'auto', // Variant A: auto-detect
         'user_preference', // Variant B: user preference
@@ -164,7 +163,7 @@ class ABTestingService {
 
   /// Check if analytics tracking is enabled based on A/B test
   static Future<bool> isAnalyticsEnabled({String? userId}) async =>
-      await getVariantValue(
+      getVariantValue(
         'analytics_tracking',
         true, // Variant A: enabled
         false, // Variant B: disabled
@@ -215,7 +214,8 @@ class ABTestingService {
     String? userId,
   }) async {
     try {
-      final conversionKey = '$_userVariantKey\_$testName\_$variant\_conversion';
+      final conversionKey =
+          '${_userVariantKey}_${testName}_${variant}_conversion';
       final prefs = await SharedPreferences.getInstance();
       final currentCount = prefs.getInt(conversionKey) ?? 0;
       await prefs.setInt(conversionKey, currentCount + 1);
@@ -237,9 +237,9 @@ class ABTestingService {
     try {
       final prefs = await SharedPreferences.getInstance();
       final variantAConversions =
-          prefs.getInt('$_userVariantKey\_$testName\_A_conversion') ?? 0;
+          prefs.getInt('${_userVariantKey}_${testName}_A_conversion') ?? 0;
       final variantBConversions =
-          prefs.getInt('$_userVariantKey\_$testName\_B_conversion') ?? 0;
+          prefs.getInt('${_userVariantKey}_${testName}_B_conversion') ?? 0;
 
       // For simplicity, return conversion counts as rates
       // In production, calculate based on total users in each variant
@@ -278,37 +278,32 @@ class ABTestingService {
 
   /// Get default test configurations
   static List<ABTestConfig> _getDefaultTests() => [
-        const ABTestConfig(
-          testName: 'max_roles_display',
-          variantA: '6_roles',
-          variantB: '8_roles',
-          variantAPercentage: 0.5,
-        ),
-        const ABTestConfig(
-          testName: 'max_locations_display',
-          variantA: '5_locations',
-          variantB: '7_locations',
-          variantAPercentage: 0.5,
-        ),
-        const ABTestConfig(
-          testName: 'ai_confidence',
-          variantA: '85',
-          variantB: '90',
-          variantAPercentage: 0.5,
-        ),
-        const ABTestConfig(
-          testName: 'popular_roles_order',
-          variantA: 'default_order',
-          variantB: 'shuffled_order',
-          variantAPercentage: 0.5,
-        ),
-        const ABTestConfig(
-          testName: 'analytics_tracking',
-          variantA: 'enabled',
-          variantB: 'disabled',
-          variantAPercentage: 0.5,
-        ),
-      ];
+    const ABTestConfig(
+      testName: 'max_roles_display',
+      variantA: '6_roles',
+      variantB: '8_roles',
+    ),
+    const ABTestConfig(
+      testName: 'max_locations_display',
+      variantA: '5_locations',
+      variantB: '7_locations',
+    ),
+    const ABTestConfig(
+      testName: 'ai_confidence',
+      variantA: '85',
+      variantB: '90',
+    ),
+    const ABTestConfig(
+      testName: 'popular_roles_order',
+      variantA: 'default_order',
+      variantB: 'shuffled_order',
+    ),
+    const ABTestConfig(
+      testName: 'analytics_tracking',
+      variantA: 'enabled',
+      variantB: 'disabled',
+    ),
+  ];
 
   /// Clear all test data
   static Future<void> clearTests() async {
@@ -337,7 +332,7 @@ class ABTestingService {
   /// Get test results summary
   static Future<Map<String, dynamic>> getTestResultsSummary() async {
     final tests = await getActiveTests();
-    final Map<String, dynamic> results = {};
+    final results = <String, dynamic>{};
 
     for (final test in tests) {
       final conversionRates = await getConversionRate(test.testName);
@@ -364,7 +359,8 @@ class ABTestingService {
   }) async {
     try {
       final prefs = await SharedPreferences.getInstance();
-      final variantKey = '$_userVariantKey\_$testName\_${userId ?? 'default'}';
+      final variantKey =
+          '${_userVariantKey}_${testName}_${userId ?? 'default'}';
       await prefs.setString(variantKey, variant);
 
       if (kDebugMode) {

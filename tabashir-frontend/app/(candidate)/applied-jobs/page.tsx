@@ -100,6 +100,7 @@ export default function AppliedJobsPage() {
   const [error, setError] = useState<string | null>(null);
   const [totalJobs, setTotalJobs] = useState(0);
   const { t, isRTL } = useTranslation();
+  const { hasResume, loading: resumeLoading } = useHasResume();
 
   // Fetch applied jobs on component mount
   useEffect(() => {
@@ -176,7 +177,7 @@ export default function AppliedJobsPage() {
     }
   };
 
-  if (loading) {
+  if (loading || resumeLoading) {
     return (
       <div className={`container mx-auto py-6 max-w-7xl text-gray-900 ${isRTL ? 'text-right' : 'text-left'}`}>
         <div className="flex justify-center items-center min-h-[400px]">
@@ -211,21 +212,22 @@ export default function AppliedJobsPage() {
         {/* <UserProfileHeader /> */}
       </div>
 
-      <div className="bg-white rounded-lg shadow-sm mx-4 lg:mx-0">
-        <div className="p-4">
-          {/* Search Bar - Mobile Friendly */}
-          <div className="mb-4">
-            <div className="relative">
-              <Search className={`absolute ${isRTL ? 'right-3' : 'left-3'} top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4`} />
-              <Input
-                type="text"
-                placeholder={t("searchJobs")}
-                className={`${isRTL ? 'pr-10 pl-4' : 'pl-10 pr-4'} py-2 w-full`}
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-              />
+      <CVRequiredBlur hasResume={hasResume}>
+        <div className="bg-white rounded-lg shadow-sm mx-4 lg:mx-0">
+          <div className="p-4">
+            {/* Search Bar - Mobile Friendly */}
+            <div className="mb-4">
+              <div className="relative">
+                <Search className={`absolute ${isRTL ? 'right-3' : 'left-3'} top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4`} />
+                <Input
+                  type="text"
+                  placeholder={t("searchJobs")}
+                  className={`${isRTL ? 'pr-10 pl-4' : 'pl-10 pr-4'} py-2 w-full`}
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                />
+              </div>
             </div>
-          </div>
 
           {/* Mobile Card Layout */}
           <div className="block md:hidden space-y-4">
@@ -472,9 +474,9 @@ export default function AppliedJobsPage() {
                 </PaginationItem>
               </PaginationContent>
             </Pagination>
-          </div> */}
-        </div>
-      </div>
-    </div>
-  );
-}
+          </div>
+          </div>
+          </CVRequiredBlur>
+          </div>
+          );
+          }

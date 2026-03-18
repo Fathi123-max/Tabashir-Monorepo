@@ -8,7 +8,8 @@ class ApiEndpoints {
   // ==========================================
   // Base URLs
   // ==========================================
-  static String get appBaseUrl => dotenv.env['API_BASE_URL'] ?? 'http://10.0.2.2:5050';
+  static String get appBaseUrl =>
+      dotenv.env['API_BASE_URL'] ?? 'http://10.0.2.2:5050';
   static String get backendBaseUrl => appBaseUrl;
 
   // ==========================================

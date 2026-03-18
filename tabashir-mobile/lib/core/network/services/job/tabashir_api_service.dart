@@ -57,7 +57,8 @@ abstract class TabashirApiService {
   /// Returns binary DOCX file
   @POST('/format')
   @MultiPart()
-  Future<HttpResponse<void>> formatCV(
+  @DioResponseType(ResponseType.bytes)
+  Future<HttpResponse<List<int>>> formatCV(
     @Part() MultipartFile file,
     @Part(name: 'output_language') String? outputLanguage,
   );
@@ -72,7 +73,8 @@ abstract class TabashirApiService {
   /// Returns binary DOCX file
   @POST('/translate')
   @MultiPart()
-  Future<HttpResponse<void>> translateCV(
+  @DioResponseType(ResponseType.bytes)
+  Future<HttpResponse<List<int>>> translateCV(
     @Part() MultipartFile file,
   );
 

@@ -10,6 +10,8 @@ import { useTranslation } from "@/lib/use-translation"
 import { useSession } from "next-auth/react"
 import { useEffect, useState } from "react"
 import { getUsersSkills, onGetUserProfile } from "@/actions/auth"
+import { useHasResume } from "@/hooks/use-has-resume"
+import { CVRequiredBlur } from "@/components/shared/cv-required-blur"
 
 export default function Dashboard() {
   const { t, isRTL } = useTranslation()
@@ -17,6 +19,7 @@ export default function Dashboard() {
   const [user, setUser] = useState<any>(null)
   const [skills, setSkills] = useState<string[]>([])
   const [loading, setLoading] = useState(true)
+  const { hasResume, loading: resumeLoading } = useHasResume()
 
   useEffect(() => {
     const fetchData = async () => {
@@ -39,7 +42,7 @@ export default function Dashboard() {
     }
   }, [session])
 
-  if (loading) {
+  if (loading || resumeLoading) {
     return (
       <div className={`flex items-center justify-center min-h-[400px] ${isRTL ? 'text-right' : ''}`}>
         <p className="text-gray-500">{t('loading')}</p>
@@ -49,15 +52,21 @@ export default function Dashboard() {
 
   return (
     <div className={`space-y-6 ${isRTL ? 'text-right' : ''}`}>
-      <MatchedJobs jobType={user?.jobType || ""} />
+      <CVRequiredBlur hasResume={hasResume}>
+        <MatchedJobs jobType={user?.jobType || ""} />
+      </CVRequiredBlur>
 
       <div className="bg-white rounded-lg p-6 shadow-sm">
-        <SkillTrendsChart jobTitle={user?.jobType || "Developer"} skills={skills} />
+        <CVRequiredBlur hasResume={hasResume}>
+          <SkillTrendsChart jobTitle={user?.jobType || "Developer"} skills={skills} />
+        </CVRequiredBlur>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         <div className="bg-white rounded-lg p-6 shadow-sm">
-          <MatchingJobsChart />
+          <CVRequiredBlur hasResume={hasResume}>
+            <MatchingJobsChart />
+          </CVRequiredBlur>
         </div>
         <div className="bg-white rounded-lg p-6 shadow-sm text-gray-900">
           <GlobalDemandList jobTitle={user?.jobType || "Developer"} skills={skills} />

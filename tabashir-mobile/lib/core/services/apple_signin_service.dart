@@ -44,8 +44,7 @@ class AppleSignInService {
       final nonce = _generateNonce();
 
       // Request Apple Sign-In authorization
-      final appleCredential =
-          await SignInWithApple.getAppleIDCredential(
+      final appleCredential = await SignInWithApple.getAppleIDCredential(
         scopes: [
           AppleIDAuthorizationScopes.email,
           AppleIDAuthorizationScopes.fullName,
@@ -83,9 +82,7 @@ class AppleSignInService {
 
   /// Check if Apple Sign-In is available
   /// Returns true if running on iOS/macOS and device supports Apple Sign-In
-  Future<bool> get isAvailable async {
-    return await SignInWithApple.isAvailable();
-  }
+  Future<bool> get isAvailable async => SignInWithApple.isAvailable();
 
   /// Sign out from Apple
   /// Note: This just clears the stored token, Apple doesn't have a sign-out API
@@ -99,9 +96,8 @@ class AppleSignInService {
 
   /// Check if user is currently signed in with Apple
   /// Checks if there's a stored token in AuthSessionService
-  Future<bool> get isSignedIn async {
-    return await AuthSessionService.instance.isAuthenticated;
-  }
+  Future<bool> get isSignedIn async =>
+      AuthSessionService.instance.isAuthenticated;
 
   /// Generate a cryptographically secure random nonce
   String _generateNonce() {
@@ -109,7 +105,9 @@ class AppleSignInService {
         '0123456789ABCDEFGHIJKLMNOPQRSTUVXYZabcdefghijklmnopqrstuvwxyz-._';
     final rand = Random.secure();
     return List.generate(
-        64, (index) => chars[rand.nextInt(chars.length)]).join();
+      64,
+      (index) => chars[rand.nextInt(chars.length)],
+    ).join();
   }
 
   /// SHA256 hash of the nonce

@@ -596,6 +596,10 @@ const translations = {
     or: "or",
 
     startApplyingMyApplication: "Start Applying My Application",
+    cvRequiredTitle: "CV Upload Required",
+    cvRequiredDesc: "Please upload your CV to unlock this feature and get personalized job recommendations.",
+    uploadCV: "Upload CV",
+    goToResume: "Go to Resume Section",
   },
   ar: {
     // Navigation
@@ -1147,7 +1151,11 @@ const translations = {
     or: "أو",
 
     startApplyingMyApplication: "ابدأ التقديم على سيرتي",
-
+    cvRequiredTitle: "مطلوب تحميل السيرة الذاتية",
+    cvRequiredDesc: "يرجى تحميل سيرتك الذاتية لفتح هذه الميزة والحصول على توصيات وظائف مخصصة.",
+    uploadCV: "تحميل السيرة الذاتية",
+    goToResume: "الذهاب إلى قسم السيرة الذاتية",
+    },
     // Courses
     coursesAvailable: "دورة متاحة",
     coursesAvailablePlural: "دورات متاحة",

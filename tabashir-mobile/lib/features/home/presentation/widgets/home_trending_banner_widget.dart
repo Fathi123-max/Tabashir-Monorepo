@@ -6,18 +6,17 @@ import 'package:go_router/go_router.dart';
 import 'package:tabashir/core/theme/app_theme.dart';
 
 class HomeTrendingBannerWidget extends StatelessWidget {
+  const HomeTrendingBannerWidget({
+    required this.trendingText,
+    required this.growthPercentage,
+    required this.topSkills,
+    super.key,
+    this.seeOpportunitiesLink,
+  });
   final String trendingText;
   final int growthPercentage;
   final List<String> topSkills;
   final String? seeOpportunitiesLink;
-
-  const HomeTrendingBannerWidget({
-    super.key,
-    required this.trendingText,
-    required this.growthPercentage,
-    required this.topSkills,
-    this.seeOpportunitiesLink,
-  });
 
   @override
   Widget build(BuildContext context) {
@@ -75,29 +74,34 @@ class HomeTrendingBannerWidget extends StatelessWidget {
             Wrap(
               spacing: AppTheme.spacingSm.w,
               runSpacing: AppTheme.spacingSm.h,
-              children: topSkills.take(3).map((skill) {
-                return Container(
-                  padding: EdgeInsets.symmetric(
-                    horizontal: AppTheme.spacingMd.w,
-                    vertical: AppTheme.spacingXs.h,
-                  ),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(AppTheme.radiusSmall.r),
-                    border: Border.all(
-                      color: AppTheme.primaryBlue.withOpacity(0.3),
+              children: topSkills
+                  .take(3)
+                  .map(
+                    (skill) => Container(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: AppTheme.spacingMd.w,
+                        vertical: AppTheme.spacingXs.h,
+                      ),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(
+                          AppTheme.radiusSmall.r,
+                        ),
+                        border: Border.all(
+                          color: AppTheme.primaryBlue.withOpacity(0.3),
+                        ),
+                      ),
+                      child: Text(
+                        skill,
+                        style: TextStyle(
+                          fontSize: 12.sp,
+                          fontWeight: FontWeight.w600,
+                          color: AppTheme.primaryBlue,
+                        ),
+                      ),
                     ),
-                  ),
-                  child: Text(
-                    skill,
-                    style: TextStyle(
-                      fontSize: 12.sp,
-                      fontWeight: FontWeight.w600,
-                      color: AppTheme.primaryBlue,
-                    ),
-                  ),
-                );
-              }).toList(),
+                  )
+                  .toList(),
             ),
             SizedBox(height: AppTheme.spacingMd.h),
           ],

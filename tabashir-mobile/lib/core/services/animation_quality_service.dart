@@ -104,7 +104,7 @@ class AnimationQualityService {
     }
 
     // Use recommended quality
-    return await getRecommendedQuality();
+    return getRecommendedQuality();
   }
 
   /// Get animation quality as string
@@ -212,13 +212,11 @@ class AnimationQualityService {
   }
 
   /// Get all available quality options
-  static List<AnimationQuality> getAllQualityOptions() {
-    return [
-      AnimationQuality.high,
-      AnimationQuality.medium,
-      AnimationQuality.low,
-    ];
-  }
+  static List<AnimationQuality> getAllQualityOptions() => [
+    AnimationQuality.high,
+    AnimationQuality.medium,
+    AnimationQuality.low,
+  ];
 
   /// Get quality display names
   static String getQualityDisplayName(AnimationQuality quality) {

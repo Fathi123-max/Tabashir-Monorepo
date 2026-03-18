@@ -346,7 +346,7 @@ class _JobDetailScreenState extends State<JobDetailScreen> {
     // Implementation for viewing company profile
   }
 
-  void _onApply(BuildContext context) async {
+  Future<void> _onApply(BuildContext context) async {
     if (context.read<JobDetailsCubit>().state is JobDetailsLoaded) {
       final loadedState =
           context.read<JobDetailsCubit>().state as JobDetailsLoaded;
@@ -393,7 +393,7 @@ class _JobDetailScreenState extends State<JobDetailScreen> {
             profileState.profile?.email == null ||
             profileState.profile!.email.isEmpty) {
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
+            const SnackBar(
               content: Text(
                 'User email not found. Please update your profile.',
               ),

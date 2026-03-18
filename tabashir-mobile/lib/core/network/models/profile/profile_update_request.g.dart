@@ -15,9 +15,9 @@ _ProfileUpdateRequest _$ProfileUpdateRequestFromJson(
   nationality: json['nationality'] as String,
   gender: json['gender'] as String,
   jobTitle: json['jobTitle'] as String,
-  location: json['location'] as String?,
   company: json['company'] as String,
   education: json['education'] as String,
+  location: json['location'] as String?,
   linkedin: json['linkedin'] as String?,
 );
 
@@ -30,8 +30,8 @@ Map<String, dynamic> _$ProfileUpdateRequestToJson(
   'nationality': instance.nationality,
   'gender': instance.gender,
   'jobTitle': instance.jobTitle,
-  'location': instance.location,
   'company': instance.company,
   'education': instance.education,
+  'location': instance.location,
   'linkedin': instance.linkedin,
 };

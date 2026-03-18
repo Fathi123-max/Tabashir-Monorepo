@@ -9,7 +9,8 @@ part 'notification_api_service.freezed.dart';
 
 @RestApi(baseUrl: '/api/v1/home')
 abstract class NotificationApiService {
-  factory NotificationApiService(Dio dio, {String baseUrl}) = _NotificationApiService;
+  factory NotificationApiService(Dio dio, {String baseUrl}) =
+      _NotificationApiService;
 
   @GET('/notifications/count')
   Future<HttpResponse<NotificationCountResponse>> getNotificationCount();

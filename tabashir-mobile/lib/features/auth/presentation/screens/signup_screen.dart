@@ -103,7 +103,7 @@ class _SignupScreenState extends State<SignupScreen> {
   String _generateDummyEmail(String fullName) {
     final base = fullName
         .toLowerCase()
-        .replaceAll(RegExp(r'[^a-z ]'), '')
+        .replaceAll(RegExp('[^a-z ]'), '')
         .trim()
         .replaceAll(' ', '.');
     final suffix = 10 + _random.nextInt(90);

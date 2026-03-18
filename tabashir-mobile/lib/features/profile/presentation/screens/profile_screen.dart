@@ -92,7 +92,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             );
           }
 
-          if (state.requiresReauth == true) {
+          if (state.requiresReauth) {
             return Scaffold(
               body: Center(
                 child: Column(
@@ -584,12 +584,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
-  Widget _sectionHeader(String title, ThemeData theme) {
-    return Text(
-      title,
-      style: theme.textTheme.titleLarge?.copyWith(
-        fontWeight: FontWeight.bold,
-      ),
-    );
-  }
+  Widget _sectionHeader(String title, ThemeData theme) => Text(
+    title,
+    style: theme.textTheme.titleLarge?.copyWith(
+      fontWeight: FontWeight.bold,
+    ),
+  );
 }

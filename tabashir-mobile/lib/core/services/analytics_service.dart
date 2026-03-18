@@ -36,7 +36,7 @@ class AnalyticsService {
       final roleSelections = prefs.getString(_roleSelectionsKey);
 
       if (roleSelections != null) {
-        final Map<String, dynamic> selections = _parseJson(roleSelections);
+        final selections = _parseJson(roleSelections);
         selections[role] = (selections[role] ?? 0) + 1;
         await prefs.setString(_roleSelectionsKey, _serializeJson(selections));
 
@@ -46,7 +46,7 @@ class AnalyticsService {
           );
         }
       } else {
-        final Map<String, int> selections = {role: 1};
+        final selections = <String, int>{role: 1};
         await prefs.setString(_roleSelectionsKey, _serializeJson(selections));
       }
 
@@ -65,7 +65,7 @@ class AnalyticsService {
       final locationSelections = prefs.getString(_locationSelectionsKey);
 
       if (locationSelections != null) {
-        final Map<String, dynamic> selections = _parseJson(locationSelections);
+        final selections = _parseJson(locationSelections);
         selections[location] = (selections[location] ?? 0) + 1;
         await prefs.setString(
           _locationSelectionsKey,
@@ -78,7 +78,7 @@ class AnalyticsService {
           );
         }
       } else {
-        final Map<String, int> selections = {location: 1};
+        final selections = <String, int>{location: 1};
         await prefs.setString(
           _locationSelectionsKey,
           _serializeJson(selections),
@@ -102,7 +102,7 @@ class AnalyticsService {
       final nationalitySelections = prefs.getString(_nationalitySelectionsKey);
 
       if (nationalitySelections != null) {
-        final Map<String, dynamic> selections = _parseJson(
+        final selections = _parseJson(
           nationalitySelections,
         );
         selections[nationality] = (selections[nationality] ?? 0) + 1;
@@ -117,7 +117,7 @@ class AnalyticsService {
           );
         }
       } else {
-        final Map<String, int> selections = {nationality: 1};
+        final selections = <String, int>{nationality: 1};
         await prefs.setString(
           _nationalitySelectionsKey,
           _serializeJson(selections),
@@ -154,12 +154,14 @@ class AnalyticsService {
         return [];
       }
 
-      final Map<String, dynamic> selections = _parseJson(roleSelections);
-      final List<Map<String, dynamic>> sortedRoles = selections.entries
+      final selections = _parseJson(roleSelections);
+      final sortedRoles = selections.entries
           .map((entry) => {'role': entry.key, 'count': entry.value})
           .toList();
 
-      sortedRoles.sort((a, b) => (b['count'] as int).compareTo(a['count'] as int));
+      sortedRoles.sort(
+        (a, b) => (b['count'] as int).compareTo(a['count'] as int),
+      );
 
       return sortedRoles.take(limit).toList();
     } catch (e) {
@@ -182,12 +184,14 @@ class AnalyticsService {
         return [];
       }
 
-      final Map<String, dynamic> selections = _parseJson(locationSelections);
-      final List<Map<String, dynamic>> sortedLocations = selections.entries
+      final selections = _parseJson(locationSelections);
+      final sortedLocations = selections.entries
           .map((entry) => {'location': entry.key, 'count': entry.value})
           .toList();
 
-      sortedLocations.sort((a, b) => (b['count'] as int).compareTo(a['count'] as int));
+      sortedLocations.sort(
+        (a, b) => (b['count'] as int).compareTo(a['count'] as int),
+      );
 
       return sortedLocations.take(limit).toList();
     } catch (e) {
@@ -210,12 +214,14 @@ class AnalyticsService {
         return [];
       }
 
-      final Map<String, dynamic> selections = _parseJson(nationalitySelections);
-      final List<Map<String, dynamic>> sortedNationalities = selections.entries
+      final selections = _parseJson(nationalitySelections);
+      final sortedNationalities = selections.entries
           .map((entry) => {'nationality': entry.key, 'count': entry.value})
           .toList();
 
-      sortedNationalities.sort((a, b) => (b['count'] as int).compareTo(a['count'] as int));
+      sortedNationalities.sort(
+        (a, b) => (b['count'] as int).compareTo(a['count'] as int),
+      );
 
       return sortedNationalities.take(limit).toList();
     } catch (e) {
@@ -234,17 +240,17 @@ class AnalyticsService {
       final locationSelections = prefs.getString(_locationSelectionsKey);
       final nationalitySelections = prefs.getString(_nationalitySelectionsKey);
 
-      int totalRoles = 0;
-      int totalLocations = 0;
-      int totalNationalities = 0;
+      var totalRoles = 0;
+      var totalLocations = 0;
+      var totalNationalities = 0;
 
       if (roleSelections != null) {
-        final Map<String, dynamic> roles = _parseJson(roleSelections);
+        final roles = _parseJson(roleSelections);
         totalRoles = roles.values.fold(0, (sum, val) => sum + (val as int));
       }
 
       if (locationSelections != null) {
-        final Map<String, dynamic> locations = _parseJson(locationSelections);
+        final locations = _parseJson(locationSelections);
         totalLocations = locations.values.fold(
           0,
           (sum, val) => sum + (val as int),
@@ -252,7 +258,7 @@ class AnalyticsService {
       }
 
       if (nationalitySelections != null) {
-        final Map<String, dynamic> nationalities = _parseJson(
+        final nationalities = _parseJson(
           nationalitySelections,
         );
         totalNationalities = nationalities.values.fold(
@@ -326,9 +332,8 @@ class AnalyticsService {
       final prefs = await SharedPreferences.getInstance();
       final eventHistory = prefs.getString(_eventHistoryKey);
 
-      final Map<String, dynamic> events = eventHistory != null
-          ? _parseJson(eventHistory)
-          : {};
+      final events =
+          eventHistory != null ? _parseJson(eventHistory) : <String, dynamic>{};
 
       final eventKey = '${event.name}_${DateTime.now().millisecondsSinceEpoch}';
       events[eventKey] = {

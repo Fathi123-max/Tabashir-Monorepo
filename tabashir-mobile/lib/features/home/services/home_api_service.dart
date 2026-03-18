@@ -55,7 +55,7 @@ class HomeApiService {
           .toList();
 
       // If no featured jobs in response, fetch from jobs API
-      List<JobDetailsResponse> finalFeaturedJobs = featuredJobs;
+      var finalFeaturedJobs = featuredJobs;
       if (featuredJobs.isEmpty) {
         final jobsResponse = await _tabashirApiService.getJobs(
           page: 0,

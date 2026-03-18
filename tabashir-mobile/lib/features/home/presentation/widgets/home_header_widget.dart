@@ -21,7 +21,7 @@ class HomeHeaderWidget extends StatelessWidget {
     final theme = Theme.of(context);
 
     // Get user name or fallback to default
-    final userName = user?.name?.isNotEmpty == true ? user!.name : 'User';
+    final userName = user?.name?.isNotEmpty ?? false ? user!.name : 'User';
 
     // Get user profile picture or use default
     final profilePictureUrl = user?.image;
@@ -115,7 +115,7 @@ class HomeHeaderWidget extends StatelessWidget {
                           child: CachedNetworkImage(
                             imageUrl: profilePictureUrl ?? defaultAvatarUrl,
                             fit: BoxFit.cover,
-                            placeholder: (context, url) => Container(
+                            placeholder: (context, url) => ColoredBox(
                               color: AppTheme.primaryColor.withOpacity(0.1),
                               child: Icon(
                                 Icons.person,
@@ -123,7 +123,7 @@ class HomeHeaderWidget extends StatelessWidget {
                                 color: theme.colorScheme.onSurfaceVariant,
                               ),
                             ),
-                            errorWidget: (context, url, error) => Container(
+                            errorWidget: (context, url, error) => ColoredBox(
                               color: AppTheme.primaryColor.withOpacity(0.1),
                               child: Icon(
                                 Icons.person,

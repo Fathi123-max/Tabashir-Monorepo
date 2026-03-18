@@ -22,7 +22,8 @@ class JobMatchService {
     final jobTypeScore = _calculateJobTypeMatch(userProfile, job);
 
     // Weighted average (skills 40%, experience 30%, location 20%, job type 10%)
-    final weightedScore = (skillsScore * 0.4) +
+    final weightedScore =
+        (skillsScore * 0.4) +
         (experienceScore * 0.3) +
         (locationScore * 0.2) +
         (jobTypeScore * 0.1);
@@ -54,7 +55,7 @@ class JobMatchService {
     }
 
     // Calculate overlap
-    int matches = 0;
+    var matches = 0;
     for (final userSkill in userSkills) {
       for (final jobSkill in jobSkills) {
         if (_isSkillMatch(userSkill, jobSkill)) {
@@ -239,7 +240,10 @@ class JobMatchService {
   int? _parseExperienceLevel(String experience) {
     final exp = experience.toLowerCase();
 
-    if (exp.contains('fresher') || exp.contains('entry') || exp.contains('0') || exp.contains('1 year')) {
+    if (exp.contains('fresher') ||
+        exp.contains('entry') ||
+        exp.contains('0') ||
+        exp.contains('1 year')) {
       return 1;
     }
     if (exp.contains('junior') || exp.contains('2-3') || exp.contains('1-2')) {
@@ -251,7 +255,10 @@ class JobMatchService {
     if (exp.contains('senior') || exp.contains('5-8') || exp.contains('6-10')) {
       return 4;
     }
-    if (exp.contains('lead') || exp.contains('expert') || exp.contains('8+') || exp.contains('10+')) {
+    if (exp.contains('lead') ||
+        exp.contains('expert') ||
+        exp.contains('8+') ||
+        exp.contains('10+')) {
       return 5;
     }
 
@@ -272,17 +279,16 @@ class JobMatchService {
   }
 
   /// Check if locations match exactly
-  bool _isLocationMatch(String userLocation, String jobLocation) {
-    return userLocation == jobLocation ||
-           userLocation.contains(jobLocation) ||
-           jobLocation.contains(userLocation);
-  }
+  bool _isLocationMatch(String userLocation, String jobLocation) =>
+      userLocation == jobLocation ||
+      userLocation.contains(jobLocation) ||
+      jobLocation.contains(userLocation);
 
   /// Check if locations partially match (same city/region)
   bool _isPartialLocationMatch(String userLocation, String jobLocation) {
     // Split by common separators and check for common parts
-    final userParts = userLocation.split(RegExp(r'[,/ -]'));
-    final jobParts = jobLocation.split(RegExp(r'[,/ -]'));
+    final userParts = userLocation.split(RegExp('[,/ -]'));
+    final jobParts = jobLocation.split(RegExp('[,/ -]'));
 
     for (final userPart in userParts) {
       for (final jobPart in jobParts) {
@@ -298,15 +304,20 @@ class JobMatchService {
   }
 
   /// Check if job types match exactly
-  bool _isJobTypeMatch(String userJobType, String jobType) {
-    return userJobType == jobType ||
-           userJobType.contains(jobType) ||
-           jobType.contains(userJobType);
-  }
+  bool _isJobTypeMatch(String userJobType, String jobType) =>
+      userJobType == jobType ||
+      userJobType.contains(jobType) ||
+      jobType.contains(userJobType);
 
   /// Check if job types partially match
   bool _isPartialJobTypeMatch(String userJobType, String jobType) {
-    final commonTypes = ['full-time', 'part-time', 'contract', 'freelance', 'remote'];
+    final commonTypes = [
+      'full-time',
+      'part-time',
+      'contract',
+      'freelance',
+      'remote',
+    ];
 
     for (final type in commonTypes) {
       if (userJobType.contains(type) && jobType.contains(type)) {

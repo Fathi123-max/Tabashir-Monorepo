@@ -4,14 +4,13 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:tabashir/core/theme/app_theme.dart';
 
 class PieChartWidget extends StatelessWidget {
-  final List<PieChartSectionData> sections;
-  final double? height;
-
   const PieChartWidget({
-    super.key,
     required this.sections,
+    super.key,
     this.height,
   });
+  final List<PieChartSectionData> sections;
+  final double? height;
 
   @override
   Widget build(BuildContext context) {
@@ -45,34 +44,32 @@ class PieChartHelper {
   static List<PieChartSectionData> createSections(
     List<Map<String, dynamic>> data, {
     double radius = 50,
-  }) {
-    return data.map((item) {
-      final String name = (item['name'] as String?) ?? '';
-      final int value = (item['value'] as num?)?.toInt() ?? 0;
-      final String? colorString = (item['color'] as String?);
-      final Color color = colorString != null
-          ? _parseColor(colorString)
-          : _getDefaultColor(data.indexOf(item));
+  }) => data.map((item) {
+    final name = (item['name'] as String?) ?? '';
+    final value = (item['value'] as num?)?.toInt() ?? 0;
+    final colorString = item['color'] as String?;
+    final color = colorString != null
+        ? _parseColor(colorString)
+        : _getDefaultColor(data.indexOf(item));
 
-      return PieChartSectionData(
-        color: color,
-        value: value.toDouble(),
-        title: value > 0 ? '$value' : '',
-        radius: radius,
-        titleStyle: TextStyle(
-          fontSize: 14.sp,
-          fontWeight: FontWeight.bold,
-          color: Colors.white,
-        ),
-        titlePositionPercentageOffset: 0.5,
-      );
-    }).toList();
-  }
+    return PieChartSectionData(
+      color: color,
+      value: value.toDouble(),
+      title: value > 0 ? '$value' : '',
+      radius: radius,
+      titleStyle: TextStyle(
+        fontSize: 14.sp,
+        fontWeight: FontWeight.bold,
+        color: Colors.white,
+      ),
+      titlePositionPercentageOffset: 0.5,
+    );
+  }).toList();
 
   static Color _parseColor(String colorString) {
     // Convert hex color string to Color
     try {
-      final String hexString = colorString.replaceAll('#', '');
+      final hexString = colorString.replaceAll('#', '');
       return Color(int.parse('FF$hexString', radix: 16));
     } catch (e) {
       return Colors.grey;
@@ -80,7 +77,7 @@ class PieChartHelper {
   }
 
   static Color _getDefaultColor(int index) {
-    final List<Color> colors = [
+    final colors = <Color>[
       AppTheme.primaryBlue,
       AppTheme.accentGreen,
       AppTheme.warningOrange,

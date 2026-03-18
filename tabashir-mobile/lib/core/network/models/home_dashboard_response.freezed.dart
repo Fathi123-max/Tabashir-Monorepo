@@ -23,11 +23,11 @@ mixin _$HomeDashboardResponse {
  int get interviews;/// Number of job offers received
  int get offers;/// Number of applications rejected
  int get rejected;/// Distribution of matches (format: "active | interviewing | offered")
- String get matchDistribution;/// Job counts by city for location-based statistics
- Map<String, int>? get jobsByCity;/// Monthly job counts for trends
- Map<String, int>? get monthlyJobCounts;/// Profile completion percentage (0-100)
+ String get matchDistribution;/// Profile completion percentage (0-100)
  int get profileCompletionPercentage;/// Application success rate percentage (0-100)
- int get applicationSuccessRate;
+ int get applicationSuccessRate;/// Job counts by city for location-based statistics
+ Map<String, int>? get jobsByCity;/// Monthly job counts for trends
+ Map<String, int>? get monthlyJobCounts;
 /// Create a copy of HomeDashboardResponse
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -40,16 +40,16 @@ $HomeDashboardResponseCopyWith<HomeDashboardResponse> get copyWith => _$HomeDash
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is HomeDashboardResponse&&const DeepCollectionEquality().equals(other.featuredJobs, featuredJobs)&&(identical(other.totalMatches, totalMatches) || other.totalMatches == totalMatches)&&(identical(other.companiesViewed, companiesViewed) || other.companiesViewed == companiesViewed)&&(identical(other.inReview, inReview) || other.inReview == inReview)&&(identical(other.interviews, interviews) || other.interviews == interviews)&&(identical(other.offers, offers) || other.offers == offers)&&(identical(other.rejected, rejected) || other.rejected == rejected)&&(identical(other.matchDistribution, matchDistribution) || other.matchDistribution == matchDistribution)&&const DeepCollectionEquality().equals(other.jobsByCity, jobsByCity)&&const DeepCollectionEquality().equals(other.monthlyJobCounts, monthlyJobCounts)&&(identical(other.profileCompletionPercentage, profileCompletionPercentage) || other.profileCompletionPercentage == profileCompletionPercentage)&&(identical(other.applicationSuccessRate, applicationSuccessRate) || other.applicationSuccessRate == applicationSuccessRate));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is HomeDashboardResponse&&const DeepCollectionEquality().equals(other.featuredJobs, featuredJobs)&&(identical(other.totalMatches, totalMatches) || other.totalMatches == totalMatches)&&(identical(other.companiesViewed, companiesViewed) || other.companiesViewed == companiesViewed)&&(identical(other.inReview, inReview) || other.inReview == inReview)&&(identical(other.interviews, interviews) || other.interviews == interviews)&&(identical(other.offers, offers) || other.offers == offers)&&(identical(other.rejected, rejected) || other.rejected == rejected)&&(identical(other.matchDistribution, matchDistribution) || other.matchDistribution == matchDistribution)&&(identical(other.profileCompletionPercentage, profileCompletionPercentage) || other.profileCompletionPercentage == profileCompletionPercentage)&&(identical(other.applicationSuccessRate, applicationSuccessRate) || other.applicationSuccessRate == applicationSuccessRate)&&const DeepCollectionEquality().equals(other.jobsByCity, jobsByCity)&&const DeepCollectionEquality().equals(other.monthlyJobCounts, monthlyJobCounts));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,const DeepCollectionEquality().hash(featuredJobs),totalMatches,companiesViewed,inReview,interviews,offers,rejected,matchDistribution,const DeepCollectionEquality().hash(jobsByCity),const DeepCollectionEquality().hash(monthlyJobCounts),profileCompletionPercentage,applicationSuccessRate);
+int get hashCode => Object.hash(runtimeType,const DeepCollectionEquality().hash(featuredJobs),totalMatches,companiesViewed,inReview,interviews,offers,rejected,matchDistribution,profileCompletionPercentage,applicationSuccessRate,const DeepCollectionEquality().hash(jobsByCity),const DeepCollectionEquality().hash(monthlyJobCounts));
 
 @override
 String toString() {
-  return 'HomeDashboardResponse(featuredJobs: $featuredJobs, totalMatches: $totalMatches, companiesViewed: $companiesViewed, inReview: $inReview, interviews: $interviews, offers: $offers, rejected: $rejected, matchDistribution: $matchDistribution, jobsByCity: $jobsByCity, monthlyJobCounts: $monthlyJobCounts, profileCompletionPercentage: $profileCompletionPercentage, applicationSuccessRate: $applicationSuccessRate)';
+  return 'HomeDashboardResponse(featuredJobs: $featuredJobs, totalMatches: $totalMatches, companiesViewed: $companiesViewed, inReview: $inReview, interviews: $interviews, offers: $offers, rejected: $rejected, matchDistribution: $matchDistribution, profileCompletionPercentage: $profileCompletionPercentage, applicationSuccessRate: $applicationSuccessRate, jobsByCity: $jobsByCity, monthlyJobCounts: $monthlyJobCounts)';
 }
 
 
@@ -60,7 +60,7 @@ abstract mixin class $HomeDashboardResponseCopyWith<$Res>  {
   factory $HomeDashboardResponseCopyWith(HomeDashboardResponse value, $Res Function(HomeDashboardResponse) _then) = _$HomeDashboardResponseCopyWithImpl;
 @useResult
 $Res call({
- List<JobDetailsResponse> featuredJobs, int totalMatches, int companiesViewed, int inReview, int interviews, int offers, int rejected, String matchDistribution, Map<String, int>? jobsByCity, Map<String, int>? monthlyJobCounts, int profileCompletionPercentage, int applicationSuccessRate
+ List<JobDetailsResponse> featuredJobs, int totalMatches, int companiesViewed, int inReview, int interviews, int offers, int rejected, String matchDistribution, int profileCompletionPercentage, int applicationSuccessRate, Map<String, int>? jobsByCity, Map<String, int>? monthlyJobCounts
 });
 
 
@@ -77,7 +77,7 @@ class _$HomeDashboardResponseCopyWithImpl<$Res>
 
 /// Create a copy of HomeDashboardResponse
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? featuredJobs = null,Object? totalMatches = null,Object? companiesViewed = null,Object? inReview = null,Object? interviews = null,Object? offers = null,Object? rejected = null,Object? matchDistribution = null,Object? jobsByCity = freezed,Object? monthlyJobCounts = freezed,Object? profileCompletionPercentage = null,Object? applicationSuccessRate = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? featuredJobs = null,Object? totalMatches = null,Object? companiesViewed = null,Object? inReview = null,Object? interviews = null,Object? offers = null,Object? rejected = null,Object? matchDistribution = null,Object? profileCompletionPercentage = null,Object? applicationSuccessRate = null,Object? jobsByCity = freezed,Object? monthlyJobCounts = freezed,}) {
   return _then(_self.copyWith(
 featuredJobs: null == featuredJobs ? _self.featuredJobs : featuredJobs // ignore: cast_nullable_to_non_nullable
 as List<JobDetailsResponse>,totalMatches: null == totalMatches ? _self.totalMatches : totalMatches // ignore: cast_nullable_to_non_nullable
@@ -87,11 +87,11 @@ as int,interviews: null == interviews ? _self.interviews : interviews // ignore:
 as int,offers: null == offers ? _self.offers : offers // ignore: cast_nullable_to_non_nullable
 as int,rejected: null == rejected ? _self.rejected : rejected // ignore: cast_nullable_to_non_nullable
 as int,matchDistribution: null == matchDistribution ? _self.matchDistribution : matchDistribution // ignore: cast_nullable_to_non_nullable
-as String,jobsByCity: freezed == jobsByCity ? _self.jobsByCity : jobsByCity // ignore: cast_nullable_to_non_nullable
-as Map<String, int>?,monthlyJobCounts: freezed == monthlyJobCounts ? _self.monthlyJobCounts : monthlyJobCounts // ignore: cast_nullable_to_non_nullable
-as Map<String, int>?,profileCompletionPercentage: null == profileCompletionPercentage ? _self.profileCompletionPercentage : profileCompletionPercentage // ignore: cast_nullable_to_non_nullable
+as String,profileCompletionPercentage: null == profileCompletionPercentage ? _self.profileCompletionPercentage : profileCompletionPercentage // ignore: cast_nullable_to_non_nullable
 as int,applicationSuccessRate: null == applicationSuccessRate ? _self.applicationSuccessRate : applicationSuccessRate // ignore: cast_nullable_to_non_nullable
-as int,
+as int,jobsByCity: freezed == jobsByCity ? _self.jobsByCity : jobsByCity // ignore: cast_nullable_to_non_nullable
+as Map<String, int>?,monthlyJobCounts: freezed == monthlyJobCounts ? _self.monthlyJobCounts : monthlyJobCounts // ignore: cast_nullable_to_non_nullable
+as Map<String, int>?,
   ));
 }
 
@@ -173,10 +173,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( List<JobDetailsResponse> featuredJobs,  int totalMatches,  int companiesViewed,  int inReview,  int interviews,  int offers,  int rejected,  String matchDistribution,  Map<String, int>? jobsByCity,  Map<String, int>? monthlyJobCounts,  int profileCompletionPercentage,  int applicationSuccessRate)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( List<JobDetailsResponse> featuredJobs,  int totalMatches,  int companiesViewed,  int inReview,  int interviews,  int offers,  int rejected,  String matchDistribution,  int profileCompletionPercentage,  int applicationSuccessRate,  Map<String, int>? jobsByCity,  Map<String, int>? monthlyJobCounts)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _HomeDashboardResponse() when $default != null:
-return $default(_that.featuredJobs,_that.totalMatches,_that.companiesViewed,_that.inReview,_that.interviews,_that.offers,_that.rejected,_that.matchDistribution,_that.jobsByCity,_that.monthlyJobCounts,_that.profileCompletionPercentage,_that.applicationSuccessRate);case _:
+return $default(_that.featuredJobs,_that.totalMatches,_that.companiesViewed,_that.inReview,_that.interviews,_that.offers,_that.rejected,_that.matchDistribution,_that.profileCompletionPercentage,_that.applicationSuccessRate,_that.jobsByCity,_that.monthlyJobCounts);case _:
   return orElse();
 
 }
@@ -194,10 +194,10 @@ return $default(_that.featuredJobs,_that.totalMatches,_that.companiesViewed,_tha
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( List<JobDetailsResponse> featuredJobs,  int totalMatches,  int companiesViewed,  int inReview,  int interviews,  int offers,  int rejected,  String matchDistribution,  Map<String, int>? jobsByCity,  Map<String, int>? monthlyJobCounts,  int profileCompletionPercentage,  int applicationSuccessRate)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( List<JobDetailsResponse> featuredJobs,  int totalMatches,  int companiesViewed,  int inReview,  int interviews,  int offers,  int rejected,  String matchDistribution,  int profileCompletionPercentage,  int applicationSuccessRate,  Map<String, int>? jobsByCity,  Map<String, int>? monthlyJobCounts)  $default,) {final _that = this;
 switch (_that) {
 case _HomeDashboardResponse():
-return $default(_that.featuredJobs,_that.totalMatches,_that.companiesViewed,_that.inReview,_that.interviews,_that.offers,_that.rejected,_that.matchDistribution,_that.jobsByCity,_that.monthlyJobCounts,_that.profileCompletionPercentage,_that.applicationSuccessRate);}
+return $default(_that.featuredJobs,_that.totalMatches,_that.companiesViewed,_that.inReview,_that.interviews,_that.offers,_that.rejected,_that.matchDistribution,_that.profileCompletionPercentage,_that.applicationSuccessRate,_that.jobsByCity,_that.monthlyJobCounts);}
 }
 /// A variant of `when` that fallback to returning `null`
 ///
@@ -211,10 +211,10 @@ return $default(_that.featuredJobs,_that.totalMatches,_that.companiesViewed,_tha
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( List<JobDetailsResponse> featuredJobs,  int totalMatches,  int companiesViewed,  int inReview,  int interviews,  int offers,  int rejected,  String matchDistribution,  Map<String, int>? jobsByCity,  Map<String, int>? monthlyJobCounts,  int profileCompletionPercentage,  int applicationSuccessRate)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( List<JobDetailsResponse> featuredJobs,  int totalMatches,  int companiesViewed,  int inReview,  int interviews,  int offers,  int rejected,  String matchDistribution,  int profileCompletionPercentage,  int applicationSuccessRate,  Map<String, int>? jobsByCity,  Map<String, int>? monthlyJobCounts)?  $default,) {final _that = this;
 switch (_that) {
 case _HomeDashboardResponse() when $default != null:
-return $default(_that.featuredJobs,_that.totalMatches,_that.companiesViewed,_that.inReview,_that.interviews,_that.offers,_that.rejected,_that.matchDistribution,_that.jobsByCity,_that.monthlyJobCounts,_that.profileCompletionPercentage,_that.applicationSuccessRate);case _:
+return $default(_that.featuredJobs,_that.totalMatches,_that.companiesViewed,_that.inReview,_that.interviews,_that.offers,_that.rejected,_that.matchDistribution,_that.profileCompletionPercentage,_that.applicationSuccessRate,_that.jobsByCity,_that.monthlyJobCounts);case _:
   return null;
 
 }
@@ -226,7 +226,7 @@ return $default(_that.featuredJobs,_that.totalMatches,_that.companiesViewed,_tha
 @JsonSerializable()
 
 class _HomeDashboardResponse implements HomeDashboardResponse {
-  const _HomeDashboardResponse({required final  List<JobDetailsResponse> featuredJobs, required this.totalMatches, required this.companiesViewed, required this.inReview, required this.interviews, required this.offers, required this.rejected, required this.matchDistribution, final  Map<String, int>? jobsByCity, final  Map<String, int>? monthlyJobCounts, required this.profileCompletionPercentage, required this.applicationSuccessRate}): _featuredJobs = featuredJobs,_jobsByCity = jobsByCity,_monthlyJobCounts = monthlyJobCounts;
+  const _HomeDashboardResponse({required final  List<JobDetailsResponse> featuredJobs, required this.totalMatches, required this.companiesViewed, required this.inReview, required this.interviews, required this.offers, required this.rejected, required this.matchDistribution, required this.profileCompletionPercentage, required this.applicationSuccessRate, final  Map<String, int>? jobsByCity, final  Map<String, int>? monthlyJobCounts}): _featuredJobs = featuredJobs,_jobsByCity = jobsByCity,_monthlyJobCounts = monthlyJobCounts;
   factory _HomeDashboardResponse.fromJson(Map<String, dynamic> json) => _$HomeDashboardResponseFromJson(json);
 
 /// List of featured jobs to display on home screen
@@ -252,6 +252,10 @@ class _HomeDashboardResponse implements HomeDashboardResponse {
 @override final  int rejected;
 /// Distribution of matches (format: "active | interviewing | offered")
 @override final  String matchDistribution;
+/// Profile completion percentage (0-100)
+@override final  int profileCompletionPercentage;
+/// Application success rate percentage (0-100)
+@override final  int applicationSuccessRate;
 /// Job counts by city for location-based statistics
  final  Map<String, int>? _jobsByCity;
 /// Job counts by city for location-based statistics
@@ -274,10 +278,6 @@ class _HomeDashboardResponse implements HomeDashboardResponse {
   return EqualUnmodifiableMapView(value);
 }
 
-/// Profile completion percentage (0-100)
-@override final  int profileCompletionPercentage;
-/// Application success rate percentage (0-100)
-@override final  int applicationSuccessRate;
 
 /// Create a copy of HomeDashboardResponse
 /// with the given fields replaced by the non-null parameter values.
@@ -292,16 +292,16 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _HomeDashboardResponse&&const DeepCollectionEquality().equals(other._featuredJobs, _featuredJobs)&&(identical(other.totalMatches, totalMatches) || other.totalMatches == totalMatches)&&(identical(other.companiesViewed, companiesViewed) || other.companiesViewed == companiesViewed)&&(identical(other.inReview, inReview) || other.inReview == inReview)&&(identical(other.interviews, interviews) || other.interviews == interviews)&&(identical(other.offers, offers) || other.offers == offers)&&(identical(other.rejected, rejected) || other.rejected == rejected)&&(identical(other.matchDistribution, matchDistribution) || other.matchDistribution == matchDistribution)&&const DeepCollectionEquality().equals(other._jobsByCity, _jobsByCity)&&const DeepCollectionEquality().equals(other._monthlyJobCounts, _monthlyJobCounts)&&(identical(other.profileCompletionPercentage, profileCompletionPercentage) || other.profileCompletionPercentage == profileCompletionPercentage)&&(identical(other.applicationSuccessRate, applicationSuccessRate) || other.applicationSuccessRate == applicationSuccessRate));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _HomeDashboardResponse&&const DeepCollectionEquality().equals(other._featuredJobs, _featuredJobs)&&(identical(other.totalMatches, totalMatches) || other.totalMatches == totalMatches)&&(identical(other.companiesViewed, companiesViewed) || other.companiesViewed == companiesViewed)&&(identical(other.inReview, inReview) || other.inReview == inReview)&&(identical(other.interviews, interviews) || other.interviews == interviews)&&(identical(other.offers, offers) || other.offers == offers)&&(identical(other.rejected, rejected) || other.rejected == rejected)&&(identical(other.matchDistribution, matchDistribution) || other.matchDistribution == matchDistribution)&&(identical(other.profileCompletionPercentage, profileCompletionPercentage) || other.profileCompletionPercentage == profileCompletionPercentage)&&(identical(other.applicationSuccessRate, applicationSuccessRate) || other.applicationSuccessRate == applicationSuccessRate)&&const DeepCollectionEquality().equals(other._jobsByCity, _jobsByCity)&&const DeepCollectionEquality().equals(other._monthlyJobCounts, _monthlyJobCounts));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,const DeepCollectionEquality().hash(_featuredJobs),totalMatches,companiesViewed,inReview,interviews,offers,rejected,matchDistribution,const DeepCollectionEquality().hash(_jobsByCity),const DeepCollectionEquality().hash(_monthlyJobCounts),profileCompletionPercentage,applicationSuccessRate);
+int get hashCode => Object.hash(runtimeType,const DeepCollectionEquality().hash(_featuredJobs),totalMatches,companiesViewed,inReview,interviews,offers,rejected,matchDistribution,profileCompletionPercentage,applicationSuccessRate,const DeepCollectionEquality().hash(_jobsByCity),const DeepCollectionEquality().hash(_monthlyJobCounts));
 
 @override
 String toString() {
-  return 'HomeDashboardResponse(featuredJobs: $featuredJobs, totalMatches: $totalMatches, companiesViewed: $companiesViewed, inReview: $inReview, interviews: $interviews, offers: $offers, rejected: $rejected, matchDistribution: $matchDistribution, jobsByCity: $jobsByCity, monthlyJobCounts: $monthlyJobCounts, profileCompletionPercentage: $profileCompletionPercentage, applicationSuccessRate: $applicationSuccessRate)';
+  return 'HomeDashboardResponse(featuredJobs: $featuredJobs, totalMatches: $totalMatches, companiesViewed: $companiesViewed, inReview: $inReview, interviews: $interviews, offers: $offers, rejected: $rejected, matchDistribution: $matchDistribution, profileCompletionPercentage: $profileCompletionPercentage, applicationSuccessRate: $applicationSuccessRate, jobsByCity: $jobsByCity, monthlyJobCounts: $monthlyJobCounts)';
 }
 
 
@@ -312,7 +312,7 @@ abstract mixin class _$HomeDashboardResponseCopyWith<$Res> implements $HomeDashb
   factory _$HomeDashboardResponseCopyWith(_HomeDashboardResponse value, $Res Function(_HomeDashboardResponse) _then) = __$HomeDashboardResponseCopyWithImpl;
 @override @useResult
 $Res call({
- List<JobDetailsResponse> featuredJobs, int totalMatches, int companiesViewed, int inReview, int interviews, int offers, int rejected, String matchDistribution, Map<String, int>? jobsByCity, Map<String, int>? monthlyJobCounts, int profileCompletionPercentage, int applicationSuccessRate
+ List<JobDetailsResponse> featuredJobs, int totalMatches, int companiesViewed, int inReview, int interviews, int offers, int rejected, String matchDistribution, int profileCompletionPercentage, int applicationSuccessRate, Map<String, int>? jobsByCity, Map<String, int>? monthlyJobCounts
 });
 
 
@@ -329,7 +329,7 @@ class __$HomeDashboardResponseCopyWithImpl<$Res>
 
 /// Create a copy of HomeDashboardResponse
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? featuredJobs = null,Object? totalMatches = null,Object? companiesViewed = null,Object? inReview = null,Object? interviews = null,Object? offers = null,Object? rejected = null,Object? matchDistribution = null,Object? jobsByCity = freezed,Object? monthlyJobCounts = freezed,Object? profileCompletionPercentage = null,Object? applicationSuccessRate = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? featuredJobs = null,Object? totalMatches = null,Object? companiesViewed = null,Object? inReview = null,Object? interviews = null,Object? offers = null,Object? rejected = null,Object? matchDistribution = null,Object? profileCompletionPercentage = null,Object? applicationSuccessRate = null,Object? jobsByCity = freezed,Object? monthlyJobCounts = freezed,}) {
   return _then(_HomeDashboardResponse(
 featuredJobs: null == featuredJobs ? _self._featuredJobs : featuredJobs // ignore: cast_nullable_to_non_nullable
 as List<JobDetailsResponse>,totalMatches: null == totalMatches ? _self.totalMatches : totalMatches // ignore: cast_nullable_to_non_nullable
@@ -339,11 +339,11 @@ as int,interviews: null == interviews ? _self.interviews : interviews // ignore:
 as int,offers: null == offers ? _self.offers : offers // ignore: cast_nullable_to_non_nullable
 as int,rejected: null == rejected ? _self.rejected : rejected // ignore: cast_nullable_to_non_nullable
 as int,matchDistribution: null == matchDistribution ? _self.matchDistribution : matchDistribution // ignore: cast_nullable_to_non_nullable
-as String,jobsByCity: freezed == jobsByCity ? _self._jobsByCity : jobsByCity // ignore: cast_nullable_to_non_nullable
-as Map<String, int>?,monthlyJobCounts: freezed == monthlyJobCounts ? _self._monthlyJobCounts : monthlyJobCounts // ignore: cast_nullable_to_non_nullable
-as Map<String, int>?,profileCompletionPercentage: null == profileCompletionPercentage ? _self.profileCompletionPercentage : profileCompletionPercentage // ignore: cast_nullable_to_non_nullable
+as String,profileCompletionPercentage: null == profileCompletionPercentage ? _self.profileCompletionPercentage : profileCompletionPercentage // ignore: cast_nullable_to_non_nullable
 as int,applicationSuccessRate: null == applicationSuccessRate ? _self.applicationSuccessRate : applicationSuccessRate // ignore: cast_nullable_to_non_nullable
-as int,
+as int,jobsByCity: freezed == jobsByCity ? _self._jobsByCity : jobsByCity // ignore: cast_nullable_to_non_nullable
+as Map<String, int>?,monthlyJobCounts: freezed == monthlyJobCounts ? _self._monthlyJobCounts : monthlyJobCounts // ignore: cast_nullable_to_non_nullable
+as Map<String, int>?,
   ));
 }
 

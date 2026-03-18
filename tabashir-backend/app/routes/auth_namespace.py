@@ -101,6 +101,21 @@ class Register(Resource):
                 (user_id, email, hashed, name, user_type),
                 commit=True
             )
+            
+            # Sync to AI DB Clients table
+            if user_type == 'CANDIDATE':
+                try:
+                    execute_ai_query(
+                        """INSERT INTO clients (name, email, date_in)
+                           VALUES (%s, %s, NOW())
+                           ON CONFLICT (email) DO UPDATE 
+                           SET name = EXCLUDED.name""",
+                        (name, email),
+                        commit=True
+                    )
+                except Exception as ai_e:
+                    print(f"Non-critical: Failed to sync new user to AI DB: {ai_e}")
+                    
         except Exception as e:
             return {"error": str(e)}, HTTPStatus.INTERNAL_SERVER_ERROR
 

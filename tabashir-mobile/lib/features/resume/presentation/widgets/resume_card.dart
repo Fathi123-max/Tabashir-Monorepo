@@ -77,7 +77,9 @@ class ResumeCard extends StatelessWidget {
                         children: [
                           Expanded(
                             child: Text(
-                              resume.title.isNotEmpty ? resume.title : 'Untitled Resume',
+                              resume.title.isNotEmpty
+                                  ? resume.title
+                                  : 'Untitled Resume',
                               style: theme.textTheme.bodyLarge?.copyWith(
                                 fontWeight: FontWeight.bold,
                               ),

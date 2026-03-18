@@ -27,6 +27,8 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { cn } from "@/lib/utils"
 import { getAiJobApplyStatus, submitAiJobApply } from "@/actions/ai-resume"
 import { useRouter } from "next/navigation"
+import { useHasResume } from "@/hooks/use-has-resume"
+import { CVRequiredBlur } from "@/components/shared/cv-required-blur"
 import {
   Dialog,
   DialogContent,
@@ -268,9 +270,10 @@ export default function AIJobApplyPage() {
   const [loading, setLoading] = useState(false)
   const [showPurchaseModal, setShowPurchaseModal] = useState(false)
   const [isUploadModalOpen, setIsUploadModalOpen] = useState(false)
+  const { hasResume, loading: resumeLoading } = useHasResume()
   const session = useSession()
   const router = useRouter()
-  const { t, isRTL } = useTranslation()
+  const { t, isRTL, loading: translationLoading } = useTranslation()
   const token = process.env.NEXT_PUBLIC_API_TOKEN;
 
   useEffect(() => {
@@ -434,11 +437,21 @@ export default function AIJobApplyPage() {
     router.push("/service-details")
   }
 
+  if (translationLoading || resumeLoading) {
+    return (
+      <div className="flex items-center justify-center min-h-[400px]">
+        <Loader2 className="animate-spin h-8 w-8 text-blue-600" />
+      </div>
+    )
+  }
+
   return (
     <div className={`flex-1 text-gray-900 overflow-y-auto ${isRTL ? 'text-right' : 'text-left'}`}>
-      <div className="bg-white rounded-lg shadow-sm px-10 max-lg:px-6 py-10 max-lg:py-8 max-lg:h-full">
-        <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)}>
+      <CVRequiredBlur hasResume={hasResume}>
+        <div className="bg-white rounded-lg shadow-sm px-10 max-lg:px-6 py-10 max-lg:py-8 max-lg:h-full">
+          <Form {...form}>
+            <form onSubmit={form.handleSubmit(onSubmit)}>
+
             <div className={`flex items-center mb-10 max-lg:mb-8 ${isRTL ? 'flex-row-reverse' : ''}`}>
               <h1 className="text-2xl font-bold max-lg:text-xl">{t("aiJobApply")}</h1>
               <Sparkles className={`${isRTL ? 'mr-3' : 'ml-3'} text-yellow-400 h-6 w-6 max-lg:hidden`} />
@@ -858,7 +871,8 @@ export default function AIJobApplyPage() {
             )}
           </form>
         </Form>
-      </div>
+      </CVRequiredBlur>
+    </div>
 
       {/* Resume Upload Modal */}
       <ResumeUploadModal

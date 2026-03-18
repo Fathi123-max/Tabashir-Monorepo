@@ -53,16 +53,14 @@ class SavedJobsCubit extends Cubit<SavedJobsState> {
 
     if (currentState is JobsStateLoaded) {
       print(
-        '[SAVED_JOBS] JobsCubit is JobsStateLoaded, jobs count: ${currentState.jobs?.length ?? 0}',
+        '[SAVED_JOBS] JobsCubit is JobsStateLoaded, jobs count: ${currentState.jobs.length ?? 0}',
       );
-      if (currentState.jobs != null) {
-        currentJobs.addAll(
-          currentState.jobs!.where((job) => savedJobIds.contains(job.id)),
-        );
-        print(
-          '[SAVED_JOBS] Added ${currentJobs.length} jobs to currentJobs',
-        );
-      }
+      currentJobs.addAll(
+        currentState.jobs.where((job) => savedJobIds.contains(job.id)),
+      );
+      print(
+        '[SAVED_JOBS] Added ${currentJobs.length} jobs to currentJobs',
+      );
     } else {
       print(
         '[SAVED_JOBS] JobsCubit is NOT JobsStateLoaded, current state: ${currentState.runtimeType}',

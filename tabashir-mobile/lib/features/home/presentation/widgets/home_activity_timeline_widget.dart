@@ -5,12 +5,6 @@ import 'package:iconsax/iconsax.dart';
 import 'package:tabashir/core/theme/app_theme.dart';
 
 class ActivityTimelineItem {
-  final String title;
-  final String subtitle;
-  final String date;
-  final IconData icon;
-  final Color color;
-
   ActivityTimelineItem({
     required this.title,
     required this.subtitle,
@@ -18,15 +12,19 @@ class ActivityTimelineItem {
     required this.icon,
     required this.color,
   });
+  final String title;
+  final String subtitle;
+  final String date;
+  final IconData icon;
+  final Color color;
 }
 
 class HomeActivityTimelineWidget extends StatelessWidget {
-  final List<ActivityTimelineItem> activities;
-
   const HomeActivityTimelineWidget({
     super.key,
     this.activities = const [],
   });
+  final List<ActivityTimelineItem> activities;
 
   @override
   Widget build(BuildContext context) {
@@ -103,15 +101,16 @@ class HomeActivityTimelineWidget extends StatelessWidget {
     );
   }
 
-  Widget _buildTimeline(BuildContext context, List<ActivityTimelineItem> activities) {
-    return Column(
-      children: activities.asMap().entries.map((entry) {
-        final index = entry.key;
-        final activity = entry.value;
-        return _buildTimelineItem(context, activity, index, activities.length);
-      }).toList(),
-    );
-  }
+  Widget _buildTimeline(
+    BuildContext context,
+    List<ActivityTimelineItem> activities,
+  ) => Column(
+    children: activities.asMap().entries.map((entry) {
+      final index = entry.key;
+      final activity = entry.value;
+      return _buildTimelineItem(context, activity, index, activities.length);
+    }).toList(),
+  );
 
   Widget _buildTimelineItem(
     BuildContext context,
@@ -180,26 +179,25 @@ class HomeActivityTimelineWidget extends StatelessWidget {
     );
   }
 
-  Widget _buildIndicator(BuildContext context, ActivityTimelineItem activity) {
-    return Container(
-      width: 32.w,
-      height: 32.w,
-      decoration: BoxDecoration(
-        color: activity.color,
-        shape: BoxShape.circle,
-        boxShadow: [
-          BoxShadow(
-            color: activity.color.withOpacity(0.3),
-            blurRadius: 4,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      child: Icon(
-        activity.icon,
-        color: Colors.white,
-        size: 16.sp,
-      ),
-    );
-  }
+  Widget _buildIndicator(BuildContext context, ActivityTimelineItem activity) =>
+      Container(
+        width: 32.w,
+        height: 32.w,
+        decoration: BoxDecoration(
+          color: activity.color,
+          shape: BoxShape.circle,
+          boxShadow: [
+            BoxShadow(
+              color: activity.color.withOpacity(0.3),
+              blurRadius: 4,
+              offset: const Offset(0, 2),
+            ),
+          ],
+        ),
+        child: Icon(
+          activity.icon,
+          color: Colors.white,
+          size: 16.sp,
+        ),
+      );
 }

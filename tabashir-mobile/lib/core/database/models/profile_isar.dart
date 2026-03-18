@@ -23,6 +23,10 @@ class ProfileIsar {
     this.updatedAt,
   });
 
+  /// Create from JSON
+  factory ProfileIsar.fromJson(Map<String, dynamic> json) =>
+      _$ProfileIsarFromJson(json);
+
   /// User's full name
   String? name;
 
@@ -64,8 +68,4 @@ class ProfileIsar {
 
   /// Convert to JSON
   Map<String, dynamic> toJson() => _$ProfileIsarToJson(this);
-
-  /// Create from JSON
-  factory ProfileIsar.fromJson(Map<String, dynamic> json) =>
-      _$ProfileIsarFromJson(json);
 }

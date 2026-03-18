@@ -149,7 +149,6 @@ class ProfileCard extends StatelessWidget {
                           ),
                           border: Border.all(
                             color: _getUserTypeColor(userType!),
-                            width: 1,
                           ),
                         ),
                         child: Text(

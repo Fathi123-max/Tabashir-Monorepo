@@ -24,6 +24,8 @@ import 'package:tabashir/features/ai_job_apply/presentation/widgets/location_chi
 import 'package:tabashir/features/ai_job_apply/presentation/widgets/resume_selection_card.dart';
 import 'package:tabashir/features/ai_job_apply/presentation/widgets/role_chip.dart';
 import 'package:tabashir/features/ai_job_apply/presentation/widgets/visa_toggle.dart';
+import 'package:tabashir/shared/widgets/cv_required_blur.dart';
+import 'package:tabashir/features/resume/presentation/cubit/resume_vault_cubit.dart';
 
 /// Unified AI Job Apply screen
 
@@ -96,54 +98,65 @@ class _AiJobApplyUnifiedScreenState extends State<AiJobApplyUnifiedScreen> {
             );
           }
         },
-        child: Container(
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topCenter,
-              end: Alignment.bottomCenter,
-              colors: [
-                AppTheme.blue900, // #042052
-                AppTheme.primaryColor, // #0D57E1
-              ],
-            ),
-          ),
-          child: SafeArea(
-            child: Column(
-              children: [
-                // Main Content
-                Expanded(
-                  child: Padding(
-                    padding: EdgeInsets.symmetric(
-                      horizontal: 16.w,
-                      vertical: 24.h,
-                    ),
-                    child: IndexedStack(
-                      index: _currentStep,
-                      children: [
-                        // Step 0: Resume Selection
-                        _buildResumeStep(),
+        child: BlocBuilder<ResumeVaultCubit, ResumeVaultState>(
+          builder: (context, resumeState) {
+            final hasNoCv =
+                resumeState.status == ResumeVaultStatus.success &&
+                resumeState.resumes.isEmpty;
 
-                        // Step 1: Target Roles
-                        _buildTargetRolesStep(),
-
-                        // Step 2: Location Preferences
-                        _buildLocationStep(),
-
-                        // Step 3: Personal Details
-                        _buildPersonalDetailsStep(),
-
-                        // Step 4: Review
-                        _buildReviewStep(),
-                      ],
-                    ),
+            return CvRequiredBlur(
+              isBlurred: hasNoCv,
+              child: Container(
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    colors: [
+                      AppTheme.blue900, // #042052
+                      AppTheme.primaryColor, // #0D57E1
+                    ],
                   ),
                 ),
+                child: SafeArea(
+                  child: Column(
+                    children: [
+                      // Main Content
+                      Expanded(
+                        child: Padding(
+                          padding: EdgeInsets.symmetric(
+                            horizontal: 16.w,
+                            vertical: 24.h,
+                          ),
+                          child: IndexedStack(
+                            index: _currentStep,
+                            children: [
+                              // Step 0: Resume Selection
+                              _buildResumeStep(),
 
-                // Bottom Navigation Buttons
-                _buildBottomButtons(),
-              ],
-            ),
-          ),
+                              // Step 1: Target Roles
+                              _buildTargetRolesStep(),
+
+                              // Step 2: Location Preferences
+                              _buildLocationStep(),
+
+                              // Step 3: Personal Details
+                              _buildPersonalDetailsStep(),
+
+                              // Step 4: Review
+                              _buildReviewStep(),
+                            ],
+                          ),
+                        ),
+                      ),
+
+                      // Bottom Navigation Buttons
+                      _buildBottomButtons(),
+                    ],
+                  ),
+                ),
+              ),
+            );
+          },
         ),
       ),
     ),
@@ -169,22 +182,19 @@ class _AiJobApplyUnifiedScreenState extends State<AiJobApplyUnifiedScreen> {
                   child: Column(
                     children: [
                       // Resume cards
-                      ...state.resumes
-                          .map(
-                            (resume) => Padding(
-                              padding: EdgeInsets.only(bottom: 12.h),
-                              child: ResumeSelectionCard(
-                                resume: resume,
-                                isSelected: state.selectedResumeId == resume.id,
-                                onTap: () => context
-                                    .read<AiJobApplyCubit>()
-                                    .selectResume(
-                                      resume.id,
-                                    ),
-                              ),
-                            ),
-                          )
-                          .toList(),
+                      ...state.resumes.map(
+                        (resume) => Padding(
+                          padding: EdgeInsets.only(bottom: 12.h),
+                          child: ResumeSelectionCard(
+                            resume: resume,
+                            isSelected: state.selectedResumeId == resume.id,
+                            onTap: () =>
+                                context.read<AiJobApplyCubit>().selectResume(
+                                  resume.id,
+                                ),
+                          ),
+                        ),
+                      ),
 
                       SizedBox(height: 16.h),
 
@@ -300,54 +310,57 @@ class _AiJobApplyUnifiedScreenState extends State<AiJobApplyUnifiedScreen> {
                 Wrap(
                   spacing: 8.w,
                   runSpacing: 8.h,
-                  children: AiJobApplyConfigService.popularRoles.take(AiJobApplyConfigService.maxRolesToShow).map((role) {
-                    final isSelected = state.selectedRoles.any(
-                      (r) => r.title == role,
-                    );
-                    return GestureDetector(
-                      onTap: () {
-                        final existingRole = state.availableRoles.firstWhere(
+                  children: AiJobApplyConfigService.popularRoles
+                      .take(AiJobApplyConfigService.maxRolesToShow)
+                      .map((role) {
+                        final isSelected = state.selectedRoles.any(
                           (r) => r.title == role,
-                          orElse: () => TargetRoleModel(
-                            id: role.toLowerCase().replaceAll(' ', '_'),
-                            title: role,
-                            isCustom: true,
+                        );
+                        return GestureDetector(
+                          onTap: () {
+                            final existingRole = state.availableRoles
+                                .firstWhere(
+                                  (r) => r.title == role,
+                                  orElse: () => TargetRoleModel(
+                                    id: role.toLowerCase().replaceAll(' ', '_'),
+                                    title: role,
+                                    isCustom: true,
+                                  ),
+                                );
+                            context.read<AiJobApplyCubit>().toggleRole(
+                              existingRole,
+                            );
+                          },
+                          child: Container(
+                            padding: EdgeInsets.symmetric(
+                              horizontal: 12.w,
+                              vertical: 6.h,
+                            ),
+                            decoration: BoxDecoration(
+                              color: isSelected
+                                  ? AppTheme.white
+                                  : Colors.transparent,
+                              borderRadius: BorderRadius.circular(20.r),
+                              border: Border.all(
+                                color: AppTheme.white,
+                              ),
+                            ),
+                            child: Text(
+                              role,
+                              style: TextStyle(
+                                color: isSelected
+                                    ? AppTheme.primaryColor
+                                    : AppTheme.white,
+                                fontSize: 12.sp,
+                                fontWeight: isSelected
+                                    ? FontWeight.w600
+                                    : FontWeight.normal,
+                              ),
+                            ),
                           ),
                         );
-                        context.read<AiJobApplyCubit>().toggleRole(
-                          existingRole,
-                        );
-                      },
-                      child: Container(
-                        padding: EdgeInsets.symmetric(
-                          horizontal: 12.w,
-                          vertical: 6.h,
-                        ),
-                        decoration: BoxDecoration(
-                          color: isSelected
-                              ? AppTheme.white
-                              : Colors.transparent,
-                          borderRadius: BorderRadius.circular(20.r),
-                          border: Border.all(
-                            color: AppTheme.white,
-                            width: 1,
-                          ),
-                        ),
-                        child: Text(
-                          role,
-                          style: TextStyle(
-                            color: isSelected
-                                ? AppTheme.primaryColor
-                                : AppTheme.white,
-                            fontSize: 12.sp,
-                            fontWeight: isSelected
-                                ? FontWeight.w600
-                                : FontWeight.normal,
-                          ),
-                        ),
-                      ),
-                    );
-                  }).toList(),
+                      })
+                      .toList(),
                 ),
               ],
             ),
@@ -471,55 +484,62 @@ class _AiJobApplyUnifiedScreenState extends State<AiJobApplyUnifiedScreen> {
               Wrap(
                 spacing: 8.w,
                 runSpacing: 8.h,
-                children: AiJobApplyConfigService.popularLocations.take(AiJobApplyConfigService.maxLocationsToShow).map((
-                  location,
-                ) {
-                  final isSelected = state.selectedLocations.any(
-                    (l) => l.name == location,
-                  );
-                  return GestureDetector(
-                    onTap: () {
-                      final existingLocation = state.availableLocations
-                          .firstWhere(
-                            (l) => l.name == location,
-                            orElse: () => LocationPreferenceModel(
-                              id: location.toLowerCase().replaceAll(' ', '_'),
-                              name: location,
-                              isCustom: true,
-                            ),
-                          );
-                      context.read<AiJobApplyCubit>().toggleLocation(
-                        existingLocation,
+                children: AiJobApplyConfigService.popularLocations
+                    .take(AiJobApplyConfigService.maxLocationsToShow)
+                    .map((
+                      location,
+                    ) {
+                      final isSelected = state.selectedLocations.any(
+                        (l) => l.name == location,
                       );
-                    },
-                    child: Container(
-                      padding: EdgeInsets.symmetric(
-                        horizontal: 12.w,
-                        vertical: 6.h,
-                      ),
-                      decoration: BoxDecoration(
-                        color: isSelected ? AppTheme.white : Colors.transparent,
-                        borderRadius: BorderRadius.circular(20.r),
-                        border: Border.all(
-                          color: AppTheme.white,
-                          width: 1,
+                      return GestureDetector(
+                        onTap: () {
+                          final existingLocation = state.availableLocations
+                              .firstWhere(
+                                (l) => l.name == location,
+                                orElse: () => LocationPreferenceModel(
+                                  id: location.toLowerCase().replaceAll(
+                                    ' ',
+                                    '_',
+                                  ),
+                                  name: location,
+                                  isCustom: true,
+                                ),
+                              );
+                          context.read<AiJobApplyCubit>().toggleLocation(
+                            existingLocation,
+                          );
+                        },
+                        child: Container(
+                          padding: EdgeInsets.symmetric(
+                            horizontal: 12.w,
+                            vertical: 6.h,
+                          ),
+                          decoration: BoxDecoration(
+                            color: isSelected
+                                ? AppTheme.white
+                                : Colors.transparent,
+                            borderRadius: BorderRadius.circular(20.r),
+                            border: Border.all(
+                              color: AppTheme.white,
+                            ),
+                          ),
+                          child: Text(
+                            location,
+                            style: TextStyle(
+                              color: isSelected
+                                  ? AppTheme.primaryColor
+                                  : AppTheme.white,
+                              fontSize: 12.sp,
+                              fontWeight: isSelected
+                                  ? FontWeight.w600
+                                  : FontWeight.normal,
+                            ),
+                          ),
                         ),
-                      ),
-                      child: Text(
-                        location,
-                        style: TextStyle(
-                          color: isSelected
-                              ? AppTheme.primaryColor
-                              : AppTheme.white,
-                          fontSize: 12.sp,
-                          fontWeight: isSelected
-                              ? FontWeight.w600
-                              : FontWeight.normal,
-                        ),
-                      ),
-                    ),
-                  );
-                }).toList(),
+                      );
+                    })
+                    .toList(),
               ),
             ],
           ),
@@ -954,10 +974,12 @@ class _AiJobApplyUnifiedScreenState extends State<AiJobApplyUnifiedScreen> {
       SizedBox(
         width: double.infinity,
         child: DropdownButtonFormField<String>(
-          value: state.nationality != null &&
+          initialValue:
+              state.nationality != null &&
                   AiJobApplyConfigService.nationalities.any(
                     (n) =>
-                        n.toLowerCase().replaceAll(' ', '_') == state.nationality,
+                        n.toLowerCase().replaceAll(' ', '_') ==
+                        state.nationality,
                   )
               ? state.nationality
               : null,
@@ -1548,7 +1570,6 @@ class _AiJobApplyUnifiedScreenState extends State<AiJobApplyUnifiedScreen> {
                       'Please ensure you are logged in with a valid email address',
                     ),
                     backgroundColor: Colors.red,
-                    duration: Duration(seconds: 4),
                   ),
                 );
               }
@@ -1558,7 +1579,7 @@ class _AiJobApplyUnifiedScreenState extends State<AiJobApplyUnifiedScreen> {
           if (mounted) {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
-                content: Text('Authentication error: ${e.toString()}'.tr()),
+                content: Text('Authentication error: $e'.tr()),
                 backgroundColor: Colors.red,
               ),
             );

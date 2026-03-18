@@ -37,72 +37,73 @@ class HomeCubit extends Cubit<HomeState> {
 
     try {
       // Load all data in parallel
-      final results = await Future.wait([
-        _homeApiService.getHomeDashboardData(),
-        _homeApiService.getTrendingData().catchError((error) {
-          print('[HOME_CUBIT] Trending data error: $error');
-          return <String, dynamic>{
-            'trendingText': 'Flutter and Node.js roles are up 17%',
-            'growthPercentage': 17,
-            'topSkills': ['JavaScript', 'React', 'Flutter'],
-            'seeOpportunitiesLink': '/jobs',
-          };
-        }),
-        _homeApiService.getMarketInsights().catchError((error) {
-          print('[HOME_CUBIT] Market insights error: $error');
-          return <String, dynamic>{
-            'trendingSkills': [
-              {'skill': 'Flutter', 'growth': 23},
-              {'skill': 'React', 'growth': 18},
-              {'skill': 'Node.js', 'growth': 15},
-            ],
-            'topLocations': [
-              {'location': 'Dubai', 'count': 234},
-              {'location': 'Abu Dhabi', 'count': 156},
-              {'location': 'Sharjah', 'count': 89},
-            ],
-            'totalJobs': 1247,
-            'newJobsThisWeek': 43,
-          };
-        }),
-        _homeApiService.getAnalytics().catchError((error) {
-          print('[HOME_CUBIT] Analytics error: $error');
-          return <String, dynamic>{
-            'applicationStatusChart': [
-              {'name': 'In Review', 'value': 5, 'color': '#FFA500'},
-              {'name': 'Interview', 'value': 3, 'color': '#0D56E1'},
-              {'name': 'Offer', 'value': 1, 'color': '#34D399'},
-            ],
-            'matchScoreDistribution': [
-              {'range': '90-100%', 'count': 3},
-              {'range': '80-89%', 'count': 8},
-              {'range': '70-79%', 'count': 11},
-            ],
-            'monthlyApplications': [
-              {'month': 'Jan', 'count': 2},
-              {'month': 'Feb', 'count': 4},
-              {'month': 'Mar', 'count': 3},
-            ],
-          };
-        }),
-        _homeApiService.getEnhancedRecommendations().catchError((error) {
-          print('[HOME_CUBIT] Recommendations error: $error');
-          return <String, dynamic>{
-            'recommendedJobs': [],
-            'reasons': ['Matches your skills', 'Based on your location'],
-          };
-        }),
-      ]).catchError((error) {
-        print('[HOME_CUBIT] Error loading parallel data: $error');
-        // Return null for failed requests
-        return [
-          null,
-          null,
-          null,
-          null,
-          null,
-        ];
-      });
+      final results =
+          await Future.wait([
+            _homeApiService.getHomeDashboardData(),
+            _homeApiService.getTrendingData().catchError((error) {
+              print('[HOME_CUBIT] Trending data error: $error');
+              return <String, dynamic>{
+                'trendingText': 'Flutter and Node.js roles are up 17%',
+                'growthPercentage': 17,
+                'topSkills': ['JavaScript', 'React', 'Flutter'],
+                'seeOpportunitiesLink': '/jobs',
+              };
+            }),
+            _homeApiService.getMarketInsights().catchError((error) {
+              print('[HOME_CUBIT] Market insights error: $error');
+              return <String, dynamic>{
+                'trendingSkills': [
+                  {'skill': 'Flutter', 'growth': 23},
+                  {'skill': 'React', 'growth': 18},
+                  {'skill': 'Node.js', 'growth': 15},
+                ],
+                'topLocations': [
+                  {'location': 'Dubai', 'count': 234},
+                  {'location': 'Abu Dhabi', 'count': 156},
+                  {'location': 'Sharjah', 'count': 89},
+                ],
+                'totalJobs': 1247,
+                'newJobsThisWeek': 43,
+              };
+            }),
+            _homeApiService.getAnalytics().catchError((error) {
+              print('[HOME_CUBIT] Analytics error: $error');
+              return <String, dynamic>{
+                'applicationStatusChart': [
+                  {'name': 'In Review', 'value': 5, 'color': '#FFA500'},
+                  {'name': 'Interview', 'value': 3, 'color': '#0D56E1'},
+                  {'name': 'Offer', 'value': 1, 'color': '#34D399'},
+                ],
+                'matchScoreDistribution': [
+                  {'range': '90-100%', 'count': 3},
+                  {'range': '80-89%', 'count': 8},
+                  {'range': '70-79%', 'count': 11},
+                ],
+                'monthlyApplications': [
+                  {'month': 'Jan', 'count': 2},
+                  {'month': 'Feb', 'count': 4},
+                  {'month': 'Mar', 'count': 3},
+                ],
+              };
+            }),
+            _homeApiService.getEnhancedRecommendations().catchError((error) {
+              print('[HOME_CUBIT] Recommendations error: $error');
+              return <String, dynamic>{
+                'recommendedJobs': [],
+                'reasons': ['Matches your skills', 'Based on your location'],
+              };
+            }),
+          ]).catchError((error) {
+            print('[HOME_CUBIT] Error loading parallel data: $error');
+            // Return null for failed requests
+            return [
+              null,
+              null,
+              null,
+              null,
+              null,
+            ];
+          });
 
       final dashboardData = results[0] as HomeDashboardResponse?;
       final trendingData = results[1] as Map<String, dynamic>?;
@@ -112,31 +113,29 @@ class HomeCubit extends Cubit<HomeState> {
 
       // Process dashboard data
       if (dashboardData != null) {
-        final featuredJobsForUI = dashboardData.featuredJobs
-            .map(
-              (job) {
-                // Calculate match percentage using JobMatchService
-                final matchPercentage = userProfile != null
-                    ? _jobMatchService.calculateMatchPercentage(
-                        userProfile: userProfile,
-                        job: job,
-                      )
-                    : '50% Match'; // Default if no profile
+        final featuredJobsForUI = dashboardData.featuredJobs.map(
+          (job) {
+            // Calculate match percentage using JobMatchService
+            final matchPercentage = userProfile != null
+                ? _jobMatchService.calculateMatchPercentage(
+                    userProfile: userProfile,
+                    job: job,
+                  )
+                : '50% Match'; // Default if no profile
 
-                return {
-                  'id': job.jobId?.toString() ?? 'unknown',
-                  'title': job.jobTitle ?? 'Untitled Position',
-                  'company': job.companyName ?? 'Unknown Company',
-                  'location': job.location ?? 'Not specified',
-                  'employmentType': job.jobType ?? 'Full-time',
-                  'level': 'Not specified', // API doesn't provide this yet
-                  'matchPercentage': matchPercentage,
-                  'isBookmarked': false,
-                  'isPrimary': false,
-                };
-              },
-            )
-            .toList();
+            return {
+              'id': job.jobId?.toString() ?? 'unknown',
+              'title': job.jobTitle ?? 'Untitled Position',
+              'company': job.companyName ?? 'Unknown Company',
+              'location': job.location ?? 'Not specified',
+              'employmentType': job.jobType ?? 'Full-time',
+              'level': 'Not specified', // API doesn't provide this yet
+              'matchPercentage': matchPercentage,
+              'isBookmarked': false,
+              'isPrimary': false,
+            };
+          },
+        ).toList();
 
         // Emit the loaded state with all data
         emit(
@@ -150,7 +149,8 @@ class HomeCubit extends Cubit<HomeState> {
             interview: dashboardData.interviews,
             offer: dashboardData.offers,
             rejected: dashboardData.rejected,
-            profileCompletionPercentage: dashboardData.profileCompletionPercentage,
+            profileCompletionPercentage:
+                dashboardData.profileCompletionPercentage,
             applicationSuccessRate: dashboardData.applicationSuccessRate,
             trendingData: trendingData,
             marketInsights: marketInsights,
@@ -275,25 +275,26 @@ class HomeCubit extends Cubit<HomeState> {
 
     try {
       // Load all data in parallel
-      final results = await Future.wait([
-        _homeApiService.getHomeDashboardData(),
-        _homeApiService.getTrendingData(),
-        _homeApiService.getMarketInsights(),
-        _homeApiService.getAnalytics(),
-        _homeApiService.getEnhancedRecommendations(),
-        _homeApiService.getDashboardData(),
-      ]).catchError((error) {
-        print('[HOME_CUBIT] Error loading parallel data: $error');
-        // Return empty maps for failed requests
-        return [
-          null, // getHomeDashboardData
-          null, // getTrendingData
-          null, // getMarketInsights
-          null, // getAnalytics
-          null, // getEnhancedRecommendations
-          null, // getDashboardData
-        ];
-      });
+      final results =
+          await Future.wait([
+            _homeApiService.getHomeDashboardData(),
+            _homeApiService.getTrendingData(),
+            _homeApiService.getMarketInsights(),
+            _homeApiService.getAnalytics(),
+            _homeApiService.getEnhancedRecommendations(),
+            _homeApiService.getDashboardData(),
+          ]).catchError((error) {
+            print('[HOME_CUBIT] Error loading parallel data: $error');
+            // Return empty maps for failed requests
+            return [
+              null, // getHomeDashboardData
+              null, // getTrendingData
+              null, // getMarketInsights
+              null, // getAnalytics
+              null, // getEnhancedRecommendations
+              null, // getDashboardData
+            ];
+          });
 
       final dashboardData = results[0] as HomeDashboardResponse?;
       final trendingData = results[1] as Map<String, dynamic>?;
@@ -304,30 +305,28 @@ class HomeCubit extends Cubit<HomeState> {
 
       // Process dashboard data
       if (dashboardData != null) {
-        final featuredJobsForUI = dashboardData.featuredJobs
-            .map(
-              (job) {
-                final matchPercentage = userProfile != null
-                    ? _jobMatchService.calculateMatchPercentage(
-                        userProfile: userProfile,
-                        job: job,
-                      )
-                    : '50% Match';
+        final featuredJobsForUI = dashboardData.featuredJobs.map(
+          (job) {
+            final matchPercentage = userProfile != null
+                ? _jobMatchService.calculateMatchPercentage(
+                    userProfile: userProfile,
+                    job: job,
+                  )
+                : '50% Match';
 
-                return {
-                  'id': job.jobId?.toString() ?? 'unknown',
-                  'title': job.jobTitle ?? 'Untitled Position',
-                  'company': job.companyName ?? 'Unknown Company',
-                  'location': job.location ?? 'Not specified',
-                  'employmentType': job.jobType ?? 'Full-time',
-                  'level': 'Not specified',
-                  'matchPercentage': matchPercentage,
-                  'isBookmarked': false,
-                  'isPrimary': false,
-                };
-              },
-            )
-            .toList();
+            return {
+              'id': job.jobId?.toString() ?? 'unknown',
+              'title': job.jobTitle ?? 'Untitled Position',
+              'company': job.companyName ?? 'Unknown Company',
+              'location': job.location ?? 'Not specified',
+              'employmentType': job.jobType ?? 'Full-time',
+              'level': 'Not specified',
+              'matchPercentage': matchPercentage,
+              'isBookmarked': false,
+              'isPrimary': false,
+            };
+          },
+        ).toList();
 
         emit(
           state.copyWith(
@@ -350,7 +349,13 @@ class HomeCubit extends Cubit<HomeState> {
 
         print('[HOME_CUBIT] Successfully loaded all home data');
       } else {
-        emit(state.copyWith(isLoading: false, error: true, errorMessage: 'Failed to load data'));
+        emit(
+          state.copyWith(
+            isLoading: false,
+            error: true,
+            errorMessage: 'Failed to load data',
+          ),
+        );
       }
     } catch (e) {
       print('[HOME_CUBIT] Error loading all home data: $e');

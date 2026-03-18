@@ -257,7 +257,9 @@ class ProfileRepositoryImpl implements ProfileRepository {
       print('########## [PROFILE_REPO] FAILED ##########\n\n');
       throw _handleDioError(e);
     } catch (e) {
-      print('\n[PROFILE_REPO] ❌ Unexpected exception during account deletion: $e');
+      print(
+        '\n[PROFILE_REPO] ❌ Unexpected exception during account deletion: $e',
+      );
       print('########## [PROFILE_REPO] FAILED ##########\n\n');
       throw Exception('Failed to delete account: $e');
     }
@@ -297,7 +299,6 @@ class ProfileRepositoryImpl implements ProfileRepository {
       email: profile.email ?? '',
       name: profile.name ?? '',
       userType: profile.userType ?? 'CANDIDATE',
-      emailVerified: null,
       createdAt: DateTime.now(),
       updatedAt: DateTime.now(),
     );
@@ -317,15 +318,8 @@ class ProfileRepositoryImpl implements ProfileRepository {
     return UserProfileResponse(
       user: user,
       candidateProfile: candidateProfile,
-      recruiterProfile: null,
-      subscription: null,
-      counts: null,
       adminPermissions: [],
-      paymentStats: null,
-      jobStats: null,
       connectedAccounts: [],
-      aiResumeStats: null,
-      security: null,
     );
   }
 

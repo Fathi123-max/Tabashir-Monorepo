@@ -4,18 +4,17 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:tabashir/core/theme/app_theme.dart';
 
 class BarChartWidget extends StatelessWidget {
+  const BarChartWidget({
+    required this.groups,
+    required this.titles,
+    super.key,
+    this.height,
+    this.isVertical = true,
+  });
   final List<BarChartGroupData> groups;
   final List<String> titles;
   final double? height;
   final bool isVertical;
-
-  const BarChartWidget({
-    super.key,
-    required this.groups,
-    required this.titles,
-    this.height,
-    this.isVertical = true,
-  });
 
   @override
   Widget build(BuildContext context) {
@@ -29,19 +28,14 @@ class BarChartWidget extends StatelessWidget {
           maxY: _getMaxY() * 1.2,
           barGroups: groups,
           titlesData: FlTitlesData(
-            show: true,
-            rightTitles: const AxisTitles(
-              sideTitles: SideTitles(showTitles: false),
-            ),
-            topTitles: const AxisTitles(
-              sideTitles: SideTitles(showTitles: false),
-            ),
+            rightTitles: const AxisTitles(),
+            topTitles: const AxisTitles(),
             bottomTitles: AxisTitles(
               sideTitles: SideTitles(
                 showTitles: true,
                 reservedSize: 30,
                 getTitlesWidget: (value, meta) {
-                  final int index = value.toInt();
+                  final index = value.toInt();
                   if (index >= 0 && index < titles.length) {
                     return SideTitleWidget(
                       axisSide: meta.axisSide,
@@ -62,18 +56,16 @@ class BarChartWidget extends StatelessWidget {
               sideTitles: SideTitles(
                 showTitles: true,
                 reservedSize: 40,
-                getTitlesWidget: (value, meta) {
-                  return SideTitleWidget(
-                    axisSide: meta.axisSide,
-                    child: Text(
-                      value.toInt().toString(),
-                      style: TextStyle(
-                        color: Colors.grey,
-                        fontSize: 10.sp,
-                      ),
+                getTitlesWidget: (value, meta) => SideTitleWidget(
+                  axisSide: meta.axisSide,
+                  child: Text(
+                    value.toInt().toString(),
+                    style: TextStyle(
+                      color: Colors.grey,
+                      fontSize: 10.sp,
                     ),
-                  );
-                },
+                  ),
+                ),
               ),
             ),
           ),
@@ -109,13 +101,13 @@ class BarChartHelper {
     String valueKey, {
     Color? color,
   }) {
-    final Color barColor = color ?? AppTheme.primaryBlue;
+    final barColor = color ?? AppTheme.primaryBlue;
 
     return List.generate(data.length, (index) {
       final item = data[index];
-      final String label = item[labelKey]?.toString() ?? '';
+      final label = item[labelKey]?.toString() ?? '';
       final dynamic rawValue = item[valueKey] ?? 0;
-      final double value = (rawValue is num) ? rawValue.toDouble() : 0.0;
+      final value = (rawValue is num) ? rawValue.toDouble() : 0.0;
 
       return BarChartGroupData(
         x: index,
@@ -137,13 +129,13 @@ class BarChartHelper {
     String valueKey, {
     Color? color,
   }) {
-    final Color barColor = color ?? AppTheme.accentGreen;
+    final barColor = color ?? AppTheme.accentGreen;
 
     return List.generate(data.length, (index) {
       final item = data[index];
-      final String label = item[labelKey]?.toString() ?? '';
+      final label = item[labelKey]?.toString() ?? '';
       final dynamic rawValue = item[valueKey] ?? 0;
-      final double value = (rawValue is num) ? rawValue.toDouble() : 0.0;
+      final value = (rawValue is num) ? rawValue.toDouble() : 0.0;
 
       return BarChartGroupData(
         x: index,

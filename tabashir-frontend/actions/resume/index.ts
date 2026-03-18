@@ -488,6 +488,57 @@ export async function downloadResume(resumeId: string) {
       message: "Failed to fetch resume",
     }
   }
+}
+
+export async function checkUserHasResume() {
+  try {
+    const session = await auth()
+
+    if (!session?.user?.id) {
+      return {
+        error: true,
+        message: "Unauthorized access",
+        hasResume: false
+      }
+    }
+
+    // Get candidate ID from user ID
+    const candidate = await prisma.candidate.findUnique({
+      where: {
+        userId: session.user.id,
+      },
+      select: {
+        id: true,
+      },
+    })
+
+    if (!candidate) {
+      return {
+        error: true,
+        message: "Candidate profile not found",
+        hasResume: false
+      }
+    }
+
+    // Check if candidate has any resumes
+    const resumeCount = await prisma.resume.count({
+      where: {
+        candidateId: candidate.id,
+      },
+    })
+
+    return {
+      error: false,
+      hasResume: resumeCount > 0,
+    }
+  } catch (error) {
+    console.error("[CHECK_HAS_RESUME_ERROR]", error)
+    return {
+      error: true,
+      message: "Failed to check resume status",
+      hasResume: false
+    }
+  }
 } 
 
 export async function uploadAIResume(file: File, resumeId: string) {

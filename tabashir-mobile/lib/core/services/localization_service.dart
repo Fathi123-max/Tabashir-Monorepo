@@ -118,7 +118,7 @@ class LocalizationService {
       return roles;
     }
 
-    return roles.map((role) => getLocalizedRole(role)).toList();
+    return roles.map(getLocalizedRole).toList();
   }
 
   /// Get list of locations in current language
@@ -130,7 +130,7 @@ class LocalizationService {
       return locations;
     }
 
-    return locations.map((loc) => getLocalizedLocation(loc)).toList();
+    return locations.map(getLocalizedLocation).toList();
   }
 
   /// Get list of nationalities in current language
@@ -142,175 +142,165 @@ class LocalizationService {
       return nationalities;
     }
 
-    return nationalities.map((nat) => getLocalizedNationality(nat)).toList();
+    return nationalities.map(getLocalizedNationality).toList();
   }
 
   /// Get all supported languages
-  static List<SupportedLanguage> getSupportedLanguages() {
-    return SupportedLanguage.values;
-  }
+  static List<SupportedLanguage> getSupportedLanguages() =>
+      SupportedLanguage.values;
 
   /// Check if language is RTL (right-to-left)
-  static bool isRTLLanguage(String languageCode) {
-    return languageCode == SupportedLanguage.arabic.code;
-  }
+  static bool isRTLLanguage(String languageCode) =>
+      languageCode == SupportedLanguage.arabic.code;
 
   /// Get role translations
   /// Format: {languageCode: {englishName: translatedName}}
-  static Map<String, Map<String, String>> _getRoleTranslations() {
-    return {
-      // Arabic translations
-      SupportedLanguage.arabic.code: {
-        'Software Engineer': 'مهندس برمجيات',
-        'Frontend Developer': 'مطور واجهات أمامية',
-        'Backend Developer': 'مطور خلفي',
-        'Full Stack Developer': 'مطور شامل',
-        'Mobile Developer': 'مطور تطبيقات',
-        'Data Scientist': 'عالم بيانات',
-        'Product Manager': 'مدير منتج',
-        'UI/UX Designer': 'مصمم واجهات',
-        'DevOps Engineer': 'مهندس DevOps',
-        'Project Manager': 'مدير مشروع',
-        'Business Analyst': 'محلل أعمال',
-        'QA Engineer': 'مهندس جودة',
-        'Machine Learning Engineer': 'مهندس تعلم آلي',
-        'Cloud Architect': 'مهندس معمارية سحابية',
-        'Cybersecurity Specialist': 'أمن سيبراني',
-      },
-      // Spanish translations
-      SupportedLanguage.spanish.code: {
-        'Software Engineer': 'Ingeniero de Software',
-        'Frontend Developer': 'Desarrollador Frontend',
-        'Backend Developer': 'Desarrollador Backend',
-        'Full Stack Developer': 'Desarrollador Full Stack',
-        'Mobile Developer': 'Desarrollador Móvil',
-        'Data Scientist': 'Científico de Datos',
-        'Product Manager': 'Gerente de Producto',
-        'UI/UX Designer': 'Diseñador UI/UX',
-        'DevOps Engineer': 'Ingeniero DevOps',
-        'Project Manager': 'Gerente de Proyecto',
-        'Business Analyst': 'Analista de Negocios',
-        'QA Engineer': 'Ingeniero de Calidad',
-        'Machine Learning Engineer': 'Ingeniero de ML',
-        'Cloud Architect': 'Arquitecto de Nube',
-        'Cybersecurity Specialist': 'Especialista en Ciberseguridad',
-      },
-    };
-  }
+  static Map<String, Map<String, String>> _getRoleTranslations() => {
+    // Arabic translations
+    SupportedLanguage.arabic.code: {
+      'Software Engineer': 'مهندس برمجيات',
+      'Frontend Developer': 'مطور واجهات أمامية',
+      'Backend Developer': 'مطور خلفي',
+      'Full Stack Developer': 'مطور شامل',
+      'Mobile Developer': 'مطور تطبيقات',
+      'Data Scientist': 'عالم بيانات',
+      'Product Manager': 'مدير منتج',
+      'UI/UX Designer': 'مصمم واجهات',
+      'DevOps Engineer': 'مهندس DevOps',
+      'Project Manager': 'مدير مشروع',
+      'Business Analyst': 'محلل أعمال',
+      'QA Engineer': 'مهندس جودة',
+      'Machine Learning Engineer': 'مهندس تعلم آلي',
+      'Cloud Architect': 'مهندس معمارية سحابية',
+      'Cybersecurity Specialist': 'أمن سيبراني',
+    },
+    // Spanish translations
+    SupportedLanguage.spanish.code: {
+      'Software Engineer': 'Ingeniero de Software',
+      'Frontend Developer': 'Desarrollador Frontend',
+      'Backend Developer': 'Desarrollador Backend',
+      'Full Stack Developer': 'Desarrollador Full Stack',
+      'Mobile Developer': 'Desarrollador Móvil',
+      'Data Scientist': 'Científico de Datos',
+      'Product Manager': 'Gerente de Producto',
+      'UI/UX Designer': 'Diseñador UI/UX',
+      'DevOps Engineer': 'Ingeniero DevOps',
+      'Project Manager': 'Gerente de Proyecto',
+      'Business Analyst': 'Analista de Negocios',
+      'QA Engineer': 'Ingeniero de Calidad',
+      'Machine Learning Engineer': 'Ingeniero de ML',
+      'Cloud Architect': 'Arquitecto de Nube',
+      'Cybersecurity Specialist': 'Especialista en Ciberseguridad',
+    },
+  };
 
   /// Get location translations
-  static Map<String, Map<String, String>> _getLocationTranslations() {
-    return {
-      // Arabic translations
-      SupportedLanguage.arabic.code: {
-        'Dubai': 'دبي',
-        'Abu Dhabi': 'أبوظبي',
-        'Sharjah': 'الشارقة',
-        'Ajman': 'عجمان',
-        'Ras Al Khaimah': 'رأس الخيمة',
-        'Umm Al Quwain': 'أم القيوين',
-        'Fujairah': 'الفجيرة',
-        'Remote': 'عن بُعد',
-        'Hybrid': 'هجين',
-      },
-      // Spanish translations
-      SupportedLanguage.spanish.code: {
-        'Dubai': 'Dubái',
-        'Abu Dhabi': 'Abu Dabi',
-        'Sharjah': 'Sharjah',
-        'Ajman': 'Ajman',
-        'Ras Al Khaimah': 'Ras Al Khaima',
-        'Umm Al Quwain': 'Umm Al Quwain',
-        'Fujairah': 'Fuyaira',
-        'Remote': 'Remoto',
-        'Hybrid': 'Híbrido',
-      },
-    };
-  }
+  static Map<String, Map<String, String>> _getLocationTranslations() => {
+    // Arabic translations
+    SupportedLanguage.arabic.code: {
+      'Dubai': 'دبي',
+      'Abu Dhabi': 'أبوظبي',
+      'Sharjah': 'الشارقة',
+      'Ajman': 'عجمان',
+      'Ras Al Khaimah': 'رأس الخيمة',
+      'Umm Al Quwain': 'أم القيوين',
+      'Fujairah': 'الفجيرة',
+      'Remote': 'عن بُعد',
+      'Hybrid': 'هجين',
+    },
+    // Spanish translations
+    SupportedLanguage.spanish.code: {
+      'Dubai': 'Dubái',
+      'Abu Dhabi': 'Abu Dabi',
+      'Sharjah': 'Sharjah',
+      'Ajman': 'Ajman',
+      'Ras Al Khaimah': 'Ras Al Khaima',
+      'Umm Al Quwain': 'Umm Al Quwain',
+      'Fujairah': 'Fuyaira',
+      'Remote': 'Remoto',
+      'Hybrid': 'Híbrido',
+    },
+  };
 
   /// Get nationality translations
-  static Map<String, Map<String, String>> _getNationalityTranslations() {
-    return {
-      // Arabic translations
-      SupportedLanguage.arabic.code: {
-        'United Arab Emirates': 'الإمارات العربية المتحدة',
-        'Saudi Arabia': 'المملكة العربية السعودية',
-        'Egypt': 'مصر',
-        'India': 'الهند',
-        'Pakistan': 'باكستان',
-        'Philippines': 'الفلبين',
-        'United Kingdom': 'المملكة المتحدة',
-        'United States': 'الولايات المتحدة',
-        'Canada': 'كندا',
-        'Australia': 'أستراليا',
-        'Jordan': 'الأردن',
-        'Lebanon': 'لبنان',
-        'Nigeria': 'نيجيريا',
-        'Bangladesh': 'بنغلاديش',
-        'Sri Lanka': 'سريلانكا',
-      },
-      // Spanish translations
-      SupportedLanguage.spanish.code: {
-        'United Arab Emirates': 'Emiratos Árabes Unidos',
-        'Saudi Arabia': 'Arabia Saudí',
-        'Egypt': 'Egipto',
-        'India': 'India',
-        'Pakistan': 'Pakistán',
-        'Philippines': 'Filipinas',
-        'United Kingdom': 'Reino Unido',
-        'United States': 'Estados Unidos',
-        'Canada': 'Canadá',
-        'Australia': 'Australia',
-        'Jordan': 'Jordania',
-        'Lebanon': 'Líbano',
-        'Nigeria': 'Nigeria',
-        'Bangladesh': 'Bangladés',
-        'Sri Lanka': 'Sri Lanka',
-      },
-    };
-  }
+  static Map<String, Map<String, String>> _getNationalityTranslations() => {
+    // Arabic translations
+    SupportedLanguage.arabic.code: {
+      'United Arab Emirates': 'الإمارات العربية المتحدة',
+      'Saudi Arabia': 'المملكة العربية السعودية',
+      'Egypt': 'مصر',
+      'India': 'الهند',
+      'Pakistan': 'باكستان',
+      'Philippines': 'الفلبين',
+      'United Kingdom': 'المملكة المتحدة',
+      'United States': 'الولايات المتحدة',
+      'Canada': 'كندا',
+      'Australia': 'أستراليا',
+      'Jordan': 'الأردن',
+      'Lebanon': 'لبنان',
+      'Nigeria': 'نيجيريا',
+      'Bangladesh': 'بنغلاديش',
+      'Sri Lanka': 'سريلانكا',
+    },
+    // Spanish translations
+    SupportedLanguage.spanish.code: {
+      'United Arab Emirates': 'Emiratos Árabes Unidos',
+      'Saudi Arabia': 'Arabia Saudí',
+      'Egypt': 'Egipto',
+      'India': 'India',
+      'Pakistan': 'Pakistán',
+      'Philippines': 'Filipinas',
+      'United Kingdom': 'Reino Unido',
+      'United States': 'Estados Unidos',
+      'Canada': 'Canadá',
+      'Australia': 'Australia',
+      'Jordan': 'Jordania',
+      'Lebanon': 'Líbano',
+      'Nigeria': 'Nigeria',
+      'Bangladesh': 'Bangladés',
+      'Sri Lanka': 'Sri Lanka',
+    },
+  };
 
   /// Get localized strings for UI elements
-  static Map<String, Map<String, String>> getUITranslations() {
-    return {
-      // Arabic UI translations
-      SupportedLanguage.arabic.code: {
-        'next': 'التالي',
-        'back': 'السابق',
-        'submit': 'إرسال',
-        'cancel': 'إلغاء',
-        'save': 'حفظ',
-        'loading': 'جارٍ التحميل...',
-        'error': 'خطأ',
-        'success': 'نجح',
-        'select': 'اختر',
-        'selected': 'مُحدد',
-        'role': 'الدور',
-        'location': 'الموقع',
-        'nationality': 'الجنسية',
-        'resume': 'السيرة الذاتية',
-        'review': 'مراجعة',
-      },
-      // Spanish UI translations
-      SupportedLanguage.spanish.code: {
-        'next': 'Siguiente',
-        'back': 'Atrás',
-        'submit': 'Enviar',
-        'cancel': 'Cancelar',
-        'save': 'Guardar',
-        'loading': 'Cargando...',
-        'error': 'Error',
-        'success': 'Éxito',
-        'select': 'Seleccionar',
-        'selected': 'Seleccionado',
-        'role': 'Rol',
-        'location': 'Ubicación',
-        'nationality': 'Nacionalidad',
-        'resume': 'Currículum',
-        'review': 'Revisar',
-      },
-    };
-  }
+  static Map<String, Map<String, String>> getUITranslations() => {
+    // Arabic UI translations
+    SupportedLanguage.arabic.code: {
+      'next': 'التالي',
+      'back': 'السابق',
+      'submit': 'إرسال',
+      'cancel': 'إلغاء',
+      'save': 'حفظ',
+      'loading': 'جارٍ التحميل...',
+      'error': 'خطأ',
+      'success': 'نجح',
+      'select': 'اختر',
+      'selected': 'مُحدد',
+      'role': 'الدور',
+      'location': 'الموقع',
+      'nationality': 'الجنسية',
+      'resume': 'السيرة الذاتية',
+      'review': 'مراجعة',
+    },
+    // Spanish UI translations
+    SupportedLanguage.spanish.code: {
+      'next': 'Siguiente',
+      'back': 'Atrás',
+      'submit': 'Enviar',
+      'cancel': 'Cancelar',
+      'save': 'Guardar',
+      'loading': 'Cargando...',
+      'error': 'Error',
+      'success': 'Éxito',
+      'select': 'Seleccionar',
+      'selected': 'Seleccionado',
+      'role': 'Rol',
+      'location': 'Ubicación',
+      'nationality': 'Nacionalidad',
+      'resume': 'Currículum',
+      'review': 'Revisar',
+    },
+  };
 
   /// Get localized UI string
   static Future<String> getLocalizedString(String key) async {

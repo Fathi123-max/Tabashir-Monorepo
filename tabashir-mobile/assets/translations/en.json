@@ -527,5 +527,9 @@
   "Match Score Distribution": "Match Score Distribution",
   "Application Trends": "Application Trends",
   "Skills Demand": "Skills Demand",
-  "Recent Activity": "Recent Activity"
+  "Recent Activity": "Recent Activity",
+  "cvRequiredTitle": "CV Upload Required",
+  "cvRequiredDesc": "Upload your CV to unlock AI-powered job matching, personalized career insights, and simplified applications.",
+  "uploadCV": "Upload CV",
+  "goToResume": "Go to Resume Vault"
 }

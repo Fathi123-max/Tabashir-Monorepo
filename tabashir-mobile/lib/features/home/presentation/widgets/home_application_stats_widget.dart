@@ -13,10 +13,12 @@ class HomeApplicationStatsWidget extends StatefulWidget {
   const HomeApplicationStatsWidget({super.key});
 
   @override
-  State<HomeApplicationStatsWidget> createState() => _HomeApplicationStatsWidgetState();
+  State<HomeApplicationStatsWidget> createState() =>
+      _HomeApplicationStatsWidgetState();
 }
 
-class _HomeApplicationStatsWidgetState extends State<HomeApplicationStatsWidget> {
+class _HomeApplicationStatsWidgetState
+    extends State<HomeApplicationStatsWidget> {
   bool _showChart = false;
 
   @override
@@ -91,7 +93,7 @@ class _HomeApplicationStatsWidgetState extends State<HomeApplicationStatsWidget>
       {'name': 'Interview', 'value': state.interview, 'color': '#34D399'},
       {'name': 'Offer', 'value': state.offer, 'color': '#10B981'},
       {'name': 'Rejected', 'value': state.rejected, 'color': '#EF4444'},
-    ].where((item) => (item['value'] as int) > 0).toList();
+    ].where((item) => (item['value']! as int) > 0).toList();
 
     if (applicationData.isEmpty) {
       return Center(
@@ -116,10 +118,10 @@ class _HomeApplicationStatsWidgetState extends State<HomeApplicationStatsWidget>
           spacing: AppTheme.spacingMd.w,
           runSpacing: AppTheme.spacingSm.h,
           children: applicationData.map((item) {
-            final String name = (item['name'] as String?) ?? '';
-            final int value = (item['value'] as int?) ?? 0;
-            final String colorString = (item['color'] as String?) ?? '#0D56E1';
-            final Color color = _parseColor(colorString);
+            final name = (item['name'] as String?) ?? '';
+            final value = (item['value'] as int?) ?? 0;
+            final colorString = (item['color'] as String?) ?? '#0D56E1';
+            final color = _parseColor(colorString);
 
             return Row(
               mainAxisSize: MainAxisSize.min,
@@ -148,47 +150,46 @@ class _HomeApplicationStatsWidgetState extends State<HomeApplicationStatsWidget>
     );
   }
 
-  Widget _buildListView(BuildContext context, HomeState state) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceAround,
-      children: [
-        HomeApplicationStatItemWidget(
-          value: state.inReview.toString(),
-          label: 'In Review'.tr(),
-        ),
-        Container(
-          width: 1,
-          height: 32.h,
-          color: AppTheme.borderLight,
-        ),
-        HomeApplicationStatItemWidget(
-          value: state.interview.toString(),
-          label: 'Interview'.tr(),
-        ),
-        Container(
-          width: 1,
-          height: 32.h,
-          color: AppTheme.borderLight,
-        ),
-        HomeApplicationStatItemWidget(
-          value: state.offer.toString(),
-          label: 'Offer'.tr(),
-        ),
-        Container(
-          width: 1,
-          height: 32.h,
-          color: AppTheme.borderLight,
-        ),
-        HomeApplicationStatItemWidget(
-          value: state.rejected.toString(),
-          label: 'Rejected'.tr(),
-        ),
-      ],
-    );
-  }
+  Widget _buildListView(BuildContext context, HomeState state) => Row(
+    mainAxisAlignment: MainAxisAlignment.spaceAround,
+    children: [
+      HomeApplicationStatItemWidget(
+        value: state.inReview.toString(),
+        label: 'In Review'.tr(),
+      ),
+      Container(
+        width: 1,
+        height: 32.h,
+        color: AppTheme.borderLight,
+      ),
+      HomeApplicationStatItemWidget(
+        value: state.interview.toString(),
+        label: 'Interview'.tr(),
+      ),
+      Container(
+        width: 1,
+        height: 32.h,
+        color: AppTheme.borderLight,
+      ),
+      HomeApplicationStatItemWidget(
+        value: state.offer.toString(),
+        label: 'Offer'.tr(),
+      ),
+      Container(
+        width: 1,
+        height: 32.h,
+        color: AppTheme.borderLight,
+      ),
+      HomeApplicationStatItemWidget(
+        value: state.rejected.toString(),
+        label: 'Rejected'.tr(),
+      ),
+    ],
+  );
 
   Widget _buildSummary(BuildContext context, HomeState state) {
-    final total = state.inReview + state.interview + state.offer + state.rejected;
+    final total =
+        state.inReview + state.interview + state.offer + state.rejected;
     if (total == 0) return const SizedBox.shrink();
 
     final positive = state.offer;
@@ -225,7 +226,7 @@ class _HomeApplicationStatsWidgetState extends State<HomeApplicationStatsWidget>
 
   Color _parseColor(String colorString) {
     try {
-      final String hexString = colorString.replaceAll('#', '');
+      final hexString = colorString.replaceAll('#', '');
       return Color(int.parse('FF$hexString', radix: 16));
     } catch (e) {
       return Colors.grey;
