@@ -26,8 +26,8 @@ class AppInitializationCubit extends Cubit<AppInitializationState> {
   /// Initialize the entire app by loading all required data
   /// Call this once after login
   Future<void> initialize() async {
-    if (state.isInitialized) {
-      print('[APP_INIT] Already initialized, skipping');
+    if (state.isInitialized && state.errorMessage == null) {
+      print('[APP_INIT] Already initialized successfully, skipping');
       return;
     }
 
