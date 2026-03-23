@@ -1,14 +1,16 @@
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:file_picker/file_picker.dart';
 import 'dart:io';
 
-import 'package:tabashir/features/resume/services/resume_parsing_service.dart';
-import 'package:tabashir/features/resume/domain/repositories/resume_vault_repository.dart';
-import 'package:tabashir/core/network/models/resume_response/resume_item.dart';
-
+import 'package:file_picker/file_picker.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:injectable/injectable.dart';
+
+import 'package:tabashir/core/di/injection.dart';
+import 'package:tabashir/core/network/models/resume_response/resume_item.dart';
 import 'package:tabashir/core/services/auth_session_service.dart';
+import 'package:tabashir/features/home/presentation/cubit/home_cubit.dart';
+import 'package:tabashir/features/resume/domain/repositories/resume_vault_repository.dart';
+import 'package:tabashir/features/resume/services/resume_parsing_service.dart';
 
 part 'resume_import_state.dart';
 part 'resume_import_cubit.freezed.dart';
@@ -203,6 +205,14 @@ class ResumeImportCubit extends Cubit<ResumeImportState> {
 
       print('🟢 [RESUME_IMPORT] ✅ uploadResume() completed');
       print('🟢 [RESUME_IMPORT] Upload result ID: ${result.id}');
+
+      // Trigger dashboard refresh via HomeCubit to show new profile data
+      try {
+        print('🟡 [RESUME_IMPORT] Triggering HomeCubit refresh...');
+        await getIt<HomeCubit>().loadHomeData(forceRefresh: true);
+      } catch (e) {
+        print('🔴 [RESUME_IMPORT] Failed to trigger HomeCubit refresh: $e');
+      }
 
       // Emit success state
       print('🟡 [RESUME_IMPORT] Emitting success state');
