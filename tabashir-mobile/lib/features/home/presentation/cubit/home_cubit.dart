@@ -49,59 +49,10 @@ class HomeCubit extends Cubit<HomeState> {
       final results =
           await Future.wait([
             _homeApiService.getHomeDashboardData(),
-            _homeApiService.getTrendingData().catchError((error) {
-              print('[HOME_CUBIT] Trending data error: $error');
-              return <String, dynamic>{
-                'trendingText': 'Flutter and Node.js roles are up 17%',
-                'growthPercentage': 17,
-                'topSkills': ['JavaScript', 'React', 'Flutter'],
-                'seeOpportunitiesLink': '/jobs',
-              };
-            }),
-            _homeApiService.getMarketInsights().catchError((error) {
-              print('[HOME_CUBIT] Market insights error: $error');
-              return <String, dynamic>{
-                'trendingSkills': [
-                  {'skill': 'Flutter', 'growth': 23},
-                  {'skill': 'React', 'growth': 18},
-                  {'skill': 'Node.js', 'growth': 15},
-                ],
-                'topLocations': [
-                  {'location': 'Dubai', 'count': 234},
-                  {'location': 'Abu Dhabi', 'count': 156},
-                  {'location': 'Sharjah', 'count': 89},
-                ],
-                'totalJobs': 1247,
-                'newJobsThisWeek': 43,
-              };
-            }),
-            _homeApiService.getAnalytics().catchError((error) {
-              print('[HOME_CUBIT] Analytics error: $error');
-              return <String, dynamic>{
-                'applicationStatusChart': [
-                  {'name': 'In Review', 'value': 5, 'color': '#FFA500'},
-                  {'name': 'Interview', 'value': 3, 'color': '#0D56E1'},
-                  {'name': 'Offer', 'value': 1, 'color': '#34D399'},
-                ],
-                'matchScoreDistribution': [
-                  {'range': '90-100%', 'count': 3},
-                  {'range': '80-89%', 'count': 8},
-                  {'range': '70-79%', 'count': 11},
-                ],
-                'monthlyApplications': [
-                  {'month': 'Jan', 'count': 2},
-                  {'month': 'Feb', 'count': 4},
-                  {'month': 'Mar', 'count': 3},
-                ],
-              };
-            }),
-            _homeApiService.getEnhancedRecommendations().catchError((error) {
-              print('[HOME_CUBIT] Recommendations error: $error');
-              return <String, dynamic>{
-                'recommendedJobs': [],
-                'reasons': ['Matches your skills', 'Based on your location'],
-              };
-            }),
+            _homeApiService.getTrendingData(),
+            _homeApiService.getMarketInsights(),
+            _homeApiService.getAnalytics(),
+            _homeApiService.getEnhancedRecommendations(),
           ]).catchError((error) {
             print('[HOME_CUBIT] Error loading parallel data: $error');
             // Return null for failed requests
