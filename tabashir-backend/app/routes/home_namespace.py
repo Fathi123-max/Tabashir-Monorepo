@@ -193,18 +193,88 @@ class Analytics(Resource):
         """Get analytics data"""
         user_id = request.user_id
 
+        # 1. Application Status Chart
         try:
             apps = execute_query(
                 'SELECT status, COUNT(*) as count FROM "JobApplication" WHERE "userId" = %s GROUP BY status',
                 (user_id,), fetch_all=True
             )
         except Exception:
-            apps = None
+            apps = []
 
         def _count(status_list):
             if not apps:
                 return 0
-            return sum(r['count'] for r in apps if r['status'] in status_list)
+            return sum(r['count'] for r in apps if r['status'].upper() in [s.upper() for s in status_list])
+
+        # 2. Match Score Distribution
+        match_distribution = [
+            {"range": "90-100%", "count": 0},
+            {"range": "80-89%", "count": 0},
+            {"range": "70-79%", "count": 0},
+        ]
+        try:
+            profile = execute_query(
+                '''SELECT cp.skills FROM "Candidate" c
+                   JOIN "CandidateProfile" cp ON cp."candidateId" = c.id
+                   WHERE c."userId" = %s''',
+                (user_id,), fetch_one=True
+            )
+            user_skills = profile.get('skills') if profile else []
+            
+            if user_skills:
+                # Get match percentage for the 50 most recent ACTIVE jobs
+                recent_jobs = execute_query(
+                    '''SELECT "requiredSkills" FROM "Job" 
+                       WHERE status = 'ACTIVE' 
+                       ORDER BY "createdAt" DESC LIMIT 50''',
+                    fetch_all=True
+                )
+                
+                user_skills_set = set(s.lower() for s in user_skills)
+                for job in recent_jobs:
+                    req_skills = job.get('requiredSkills') or []
+                    if not req_skills:
+                        continue
+                    
+                    req_skills_set = set(s.lower() for s in req_skills)
+                    matches = len(user_skills_set.intersection(req_skills_set))
+                    percentage = (matches / len(req_skills_set)) * 100
+                    
+                    if percentage >= 90:
+                        match_distribution[0]["count"] += 1
+                    elif percentage >= 80:
+                        match_distribution[1]["count"] += 1
+                    elif percentage >= 70:
+                        match_distribution[2]["count"] += 1
+        except Exception as e:
+            print(f"[ANALYTICS] Match Score error: {e}")
+
+        # 3. Monthly Applications
+        try:
+            monthly_apps = execute_query(
+                '''SELECT to_char("createdAt", 'Mon') as month, COUNT(*) as count 
+                   FROM "JobApplication" 
+                   WHERE "userId" = %s AND "createdAt" > NOW() - INTERVAL '6 months' 
+                   GROUP BY month, date_trunc('month', "createdAt")
+                   ORDER BY date_trunc('month', "createdAt")''',
+                (user_id,), fetch_all=True
+            )
+        except Exception as e:
+            print(f"[ANALYTICS] Monthly Apps error: {e}")
+            monthly_apps = []
+
+        # 4. Skills Demand
+        try:
+            skills_demand = execute_query(
+                '''SELECT LOWER(TRIM(skill)) as skill, COUNT(*) as demand 
+                   FROM (SELECT unnest("requiredSkills") as skill FROM "Job" WHERE status = 'ACTIVE') s 
+                   GROUP BY skill ORDER BY demand DESC LIMIT 5''',
+                fetch_all=True
+            )
+        except Exception as e:
+            print(f"[ANALYTICS] Skills Demand error: {e}")
+            skills_demand = []
 
         return {
             "applicationStatusChart": [
@@ -213,23 +283,9 @@ class Analytics(Resource):
                 {"name": "Offer", "value": _count(['offer', 'OFFER']), "color": "#34D399"},
                 {"name": "Rejected", "value": _count(['rejected', 'REJECTED']), "color": "#EF4444"},
             ],
-            "matchScoreDistribution": [
-                {"range": "90-100%", "count": 3},
-                {"range": "80-89%", "count": 8},
-                {"range": "70-79%", "count": 11},
-            ],
-            "monthlyApplications": [
-                {"month": "Jan", "count": 2},
-                {"month": "Feb", "count": 4},
-                {"month": "Mar", "count": 3},
-            ],
-            "skillsDemand": [
-                {"skill": "JavaScript", "demand": 245},
-                {"skill": "Python", "demand": 198},
-                {"skill": "React", "demand": 176},
-                {"skill": "Node.js", "demand": 143},
-                {"skill": "AI/ML", "demand": 127},
-            ]
+            "matchScoreDistribution": match_distribution,
+            "monthlyApplications": monthly_apps or [],
+            "skillsDemand": skills_demand or []
         }, HTTPStatus.OK
 
 
