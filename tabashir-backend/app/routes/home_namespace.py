@@ -262,12 +262,10 @@ class MarketInsights(Resource):
             )
 
             top_locations = execute_query(
-                """SELECT location, COUNT(*) as count
-                   FROM "Job"
-                   WHERE status = 'ACTIVE'
-                   GROUP BY location
-                   ORDER BY count DESC
-                   LIMIT 5""",
+                """SELECT location, COUNT(*) as count 
+                   FROM "Job" 
+                   WHERE status = 'ACTIVE' AND location IS NOT NULL
+                   GROUP BY location ORDER BY count DESC LIMIT 5""",
                 fetch_all=True
             )
 
@@ -290,13 +288,12 @@ class MarketInsights(Resource):
                 total_apps = total_applications.get('count', 0) if total_applications else 0
                 avg_applications = round(total_apps / total_jobs.get('count', 1), 1)
 
-            trending_skills = [
-                {"skill": "JavaScript", "growth": 23},
-                {"skill": "Python", "growth": 18},
-                {"skill": "React", "growth": 15},
-                {"skill": "Node.js", "growth": 12},
-                {"skill": "AI/ML", "growth": 10}
-            ]
+            trending_skills = execute_query(
+                """SELECT LOWER(TRIM(skill)) as skill, COUNT(*) as count 
+                   FROM (SELECT unnest("requiredSkills") as skill FROM "Job" WHERE status = 'ACTIVE') s 
+                   GROUP BY skill ORDER BY count DESC LIMIT 10""",
+                fetch_all=True
+            )
 
             return {
                 "totalJobs": total_jobs.get('count', 0) if total_jobs else 0,
