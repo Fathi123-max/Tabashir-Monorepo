@@ -18,18 +18,26 @@ Tabashir's mobile home page currently displays several components with static or
 Modify `app/routes/home_namespace.py` to replace static mocks with real SQL queries:
 
 - **`/home/market-insights`**:
-    - **Trending Skills**: `SELECT unnest("requiredSkills") as skill, COUNT(*) as count FROM "Job" WHERE status = 'ACTIVE' GROUP BY skill ORDER BY count DESC LIMIT 10`.
+    - **Trending Skills**: 
+      ```sql
+      SELECT LOWER(TRIM(skill)) as skill, COUNT(*) as count 
+      FROM (SELECT unnest("requiredSkills") as skill FROM "Job" WHERE status = 'ACTIVE') s 
+      GROUP BY skill ORDER BY count DESC LIMIT 10
+      ```
     - **Top Locations**: Use `GROUP BY location` on the `Job` table to get real counts.
 - **`/home/analytics`**:
-    - **Application Status Chart**: Already dynamic, but ensure it filters by `userId`.
-    - **Match Score Distribution**: Calculate real match percentages using the user's skills vs. all active jobs and bucket them into 10% ranges.
+    - **Application Status Chart**: Filter by `userId`.
+    - **Match Score Distribution**: Calculate real match percentages using the user's skills vs. a sample of 50 most recent `ACTIVE` jobs to maintain dashboard performance. Bucket into 10% ranges.
     - **Monthly Applications**: `SELECT to_char("createdAt", 'Mon') as month, COUNT(*) FROM "JobApplication" WHERE "userId" = %s AND "createdAt" > NOW() - INTERVAL '6 months' GROUP BY month`.
+    - **Skills Demand**: Overhaul to use the same dynamic logic as Trending Skills.
 
 ### 3.2 Mobile Updates (`tabashir-mobile`)
 Clean up the Flutter UI to remove hardcoded placeholders and align with the schema:
 
 - **`HomeScreen`**:
-    - Hide/Comment out `HomeActivityTimelineWidget`.
+    - Hide `HomeActivityTimelineWidget` completely (ensure surrounding layout collapses to avoid gaps).
+- **`HomeTrendingBannerWidget`**:
+    - Remove hardcoded fallback text ("Flutter and Node.js roles are up 17%"). If the API fails or is empty, the banner should be hidden.
 - **`HomeJobCardWidget`**:
     - Remove the `level` tag until the Prisma schema is updated to include a `level` field.
 - **`HomeCubit`**:
