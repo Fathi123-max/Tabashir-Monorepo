@@ -101,8 +101,8 @@ class Dashboard(Resource):
                 "avgMarketSalary": avg_salary,
                 "totalApplications": total_apps,
                 "inReview": _count(['pending', 'IN_REVIEW']),
-                "interview": _count(['interview', 'INTERVIEW']),
-                "offer": _count(['offer', 'OFFER']),
+                "interviews": _count(['interview', 'INTERVIEW']),
+                "offers": _count(['offer', 'OFFER']),
                 "rejected": _count(['rejected', 'REJECTED'])
             },
             "recentJobs": recent_jobs or []
@@ -172,7 +172,7 @@ class Recommendations(Resource):
                 jobs = execute_query(
                     """SELECT id, title, company, "companyLogo", "jobType",
                               "salaryMin", "salaryMax", location, description,
-                              50 as match_percentage
+                              0 as match_percentage
                        FROM "Job"
                        WHERE status = 'ACTIVE'
                        ORDER BY "createdAt" DESC LIMIT 15""",

@@ -16,10 +16,12 @@ class HomeCubit extends Cubit<HomeState> {
   bool _isDataLoaded = false;
 
   void updateLoading(bool isLoading) {
+    if (isClosed) return;
     emit(state.copyWith(isLoading: isLoading));
   }
 
   void updateError(String message) {
+    if (isClosed) return;
     emit(state.copyWith(error: true, errorMessage: message));
   }
 
@@ -39,6 +41,7 @@ class HomeCubit extends Cubit<HomeState> {
     }
 
     print('[HOME_CUBIT] Loading home data...');
+    if (isClosed) return;
     emit(state.copyWith(isLoading: true, error: false));
 
     try {
@@ -157,6 +160,7 @@ class HomeCubit extends Cubit<HomeState> {
         ).toList();
 
         // Emit the loaded state with all data
+        if (isClosed) return;
         emit(
           state.copyWith(
             isLoading: false,

@@ -80,8 +80,8 @@ class HomeApiService {
       final avgMarketSalary = stats['avgMarketSalary'] as String? ?? 'N/A';
       final totalApplications = stats['totalApplications'] as int? ?? 0;
       final inReview = stats['inReview'] as int? ?? 0;
-      final interviews = stats['interview'] as int? ?? 0;
-      final offers = stats['offer'] as int? ?? 0;
+      final interviews = stats['interviews'] as int? ?? 0;
+      final offers = stats['offers'] as int? ?? 0;
       final rejected = stats['rejected'] as int? ?? 0;
 
       // Format match distribution as "inReview | interviews | offers"
