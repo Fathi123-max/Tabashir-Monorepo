@@ -161,7 +161,7 @@ class HomeCubit extends Cubit<HomeState> {
   /// Get a specific job by ID from the featured jobs list
   Map<String, dynamic>? getJobById(String jobId) {
     try {
-      return state.jobs.firstWhere((job) => job['id'] == jobId);
+      return state.jobs.firstWhere((job) => job['id']?.toString() == jobId);
     } catch (e) {
       return null;
     }
@@ -169,6 +169,7 @@ class HomeCubit extends Cubit<HomeState> {
 
   /// Update user data in home state
   void updateUserData(UserData userData) {
+    if (isClosed) return;
     emit(state.copyWith(user: userData));
     print('[HOME_CUBIT] User data updated: ${userData.name}');
   }
@@ -249,6 +250,7 @@ class HomeCubit extends Cubit<HomeState> {
     }
 
     print('[HOME_CUBIT] Loading all home data...');
+    if (isClosed) return;
     emit(state.copyWith(isLoading: true, error: false));
 
     try {
@@ -306,6 +308,7 @@ class HomeCubit extends Cubit<HomeState> {
           },
         ).toList();
 
+        if (isClosed) return;
         emit(
           state.copyWith(
             isLoading: false,
@@ -327,6 +330,7 @@ class HomeCubit extends Cubit<HomeState> {
 
         print('[HOME_CUBIT] Successfully loaded all home data');
       } else {
+        if (isClosed) return;
         emit(
           state.copyWith(
             isLoading: false,
