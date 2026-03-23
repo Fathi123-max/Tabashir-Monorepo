@@ -11,6 +11,8 @@ import 'package:tabashir/features/ai_job_apply/data/models/location_preference_m
 import 'package:tabashir/features/ai_job_apply/domain/repositories/ai_job_apply_repository.dart';
 import 'package:tabashir/features/resume/domain/repositories/resume_vault_repository.dart';
 import 'package:tabashir/features/profile/presentation/cubit/profile_cubit.dart';
+import 'package:tabashir/core/di/injection.dart';
+import 'package:tabashir/features/home/presentation/cubit/home_cubit.dart';
 
 import 'ai_job_apply_state.dart';
 
@@ -225,6 +227,9 @@ class AiJobApplyCubit extends Cubit<AiJobApplyState> {
             state.gender?.name.toUpperCase() ??
             'MALE', // Default or handle null
       );
+
+      // Trigger home dashboard refresh
+      getIt<HomeCubit>().loadHomeData(forceRefresh: true);
 
       emit(
         state.copyWith(
@@ -542,6 +547,9 @@ class AiJobApplyCubit extends Cubit<AiJobApplyState> {
         nationality: nationality,
         gender: gender,
       );
+
+      // Trigger home dashboard refresh
+      getIt<HomeCubit>().loadHomeData(forceRefresh: true);
 
       emit(
         state.copyWith(

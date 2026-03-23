@@ -10,6 +10,8 @@ import 'package:tabashir/core/network/models/profile/profile_update_request.dart
 import 'package:tabashir/core/constants/storage_keys.dart';
 import 'package:tabashir/features/profile/domain/repositories/profile_repository.dart';
 import 'package:tabashir/core/network/models/candidate/professional_info_request.dart';
+import 'package:tabashir/core/di/injection.dart';
+import 'package:tabashir/features/home/presentation/cubit/home_cubit.dart';
 
 part 'profile_state.dart';
 part 'profile_cubit.freezed.dart';
@@ -64,6 +66,7 @@ class ProfileCubit extends Cubit<ProfileState> {
     print('[PROFILE_CUBIT] Initializing with shared profile data...');
     final profile = _mapUserProfileToUI(profileData);
 
+    if (isClosed) return;
     emit(
       state.copyWith(
         status: ProfileStatus.success,
@@ -93,6 +96,7 @@ class ProfileCubit extends Cubit<ProfileState> {
     }
 
     print('[PROFILE_CUBIT] Loading profile data...');
+    if (isClosed) return;
     emit(state.copyWith(status: ProfileStatus.loading));
 
     try {
@@ -101,6 +105,7 @@ class ProfileCubit extends Cubit<ProfileState> {
       // New API returns UserProfileResponse directly
       // Map it to UI format
       final profile = _mapUserProfileToUI(response);
+      if (isClosed) return;
       emit(
         state.copyWith(
           status: ProfileStatus.success,
@@ -119,8 +124,9 @@ class ProfileCubit extends Cubit<ProfileState> {
       if (errorMessage.contains('Session expired') ||
           errorMessage.contains('Unauthorized') ||
           errorMessage.contains('Please log in again')) {
-        // Clear auth state and emit a special error state
-        await AuthSessionService.instance.setLoggedOut();
+        // Emit a special error state so UI can show login if needed
+        // But don't clear the session here - interceptor handles it
+        if (isClosed) return;
         emit(
           state.copyWith(
             status: ProfileStatus.failure,
@@ -129,6 +135,7 @@ class ProfileCubit extends Cubit<ProfileState> {
           ),
         );
       } else {
+        if (isClosed) return;
         emit(
           state.copyWith(
             status: ProfileStatus.failure,
@@ -137,6 +144,7 @@ class ProfileCubit extends Cubit<ProfileState> {
         );
       }
     } catch (e) {
+      if (isClosed) return;
       emit(
         state.copyWith(
           status: ProfileStatus.failure,
@@ -147,6 +155,7 @@ class ProfileCubit extends Cubit<ProfileState> {
   }
 
   Future<void> logout() async {
+    if (isClosed) return;
     emit(state.copyWith(status: ProfileStatus.loading));
 
     try {
@@ -157,6 +166,7 @@ class ProfileCubit extends Cubit<ProfileState> {
       await AuthSessionService.instance.setLoggedOut();
 
       // Clear profile data
+      if (isClosed) return;
       emit(
         state.copyWith(
           status: ProfileStatus.success,
@@ -164,6 +174,7 @@ class ProfileCubit extends Cubit<ProfileState> {
         ),
       );
     } catch (e) {
+      if (isClosed) return;
       emit(
         state.copyWith(
           status: ProfileStatus.failure,
@@ -174,6 +185,7 @@ class ProfileCubit extends Cubit<ProfileState> {
   }
 
   Future<void> deleteAccount() async {
+    if (isClosed) return;
     emit(state.copyWith(status: ProfileStatus.loading));
 
     try {
@@ -184,6 +196,7 @@ class ProfileCubit extends Cubit<ProfileState> {
       await AuthSessionService.instance.setLoggedOut();
 
       // Clear profile data
+      if (isClosed) return;
       emit(
         state.copyWith(
           status: ProfileStatus.success,
@@ -191,6 +204,7 @@ class ProfileCubit extends Cubit<ProfileState> {
         ),
       );
     } on Exception catch (e) {
+      if (isClosed) return;
       emit(
         state.copyWith(
           status: ProfileStatus.failure,
@@ -198,6 +212,7 @@ class ProfileCubit extends Cubit<ProfileState> {
         ),
       );
     } catch (e) {
+      if (isClosed) return;
       emit(
         state.copyWith(
           status: ProfileStatus.failure,
@@ -220,6 +235,7 @@ class ProfileCubit extends Cubit<ProfileState> {
     );
     print('[PROFILE_CUBIT] Parsed data: $parsedData');
 
+    if (isClosed) return;
     emit(state.copyWith(status: ProfileStatus.loading));
 
     try {
@@ -383,6 +399,7 @@ class ProfileCubit extends Cubit<ProfileState> {
             'Connection timeout. Please check your internet and try again.';
       }
 
+      if (isClosed) return;
       emit(
         state.copyWith(
           status: ProfileStatus.failure,
@@ -442,6 +459,7 @@ class ProfileCubit extends Cubit<ProfileState> {
   }
 
   Future<void> updateProfile(FormGroup form) async {
+    if (isClosed) return;
     emit(state.copyWith(status: ProfileStatus.loading));
 
     try {
@@ -472,10 +490,14 @@ class ProfileCubit extends Cubit<ProfileState> {
 
       await _repository.updateProfile(profileUpdate: profileUpdate);
 
+      // Trigger home dashboard refresh
+      getIt<HomeCubit>().loadHomeData(forceRefresh: true);
+
       // Reload profile data from server to get updated information
       final response = await _repository.getUserProfile();
       final updatedProfile = _mapUserProfileToUI(response);
 
+      if (isClosed) return;
       emit(
         state.copyWith(
           status: ProfileStatus.success,
@@ -490,6 +512,7 @@ class ProfileCubit extends Cubit<ProfileState> {
           errorMessage.contains('Unauthorized') ||
           errorMessage.contains('Please log in again')) {
         await AuthSessionService.instance.setLoggedOut();
+        if (isClosed) return;
         emit(
           state.copyWith(
             status: ProfileStatus.failure,
@@ -498,6 +521,7 @@ class ProfileCubit extends Cubit<ProfileState> {
           ),
         );
       } else {
+        if (isClosed) return;
         emit(
           state.copyWith(
             status: ProfileStatus.failure,
@@ -506,6 +530,7 @@ class ProfileCubit extends Cubit<ProfileState> {
         );
       }
     } catch (e) {
+      if (isClosed) return;
       emit(
         state.copyWith(
           status: ProfileStatus.failure,
