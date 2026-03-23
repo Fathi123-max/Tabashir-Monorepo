@@ -6,6 +6,7 @@ import 'package:tabashir/core/network/models/auth/auth_response.dart';
 import 'package:tabashir/core/network/models/auth/email_verification_response.dart';
 import 'package:tabashir/core/services/auth_session_service.dart';
 import 'package:tabashir/features/auth/domain/repositories/auth_repository.dart';
+import 'package:tabashir/features/home/presentation/cubit/app_initialization_cubit.dart';
 import 'package:tabashir/features/profile/presentation/cubit/profile_cubit.dart';
 
 part 'auth_state.dart';
@@ -63,6 +64,9 @@ class AuthCubit extends Cubit<AuthState> {
       } else {
         print('[AUTH_CUBIT] WARNING: No access token in response!');
       }
+
+      // Reset application initialization state on successful login
+      getIt<AppInitializationCubit>().reset();
 
       emit(
         state.copyWith(
@@ -139,6 +143,9 @@ class AuthCubit extends Cubit<AuthState> {
         print('DEBUG: Attempting to login after registration...');
         await _attemptLoginAfterRegistration(email, password);
       }
+
+      // Reset application initialization state on successful registration
+      getIt<AppInitializationCubit>().reset();
 
       emit(
         state.copyWith(
