@@ -31,28 +31,38 @@ class ProfileSyncService:
                 print(f"[PROFILE_SYNC] Found existing Candidate: {candidate_id}")
 
             # 2. Extract Data from Resume Object
-            # Combine skillset and keywords
+            # Merge skillset, softskills and keywords
             skillset = []
+            softskills = []
+            keywords = []
+            
             if hasattr(resume_obj, 'skills') and resume_obj.skills:
-                skillset = resume_obj.skills.skillset if hasattr(resume_obj.skills, 'skillset') else []
+                skillset = getattr(resume_obj.skills, 'skillset', [])
+                softskills = getattr(resume_obj.skills, 'softskills', [])
             
-            keywords = resume_obj.keywords if hasattr(resume_obj, 'keywords') else []
+            keywords = getattr(resume_obj, 'keywords', [])
             
-            # Ensure they are lists and flatten if necessary
-            if not isinstance(skillset, list): skillset = [skillset]
-            if not isinstance(keywords, list): keywords = [keywords]
+            # Ensure they are lists
+            def ensure_list(val):
+                if val is None: return []
+                if isinstance(val, list): return val
+                return [val]
             
-            skills = list(set([str(s).strip() for s in (skillset + (keywords or [])) if s]))
+            skillset = ensure_list(skillset)
+            softskills = ensure_list(softskills)
+            keywords = ensure_list(keywords)
+            
+            # Combine, lowercase, trim, and unique
+            combined_skills = skillset + softskills + keywords
+            skills = list(set([str(s).strip().lower() for s in combined_skills if s]))
             
             # Primary Role (latest position)
             primary_role = "Professional"
-            if hasattr(resume_obj, 'work') and resume_obj.work:
+            if hasattr(resume_obj, 'work') and isinstance(resume_obj.work, list) and len(resume_obj.work) > 0:
                 # Take the first work experience as the primary role
                 work_exp = resume_obj.work[0]
                 if hasattr(work_exp, 'position') and work_exp.position:
                     primary_role = work_exp.position
-                elif hasattr(work_exp, 'company') and work_exp.company:
-                    primary_role = work_exp.company
 
             location = resume_obj.header.location if hasattr(resume_obj, 'header') and hasattr(resume_obj.header, 'location') else None
             phone = resume_obj.header.phone if hasattr(resume_obj, 'header') and hasattr(resume_obj.header, 'phone') else None
