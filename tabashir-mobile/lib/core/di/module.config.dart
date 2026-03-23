@@ -160,6 +160,7 @@ import '../services/local_storage_service.dart' as _i527;
 import '../services/notification_service.dart' as _i941;
 import '../services/onesignal_notification_service.dart' as _i469;
 import '../services/stripe_service.dart' as _i333;
+import '../session/cubit/session_cubit.dart' as _i763;
 import 'module.dart' as _i946;
 
 extension GetItInjectableX on _i174.GetIt {
@@ -233,6 +234,7 @@ extension GetItInjectableX on _i174.GetIt {
     gh.lazySingleton<_i801.AppliedJobsStorage>(
       () => registerModule.appliedJobsStorage,
     );
+    gh.lazySingleton<_i763.SessionCubit>(() => _i763.SessionCubit());
     gh.factory<_i973.JobsRepository>(
       () => _i150.JobsRepositoryImpl(gh<_i1.TabashirApiService>()),
     );

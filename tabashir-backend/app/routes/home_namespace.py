@@ -14,6 +14,7 @@ class Dashboard(Resource):
         """Get user dashboard data"""
         user_id = request.user_id
 
+        # 1. Basic User Info
         try:
             user = execute_query(
                 'SELECT name, "jobCount", "aiJobApplyCount" FROM users WHERE id = %s',
@@ -22,14 +23,47 @@ class Dashboard(Resource):
         except Exception:
             user = None
 
+        # 2. Candidate Profile & AI Stats
         try:
-            saved = execute_query(
-                'SELECT COUNT(*) as count FROM "SavedJobPost" WHERE "userId" = %s',
+            profile = execute_query(
+                '''SELECT cp."jobType", cp.skills, cp.location 
+                   FROM "Candidate" c
+                   JOIN "CandidateProfile" cp ON cp."candidateId" = c.id
+                   WHERE c."userId" = %s''',
                 (user_id,), fetch_one=True
             )
         except Exception:
-            saved = None
+            profile = None
 
+        # 3. Dynamic Matches Count
+        total_matches = 0
+        if profile and profile.get('skills'):
+            try:
+                # Simple overlap check: Job requiredSkills contains any of user skills
+                match_res = execute_query('''
+                    SELECT COUNT(*) as count FROM "Job" 
+                    WHERE status = 'ACTIVE' 
+                    AND "requiredSkills" && %s
+                ''', (profile['skills'],), fetch_one=True)
+                total_matches = match_res.get('count', 0) if match_res else 0
+            except Exception as e:
+                print(f"[DASHBOARD] Match calculation failed: {e}")
+
+        # 4. Market Salary Logic
+        avg_salary = "N/A"
+        if profile and profile.get('jobType'):
+            try:
+                salary_res = execute_query('''
+                    SELECT AVG("salaryMin") as min_sal, AVG("salaryMax") as max_sal 
+                    FROM "Job" 
+                    WHERE status = 'ACTIVE' AND title ILIKE %s
+                ''', (f"%{profile['jobType']}%",), fetch_one=True)
+                if salary_res and salary_res['min_sal']:
+                    avg_salary = f"{int(salary_res['min_sal']//1000)}k - {int(salary_res['max_sal']//1000)}k AED"
+            except Exception:
+                pass
+
+        # 5. Application Stats (Existing logic but cleaner)
         try:
             apps = execute_query(
                 'SELECT status, COUNT(*) as count FROM "JobApplication" WHERE "userId" = %s GROUP BY status',
@@ -39,12 +73,12 @@ class Dashboard(Resource):
             apps = None
 
         def _count(status_list):
-            if not apps:
-                return 0
-            return sum(r['count'] for r in apps if r['status'] in status_list)
+            if not apps: return 0
+            return sum(r['count'] for r in apps if r['status'].upper() in [s.upper() for s in status_list])
 
-        total = sum(r['count'] for r in apps) if apps else 0
+        total_apps = sum(r['count'] for r in apps) if apps else 0
 
+        # 6. Recent Jobs
         try:
             recent_jobs = execute_query(
                 """SELECT id, title, company, "companyLogo", "jobType", location
@@ -53,26 +87,19 @@ class Dashboard(Resource):
                 fetch_all=True
             )
         except Exception:
-            try:
-                recent_jobs = execute_query(
-                    """SELECT id, job_title as title, company_name as company, NULL as "companyLogo", job_type as "jobType", vacancy_city as location
-                       FROM jobs
-                       ORDER BY job_date DESC LIMIT 5""",
-                    fetch_all=True
-                )
-            except Exception:
-                recent_jobs = []
+            recent_jobs = []
 
         return {
             "user": {
                 "name": user.get('name', 'User') if user else 'User',
                 "jobCount": user.get('jobCount', 0) if user else 0,
                 "aiJobApplyCount": user.get('aiJobApplyCount', 0) if user else 0,
-                "jobType": None
+                "jobType": profile.get('jobType') if profile else None
             },
             "stats": {
-                "savedJobs": saved.get('count', 0) if saved else 0,
-                "totalApplications": total,
+                "totalMatches": total_matches,
+                "avgMarketSalary": avg_salary,
+                "totalApplications": total_apps,
                 "inReview": _count(['pending', 'IN_REVIEW']),
                 "interview": _count(['interview', 'INTERVIEW']),
                 "offer": _count(['offer', 'OFFER']),
@@ -108,18 +135,53 @@ class Recommendations(Resource):
     @home_ns.doc(security='Bearer')
     @jwt_required
     def get(self):
-        """Get job recommendations"""
+        """Get job recommendations sorted by AI match percentage"""
+        user_id = request.user_id
         try:
-            jobs = execute_query(
-                """SELECT id, title, company, "companyLogo", "jobType",
-                          "salaryMin", "salaryMax", location, description
-                   FROM "Job"
-                   WHERE status = 'ACTIVE'
-                   ORDER BY "createdAt" DESC LIMIT 15""",
-                fetch_all=True
+            # 1. Get user skills
+            profile = execute_query(
+                '''SELECT cp.skills FROM "Candidate" c
+                   JOIN "CandidateProfile" cp ON cp."candidateId" = c.id
+                   WHERE c."userId" = %s''',
+                (user_id,), fetch_one=True
             )
+            
+            user_skills = profile.get('skills') if profile else []
+
+            # 2. Fetch jobs and calculate match percentage in SQL
+            if user_skills:
+                # Calculate overlap count / total required skills
+                jobs = execute_query(
+                    """SELECT j.id, j.title, j.company, j."companyLogo", j."jobType",
+                              j."salaryMin", j."salaryMax", j.location, j.description,
+                              CASE 
+                                WHEN array_length(j."requiredSkills", 1) = 0 THEN 50
+                                ELSE round((
+                                    SELECT count(*) FROM unnest(j."requiredSkills") s 
+                                    WHERE s = ANY(%s)
+                                )::numeric / array_length(j."requiredSkills", 1) * 100)
+                              END as match_percentage
+                       FROM "Job" j
+                       WHERE j.status = 'ACTIVE'
+                       ORDER BY match_percentage DESC, j."createdAt" DESC
+                       LIMIT 15""",
+                    (user_skills,),
+                    fetch_all=True
+                )
+            else:
+                jobs = execute_query(
+                    """SELECT id, title, company, "companyLogo", "jobType",
+                              "salaryMin", "salaryMax", location, description,
+                              50 as match_percentage
+                       FROM "Job"
+                       WHERE status = 'ACTIVE'
+                       ORDER BY "createdAt" DESC LIMIT 15""",
+                    fetch_all=True
+                )
+            
             return {"recommendations": jobs or []}, HTTPStatus.OK
-        except Exception:
+        except Exception as e:
+            print(f"[RECOMMENDATIONS] Error: {e}")
             return {"recommendations": []}, HTTPStatus.OK
 
 

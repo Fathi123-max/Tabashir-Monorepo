@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -28,14 +29,32 @@ import 'package:tabashir/features/onboarding/presentation/screens/onboarding_scr
 import 'package:tabashir/features/onboarding/presentation/screens/splash_screen.dart';
 import 'package:tabashir/features/resume/presentation/screens/resume_import_screen.dart';
 import 'package:tabashir/features/resume/presentation/screens/resume_preview_screen.dart';
+import 'package:tabashir/features/resume/presentation/screens/resume_vault_screen.dart';
 import 'package:tabashir/features/resume/presentation/cubit/resume_import_cubit.dart';
 
 import 'route_names.dart';
 
 import 'package:tabashir/core/services/auth_session_service.dart';
 
+class StreamListenable extends ChangeNotifier {
+  StreamListenable(Stream stream) {
+    _subscription = stream.listen((_) {
+      notifyListeners();
+    });
+  }
+
+  late final StreamSubscription _subscription;
+
+  @override
+  void dispose() {
+    _subscription.cancel();
+    super.dispose();
+  }
+}
+
 final GoRouter appRouter = GoRouter(
   initialLocation: RouteNames.splash,
+  refreshListenable: StreamListenable(AuthSessionService.instance.authStateStream),
   redirect: (context, state) async {
     final authService = AuthSessionService.instance;
     final isAuthenticated = await authService.isAuthenticated;
@@ -276,6 +295,11 @@ final GoRouter appRouter = GoRouter(
       path: RouteNames.savedJobs,
       name: 'saved-jobs-screen',
       builder: (context, state) => const SavedJobsScreen(),
+    ),
+    GoRoute(
+      path: RouteNames.resumeVault,
+      name: 'resume-vault-screen',
+      builder: (context, state) => const ResumeVaultScreen(),
     ),
     GoRoute(
       path: RouteNames.resumePreview,

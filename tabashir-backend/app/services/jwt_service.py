@@ -25,7 +25,7 @@ def create_refresh_token(payload: Dict[str, Any]) -> str:
         "exp": expire,
         "iat": datetime.utcnow()
     })
-    return jwt.encode(to_encode, Config.JWT_SECRET_KEY, algorithm=ALGORITHM)
+    return jwt.encode(to_encode, Config.JWT_REFRESH_SECRET, algorithm=ALGORITHM)
 
 def verify_access_token(token: str) -> Dict[str, Any]:
     """Verify and decode access token"""
@@ -42,7 +42,7 @@ def verify_access_token(token: str) -> Dict[str, Any]:
 def verify_refresh_token(token: str) -> Dict[str, Any]:
     """Verify and decode refresh token"""
     try:
-        payload = jwt.decode(token, Config.JWT_SECRET_KEY, algorithms=[ALGORITHM])
+        payload = jwt.decode(token, Config.JWT_REFRESH_SECRET, algorithms=[ALGORITHM])
         if payload.get("type") != "refresh":
             raise jwt.InvalidTokenError("Invalid token type")
         return payload

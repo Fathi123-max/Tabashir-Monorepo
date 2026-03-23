@@ -468,6 +468,11 @@
   "Applying to $jobsCount jobs may take $estimatedTime seconds. You'll get a report after.": "[ES] Applying to $jobsCount jobs may take $estimatedTime seconds. You'll get a report after.",
   "Account Activity": "[ES] Account Activity",
   "Security & Privacy": "[ES] Security & Privacy",
-  "$matchingRolesCount matching roles": "[ES] $matchingRolesCount matching roles"
+  "$matchingRolesCount matching roles": "[ES] $matchingRolesCount matching roles",
+  "cvRequiredTitle": "Carga de CV Requerida",
+  "cvRequiredDesc": "Sube tu currículum para desbloquear coincidencias de trabajo impulsadas por IA, obtener información profesional personalizada y simplificar tus solicitudes.",
+  "uploadCV": "Subir Currículum",
+  "goToResume": "Ir a la Bóveda de Currículums",
+  "hi_greeting": "Hola {}"
 }
 

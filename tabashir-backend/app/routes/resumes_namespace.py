@@ -23,6 +23,7 @@ from app.models.cv_models import (
 )
 from app.services.text_extract_PyMuPDF import extract_text
 from app.services.cv_processor import cv_formatter
+from app.services.profile_sync_service import ProfileSyncService
 from app.services.arabic_translator import translate_docx_to_arabic
 from app.services.job_apply import (
     process_ai_job_input, process_ai_job_input_not_active, serialize_row,
@@ -508,6 +509,14 @@ class FormatFromRaw(Resource):
 
             formatted_cv = cv_formatter(raw_data)
 
+            # Sync to CandidateProfile synchronously
+            try:
+                user_id = getattr(request, 'user_id', None)
+                if user_id:
+                    ProfileSyncService.sync_from_resume(user_id, formatted_cv)
+            except Exception as sync_err:
+                print(f"[RESUME_NS] Profile sync failed (non-blocking): {sync_err}")
+
             base_name = f"cv_{datetime.now().strftime('%Y%m%d%H%M%S')}"
             output_filename = f"{base_name}_formatted.docx"
             formatted_path = Config.FORMATTED_FOLDER / output_filename
@@ -670,6 +679,15 @@ class FormatFromRawJSON(Resource):
                 raise ValueError("Invalid 'output_language'. Must be 'arabic' or 'regular'")
 
             formatted_cv = cv_formatter(raw_data)
+            
+            # Sync to CandidateProfile synchronously
+            try:
+                user_id = getattr(request, 'user_id', None)
+                if user_id:
+                    ProfileSyncService.sync_from_resume(user_id, formatted_cv)
+            except Exception as sync_err:
+                print(f"[RESUME_NS] Profile sync failed (non-blocking): {sync_err}")
+
             json_output = self.serialize_resume(formatted_cv)
 
             return jsonify({

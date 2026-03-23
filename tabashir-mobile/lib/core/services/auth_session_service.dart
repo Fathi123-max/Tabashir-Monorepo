@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:dio/dio.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -27,6 +28,14 @@ class AuthSessionService {
     ),
   );
 
+  // Synchronization for token refresh
+  bool _isRefreshing = false;
+  Completer<String?>? _refreshCompleter;
+
+  // Stream for auth state changes
+  final _authStateController = StreamController<bool>.broadcast();
+  Stream<bool> get authStateStream => _authStateController.stream;
+
   /// Check if user is currently authenticated
   /// Only checks the boolean flag in SharedPreferences (not secure data)
   Future<bool> get isAuthenticated async {
@@ -40,8 +49,8 @@ class AuthSessionService {
   Future<String?> get accessToken async {
     try {
       return await _secureStorage.read(key: StorageKeys.accessToken);
-    } on Exception catch (_) {
-      // Handle errors (e.g., keychain not available)
+    } on Exception catch (e) {
+      print('[AUTH_SESSION] ❌ ERROR reading access token: $e');
       return null;
     }
   }
@@ -52,14 +61,6 @@ class AuthSessionService {
   Future<String?> get refreshToken async {
     try {
       final token = await _secureStorage.read(key: StorageKeys.refreshToken);
-      print(
-        '[AUTH_SESSION] Reading refresh token from storage: ${token != null ? "present (${token.length} chars)" : "NULL"}',
-      );
-      if (token == null) {
-        print(
-          '[AUTH_SESSION] ⚠️ WARNING: refreshToken is NULL in secure storage',
-        );
-      }
       return token;
     } on Exception catch (e) {
       print('[AUTH_SESSION] ❌ ERROR reading refresh token: $e');
@@ -79,15 +80,7 @@ class AuthSessionService {
   }) async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setBool(StorageKeys.isLoggedIn, true);
-
-    // Debug logging
-    print('[AUTH_SESSION] Storing tokens:');
-    print(
-      '[AUTH_SESSION] - accessToken: ${token != null ? "present (${token.length} chars)" : "NULL"}',
-    );
-    print(
-      '[AUTH_SESSION] - refreshToken: ${refreshToken != null ? "present (${refreshToken.length} chars)" : "NULL"}',
-    );
+    _authStateController.add(true);
 
     // Store tokens securely using flutter_secure_storage (encrypted)
     if (token != null) {
@@ -95,9 +88,6 @@ class AuthSessionService {
         key: StorageKeys.accessToken,
         value: token,
       );
-      print('[AUTH_SESSION] ✅ Access token stored successfully');
-    } else {
-      print('[AUTH_SESSION] ⚠️ WARNING: No access token to store!');
     }
 
     if (refreshToken != null) {
@@ -105,26 +95,22 @@ class AuthSessionService {
         key: StorageKeys.refreshToken,
         value: refreshToken,
       );
-      print('[AUTH_SESSION] ✅ Refresh token stored successfully');
-    } else {
-      print('[AUTH_SESSION] ⚠️ WARNING: No refresh token to store!');
     }
+    print('[AUTH_SESSION] ✅ Tokens stored successfully');
   }
 
   /// Set user as logged out and clear all auth data
   /// Clears both secure storage (tokens) and SharedPreferences (flags)
   Future<void> setLoggedOut() async {
-    print('[AUTH_SESSION] 🔴 setLoggedOut() called - Clearing all auth data');
+    print('[AUTH_SESSION] 🔴 setLoggedOut() - Clearing all auth data');
     final prefs = await SharedPreferences.getInstance();
     await prefs.setBool(StorageKeys.isLoggedIn, false);
+    _authStateController.add(false);
 
     // Clear all auth-related data from secure storage
     await _secureStorage.delete(key: StorageKeys.accessToken);
-    print('[AUTH_SESSION] 🔴 Deleted accessToken from storage');
     await _secureStorage.delete(key: StorageKeys.refreshToken);
-    print('[AUTH_SESSION] 🔴 Deleted refreshToken from storage');
     await prefs.remove(StorageKeys.userCredentials);
-    print('[AUTH_SESSION] 🔴 Cleared all auth data');
   }
 
   /// Check if secure storage is available
@@ -140,70 +126,88 @@ class AuthSessionService {
 
   /// Refresh the access token using the refresh token
   /// Returns the new access token, or null if refresh fails
+  /// Uses a synchronized approach to prevent multiple concurrent refreshes
   Future<String?> refreshAccessToken() async {
+    // If a refresh is already in progress, wait for it
+    if (_isRefreshing) {
+      print('[AUTH_SESSION] ⏳ Refresh already in progress, waiting...');
+      return _refreshCompleter?.future;
+    }
+
+    _isRefreshing = true;
+    _refreshCompleter = Completer<String?>();
+
     try {
       final currentRefreshToken = await refreshToken;
       if (currentRefreshToken == null) {
-        print('[AUTH_SESSION] No refresh token available');
+        print('[AUTH_SESSION] ❌ No refresh token available');
+        _isRefreshing = false;
+        _refreshCompleter?.complete(null);
         return null;
       }
 
-      // Create a Dio instance for the refresh request
+      // Create a Dio instance for the refresh request (avoid interceptors)
+      final baseUrl = dotenv.env['API_BASE_URL'];
+      if (baseUrl == null) {
+        print('[AUTH_SESSION] ❌ API_BASE_URL is not set');
+        _isRefreshing = false;
+        _refreshCompleter?.complete(null);
+        return null;
+      }
+
       final dio = Dio(
         BaseOptions(
-          baseUrl: '${dotenv.env['API_BASE_URL']}',
+          baseUrl: baseUrl,
+          connectTimeout: const Duration(seconds: 30),
+          receiveTimeout: const Duration(seconds: 30),
           headers: {
             'Content-Type': 'application/json',
           },
         ),
       );
 
-      print('[AUTH_SESSION] Sending refresh request to backend...');
-      print(
-        '[AUTH_SESSION] Refresh token length: ${currentRefreshToken.length} chars',
-      );
-      print(
-        '[AUTH_SESSION] Refresh token (first 20 chars): ${currentRefreshToken.substring(0, 20)}...',
-      );
-
+      print('[AUTH_SESSION] 🔄 Sending refresh request...');
       final response = await dio.post(
         '/api/v1/auth/refresh',
         data: {'refreshToken': currentRefreshToken},
       );
 
-      print('[AUTH_SESSION] Refresh response status: ${response.statusCode}');
-      print('[AUTH_SESSION] Refresh response data: ${response.data}');
-
       if (response.statusCode == 200 && response.data != null) {
-        // Parse using the RefreshTokenResponse model
         final refreshResponse = RefreshTokenResponse.fromJson(
           response.data as Map<String, dynamic>,
         );
         final newAccessToken = refreshResponse.accessToken;
 
-        // Update the stored access token
         await _secureStorage.write(
           key: StorageKeys.accessToken,
           value: newAccessToken,
         );
-        print('[AUTH_SESSION] Successfully refreshed access token');
+        print('[AUTH_SESSION] ✅ Successfully refreshed access token');
+        
+        _isRefreshing = false;
+        _refreshCompleter?.complete(newAccessToken);
         return newAccessToken;
       }
 
-      print('[AUTH_SESSION] Failed to refresh token - invalid response');
+      print('[AUTH_SESSION] ❌ Failed to refresh token - status: ${response.statusCode}');
+      _isRefreshing = false;
+      _refreshCompleter?.complete(null);
       return null;
     } on DioException catch (e) {
-      print('[AUTH_SESSION] ❌ DioException during refresh:');
-      print('[AUTH_SESSION] - Type: ${e.type}');
-      print('[AUTH_SESSION] - Status Code: ${e.response?.statusCode}');
-      print('[AUTH_SESSION] - Error: ${e.message}');
-      if (e.response?.data != null) {
-        print('[AUTH_SESSION] - Response Data: ${e.response?.data}');
+      print('[AUTH_SESSION] ❌ DioException during refresh: ${e.message}');
+      if (e.response?.statusCode == 401) {
+        print('[AUTH_SESSION] 🔑 Refresh token expired or invalid');
       }
+      _isRefreshing = false;
+      _refreshCompleter?.complete(null);
       return null;
     } catch (e) {
       print('[AUTH_SESSION] ❌ Generic error during refresh: $e');
+      _isRefreshing = false;
+      _refreshCompleter?.complete(null);
       return null;
+    } finally {
+      _isRefreshing = false;
     }
   }
 }

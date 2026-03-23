@@ -30,7 +30,8 @@ class Config:
 
 
     SECRET_KEY = os.getenv('SECRET_KEY', 'default-dev-key')
-    JWT_SECRET_KEY = os.getenv('JWT_SECRET_KEY', os.getenv('SECRET_KEY', 'default-dev-key'))
+    JWT_SECRET_KEY = os.getenv('JWT_SECRET_KEY', os.getenv('JWT_ACCESS_SECRET', os.getenv('SECRET_KEY', 'default-dev-key')))
+    JWT_REFRESH_SECRET = os.getenv('JWT_REFRESH_SECRET', JWT_SECRET_KEY)
     JWT_ACCESS_EXPIRE = int(os.getenv('JWT_ACCESS_EXPIRE', 900))       # 15 min
     JWT_REFRESH_EXPIRE = int(os.getenv('JWT_REFRESH_EXPIRE', 604800))  # 7 days
     DEBUG = os.getenv('DEBUG', 'False').lower() in ['true', '1', 'yes']

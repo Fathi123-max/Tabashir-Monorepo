@@ -21,7 +21,7 @@ class HomeHeaderWidget extends StatelessWidget {
     final theme = Theme.of(context);
 
     // Get user name or fallback to default
-    final userName = user?.name?.isNotEmpty ?? false ? user!.name : 'User';
+    final userName = (user?.name?.isNotEmpty ?? false) ? user!.name! : 'User';
 
     // Get user profile picture or use default
     final profilePictureUrl = user?.image;
@@ -46,7 +46,7 @@ class HomeHeaderWidget extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'Hi $userName'.tr(),
+                        'hi_greeting'.tr(args: [userName]),
                         style: theme.textTheme.displayMedium?.copyWith(
                           fontWeight: FontWeight.bold,
                           fontSize: 30.sp,

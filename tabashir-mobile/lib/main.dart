@@ -9,9 +9,10 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:tabashir/core/di/injection.dart';
 import 'package:tabashir/features/jobs/presentation/cubit/saved_jobs_cubit.dart';
 import 'package:tabashir/features/profile/presentation/cubit/profile_cubit.dart';
-import 'package:tabashir/features/resume/presentation/cubit/resume_vault_cubit.dart';
+import 'features/resume/presentation/cubit/resume_vault_cubit.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'core/services/apple_signin_service.dart';
+import 'core/session/cubit/session_cubit.dart';
 
 void main() async {
   await dotenv.load();
@@ -86,6 +87,9 @@ class _AppState extends State<App> {
       designSize: const Size(375, 812),
       builder: (context, child) => MultiBlocProvider(
         providers: [
+          BlocProvider(
+            create: (context) => getIt<SessionCubit>(),
+          ),
           BlocProvider(
             create: (context) => getIt<SavedJobsCubit>()..loadSavedIds(),
           ),

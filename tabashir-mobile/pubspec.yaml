@@ -86,6 +86,7 @@ dependencies:
   liquid_progress_indicator: ^0.4.0
   timelines: ^0.1.0
   device_info_plus: ^12.3.0
+  flutter_svg: ^2.2.4
 
 dev_dependencies:
   flutter_en_json_extractor: ^0.0.5

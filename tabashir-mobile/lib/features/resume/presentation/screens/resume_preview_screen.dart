@@ -5,9 +5,11 @@ import 'package:go_router/go_router.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:pdfx/pdfx.dart';
 import 'package:dio/dio.dart';
+import 'package:tabashir/core/di/injection.dart';
+import 'package:tabashir/core/network/_clients/auth_dio_client.dart';
+import 'package:tabashir/core/services/auth_session_service.dart';
+import 'package:tabashir/core/theme/app_theme.dart';
 import '../../../../core/network/models/resume_response/resume_item.dart';
-
-import '../../../../core/theme/app_theme.dart';
 
 class ResumePreviewScreen extends StatefulWidget {
   const ResumePreviewScreen({
@@ -56,10 +58,16 @@ class _ResumePreviewScreenState extends State<ResumePreviewScreen> {
       final fileName = '${widget.resume.filename}.pdf';
       final filePath = '${dir.path}/$fileName';
 
-      final dio = Dio();
+      final token = await AuthSessionService.instance.accessToken;
+      final dio = getIt<AuthDioClient>().dio;
       await dio.download(
         url,
         filePath,
+        options: Options(
+          headers: {
+            if (token != null) 'Authorization': 'Bearer $token',
+          },
+        ),
       );
 
       // Open the PDF
@@ -223,10 +231,16 @@ class _ResumePreviewScreenState extends State<ResumePreviewScreen> {
       final fileName = '${widget.resume.filename}.pdf';
       final filePath = '${dir.path}/$fileName';
 
-      final dio = Dio();
+      final token = await AuthSessionService.instance.accessToken;
+      final dio = getIt<AuthDioClient>().dio;
       await dio.download(
         url,
         filePath,
+        options: Options(
+          headers: {
+            if (token != null) 'Authorization': 'Bearer $token',
+          },
+        ),
       );
 
       scaffoldMessenger.showSnackBar(

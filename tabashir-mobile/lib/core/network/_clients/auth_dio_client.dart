@@ -36,67 +36,68 @@ class AuthDioClient {
           handler.next(response);
         },
         onError: (error, handler) async {
-          print('[AUTH_DIO] ❌ Request failed: ${error.response?.statusCode}');
+          final requestPath = error.requestOptions.path;
+          print('[AUTH_DIO] ❌ Request to $requestPath failed: ${error.response?.statusCode}');
+          
           if (error.response?.data != null) {
             print('[AUTH_DIO] Error response: ${error.response?.data}');
           }
-          _logResponse(error.response?.statusCode, error.response?.data);
 
           // Handle 401 Unauthorized errors
           if (error.response?.statusCode == 401) {
-            final requestPath = error.requestOptions.path.toLowerCase();
             print('[AUTH_DIO] 401 Unauthorized for path: $requestPath');
 
             // Check if this is an auth endpoint
-            // For auth endpoints (/api/v1/auth/login, /api/v1/auth/register), 401 means invalid credentials - clear state
             final authEndpoints = [
-              '/api/v1/auth/login',
-              '/api/v1/auth/register',
-              '/api/v1/auth/refresh',
+              '/auth/login',
+              '/auth/register',
+              '/auth/refresh',
+              '/auth/apple-signin',
             ];
 
             final isAuthEndpoint = authEndpoints.any(
-              requestPath.contains,
+              (path) => requestPath.contains(path),
             );
 
             if (isAuthEndpoint) {
-              print('[AUTH_DIO] 401 on auth endpoint - Clearing auth state');
+              print('[AUTH_DIO] 401 on auth endpoint - Clearing session');
               await AuthSessionService.instance.setLoggedOut();
-              handler.next(error);
-              return;
+              return handler.next(error);
             }
 
             // For non-auth endpoints, try to refresh the token
-            print(
-              '[AUTH_DIO] 401 on non-auth endpoint - Attempting token refresh',
-            );
+            print('[AUTH_DIO] Attempting token refresh...');
             try {
-              final newToken = await AuthSessionService.instance
-                  .refreshAccessToken();
+              final newToken = await AuthSessionService.instance.refreshAccessToken();
+              
               if (newToken != null) {
-                print(
-                  '[AUTH_DIO] Token refreshed successfully - Retrying request',
-                );
+                print('[AUTH_DIO] Token refreshed, retrying original request...');
 
                 // Clone the original request with the new token
                 final opts = error.requestOptions;
                 opts.headers['Authorization'] = 'Bearer $newToken';
 
-                // Retry the request
-                final clonedRequest = await _dio.fetch(opts);
-                handler.resolve(clonedRequest);
-                return;
+                // Retry the request using the same Dio instance
+                try {
+                  final response = await _dio.fetch(opts);
+                  return handler.resolve(response);
+                } on DioException catch (retryError) {
+                  print('[AUTH_DIO] ❌ Retry failed: ${retryError.message}');
+                  return handler.next(retryError);
+                }
+              } else {
+                print('[AUTH_DIO] ❌ Token refresh returned null');
               }
             } catch (e) {
-              print('[AUTH_DIO] Token refresh failed: $e');
+              print('[AUTH_DIO] ❌ Token refresh exception: $e');
             }
 
-            // If refresh failed, clear auth state
-            print('[AUTH_DIO] Token refresh failed - Clearing auth state');
+            // If refresh failed or returned null, clear auth state
+            print('[AUTH_DIO] Session expired - Logging out');
             await AuthSessionService.instance.setLoggedOut();
           }
 
-          handler.next(error);
+          return handler.next(error);
         },
       ),
     );

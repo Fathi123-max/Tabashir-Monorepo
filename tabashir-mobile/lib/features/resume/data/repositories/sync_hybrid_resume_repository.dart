@@ -101,7 +101,13 @@ class SyncHybridResumeRepository implements ResumeVaultRepository {
             .toList();
       } catch (localError) {
         print('❌ [SYNC_REPO] ❌ Both backend and local failed');
-        throw Exception('Failed to load resumes: $e');
+        // If both fail, rethrow the original error but with more context
+        if (e is DioException) {
+          final statusCode = e.response?.statusCode;
+          final message = e.response?.data?['message'] ?? e.message;
+          throw Exception('Backend error ($statusCode): $message');
+        }
+        throw e;
       }
     }
   }

@@ -17,9 +17,16 @@ export function signAccessToken(payload: Omit<JWTPayload, "iat" | "exp">) {
     throw new Error("JWT_ACCESS_SECRET is not configured");
   }
 
-  return jwt.sign(payload, secret, {
-    expiresIn: "15m", // 15 minutes
-  });
+  return jwt.sign(
+    {
+      ...payload,
+      type: "access",
+    },
+    secret,
+    {
+      expiresIn: "15m", // 15 minutes
+    }
+  );
 }
 
 /**
@@ -31,9 +38,16 @@ export function signRefreshToken(payload: Omit<JWTPayload, "iat" | "exp">) {
     throw new Error("JWT_REFRESH_SECRET is not configured");
   }
 
-  return jwt.sign(payload, secret, {
-    expiresIn: "7d", // 7 days
-  });
+  return jwt.sign(
+    {
+      id: payload.id,
+      type: "refresh",
+    },
+    secret,
+    {
+      expiresIn: "7d", // 7 days
+    }
+  );
 }
 
 /**

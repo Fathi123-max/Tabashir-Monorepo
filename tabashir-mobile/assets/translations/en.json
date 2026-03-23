@@ -531,5 +531,6 @@
   "cvRequiredTitle": "CV Upload Required",
   "cvRequiredDesc": "Upload your CV to unlock AI-powered job matching, personalized career insights, and simplified applications.",
   "uploadCV": "Upload CV",
-  "goToResume": "Go to Resume Vault"
+  "goToResume": "Go to Resume Vault",
+  "hi_greeting": "Hi {}"
 }

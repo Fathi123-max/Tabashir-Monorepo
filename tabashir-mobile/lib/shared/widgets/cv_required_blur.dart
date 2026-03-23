@@ -4,6 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:tabashir/core/theme/app_theme.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:go_router/go_router.dart';
+import 'package:tabashir/core/router/route_names.dart';
 
 class CvRequiredBlur extends StatelessWidget {
   const CvRequiredBlur({
@@ -59,20 +60,26 @@ class CvRequiredBlur extends StatelessWidget {
                   Text(
                     'cvRequiredTitle'.tr(),
                     style: AppTheme.subheadingStyle.copyWith(
-                      color: Colors.black,
+                      color: Theme.of(context).brightness == Brightness.dark
+                          ? Colors.white
+                          : Colors.black,
                     ),
                     textAlign: TextAlign.center,
                   ),
                   SizedBox(height: 12.h),
                   Text(
                     'cvRequiredDesc'.tr(),
-                    style: AppTheme.bodyStyle.copyWith(color: Colors.grey[700]),
+                    style: AppTheme.bodyStyle.copyWith(
+                      color: Theme.of(context).brightness == Brightness.dark
+                          ? Colors.grey[400]
+                          : Colors.grey[700],
+                    ),
                     textAlign: TextAlign.center,
                   ),
                   SizedBox(height: 32.h),
                   ElevatedButton(
                     onPressed: () {
-                      context.push('/resume-vault');
+                      context.push(RouteNames.resumeVault);
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: AppTheme.primaryColor,
@@ -85,7 +92,7 @@ class CvRequiredBlur extends StatelessWidget {
                         borderRadius: BorderRadius.circular(12.r),
                       ),
                     ),
-                    child: Text('uploadCV'.tr()),
+                    child: Text('goToResume'.tr()),
                   ),
                 ],
               ),
