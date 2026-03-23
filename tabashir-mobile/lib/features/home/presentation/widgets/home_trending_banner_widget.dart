@@ -20,6 +20,9 @@ class HomeTrendingBannerWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    if (trendingText.isEmpty) {
+      return const SizedBox.shrink();
+    }
     final theme = Theme.of(context);
 
     return Container(

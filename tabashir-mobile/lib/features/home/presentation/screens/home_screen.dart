@@ -281,11 +281,11 @@ class _HomeScreenState extends State<HomeScreen> {
                                         trendingText:
                                             state.trendingData?['trendingText']
                                                 as String? ??
-                                            'Flutter and Node.js roles are up 17%',
+                                            '',
                                         growthPercentage:
                                             state.trendingData?['growthPercentage']
                                                 as int? ??
-                                            17,
+                                            0,
                                         topSkills:
                                             (state.trendingData?['topSkills']
                                                         as List<dynamic>? ??
@@ -413,41 +413,6 @@ class _HomeScreenState extends State<HomeScreen> {
                                       ),
                                     ),
                                     SizedBox(height: AppTheme.spacingMd.h),
-
-                                    // Activity Timeline
-                                    Padding(
-                                      padding: EdgeInsets.symmetric(
-                                        horizontal: AppTheme.spacingMd.w,
-                                      ),
-                                      child: HomeActivityTimelineWidget(
-                                        activities: [
-                                          ActivityTimelineItem(
-                                            title: 'Application Submitted',
-                                            subtitle:
-                                                'Applied to Steward position at Our restaurant',
-                                            date: 'Today',
-                                            icon: Iconsax.document_text,
-                                            color: AppTheme.primaryBlue,
-                                          ),
-                                          ActivityTimelineItem(
-                                            title: 'Profile Updated',
-                                            subtitle:
-                                                'Updated skills and experience',
-                                            date: '2 days ago',
-                                            icon: Iconsax.user,
-                                            color: AppTheme.accentGreen,
-                                          ),
-                                          ActivityTimelineItem(
-                                            title: 'Resume Uploaded',
-                                            subtitle: 'fathi_wehba_Resume.pdf',
-                                            date: '1 week ago',
-                                            icon: Iconsax.document,
-                                            color: AppTheme.warningOrange,
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                    SizedBox(height: AppTheme.spacingLg.h),
 
                                     // Quick Actions
                                     Padding(

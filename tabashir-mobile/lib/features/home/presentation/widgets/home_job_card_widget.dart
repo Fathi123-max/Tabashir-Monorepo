@@ -129,8 +129,6 @@ class HomeJobCardWidget extends StatelessWidget {
                       child: Row(
                         children: [
                           HomeTagChipWidget(label: employmentType),
-                          SizedBox(width: AppTheme.spacingSm.w),
-                          HomeTagChipWidget(label: level),
                         ],
                       ),
                     ),
