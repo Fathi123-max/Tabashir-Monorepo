@@ -217,23 +217,23 @@ class _HomeJobCardsHorizontalListWidgetState
                     2; // First 2 cards show "Apply Now", rest show "View Details"
 
                 return HomeJobCardWidget(
-                  title: job['title'] as String? ?? 'Untitled Position',
-                  company: job['company'] as String? ?? 'Unknown Company',
+                  title: (job['title'] ?? job['job_title']) as String? ?? 'Untitled Position',
+                  company: (job['company'] ?? job['company_name']) as String? ?? 'Unknown Company',
                   employmentType:
-                      job['employmentType'] as String? ?? 'Full-time',
-                  level: job['level'] as String? ?? 'Not specified',
+                      (job['employmentType'] ?? job['job_type']) as String? ?? 'Full-time',
+                  level: (job['level'] ?? 'Not specified') as String? ?? 'Not specified',
                   matchPercentage: job['matchPercentage'] as String? ?? 'N/A',
-                  isBookmarked: savedJobs.contains(job['id']),
+                  isBookmarked: savedJobs.contains(job['id']?.toString()),
                   isPrimary: isPrimary,
-                  jobId: job['id'] as String?,
+                  jobId: job['id']?.toString(),
                   onBookmarkTap: () {
-                    final jobId = job['id'] as String?;
+                    final jobId = job['id']?.toString();
                     if (jobId != null) {
                       context.read<JobsCubit>().toggleSaveJob(jobId);
                     }
                   },
                   onApplyTap: () {
-                    final jobId = job['id'] as String?;
+                    final jobId = job['id']?.toString();
                     if (jobId != null) {
                       if (isPrimary) {
                         // First 2 cards: Apply directly
@@ -247,8 +247,8 @@ class _HomeJobCardsHorizontalListWidgetState
                       }
                     }
                   },
-                  isApplied: _appliedJobs.contains(job['id']),
-                  isLoading: _applyingJobs.contains(job['id']),
+                  isApplied: _appliedJobs.contains(job['id']?.toString()),
+                  isLoading: _applyingJobs.contains(job['id']?.toString()),
                 );
               }).toList(),
             ),

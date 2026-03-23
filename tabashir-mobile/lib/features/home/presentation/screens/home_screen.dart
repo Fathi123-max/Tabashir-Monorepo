@@ -37,36 +37,36 @@ class _HomeScreenState extends State<HomeScreen> {
   /// Extract the primary job title from the jobs list
   /// Returns the most common job title or 'relevant' if no jobs
   String? _extractPrimaryJobTitle(List<Map<String, dynamic>> jobs) {
-    if (jobs.isEmpty) return 'relevant';
+    if (jobs.isEmpty) return 'relevant'.tr();
 
     // Count occurrences of each job title
     final titleCounts = <String, int>{};
     for (final job in jobs) {
-      final title = job['title'] as String? ?? '';
+      final title = (job['title'] ?? job['job_title']) as String? ?? '';
       if (title.isNotEmpty) {
         titleCounts[title] = (titleCounts[title] ?? 0) + 1;
       }
     }
 
     // Return the most common title, or the first one if all are unique
-    if (titleCounts.isEmpty) return 'relevant';
+    if (titleCounts.isEmpty) return 'relevant'.tr();
     return titleCounts.entries.reduce((a, b) => a.value > b.value ? a : b).key;
   }
 
   /// Extract unique locations from the jobs list
   /// Returns a list of unique location strings
   List<String>? _extractUniqueLocations(List<Map<String, dynamic>> jobs) {
-    if (jobs.isEmpty) return ['your area'];
+    if (jobs.isEmpty) return ['your area'.tr()];
 
     final locations = <String>{};
     for (final job in jobs) {
-      final location = job['location'] as String? ?? '';
+      final location = (job['location'] ?? job['vacancy_city']) as String? ?? '';
       if (location.isNotEmpty) {
         locations.add(location);
       }
     }
 
-    return locations.isEmpty ? ['your area'] : locations.toList();
+    return locations.isEmpty ? ['your area'.tr()] : locations.toList();
   }
 
   @override
