@@ -78,25 +78,6 @@ class _HomeScreenState extends State<HomeScreen> {
       create: (context) => getIt<AppInitializationCubit>()..initialize(),
       child: BlocBuilder<AppInitializationCubit, AppInitializationState>(
         builder: (context, initState) {
-          // Show loading until all data is initialized
-          if (!initState.isInitialized || initState.isLoading) {
-            return Scaffold(
-              body: Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const CircularProgressIndicator(),
-                    SizedBox(height: 16.h),
-                    Text(
-                      'Loading your profile...',
-                      style: theme.textTheme.bodyLarge,
-                    ),
-                  ],
-                ),
-              ),
-            );
-          }
-
           // Show error if initialization failed
           if (initState.errorMessage != null) {
             return Scaffold(
@@ -111,6 +92,25 @@ class _HomeScreenState extends State<HomeScreen> {
                         context.read<AppInitializationCubit>().initialize();
                       },
                       child: const Text('Retry'),
+                    ),
+                  ],
+                ),
+              ),
+            );
+          }
+
+          // Show loading until all data is initialized
+          if (!initState.isInitialized || initState.isLoading) {
+            return Scaffold(
+              body: Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const CircularProgressIndicator(),
+                    SizedBox(height: 16.h),
+                    Text(
+                      'Loading your profile...',
+                      style: theme.textTheme.bodyLarge,
                     ),
                   ],
                 ),
