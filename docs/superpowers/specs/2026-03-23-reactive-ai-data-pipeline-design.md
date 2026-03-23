@@ -29,7 +29,7 @@ Inject the `HomeCubit` refresh trigger into key business logic flows using `getI
 - **`ProfileCubit`**:
     - Trigger `loadHomeData(forceRefresh: true)` after a successful `updateProfile` call.
 - **`AiJobApplyCubit`**:
-    - Trigger `loadHomeData(forceRefresh: true)` after a successful `applyToSpecificJob` call to update the "Total Applications" and "In Review" stats on the dashboard.
+    - Trigger `loadHomeData(forceRefresh: true)` after successful `applyToSpecificJob` OR `submitApplication` (batch) calls to update dashboard stats immediately.
 
 ### 3.3 Mobile: Safety & Persistence
 - Ensure all `emit` calls in `HomeCubit` are guarded with `if (!isClosed)` to prevent crashes during rapid navigation after a refresh.
