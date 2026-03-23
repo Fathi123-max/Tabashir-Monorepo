@@ -30,7 +30,7 @@ class HomeCubit extends Cubit<HomeState> {
     bool forceRefresh = false,
   }) async {
     // Prevent duplicate loads unless forced
-    if (_isDataLoaded && state.jobs.isNotEmpty && !forceRefresh) {
+    if (_isDataLoaded && !forceRefresh) {
       print('[HOME_CUBIT] Data already loaded, skipping duplicate load');
       return;
     }
