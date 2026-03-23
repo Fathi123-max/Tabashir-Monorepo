@@ -101,6 +101,22 @@ class ResumeList(Resource):
                     (resume_id, candidate_id, filename, original_url, False),
                     commit=True
                 )
+                
+                # --- NEW: Trigger Synchronous Profile Sync after Upload ---
+                try:
+                    # 1. Extract text from the newly saved file
+                    raw_text = extract_text(file_path)
+                    if raw_text:
+                        # 2. Format/Parse with AI
+                        formatted_cv = cv_formatter(raw_text)
+                        # 3. Sync to CandidateProfile
+                        ProfileSyncService.sync_from_resume(user_id, formatted_cv)
+                        print(f"[RESUME_NS] Auto-sync successful for user {user_id}")
+                except Exception as sync_err:
+                    # Sync is secondary, don't fail the upload if it fails
+                    print(f"[RESUME_NS] Auto-sync failed (non-blocking): {sync_err}")
+                # --------------------------------------------------------
+
             except Exception as db_err:
                 # Cleanup saved file if DB fails
                 if os.path.exists(file_path):

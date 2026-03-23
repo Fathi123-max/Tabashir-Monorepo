@@ -532,5 +532,14 @@
   "cvRequiredDesc": "Upload your CV to unlock AI-powered job matching, personalized career insights, and simplified applications.",
   "uploadCV": "Upload CV",
   "goToResume": "Go to Resume Vault",
-  "hi_greeting": "Hi {}"
+  "hi_greeting": "Hi {}",
+  "AI Matches Found": "AI Matches Found",
+  "Market Salary": "Market Salary",
+  "Match Quality": "Match Quality",
+  "Total Applications": "Total Applications",
+  "1h ago": "1h ago",
+  "2h ago": "2h ago",
+  "3h ago": "3h ago",
+  "1d ago": "1d ago",
+  "2d ago": "2d ago"
 }

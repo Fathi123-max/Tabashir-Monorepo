@@ -62,7 +62,7 @@ class _HomeJobCardsHorizontalListWidgetState
     try {
       final response = await _jobsRepository.getAppliedJobs(email: email);
       final ids = response.jobs
-          .map((job) => job.jobId)
+          .map((job) => job.jobId?.toString() ?? '')
           .where((id) => id.isNotEmpty)
           .toSet();
       setState(() {
