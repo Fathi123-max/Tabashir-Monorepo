@@ -75,9 +75,10 @@ class HomeApiService {
       final applicationSuccessRate =
           metrics['applicationSuccessRate'] as int? ?? 0;
 
-      // Map the counts to display values
-      final totalMatches = stats['totalApplications'] as int? ?? 0;
-      final companiesViewed = stats['savedJobs'] as int? ?? 0;
+      final stats = data['stats'] as Map<String, dynamic>? ?? {};
+      final totalMatches = stats['totalMatches'] as int? ?? 0;
+      final avgMarketSalary = stats['avgMarketSalary'] as String? ?? 'N/A';
+      final totalApplications = stats['totalApplications'] as int? ?? 0;
       final inReview = stats['inReview'] as int? ?? 0;
       final interviews = stats['interview'] as int? ?? 0;
       final offers = stats['offer'] as int? ?? 0;
@@ -87,13 +88,15 @@ class HomeApiService {
       final matchDistribution = '$inReview | $interviews | $offers';
 
       print(
-        '[HOME_API_SERVICE] Statistics - Matches: $totalMatches, In Review: $inReview, Interviews: $interviews, Offers: $offers',
+        '[HOME_API_SERVICE] Statistics - Matches: $totalMatches, Salary: $avgMarketSalary, In Review: $inReview, Interviews: $interviews, Offers: $offers',
       );
 
       return HomeDashboardResponse(
         featuredJobs: finalFeaturedJobs,
         totalMatches: totalMatches,
-        companiesViewed: companiesViewed,
+        avgMarketSalary: avgMarketSalary,
+        totalApplications: totalApplications,
+        companiesViewed: 0, // No longer used in stats but required by model
         inReview: inReview,
         interviews: interviews,
         offers: offers,
@@ -102,6 +105,7 @@ class HomeApiService {
         profileCompletionPercentage: profileCompletionPercentage,
         applicationSuccessRate: applicationSuccessRate,
       );
+
     } catch (e) {
       print('[HOME_API_SERVICE] Error: $e');
       rethrow;

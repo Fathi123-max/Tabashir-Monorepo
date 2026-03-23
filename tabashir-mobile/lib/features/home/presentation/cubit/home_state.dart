@@ -31,5 +31,7 @@ sealed class HomeState with _$HomeState {
     // Metrics from dashboard API
     @Default(0) int profileCompletionPercentage,
     @Default(0) int applicationSuccessRate,
+    @Default('N/A') String avgMarketSalary,
+    @Default(0) int totalApplications,
   }) = _HomeState;
 }

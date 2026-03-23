@@ -38,6 +38,12 @@ sealed class HomeDashboardResponse with _$HomeDashboardResponse {
     /// Application success rate percentage (0-100)
     required int applicationSuccessRate,
 
+    /// Average market salary for user's role
+    String? avgMarketSalary,
+
+    /// Total number of applications
+    int? totalApplications,
+
     /// Job counts by city for location-based statistics
     Map<String, int>? jobsByCity,
 

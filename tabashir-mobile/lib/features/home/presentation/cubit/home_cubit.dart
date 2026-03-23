@@ -25,11 +25,17 @@ class HomeCubit extends Cubit<HomeState> {
 
   Future<void> loadHomeData({
     CandidateProfileData? userProfile,
+    bool forceRefresh = false,
   }) async {
-    // Prevent duplicate loads
-    if (_isDataLoaded && state.jobs.isNotEmpty) {
+    // Prevent duplicate loads unless forced
+    if (_isDataLoaded && state.jobs.isNotEmpty && !forceRefresh) {
       print('[HOME_CUBIT] Data already loaded, skipping duplicate load');
       return;
+    }
+
+    if (forceRefresh) {
+      print('[HOME_CUBIT] Force refresh requested');
+      _isDataLoaded = false;
     }
 
     print('[HOME_CUBIT] Loading home data...');
@@ -111,6 +117,19 @@ class HomeCubit extends Cubit<HomeState> {
       final analyticsData = results[3] as Map<String, dynamic>?;
       final recommendationsData = results[4] as Map<String, dynamic>?;
 
+      // Process recommendations to include match percentage
+      List<Map<String, dynamic>> processedRecommendations = [];
+      if (recommendationsData != null && recommendationsData['recommendations'] != null) {
+        final recs = recommendationsData['recommendations'] as List<dynamic>;
+        processedRecommendations = recs.map((job) {
+          final jobMap = job as Map<String, dynamic>;
+          return {
+            ...jobMap,
+            'matchPercentage': '${jobMap['match_percentage'] ?? 50}% Match',
+          };
+        }).toList();
+      }
+
       // Process dashboard data
       if (dashboardData != null) {
         final featuredJobsForUI = dashboardData.featuredJobs.map(
@@ -141,7 +160,9 @@ class HomeCubit extends Cubit<HomeState> {
         emit(
           state.copyWith(
             isLoading: false,
-            jobs: featuredJobsForUI,
+            jobs: processedRecommendations.isNotEmpty 
+                ? processedRecommendations 
+                : featuredJobsForUI,
             matches: dashboardData.totalMatches,
             companiesViewed: dashboardData.companiesViewed,
             matchDistribution: dashboardData.matchDistribution,
@@ -149,6 +170,8 @@ class HomeCubit extends Cubit<HomeState> {
             interview: dashboardData.interviews,
             offer: dashboardData.offers,
             rejected: dashboardData.rejected,
+            avgMarketSalary: dashboardData.avgMarketSalary ?? 'N/A',
+            totalApplications: dashboardData.totalApplications ?? 0,
             profileCompletionPercentage:
                 dashboardData.profileCompletionPercentage,
             applicationSuccessRate: dashboardData.applicationSuccessRate,

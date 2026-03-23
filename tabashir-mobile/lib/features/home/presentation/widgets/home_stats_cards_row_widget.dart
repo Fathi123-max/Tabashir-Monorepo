@@ -17,28 +17,23 @@ class HomeStatsCardsRowWidget extends StatelessWidget {
       child: Row(
         children: [
           HomeStatCardWidget(
-            value: '${state.profileCompletionPercentage}%',
-            label: 'Profile Complete'.tr(),
+            value: state.matches.toString(),
+            label: 'AI Matches Found'.tr(),
+          ),
+          SizedBox(width: AppTheme.spacingSm.w),
+          HomeStatCardWidget(
+            value: state.avgMarketSalary,
+            label: 'Market Salary'.tr(),
           ),
           SizedBox(width: AppTheme.spacingSm.w),
           HomeStatCardWidget(
             value: '${state.applicationSuccessRate}%',
-            label: 'Success Rate'.tr(),
+            label: 'Match Quality'.tr(),
           ),
           SizedBox(width: AppTheme.spacingSm.w),
           HomeStatCardWidget(
-            value: state.matches.toString(),
-            label: 'Matches'.tr(),
-          ),
-          SizedBox(width: AppTheme.spacingSm.w),
-          HomeStatCardWidget(
-            value: state.companiesViewed.toString(),
-            label: 'Companies Viewed You'.tr(),
-          ),
-          SizedBox(width: AppTheme.spacingSm.w),
-          HomeStatCardWidget(
-            value: state.matchDistribution,
-            label: 'Onsite/Hybrid/Remote'.tr(),
+            value: state.totalApplications.toString(),
+            label: 'Total Applications'.tr(),
           ),
         ],
       ),

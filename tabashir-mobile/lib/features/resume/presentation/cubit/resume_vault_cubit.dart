@@ -1,7 +1,9 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:injectable/injectable.dart';
+import 'package:tabashir/core/di/injection.dart';
 import 'package:tabashir/core/network/models/resume_response/resume_item.dart';
+import 'package:tabashir/features/home/presentation/cubit/home_cubit.dart';
 import 'package:tabashir/features/resume/domain/repositories/resume_vault_repository.dart';
 
 part 'resume_vault_state.dart';
@@ -257,6 +259,14 @@ class ResumeVaultCubit extends Cubit<ResumeVaultState> {
         ),
       );
       print('🔵 [RESUME_VAULT_CUBIT] ✅ Emitted success state with new resume');
+
+      // Trigger AI Dashboard Refresh
+      try {
+        print('🔵 [RESUME_VAULT_CUBIT] Triggering HomeCubit refresh...');
+        getIt<HomeCubit>().loadHomeData(forceRefresh: true);
+      } catch (e) {
+        print('🔵 [RESUME_VAULT_CUBIT] Failed to trigger HomeCubit refresh: $e');
+      }
     } catch (e, stackTrace) {
       print('🔴 [RESUME_VAULT_CUBIT] ❌ Error uploading: $e');
       print('🔴 [RESUME_VAULT_CUBIT] StackTrace: $stackTrace');
