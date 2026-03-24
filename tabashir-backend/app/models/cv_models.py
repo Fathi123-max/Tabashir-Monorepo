@@ -105,7 +105,8 @@ class Resume:
                  objective: CareerObjective, skills: Skills, languages: Languages, 
                  work: list[WorkAndLeadershipExperience], 
                  lship: Optional[list[WorkAndLeadershipExperience]], 
-                 projects: Optional[list[Project]], keywords: Optional[list[str]]):
+                 projects: Optional[list[Project]], keywords: Optional[list[str]],
+                 source_data: Optional[dict] = None):
         self.education = education
         self.header = header
         self.objective = objective
@@ -115,6 +116,7 @@ class Resume:
         self.languages = languages
         self.work = work
         self.keywords = keywords
+        self.source_data = source_data
 
     def __str__(self):
         objective_str = str(self.objective) if self.objective else ''

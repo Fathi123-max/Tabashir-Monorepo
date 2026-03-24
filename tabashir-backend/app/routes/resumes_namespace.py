@@ -658,7 +658,8 @@ class GenerateDocxFromJson(Resource):
             work=work,
             lship=leadership,
             projects=projects,
-            keywords=keywords
+            keywords=keywords,
+            source_data=data.get('source_data')
         )
 
     def _error_response(self, message, error_detail, status_code):
@@ -730,7 +731,8 @@ class FormatFromRawJSON(Resource):
                 "training": resume.skills.training if resume.skills.training else []
             },
             "languages": format_languages(resume.languages.langs) if resume.languages else [],
-            "keywords": resume.keywords if resume.keywords else []
+            "keywords": resume.keywords if resume.keywords else [],
+            "source_data": resume.source_data
         }
 
     def _error_response(self, message, error_detail, status_code):
