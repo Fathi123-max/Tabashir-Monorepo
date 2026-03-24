@@ -24,106 +24,6 @@ from app.models.cv_models import (
     WorkAndLeadershipExperience, Project, Skills, Languages, format_languages
 )
 
-def deserialize_resume(data: dict) -> Resume:
-    """Helper to convert dictionary to Resume object with defaults for missing fields."""
-    h = data.get('header', {})
-    header = Header(
-        email=h.get('email', ''),
-        location=h.get('location', h.get('address', '')),
-        name=h.get('name', ''),
-        phone=h.get('phone', ''),
-        github=h.get('github'),
-        linkedin=h.get('linkedin'),
-        nationality=h.get('nationality')
-    )
-
-    objective = CareerObjective(data.get('objective', ''))
-
-    education = []
-    for edu in data.get('education', []):
-        education.append(EducationExperience(
-            coursework=edu.get('coursework', []),
-            date=edu.get('date', ''),
-            details=edu.get('details', []),
-            location=edu.get('location', ''),
-            major=edu.get('major', ''),
-            degree=edu.get('degree', ''),
-            university=edu.get('university', ''),
-            GPA=edu.get('GPA', edu.get('gpa', ''))
-        ))
-
-    work = []
-    for w in data.get('work', []):
-        work.append(WorkAndLeadershipExperience(
-            company=w.get('company', ''),
-            date=w.get('date', ''),
-            details=w.get('details', []),
-            location=w.get('location', ''),
-            position=w.get('position', '')
-        ))
-
-    leadership = []
-    for l in data.get('leadership', []):
-        leadership.append(WorkAndLeadershipExperience(
-            company=l.get('company', ''),
-            date=l.get('date', ''),
-            details=l.get('details', []),
-            location=l.get('location', ''),
-            position=l.get('position', '')
-        ))
-
-    projects = []
-    for p in data.get('projects', []):
-        projects.append(Project(
-            date=p.get('date', ''),
-            details=p.get('details', []),
-            location=p.get('location', ''),
-            title=p.get('title', ''),
-            position=p.get('position', '')
-        ))
-
-    skills_data = data.get('skills', {})
-    skills = Skills(
-        softskills=skills_data.get('softskills', []),
-        skillset=skills_data.get('skillset', []),
-        training=skills_data.get('training', [])
-    )
-
-    languages = Languages(data.get('languages', []))
-    keywords = data.get('keywords', [])
-
-    return Resume(
-        education=education,
-        header=header,
-        objective=objective,
-        skills=skills,
-        languages=languages,
-        work=work,
-        lship=leadership,
-        projects=projects,
-        keywords=keywords,
-        source_data=data.get('source_data')
-    )
-
-def serialize_resume(resume: Resume) -> dict:
-    """Helper to convert Resume object to dictionary."""
-    return {
-        "header": vars(resume.header),
-        "objective": resume.objective.objective if resume.objective else "",
-        "education": [vars(edu) for edu in resume.education],
-        "work": [vars(work) for work in resume.work],
-        "leadership": [vars(l) for l in resume.lship] if resume.lship else [],
-        "projects": [vars(p) for p in resume.projects] if resume.projects else [],
-        "skills": {
-            "softskills": resume.skills.softskills,
-            "skillset": resume.skills.skillset,
-            "training": resume.skills.training if resume.skills.training else []
-        },
-        "languages": format_languages(resume.languages.langs) if resume.languages else [],
-        "keywords": resume.keywords if resume.keywords else [],
-        "source_data": resume.source_data
-    }
-
 from app.services.text_extract_PyMuPDF import extract_text
 from app.services.cv_processor import cv_formatter
 from app.services.profile_sync_service import ProfileSyncService
@@ -694,7 +594,7 @@ class GenerateDocxFromJson(Resource):
             if output_language not in ('arabic', 'regular'):
                 raise ValueError("Invalid 'output_language'. Must be 'arabic' or 'regular'")
 
-            resume_obj = deserialize_resume(resume_json)
+            resume_obj = Resume.from_dict(resume_json)
 
             base_name = f"cv_{datetime.now().strftime('%Y%m%d%H%M%S')}"
             output_filename = f"{base_name}_formatted.docx"
@@ -763,7 +663,7 @@ class SaveAndGenerate(Resource):
                 candidate_id = candidate['id']
 
             # 2. Deserialize resume
-            resume_obj = deserialize_resume(resume_data)
+            resume_obj = Resume.from_dict(resume_data)
             resume_obj.source_data = resume_data
 
             # 3. Generate file
@@ -779,13 +679,22 @@ class SaveAndGenerate(Resource):
             resume_id = str(uuid.uuid4())
             original_url = unique_filename
             
-            execute_query(
-                """INSERT INTO "Resume" 
-                   (id, "candidateId", filename, "originalUrl", "isAiResume", "sourceData", "createdAt", "updatedAt") 
-                   VALUES (%s, %s, %s, %s, %s, %s, NOW(), NOW())""",
-                (resume_id, candidate_id, filename, original_url, True, json.dumps(resume_data)),
-                commit=True
-            )
+            try:
+                execute_query(
+                    """INSERT INTO "Resume" 
+                       (id, "candidateId", filename, "originalUrl", "isAiResume", "sourceData", "createdAt", "updatedAt") 
+                       VALUES (%s, %s, %s, %s, %s, %s, NOW(), NOW())""",
+                    (resume_id, candidate_id, filename, original_url, True, json.dumps(resume_obj.to_dict())),
+                    commit=True
+                )
+            except Exception as db_err:
+                # Cleanup generated files if DB fails
+                if os.path.exists(file_path):
+                    os.remove(file_path)
+                pdf_path = Path(file_path).with_suffix('.pdf')
+                if os.path.exists(pdf_path):
+                    os.remove(pdf_path)
+                raise db_err
 
             # Return the full ResumeItem object
             base_url = request.host_url.rstrip('/')
@@ -798,7 +707,7 @@ class SaveAndGenerate(Resource):
                     "originalUrl": f"{base_url}/api/v1/resumes/{resume_id}/download",
                     "formatedUrl": None,
                     "isAiResume": True,
-                    "sourceData": resume_data,
+                    "sourceData": resume_obj.to_dict(),
                     "createdAt": datetime.utcnow().isoformat(),
                     "updatedAt": datetime.utcnow().isoformat()
                 }
@@ -844,7 +753,7 @@ class FormatFromRawJSON(Resource):
             except Exception as sync_err:
                 print(f"[RESUME_NS] Profile sync failed (non-blocking): {sync_err}")
 
-            json_output = serialize_resume(formatted_cv)
+            json_output = formatted_cv.to_dict()
 
             return jsonify({
                 "success": True,

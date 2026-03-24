@@ -85,18 +85,16 @@ def test_save_and_generate_resume_success(mock_write, mock_query, client, auth_h
     params = insert_call[0][1]
     assert 'sourceData' in query
     
-    # Find resume_data in params
+    # Find resume_data in params (it should be in source_data field of the serialized Resume)
     resume_data_found = False
     for p in params:
         if isinstance(p, str):
             try:
-                if json.loads(p) == resume_data:
+                data = json.loads(p)
+                if data.get('source_data') == resume_data:
                     resume_data_found = True
                     break
             except:
                 pass
-        elif p == resume_data:
-            resume_data_found = True
-            break
     
     assert resume_data_found
