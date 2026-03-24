@@ -11,7 +11,7 @@ enum ResumeReviewStatus {
 }
 
 @freezed
-class ResumeReviewState with _$ResumeReviewState {
+sealed class ResumeReviewState with _$ResumeReviewState {
   const factory ResumeReviewState({
     @Default(ResumeReviewStatus.initial) ResumeReviewStatus status,
     @Default({}) Map<String, dynamic> data,
