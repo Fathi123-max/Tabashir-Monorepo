@@ -1,5 +1,6 @@
 import os
 import uuid
+import json
 import shutil
 import re
 from math import ceil
@@ -13,6 +14,7 @@ from werkzeug.utils import secure_filename
 from http import HTTPStatus
 from pathlib import Path
 import psycopg2
+
 from app.config import Config
 from app.database.db import execute_query, get_ai_db_connection
 from app.routes.middleware import jwt_required
@@ -21,6 +23,107 @@ from app.models.cv_models import (
     Resume, Header, CareerObjective, EducationExperience, 
     WorkAndLeadershipExperience, Project, Skills, Languages, format_languages
 )
+
+def deserialize_resume(data: dict) -> Resume:
+    """Helper to convert dictionary to Resume object with defaults for missing fields."""
+    h = data.get('header', {})
+    header = Header(
+        email=h.get('email', ''),
+        location=h.get('location', h.get('address', '')),
+        name=h.get('name', ''),
+        phone=h.get('phone', ''),
+        github=h.get('github'),
+        linkedin=h.get('linkedin'),
+        nationality=h.get('nationality')
+    )
+
+    objective = CareerObjective(data.get('objective', ''))
+
+    education = []
+    for edu in data.get('education', []):
+        education.append(EducationExperience(
+            coursework=edu.get('coursework', []),
+            date=edu.get('date', ''),
+            details=edu.get('details', []),
+            location=edu.get('location', ''),
+            major=edu.get('major', ''),
+            degree=edu.get('degree', ''),
+            university=edu.get('university', ''),
+            GPA=edu.get('GPA', edu.get('gpa', ''))
+        ))
+
+    work = []
+    for w in data.get('work', []):
+        work.append(WorkAndLeadershipExperience(
+            company=w.get('company', ''),
+            date=w.get('date', ''),
+            details=w.get('details', []),
+            location=w.get('location', ''),
+            position=w.get('position', '')
+        ))
+
+    leadership = []
+    for l in data.get('leadership', []):
+        leadership.append(WorkAndLeadershipExperience(
+            company=l.get('company', ''),
+            date=l.get('date', ''),
+            details=l.get('details', []),
+            location=l.get('location', ''),
+            position=l.get('position', '')
+        ))
+
+    projects = []
+    for p in data.get('projects', []):
+        projects.append(Project(
+            date=p.get('date', ''),
+            details=p.get('details', []),
+            location=p.get('location', ''),
+            title=p.get('title', ''),
+            position=p.get('position', '')
+        ))
+
+    skills_data = data.get('skills', {})
+    skills = Skills(
+        softskills=skills_data.get('softskills', []),
+        skillset=skills_data.get('skillset', []),
+        training=skills_data.get('training', [])
+    )
+
+    languages = Languages(data.get('languages', []))
+    keywords = data.get('keywords', [])
+
+    return Resume(
+        education=education,
+        header=header,
+        objective=objective,
+        skills=skills,
+        languages=languages,
+        work=work,
+        lship=leadership,
+        projects=projects,
+        keywords=keywords,
+        source_data=data.get('source_data')
+    )
+
+def serialize_resume(resume: Resume) -> dict:
+    """Helper to convert Resume object to dictionary."""
+    return {
+        "header": vars(resume.header),
+        "objective": resume.objective.objective if resume.objective else "",
+        "education": [vars(edu) for edu in resume.education],
+        "work": [vars(work) for work in resume.work],
+        "leadership": [vars(l) for l in resume.lship] if resume.lship else [],
+        "projects": [vars(p) for p in resume.projects] if resume.projects else [],
+        "skills": {
+            "softskills": resume.skills.softskills,
+            "skillset": resume.skills.skillset,
+            "training": resume.skills.training if resume.skills.training else []
+        },
+        "languages": format_languages(resume.languages.langs) if resume.languages else [],
+        "keywords": resume.keywords if resume.keywords else [],
+        "source_data": resume.source_data
+    }
+
 from app.services.text_extract_PyMuPDF import extract_text
 from app.services.cv_processor import cv_formatter
 from app.services.profile_sync_service import ProfileSyncService
@@ -591,7 +694,7 @@ class GenerateDocxFromJson(Resource):
             if output_language not in ('arabic', 'regular'):
                 raise ValueError("Invalid 'output_language'. Must be 'arabic' or 'regular'")
 
-            resume_obj = self.deserialize_resume(resume_json)
+            resume_obj = deserialize_resume(resume_json)
 
             base_name = f"cv_{datetime.now().strftime('%Y%m%d%H%M%S')}"
             output_filename = f"{base_name}_formatted.docx"
@@ -610,58 +713,6 @@ class GenerateDocxFromJson(Resource):
         except Exception as e:
             return self._error_response("Document generation failed", str(e), HTTPStatus.INTERNAL_SERVER_ERROR.value)
 
-    def deserialize_resume(self, data: dict) -> Resume:
-        header_data = data.get('header', {})
-        header = Header(**header_data)
-
-        objective = CareerObjective(data.get('objective', ''))
-
-        # Normalize GPA key and clean unsupported keys like 'gpa_hidden'
-        education = []
-        for edu in data.get('education', []):
-            edu = edu.copy()  # avoid mutating original
-            edu['GPA'] = edu.pop('gpa', '')  # Rename 'gpa' → 'GPA'
-            edu.pop('gpa_hidden', None)      # Remove 'gpa_hidden' if present
-            education.append(EducationExperience(**edu))
-
-        work = [WorkAndLeadershipExperience(**w) for w in data.get('work', [])]
-        leadership = [WorkAndLeadershipExperience(**l) for l in data.get('leadership', [])]
-
-        # Ensure all expected project keys exist (even if empty)
-        projects = []
-        for p in data.get('projects', []):
-            project_data = {
-                "date": p.get("date", ""),
-                "details": p.get("details", []),
-                "location": p.get("location", ""),
-                "title": p.get("title", ""),
-                "position": p.get("position", "")
-            }
-            projects.append(Project(**project_data))
-
-        skills_data = data.get('skills', {})
-        skills = Skills(
-            softskills=skills_data.get('softskills', []),
-            skillset=skills_data.get('skillset', []),
-            training=skills_data.get('training', [])
-        )
-
-        languages = Languages(data.get('languages', []))
-        keywords = data.get('keywords', [])
-
-        return Resume(
-            education=education,
-            header=header,
-            objective=objective,
-            skills=skills,
-            languages=languages,
-            work=work,
-            lship=leadership,
-            projects=projects,
-            keywords=keywords,
-            source_data=data.get('source_data')
-        )
-
     def _error_response(self, message, error_detail, status_code):
         response = jsonify({
             "success": False,
@@ -669,6 +720,94 @@ class GenerateDocxFromJson(Resource):
             "error": error_detail
         })
         return make_response(response, status_code)
+
+
+@resumes_ns.route('/save-and-generate')
+class SaveAndGenerate(Resource):
+    @resumes_ns.doc(security='Bearer')
+    @resumes_ns.expect(resumes_ns.model('SaveAndGenerateInput', {
+        'resume_data': fields.Raw(required=True, description='Structured Resume JSON data'),
+        'template_id': fields.String(required=False, default='regular', description="Template ID: 'regular' or 'arabic'"),
+        'filename': fields.String(required=False, default='resume.docx', description="Desired filename")
+    }))
+    @jwt_required
+    def post(self):
+        """
+        POST endpoint to save resume data and generate the document.
+        """
+        user_id = request.user_id
+        try:
+            data = request.json
+            resume_data = data.get('resume_data')
+            template_id = data.get('template_id', 'regular').lower()
+            filename = data.get('filename', 'resume.docx')
+
+            if not resume_data:
+                raise ValueError("Missing 'resume_data' in request")
+
+            # 1. Ensure Candidate exists for this user
+            candidate = execute_query(
+                'SELECT id FROM "Candidate" WHERE "userId" = %s',
+                (user_id,),
+                fetch_one=True
+            )
+            
+            if not candidate:
+                candidate_id = str(uuid.uuid4())
+                execute_query(
+                    'INSERT INTO "Candidate" (id, "userId", "createdAt", "updatedAt") VALUES (%s, %s, NOW(), NOW())',
+                    (candidate_id, user_id),
+                    commit=True
+                )
+            else:
+                candidate_id = candidate['id']
+
+            # 2. Deserialize resume
+            resume_obj = deserialize_resume(resume_data)
+            resume_obj.source_data = resume_data
+
+            # 3. Generate file
+            unique_filename = f"{uuid.uuid4()}_{secure_filename(filename)}"
+            os.makedirs(Config.CV_STORAGE_PATH, exist_ok=True)
+            file_path = Config.CV_STORAGE_PATH / unique_filename
+
+            template_path = Config.ARABIC_TEMPLATE_PATH if template_id == 'arabic' else Config.REGULAR_TEMPLATE_PATH
+            # Ensure it is a string for write_document
+            resume_obj.write_document(str(template_path), str(file_path))
+
+            # 4. Create Resume record
+            resume_id = str(uuid.uuid4())
+            original_url = unique_filename
+            
+            execute_query(
+                """INSERT INTO "Resume" 
+                   (id, "candidateId", filename, "originalUrl", "isAiResume", "sourceData", "createdAt", "updatedAt") 
+                   VALUES (%s, %s, %s, %s, %s, %s, NOW(), NOW())""",
+                (resume_id, candidate_id, filename, original_url, True, json.dumps(resume_data)),
+                commit=True
+            )
+
+            # Return the full ResumeItem object
+            base_url = request.host_url.rstrip('/')
+            return {
+                "success": True,
+                "message": "Resume saved and generated successfully",
+                "resume": {
+                    "id": resume_id,
+                    "filename": filename,
+                    "originalUrl": f"{base_url}/api/v1/resumes/{resume_id}/download",
+                    "formatedUrl": None,
+                    "isAiResume": True,
+                    "sourceData": resume_data,
+                    "createdAt": datetime.utcnow().isoformat(),
+                    "updatedAt": datetime.utcnow().isoformat()
+                }
+            }, HTTPStatus.CREATED
+
+        except ValueError as ve:
+            return {"success": False, "message": "Invalid input", "error": str(ve)}, HTTPStatus.BAD_REQUEST
+        except Exception as e:
+            return {"success": False, "message": "Failed to save and generate resume", "error": str(e)}, HTTPStatus.INTERNAL_SERVER_ERROR
 
 
 @resumes_ns.route('/format-cv-object')
@@ -705,7 +844,7 @@ class FormatFromRawJSON(Resource):
             except Exception as sync_err:
                 print(f"[RESUME_NS] Profile sync failed (non-blocking): {sync_err}")
 
-            json_output = self.serialize_resume(formatted_cv)
+            json_output = serialize_resume(formatted_cv)
 
             return jsonify({
                 "success": True,
@@ -716,24 +855,6 @@ class FormatFromRawJSON(Resource):
             return self._error_response("Invalid input", str(ve), HTTPStatus.BAD_REQUEST.value)
         except Exception as e:
             return self._error_response("CV parsing failed", str(e), HTTPStatus.INTERNAL_SERVER_ERROR.value)
-
-    def serialize_resume(self, resume: Resume) -> dict:
-        return {
-            "header": vars(resume.header),
-            "objective": resume.objective.objective if resume.objective else "",
-            "education": [vars(edu) for edu in resume.education],
-            "work": [vars(work) for work in resume.work],
-            "leadership": [vars(l) for l in resume.lship] if resume.lship else [],
-            "projects": [vars(p) for p in resume.projects] if resume.projects else [],
-            "skills": {
-                "softskills": resume.skills.softskills,
-                "skillset": resume.skills.skillset,
-                "training": resume.skills.training if resume.skills.training else []
-            },
-            "languages": format_languages(resume.languages.langs) if resume.languages else [],
-            "keywords": resume.keywords if resume.keywords else [],
-            "source_data": resume.source_data
-        }
 
     def _error_response(self, message, error_detail, status_code):
         response = jsonify({
