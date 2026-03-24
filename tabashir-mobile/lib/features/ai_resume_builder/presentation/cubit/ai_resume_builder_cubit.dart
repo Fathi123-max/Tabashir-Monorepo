@@ -1,7 +1,12 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
-import '../../data/models/resume_models.dart';
+import '../../../../core/di/injection.dart';
+import '../../../../core/network/models/ai_resume/resume_models.dart';
+import '../../../../core/network/models/resume_request/save_and_generate_request.dart';
+import '../../../../core/network/models/resume_response/resume_item.dart';
+import '../../../../core/network/services/resume/resume_api_service.dart';
+import '../../../resume/presentation/cubit/resume_vault_cubit.dart';
 
 part 'ai_resume_builder_state.dart';
 part 'ai_resume_builder_cubit.freezed.dart';
@@ -108,9 +113,41 @@ class AiResumeBuilderCubit extends Cubit<AiResumeBuilderState> {
     }
   }
 
+  void updateTemplate(String templateId) {
+    emit(state.copyWith(selectedTemplateId: templateId));
+    _updateResumeScore();
+  }
+
+  Future<void> generateAndSave() async {
+    emit(state.copyWith(isGenerating: true, errors: []));
+
+    try {
+      final apiService = getIt<ResumeApiService>();
+      final request = SaveAndGenerateRequest(
+        resumeData: state.resumeData,
+        templateId: state.selectedTemplateId,
+        filename: 'AI_Resume_${DateTime.now().millisecondsSinceEpoch}.pdf',
+      );
+
+      final result = await apiService.saveAndGenerate(request);
+
+      emit(state.copyWith(isGenerating: false, generationResult: result));
+
+      // Refresh resume vault
+      await getIt<ResumeVaultCubit>().loadResumes(force: true);
+    } catch (e) {
+      emit(
+        state.copyWith(
+          isGenerating: false,
+          errors: [e.toString()],
+        ),
+      );
+    }
+  }
+
   void nextStep() {
     final currentStep = state.resumeData.currentStep;
-    if (currentStep < BuilderStep.skills) {
+    if (currentStep < BuilderStep.templateSelection) {
       final updatedData = state.resumeData.copyWith(
         currentStep: currentStep + 1,
       );
@@ -129,7 +166,7 @@ class AiResumeBuilderCubit extends Cubit<AiResumeBuilderState> {
   }
 
   void goToStep(int stepIndex) {
-    if (stepIndex >= 0 && stepIndex <= BuilderStep.skills) {
+    if (stepIndex >= 0 && stepIndex <= BuilderStep.templateSelection) {
       final updatedData = state.resumeData.copyWith(currentStep: stepIndex);
       emit(state.copyWith(resumeData: updatedData));
     }
@@ -139,10 +176,10 @@ class AiResumeBuilderCubit extends Cubit<AiResumeBuilderState> {
     var score = 0;
 
     if (state.isPersonalDetailsComplete) {
-      score += 20;
+      score += 15;
     }
     if (state.isProfessionalSummaryComplete) {
-      score += 20;
+      score += 15;
     }
     if (state.isWorkExperienceComplete) {
       score += 20;
@@ -151,7 +188,10 @@ class AiResumeBuilderCubit extends Cubit<AiResumeBuilderState> {
       score += 20;
     }
     if (state.isSkillsComplete) {
-      score += 20;
+      score += 15;
+    }
+    if (state.isTemplateSelectionComplete) {
+      score += 15;
     }
 
     final updatedData = state.resumeData.copyWith(resumeScore: score);
@@ -172,6 +212,8 @@ class AiResumeBuilderCubit extends Cubit<AiResumeBuilderState> {
         return state.isEducationComplete;
       case BuilderStep.skills:
         return state.isSkillsComplete;
+      case BuilderStep.templateSelection:
+        return state.isTemplateSelectionComplete;
       default:
         return false;
     }

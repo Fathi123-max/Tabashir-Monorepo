@@ -1,5 +1,4 @@
 import 'package:easy_localization/easy_localization.dart';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -12,7 +11,8 @@ import 'steps/professional_summary_step.dart';
 import 'steps/work_experience_step.dart';
 import 'steps/education_step.dart';
 import 'steps/skills_step.dart';
-import '../../data/models/resume_models.dart';
+import 'steps/template_selection_step.dart';
+import '../../../../core/network/models/ai_resume/resume_models.dart';
 
 class AiResumeBuilderScreen extends StatelessWidget {
   const AiResumeBuilderScreen({super.key});
@@ -41,7 +41,6 @@ class AiResumeBuilderView extends StatelessWidget {
           fontWeight: FontWeight.bold,
         ),
       ),
-
       elevation: 0,
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       scrolledUnderElevation: 0,
@@ -56,29 +55,75 @@ class AiResumeBuilderView extends StatelessWidget {
             ),
           );
         }
-      },
-      builder: (context, state) => Column(
-        children: [
-          AiResumeBuilderHeader(
-            currentStep: state.resumeData.currentStep,
-            resumeScore: state.resumeData.resumeScore,
-            onStepTap: (step) {
-              context.read<AiResumeBuilderCubit>().goToStep(step);
-            },
-          ),
-          Expanded(
-            child: IndexedStack(
-              index: state.resumeData.currentStep,
-              children: const [
-                PersonalDetailsStep(),
-                ProfessionalSummaryStep(),
-                WorkExperienceStep(),
-                EducationStep(),
-                SkillsStep(),
-              ],
+
+        if (state.generationResult != null && !state.isGenerating) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('CV generated successfully!'.tr()),
+              backgroundColor: AppTheme.successColor,
             ),
+          );
+          // Navigate back or to the resume details
+          context.pop();
+        }
+      },
+      builder: (context, state) => Stack(
+        children: [
+          Column(
+            children: [
+              AiResumeBuilderHeader(
+                currentStep: state.resumeData.currentStep,
+                resumeScore: state.resumeData.resumeScore,
+                onStepTap: (step) {
+                  context.read<AiResumeBuilderCubit>().goToStep(step);
+                },
+              ),
+              Expanded(
+                child: IndexedStack(
+                  index: state.resumeData.currentStep,
+                  children: const [
+                    PersonalDetailsStep(),
+                    ProfessionalSummaryStep(),
+                    WorkExperienceStep(),
+                    EducationStep(),
+                    SkillsStep(),
+                    TemplateSelectionStep(),
+                  ],
+                ),
+              ),
+              _buildBottomActions(context, state),
+            ],
           ),
-          _buildBottomActions(context, state),
+          if (state.isGenerating)
+            Container(
+              color: Colors.black.withOpacity(0.5),
+              child: Center(
+                child: Card(
+                  margin: EdgeInsets.symmetric(horizontal: 40.w),
+                  child: Padding(
+                    padding: EdgeInsets.all(AppTheme.spacingLg.w),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        const CircularProgressIndicator(),
+                        SizedBox(height: AppTheme.spacingLg.h),
+                        Text(
+                          'Generating your professional CV...'.tr(),
+                          textAlign: TextAlign.center,
+                          style: Theme.of(context).textTheme.titleMedium,
+                        ),
+                        SizedBox(height: AppTheme.spacingSm.h),
+                        Text(
+                          'This may take a few moments'.tr(),
+                          textAlign: TextAlign.center,
+                          style: Theme.of(context).textTheme.bodySmall,
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ),
         ],
       ),
     ),
@@ -90,7 +135,7 @@ class AiResumeBuilderView extends StatelessWidget {
   ) {
     final theme = Theme.of(context);
     final currentStep = state.resumeData.currentStep;
-    final isLastStep = currentStep == BuilderStep.skills;
+    final isLastStep = currentStep == BuilderStep.templateSelection;
 
     return Container(
       padding: EdgeInsets.all(AppTheme.spacingMd.w),
@@ -110,8 +155,10 @@ class AiResumeBuilderView extends StatelessWidget {
             if (currentStep > 0) ...[
               Expanded(
                 child: OutlinedButton(
-                  onPressed: () =>
-                      context.read<AiResumeBuilderCubit>().previousStep(),
+                  onPressed: state.isGenerating
+                      ? null
+                      : () =>
+                            context.read<AiResumeBuilderCubit>().previousStep(),
                   child: Text('Back'.tr()),
                 ),
               ),
@@ -120,28 +167,29 @@ class AiResumeBuilderView extends StatelessWidget {
             Expanded(
               flex: 2,
               child: ElevatedButton(
-                onPressed: () {
-                  final cubit = context.read<AiResumeBuilderCubit>();
+                onPressed: state.isGenerating
+                    ? null
+                    : () {
+                        final cubit = context.read<AiResumeBuilderCubit>();
 
-                  // Only validate when generating CV (on last step)
-                  // All steps are accessible at the same level
-                  if (isLastStep) {
-                    if (!cubit.validateCurrentStep()) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          content: Text(
-                            'Please complete all required fields'.tr(),
-                          ),
-                          backgroundColor: AppTheme.warningColor,
-                        ),
-                      );
-                      return;
-                    }
-                    _showGenerateConfirmation(context);
-                  } else {
-                    cubit.nextStep();
-                  }
-                },
+                        if (!cubit.validateCurrentStep()) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text(
+                                'Please complete all required fields'.tr(),
+                              ),
+                              backgroundColor: AppTheme.warningColor,
+                            ),
+                          );
+                          return;
+                        }
+
+                        if (isLastStep) {
+                          _showGenerateConfirmation(context, cubit);
+                        } else {
+                          cubit.nextStep();
+                        }
+                      },
                 child: Text(
                   isLastStep ? 'Generate CV'.tr() : 'Save & Continue'.tr(),
                 ),
@@ -153,13 +201,16 @@ class AiResumeBuilderView extends StatelessWidget {
     );
   }
 
-  Future<void> _showGenerateConfirmation(BuildContext context) async {
+  Future<void> _showGenerateConfirmation(
+    BuildContext context,
+    AiResumeBuilderCubit cubit,
+  ) async {
     await showDialog<void>(
       context: context,
       builder: (context) => AlertDialog(
         title: Text('Generate CV'.tr()),
         content: Text(
-          'Your resume is ready! Would you like to generate and download your CV now?'
+          'Your resume is ready! Would you like to generate and save your professional CV now?'
               .tr(),
         ),
         actions: [
@@ -170,15 +221,9 @@ class AiResumeBuilderView extends StatelessWidget {
           ElevatedButton(
             onPressed: () {
               Navigator.pop(context);
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text('CV generated successfully!'.tr()),
-                  backgroundColor: AppTheme.successColor,
-                ),
-              );
-              Navigator.pop(context);
+              cubit.generateAndSave();
             },
-            child: Text('Generate'.tr()),
+            child: Text('Generate & Save'.tr()),
           ),
         ],
       ),

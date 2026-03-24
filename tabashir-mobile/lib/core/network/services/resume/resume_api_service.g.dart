@@ -279,12 +279,12 @@ class _ResumeApiService implements ResumeApiService {
   }
 
   @override
-  Future<ResumeItem> saveAndGenerate(Map<String, dynamic> body) async {
+  Future<ResumeItem> saveAndGenerate(SaveAndGenerateRequest request) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
     final _data = <String, dynamic>{};
-    _data.addAll(body);
+    _data.addAll(request.toJson());
     final _options = _setStreamType<ResumeItem>(
       Options(method: 'POST', headers: _headers, extra: _extra)
           .compose(

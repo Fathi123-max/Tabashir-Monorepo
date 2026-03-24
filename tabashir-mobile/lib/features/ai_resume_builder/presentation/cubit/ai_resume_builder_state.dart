@@ -6,6 +6,9 @@ sealed class AiResumeBuilderState with _$AiResumeBuilderState {
     @Default(ResumeData()) ResumeData resumeData,
     @Default(false) bool isLoading,
     @Default(<String>[]) List<String> errors,
+    @Default('regular') String selectedTemplateId,
+    @Default(false) bool isGenerating,
+    ResumeItem? generationResult,
   }) = _AiResumeBuilderState;
 
   const AiResumeBuilderState._();
@@ -19,4 +22,5 @@ sealed class AiResumeBuilderState with _$AiResumeBuilderState {
   bool get isWorkExperienceComplete => resumeData.workExperience.isNotEmpty;
   bool get isEducationComplete => resumeData.education.isNotEmpty;
   bool get isSkillsComplete => resumeData.skills.isNotEmpty;
+  bool get isTemplateSelectionComplete => selectedTemplateId.isNotEmpty;
 }

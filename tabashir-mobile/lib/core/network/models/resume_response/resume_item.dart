@@ -1,5 +1,5 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:tabashir/features/ai_resume_builder/data/models/resume_models.dart';
+import 'package:tabashir/core/network/models/ai_resume/resume_models.dart';
 
 part 'resume_item.freezed.dart';
 part 'resume_item.g.dart';
