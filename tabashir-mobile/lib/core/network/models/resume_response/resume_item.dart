@@ -1,4 +1,5 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:tabashir/features/ai_resume_builder/data/models/resume_models.dart';
 
 part 'resume_item.freezed.dart';
 part 'resume_item.g.dart';
@@ -14,6 +15,7 @@ sealed class ResumeItem with _$ResumeItem {
     required DateTime createdAt,
     required DateTime updatedAt,
     String? formatedContent, // Added for translation
+    ResumeData? sourceData, // Added for AI Resume generation source data
     // UI-specific properties
     @Default('') String name, // Display name (defaults to filename)
     @Default('') String filePath, // Local or remote file path

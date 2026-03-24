@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:injectable/injectable.dart';
 import 'package:retrofit/retrofit.dart';
+import 'package:tabashir/core/network/models/resume_response/resume_item.dart';
 import 'package:tabashir/core/network/models/resume_response/resume_response.dart';
 
 part 'resume_api_service.g.dart';
@@ -91,4 +92,9 @@ abstract class ResumeApiService {
     @Path('id') String resumeId,
     @Body() Map<String, dynamic> request,
   );
+
+  /// POST /resumes/save-and-generate
+  /// Save resume data and generate AI resume
+  @POST('/save-and-generate')
+  Future<ResumeItem> saveAndGenerate(@Body() Map<String, dynamic> body);
 }
