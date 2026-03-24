@@ -4,6 +4,7 @@ import 'package:tabashir/core/di/injection.dart';
 import 'package:tabashir/core/network/models/user/user_profile_response.dart';
 import 'package:tabashir/core/network/models/home_dashboard_response.dart';
 import 'package:tabashir/core/network/models/resume_response/resume_item.dart';
+import 'package:tabashir/core/session/cubit/session_cubit.dart';
 import 'package:tabashir/features/home/data/models/app_initialization_state.dart';
 import 'package:tabashir/features/profile/domain/repositories/profile_repository.dart';
 import 'package:tabashir/features/profile/presentation/cubit/profile_cubit.dart';
@@ -32,7 +33,9 @@ class AppInitializationCubit extends Cubit<AppInitializationState> {
     }
 
     print('[APP_INIT] Starting app initialization...');
-    emit(state.copyWith(isLoading: true, errorMessage: null));
+    if (!isClosed) {
+      emit(state.copyWith(isLoading: true, errorMessage: null));
+    }
 
     try {
       // 1. Load user profile
@@ -56,25 +59,48 @@ class AppInitializationCubit extends Cubit<AppInitializationState> {
       print('[APP_INIT] ✅ Cubits initialized');
 
       // Emit success state with all data
-      emit(
-        state.copyWith(
-          isLoading: false,
-          isInitialized: true,
-          userProfile: userProfile,
-          resumes: resumes,
-          homeDashboard: homeDashboard,
-        ),
-      );
+      if (!isClosed) {
+        emit(
+          state.copyWith(
+            isLoading: false,
+            isInitialized: true,
+            userProfile: userProfile,
+            resumes: resumes,
+            homeDashboard: homeDashboard,
+          ),
+        );
+      }
 
       print('[APP_INIT] ✅✅ App initialization complete');
     } catch (e) {
-      print('[APP_INIT] ❌ Initialization failed: $e');
-      emit(
-        state.copyWith(
-          isLoading: false,
-          errorMessage: 'Failed to initialize app: $e',
-        ),
+      // If authentication failed and logged the user out, we shouldn't show an error.
+      // We just let the UI redirect to the login screen.
+      final sessionCubit = getIt<SessionCubit>();
+      final isUnauthenticated = sessionCubit.state.maybeMap(
+        unauthenticated: (_) => true,
+        orElse: () => false,
       );
+      
+      if (isUnauthenticated) {
+        print('[APP_INIT] Authentication failed during initialization. User is logged out. Continuing gracefully.');
+        if (!isClosed) {
+          emit(state.copyWith(
+            isInitialized: true,
+            isLoading: false,
+          ));
+        }
+        return;
+      }
+
+      print('[APP_INIT] ❌ Initialization failed: $e');
+      if (!isClosed) {
+        emit(
+          state.copyWith(
+            isLoading: false,
+            errorMessage: 'Failed to initialize app: $e',
+          ),
+        );
+      }
     }
   }
 
@@ -101,6 +127,8 @@ class AppInitializationCubit extends Cubit<AppInitializationState> {
 
   /// Reset initialization (for logout)
   void reset() {
-    emit(const AppInitializationState());
+    if (!isClosed) {
+      emit(const AppInitializationState());
+    }
   }
 }

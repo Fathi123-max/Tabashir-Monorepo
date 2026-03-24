@@ -116,6 +116,16 @@ class Trending(Resource):
     def get(self):
         """Get trending data"""
         try:
+            # 1. Fetch top trending skills for the banner
+            trending_skills = execute_query(
+                """SELECT LOWER(TRIM(skill)) as skill, COUNT(*) as count 
+                   FROM (SELECT unnest("requiredSkills") as skill FROM "Job" WHERE status = 'ACTIVE') s 
+                   GROUP BY skill ORDER BY count DESC LIMIT 3""",
+                fetch_all=True
+            )
+            top_skills = [s['skill'] for s in trending_skills] if trending_skills else []
+            
+            # 2. Fetch trending jobs (most viewed)
             jobs = execute_query(
                 """SELECT id, title, company, "companyLogo", "jobType",
                           "salaryMin", "salaryMax", location, "views"
@@ -125,9 +135,29 @@ class Trending(Resource):
                    LIMIT 10""",
                 fetch_all=True
             )
-            return {"trending": jobs or []}, HTTPStatus.OK
-        except Exception:
-            return {"trending": []}, HTTPStatus.OK
+            
+            # 3. Construct the trending summary for the banner
+            trending_text = ""
+            if top_skills:
+                skills_str = " & ".join([s.capitalize() for s in top_skills[:2]])
+                trending_text = f"{skills_str} roles are seeing increased demand this week."
+
+            return {
+                "trending": jobs or [],
+                "trendingText": trending_text,
+                "growthPercentage": 15,  # Estimated or static for now
+                "topSkills": top_skills,
+                "seeOpportunitiesLink": "/jobs"
+            }, HTTPStatus.OK
+        except Exception as e:
+            print(f"[TRENDING] Error: {e}")
+            return {
+                "trending": [],
+                "trendingText": "",
+                "growthPercentage": 0,
+                "topSkills": [],
+                "seeOpportunitiesLink": "/jobs"
+            }, HTTPStatus.OK
 
 
 @home_ns.route('/recommendations')
@@ -397,7 +427,7 @@ class AIJobApplyConfig(Resource):
 
         user = execute_query(
             """SELECT "aiJobApplyCount", "jobCount"
-               FROM "User"
+               FROM users
                WHERE id = %s""",
             (user_id,),
             fetch_one=True

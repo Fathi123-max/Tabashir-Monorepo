@@ -133,11 +133,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       text: 'Sign in with Google'.tr(),
                       onPressed: () async {
                         try {
-                          final idToken = await getIt<GoogleSignInService>()
-                              .signIn();
-                          await AuthSessionService.instance.setLoggedIn(
-                            token: idToken,
-                          );
+                          await getIt<GoogleSignInService>().signIn();
                           if (mounted) context.go('/');
                         } catch (e) {
                           _showMessage('Google sign-in failed: $e');

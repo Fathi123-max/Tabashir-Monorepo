@@ -275,6 +275,14 @@ export async function processResumeWithAIAfterUpload(resumeId: string): Promise<
     // Update the resume with the transformed text using the new update function
     await updateResumeWithFormattedContent(resumeId, aiResult.data);
 
+    // NEW: Extract personal information from the AI-processed text and update user profile
+    try {
+      await extractAndUpdateProfileFromCV(aiResult.data, resumeId);
+    } catch (profileError) {
+      console.error("[PROFILE_UPDATE_FROM_CV_ERROR]", profileError);
+      // Don't fail the entire process if profile update fails
+    }
+
     return {
       error: false,
       message: "Resume processed successfully",
@@ -287,6 +295,125 @@ export async function processResumeWithAIAfterUpload(resumeId: string): Promise<
       error: true,
       message: error instanceof Error ? error.message : "Failed to process PDF file",
     };
+  }
+}
+
+/**
+ * Extract personal information from CV text and update user profile
+ */
+async function extractAndUpdateProfileFromCV(cvText: string, resumeId: string): Promise<void> {
+  try {
+    const session = await auth();
+    if (!session?.user?.id) {
+      console.warn("[EXTRACT_CV_PROFILE] No authenticated user found");
+      return;
+    }
+
+    const userId = session.user.id;
+
+    // Use OpenAI to extract structured personal information from CV
+    const openai = new OpenAI({
+      apiKey: process.env.OPENAI_API_KEY,
+    });
+
+    const extractionPrompt = `Extract the following personal information from this CV text and return it as a JSON object:
+{
+  "name": "Full name from CV",
+  "email": "Email address",
+  "phone": "Phone number",
+  "location": "City, Country",
+  "nationality": "Nationality if mentioned",
+  "linkedin": "LinkedIn URL if available",
+  "summary": "Professional summary or objective"
+}
+
+Only extract information that is explicitly present in the CV. Return empty strings for fields not found.
+Return ONLY the JSON object, no other text.
+
+CV Text:
+${cvText.substring(0, 5000)} // Limit text to avoid token limits
+`;
+
+    const completion = await openai.chat.completions.create({
+      model: "gpt-4o",
+      messages: [
+        { role: "system", content: "You are a data extraction assistant. Extract personal information from CVs and return only valid JSON." },
+        { role: "user", content: extractionPrompt },
+      ],
+      temperature: 0,
+      response_format: { type: "json_object" },
+    });
+
+    const extractedData = completion.choices[0]?.message?.content;
+    if (!extractedData) {
+      console.warn("[EXTRACT_CV_PROFILE] No data extracted from CV");
+      return;
+    }
+
+    const parsedData = JSON.parse(extractedData);
+    console.log("[EXTRACT_CV_PROFILE] Extracted data:", parsedData);
+
+    // Update user and candidate profile with extracted data
+    const candidate = await prisma.candidate.findUnique({
+      where: { userId },
+      include: { profile: true },
+    });
+
+    if (!candidate) {
+      console.warn("[EXTRACT_CV_PROFILE] Candidate not found for user");
+      return;
+    }
+
+    // Update User table
+    const userUpdateData: any = {};
+    if (parsedData.name && parsedData.name.trim()) {
+      userUpdateData.name = parsedData.name.trim();
+    }
+    if (parsedData.email && parsedData.email.trim()) {
+      // Check if email is already used by another user
+      const existingUser = await prisma.user.findUnique({
+        where: { email: parsedData.email.trim() },
+      });
+      if (!existingUser || existingUser.id === userId) {
+        userUpdateData.email = parsedData.email.trim();
+      }
+    }
+
+    if (Object.keys(userUpdateData).length > 0) {
+      await prisma.user.update({
+        where: { id: userId },
+        data: userUpdateData,
+      });
+      console.log("[EXTRACT_CV_PROFILE] User table updated");
+    }
+
+    // Update or create CandidateProfile
+    const profileData: any = {
+      phone: parsedData.phone?.trim() || null,
+      nationality: parsedData.nationality?.trim() || null,
+      location: parsedData.location?.trim() || null,
+      linkedin: parsedData.linkedin?.trim() || null,
+    };
+
+    if (candidate.profile) {
+      await prisma.candidateProfile.update({
+        where: { candidateId: candidate.id },
+        data: profileData,
+      });
+    } else {
+      await prisma.candidateProfile.create({
+        data: {
+          candidateId: candidate.id,
+          ...profileData,
+        },
+      });
+    }
+
+    console.log("[EXTRACT_CV_PROFILE] Candidate profile updated successfully");
+
+  } catch (error) {
+    console.error("[EXTRACT_CV_PROFILE_ERROR]", error);
+    throw error;
   }
 }
 

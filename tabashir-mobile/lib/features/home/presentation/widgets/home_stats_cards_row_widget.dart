@@ -25,6 +25,7 @@ class HomeStatsCardsRowWidget extends StatelessWidget {
             value: state.avgMarketSalary,
             label: 'Market Salary'.tr(),
           ),
+          /*
           SizedBox(width: AppTheme.spacingSm.w),
           HomeStatCardWidget(
             value: '${state.applicationSuccessRate}%',
@@ -35,6 +36,7 @@ class HomeStatsCardsRowWidget extends StatelessWidget {
             value: state.totalApplications.toString(),
             label: 'Total Applications'.tr(),
           ),
+          */
         ],
       ),
     ),

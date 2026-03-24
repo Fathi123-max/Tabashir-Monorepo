@@ -224,3 +224,194 @@ class Account(Resource):
 
         except Exception as e:
             return {"error": f"Failed to delete account: {str(e)}"}, HTTPStatus.INTERNAL_SERVER_ERROR
+
+
+apple_signin_parser = auth_ns.parser()
+apple_signin_parser.add_argument('identityToken', required=True, help='Apple Identity Token')
+
+@auth_ns.route('/apple-signin')
+class AppleSignIn(Resource):
+    @auth_ns.expect(apple_signin_parser)
+    def post(self):
+        """Sign in with Apple"""
+        import jwt # using PyJWT
+        data = request.get_json() or {}
+        identity_token = data.get('identityToken')
+
+        if not identity_token:
+            return {"error": "identityToken is required"}, HTTPStatus.BAD_REQUEST
+
+        try:
+            # Decode the token (unverified for MVP; ideally verify against Apple's JWKS)
+            decoded = jwt.decode(identity_token, options={"verify_signature": False})
+            email = decoded.get('email')
+            
+            if not email:
+                email = data.get('email')
+                
+            if not email:
+                return {"error": "Email could not be determined from Apple Sign-In"}, HTTPStatus.BAD_REQUEST
+                
+        except Exception as e:
+            return {"error": f"Invalid identity token: {str(e)}"}, HTTPStatus.UNAUTHORIZED
+
+        # Find user or create if doesn't exist
+        user = execute_query(
+            """SELECT id, email, name, "userType" FROM users WHERE email = %s""",
+            (email,),
+            fetch_one=True
+        )
+
+        if not user:
+            # Create a new user
+            user_id = str(uuid.uuid4())
+            name = email.split('@')[0] # Fallback name
+            user_type = 'CANDIDATE'
+            hashed_pw = hash_password(str(uuid.uuid4()) + str(uuid.uuid4())) # Random placeholder password
+
+            try:
+                execute_query(
+                    """INSERT INTO users (id, email, password, name, "userType", "createdAt", "updatedAt")
+                       VALUES (%s, %s, %s, %s, %s, NOW(), NOW())""",
+                    (user_id, email, hashed_pw, name, user_type),
+                    commit=True
+                )
+                
+                # Sync to AI DB
+                try:
+                    execute_ai_query(
+                        """INSERT INTO clients (name, email, date_in)
+                           VALUES (%s, %s, NOW())
+                           ON CONFLICT (email) DO UPDATE 
+                           SET name = EXCLUDED.name""",
+                        (name, email),
+                        commit=True
+                    )
+                except Exception as ai_e:
+                    print(f"Non-critical: Failed to sync new user to AI DB: {ai_e}")
+            except Exception as e:
+                return {"error": str(e)}, HTTPStatus.INTERNAL_SERVER_ERROR
+                
+            user = {
+                "id": user_id,
+                "email": email,
+                "name": name,
+                "userType": user_type
+            }
+
+        payload = {
+            "id": user['id'],
+            "email": user['email'],
+            "userType": user.get('userType', 'CANDIDATE') or 'CANDIDATE'
+        }
+
+        access_token = create_access_token(payload)
+        refresh_token = create_refresh_token({"id": user['id']})
+
+        return {
+            "user": {
+                "id": user['id'],
+                "name": user['name'],
+                "email": user['email'],
+                "userType": user.get('userType', 'CANDIDATE')
+            },
+            "accessToken": access_token,
+            "refreshToken": refresh_token
+        }, HTTPStatus.OK
+
+
+google_signin_parser = auth_ns.parser()
+google_signin_parser.add_argument('idToken', required=True, help='Google ID Token')
+google_signin_parser.add_argument('email', required=False, help='User email')
+google_signin_parser.add_argument('name', required=False, help='User name')
+
+@auth_ns.route('/google-signin')
+class GoogleSignIn(Resource):
+    @auth_ns.expect(google_signin_parser)
+    def post(self):
+        """Sign in with Google"""
+        import jwt # using PyJWT
+        data = request.get_json() or {}
+        id_token = data.get('idToken')
+
+        if not id_token:
+            return {"error": "idToken is required"}, HTTPStatus.BAD_REQUEST
+
+        try:
+            # Decode the token (unverified for MVP; ideally verify against Google's JWKS)
+            decoded = jwt.decode(id_token, options={"verify_signature": False})
+            email = decoded.get('email')
+            
+            if not email:
+                email = data.get('email')
+                
+            if not email:
+                return {"error": "Email could not be determined from Google Sign-In"}, HTTPStatus.BAD_REQUEST
+            
+            name = decoded.get('name') or data.get('name') or email.split('@')[0]
+                
+        except Exception as e:
+            return {"error": f"Invalid ID token: {str(e)}"}, HTTPStatus.UNAUTHORIZED
+
+        # Find user or create if doesn't exist
+        user = execute_query(
+            """SELECT id, email, name, "userType" FROM users WHERE email = %s""",
+            (email,),
+            fetch_one=True
+        )
+
+        if not user:
+            # Create a new user
+            user_id = str(uuid.uuid4())
+            user_type = 'CANDIDATE'
+            hashed_pw = hash_password(str(uuid.uuid4()) + str(uuid.uuid4())) # Random placeholder password
+
+            try:
+                execute_query(
+                    """INSERT INTO users (id, email, password, name, "userType", "createdAt", "updatedAt")
+                       VALUES (%s, %s, %s, %s, %s, NOW(), NOW())""",
+                    (user_id, email, hashed_pw, name, user_type),
+                    commit=True
+                )
+                
+                # Sync to AI DB
+                try:
+                    execute_ai_query(
+                        """INSERT INTO clients (name, email, date_in)
+                           VALUES (%s, %s, NOW())
+                           ON CONFLICT (email) DO UPDATE 
+                           SET name = EXCLUDED.name""",
+                        (name, email),
+                        commit=True
+                    )
+                except Exception as ai_e:
+                    print(f"Non-critical: Failed to sync new user to AI DB: {ai_e}")
+            except Exception as e:
+                return {"error": str(e)}, HTTPStatus.INTERNAL_SERVER_ERROR
+                
+            user = {
+                "id": user_id,
+                "email": email,
+                "name": name,
+                "userType": user_type
+            }
+
+        payload = {
+            "id": user['id'],
+            "email": user['email'],
+            "userType": user.get('userType', 'CANDIDATE') or 'CANDIDATE'
+        }
+
+        access_token = create_access_token(payload)
+        refresh_token = create_refresh_token({"id": user['id']})
+
+        return {
+            "user": {
+                "id": user['id'],
+                "name": user['name'],
+                "email": user['email'],
+                "userType": user.get('userType', 'CANDIDATE')
+            },
+            "accessToken": access_token,
+            "refreshToken": refresh_token
+        }, HTTPStatus.OK

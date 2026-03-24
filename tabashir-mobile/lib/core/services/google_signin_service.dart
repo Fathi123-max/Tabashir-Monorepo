@@ -1,5 +1,7 @@
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:tabashir/core/services/auth_session_service.dart';
+import 'package:tabashir/core/di/injection.dart';
+import 'package:tabashir/features/auth/domain/repositories/auth_repository.dart';
 
 /// Service for Google Sign-In authentication
 /// Uses Firebase Auth (recommended approach)
@@ -10,6 +12,7 @@ class GoogleSignInService {
       _instance ??= GoogleSignInService._();
 
   late final GoogleSignIn _googleSignIn;
+  final AuthRepository _repository = getIt<AuthRepository>();
 
   /// Initialize Google Sign-In
   /// Call this once at app startup
@@ -24,7 +27,7 @@ class GoogleSignInService {
   }
 
   /// Sign in with Google
-  /// Returns UserCredential on success
+  /// Returns ID token on success
   /// Throws exception on failure
   Future<String> signIn() async {
     try {
@@ -44,7 +47,22 @@ class GoogleSignInService {
         throw Exception('Google sign-in did not return an ID token');
       }
 
-      await AuthSessionService.instance.setLoggedIn(token: idToken);
+      // Exchange Google ID token for backend JWT
+      final response = await _repository.googleSignIn(
+        idToken: idToken,
+        email: googleUser.email,
+        name: googleUser.displayName,
+      );
+
+      // Store the JWT token from backend in AuthSessionService
+      final tokenToStore = response.token ?? response.accessToken;
+      if (tokenToStore != null) {
+        await AuthSessionService.instance.setLoggedIn(
+          token: tokenToStore,
+          refreshToken: response.refreshToken,
+        );
+      }
+
       return idToken;
     } catch (e) {
       throw Exception('Google sign-in failed: $e');

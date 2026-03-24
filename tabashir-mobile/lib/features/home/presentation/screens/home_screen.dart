@@ -74,8 +74,9 @@ class _HomeScreenState extends State<HomeScreen> {
     final theme = Theme.of(context);
 
     // Use AppInitializationCubit to load all data once
-    return BlocProvider(
-      create: (context) => getIt<AppInitializationCubit>()..initialize(),
+    // Use BlocProvider.value to prevent the singleton from being closed
+    return BlocProvider.value(
+      value: getIt<AppInitializationCubit>()..initialize(),
       child: BlocBuilder<AppInitializationCubit, AppInitializationState>(
         builder: (context, initState) {
           // Show error if initialization failed
@@ -344,6 +345,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                     ),
                                     SizedBox(height: AppTheme.spacingMd.h),
 
+                                    /*
                                     // Applications Section
                                     Padding(
                                       padding: EdgeInsets.symmetric(
@@ -367,6 +369,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                       child: const HomeApplicationStatsWidget(),
                                     ),
                                     SizedBox(height: AppTheme.spacingMd.h),
+                                    */
 
                                     // Analytics
                                     Padding(

@@ -87,17 +87,17 @@ class _AppState extends State<App> {
       designSize: const Size(375, 812),
       builder: (context, child) => MultiBlocProvider(
         providers: [
-          BlocProvider(
-            create: (context) => getIt<SessionCubit>(),
+          BlocProvider.value(
+            value: getIt<SessionCubit>(),
           ),
           BlocProvider(
             create: (context) => getIt<SavedJobsCubit>()..loadSavedIds(),
           ),
-          BlocProvider(
-            create: (context) => getIt<ProfileCubit>(),
+          BlocProvider.value(
+            value: getIt<ProfileCubit>(),
           ),
-          BlocProvider(
-            create: (context) => getIt<ResumeVaultCubit>()..loadResumes(),
+          BlocProvider.value(
+            value: getIt<ResumeVaultCubit>()..loadResumes(),
           ),
         ],
         child: AnimatedBuilder(

@@ -125,7 +125,9 @@ class AuthSessionService {
   }
 
   /// Refresh the access token using the refresh token
-  /// Returns the new access token, or null if refresh fails
+  /// Returns the new access token
+  /// Returns null ONLY if the refresh token is invalid/expired (401)
+  /// Throws an exception for network or server errors
   /// Uses a synchronized approach to prevent multiple concurrent refreshes
   Future<String?> refreshAccessToken() async {
     // If a refresh is already in progress, wait for it
@@ -151,8 +153,9 @@ class AuthSessionService {
       if (baseUrl == null) {
         print('[AUTH_SESSION] ❌ API_BASE_URL is not set');
         _isRefreshing = false;
-        _refreshCompleter?.complete(null);
-        return null;
+        final error = Exception('API_BASE_URL is not set');
+        _refreshCompleter?.completeError(error);
+        throw error;
       }
 
       final dio = Dio(
@@ -189,23 +192,32 @@ class AuthSessionService {
         return newAccessToken;
       }
 
-      print('[AUTH_SESSION] ❌ Failed to refresh token - status: ${response.statusCode}');
+      print('[AUTH_SESSION] ❌ Unexpected status code: ${response.statusCode}');
       _isRefreshing = false;
-      _refreshCompleter?.complete(null);
-      return null;
+      final error = Exception('Failed to refresh token: Status ${response.statusCode}');
+      _refreshCompleter?.completeError(error);
+      throw error;
     } on DioException catch (e) {
       print('[AUTH_SESSION] ❌ DioException during refresh: ${e.message}');
-      if (e.response?.statusCode == 401) {
-        print('[AUTH_SESSION] 🔑 Refresh token expired or invalid');
-      }
       _isRefreshing = false;
-      _refreshCompleter?.complete(null);
-      return null;
+      
+      final statusCode = e.response?.statusCode;
+      // 400, 401, 403, 404 all indicate the token is definitively invalid or user doesn't exist
+      if (statusCode != null && statusCode >= 400 && statusCode < 500) {
+        print('[AUTH_SESSION] 🔑 Refresh token invalid, expired, or user not found ($statusCode)');
+        _refreshCompleter?.complete(null);
+        return null;
+      }
+      
+      // For network errors or 5xx server errors, throw so interceptor doesn't logout
+      print('[AUTH_SESSION] ⚠️ Network or server error during refresh. Not logging out.');
+      _refreshCompleter?.completeError(e);
+      rethrow;
     } catch (e) {
       print('[AUTH_SESSION] ❌ Generic error during refresh: $e');
       _isRefreshing = false;
-      _refreshCompleter?.complete(null);
-      return null;
+      _refreshCompleter?.completeError(e);
+      rethrow;
     } finally {
       _isRefreshing = false;
     }

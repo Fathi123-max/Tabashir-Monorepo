@@ -18,8 +18,8 @@ class Config:
 
     # JWT Settings - Use same secret as Next.js for token compatibility
     JWT_SECRET_KEY = os.getenv("JWT_SECRET_KEY", "b0db5450cbb5cb89b04f02f649a26431f13c10eff61bb17704eb6c838ae8decf9b025b7e7a2d2a19813eab31f0c112d7dc732416fd6180963b8c1969b7d4315e")
-    JWT_ACCESS_EXPIRE = 15 * 60  # 15 minutes
-    JWT_REFRESH_EXPIRE = 7 * 24 * 60 * 60  # 7 days
+    JWT_ACCESS_EXPIRE = 60 * 60  # 1 hour
+    JWT_REFRESH_EXPIRE = 30 * 24 * 60 * 60  # 30 days
 
     # Folder paths for CV processing
     BASE_DIR = Path(__file__).parent

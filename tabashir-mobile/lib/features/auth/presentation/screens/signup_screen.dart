@@ -237,11 +237,7 @@ class _SignupScreenState extends State<SignupScreen> {
                         text: 'Sign up with Google'.tr(),
                         onPressed: () async {
                           try {
-                            final idToken = await getIt<GoogleSignInService>()
-                                .signIn();
-                            await AuthSessionService.instance.setLoggedIn(
-                              token: idToken,
-                            );
+                            await getIt<GoogleSignInService>().signIn();
                             if (mounted) context.go('/');
                           } catch (e) {
                             _showMessage('Google sign-up failed: $e');
@@ -296,7 +292,7 @@ class _SignupScreenState extends State<SignupScreen> {
                             return 'Please enter your email'.tr();
                           }
                           if (!RegExp(
-                            r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$'.tr(),
+                            r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$',
                           ).hasMatch(value)) {
                             return 'Please enter a valid email'.tr();
                           }
@@ -419,9 +415,10 @@ class _SignupScreenState extends State<SignupScreen> {
                       SizedBox(height: AppTheme.spacingLg.h),
 
                       // AI Assistant Info
-                      const AIAssistantWidget(
+                      AIAssistantWidget(
                         message:
-                            "After signup, I'.tr()ll help you build a standout profile in under 2 minutes.",
+                            "After signup, I'll help you build a standout profile in under 2 minutes."
+                                .tr(),
                       ),
                       SizedBox(height: AppTheme.spacingLg.h),
 

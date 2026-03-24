@@ -105,6 +105,8 @@ import '../../features/resume/domain/repositories/resume_vault_repository.dart'
     as _i229;
 import '../../features/resume/presentation/cubit/resume_import_cubit.dart'
     as _i658;
+import '../../features/resume/presentation/cubit/resume_review_cubit.dart'
+    as _i349;
 import '../../features/resume/presentation/cubit/resume_vault_cubit.dart'
     as _i938;
 import '../../features/resume/services/resume_parsing_service.dart' as _i1030;
@@ -408,6 +410,13 @@ extension GetItInjectableX on _i174.GetIt {
     );
     gh.factory<_i331.Cubit<_i949.SubscriptionState>>(
       () => _i949.SubscriptionCubit(gh<_i185.SubscriptionRepository>()),
+    );
+    gh.factoryParam<_i349.ResumeReviewCubit, Map<String, dynamic>?, dynamic>(
+      (initialData, _) => _i349.ResumeReviewCubit(
+        profileCubit: gh<_i36.ProfileCubit>(),
+        resumeVaultCubit: gh<_i938.ResumeVaultCubit>(),
+        initialData: initialData,
+      ),
     );
     gh.factory<_i331.Cubit<_i895.UploadState>>(
       () => _i895.UploadCubit(gh<_i302.UploadRepository>()),

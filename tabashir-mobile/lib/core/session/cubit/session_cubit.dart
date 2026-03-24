@@ -24,14 +24,17 @@ class SessionCubit extends Cubit<SessionState> {
     }
 
     // Listen for auth state changes from the service
-    _authSubscription = AuthSessionService.instance.authStateStream.listen((isLoggedIn) {
-      print('[SESSION_CUBIT] Auth state changed: isLoggedIn=$isLoggedIn');
-      if (isLoggedIn) {
-        emit(const SessionState.authenticated());
-      } else {
-        emit(const SessionState.unauthenticated());
-      }
-    });
+    _authSubscription =
+        AuthSessionService.instance.authStateStream.listen((isLoggedIn) {
+          print('[SESSION_CUBIT] Auth state changed: isLoggedIn=$isLoggedIn');
+          if (!isClosed) {
+            if (isLoggedIn) {
+              emit(const SessionState.authenticated());
+            } else {
+              emit(const SessionState.unauthenticated());
+            }
+          }
+        });
   }
 
   @override

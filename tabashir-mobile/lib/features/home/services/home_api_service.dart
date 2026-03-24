@@ -41,9 +41,21 @@ class HomeApiService {
 
       print('[HOME_API_SERVICE] Fetched dashboard data: $responseData');
 
-      // Extract stats from response
-      final stats = responseData['stats'] as Map<String, dynamic>? ?? {};
+      // Extract stats and metrics from response
       final metrics = responseData['metrics'] as Map<String, dynamic>? ?? {};
+      final profileCompletionPercentage =
+          metrics['profileCompletionPercentage'] as int? ?? 0;
+      final applicationSuccessRate =
+          metrics['applicationSuccessRate'] as int? ?? 0;
+
+      final statsMap = responseData['stats'] as Map<String, dynamic>? ?? {};
+      final totalMatches = statsMap['totalMatches'] as int? ?? 0;
+      final avgMarketSalary = statsMap['avgMarketSalary'] as String? ?? 'N/A';
+      final totalApplications = statsMap['totalApplications'] as int? ?? 0;
+      final inReview = statsMap['inReview'] as int? ?? 0;
+      final interviews = statsMap['interviews'] as int? ?? 0;
+      final offers = statsMap['offers'] as int? ?? 0;
+      final rejected = statsMap['rejected'] as int? ?? 0;
 
       // Extract featured jobs from the response or fetch separately
       final featuredJobsData =
@@ -69,20 +81,6 @@ class HomeApiService {
         '[HOME_API_SERVICE] Fetched ${finalFeaturedJobs.length} featured jobs',
       );
 
-      // Extract metrics with defaults
-      final profileCompletionPercentage =
-          metrics['profileCompletionPercentage'] as int? ?? 0;
-      final applicationSuccessRate =
-          metrics['applicationSuccessRate'] as int? ?? 0;
-
-      final stats = data['stats'] as Map<String, dynamic>? ?? {};
-      final totalMatches = stats['totalMatches'] as int? ?? 0;
-      final avgMarketSalary = stats['avgMarketSalary'] as String? ?? 'N/A';
-      final totalApplications = stats['totalApplications'] as int? ?? 0;
-      final inReview = stats['inReview'] as int? ?? 0;
-      final interviews = stats['interviews'] as int? ?? 0;
-      final offers = stats['offers'] as int? ?? 0;
-      final rejected = stats['rejected'] as int? ?? 0;
 
       // Format match distribution as "inReview | interviews | offers"
       final matchDistribution = '$inReview | $interviews | $offers';

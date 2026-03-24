@@ -27,6 +27,7 @@ class HomeAnalyticsWidget extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+        /*
         // Application Status Chart
         _buildChartCard(
           context,
@@ -35,6 +36,7 @@ class HomeAnalyticsWidget extends StatelessWidget {
           _buildApplicationStatusChart(context),
         ),
         SizedBox(height: AppTheme.spacingMd.h),
+        */
 
         // Match Score Distribution
         _buildChartCard(
@@ -45,6 +47,7 @@ class HomeAnalyticsWidget extends StatelessWidget {
         ),
         SizedBox(height: AppTheme.spacingMd.h),
 
+        /*
         // Monthly Applications Trend
         _buildChartCard(
           context,
@@ -53,6 +56,7 @@ class HomeAnalyticsWidget extends StatelessWidget {
           _buildMonthlyTrendChart(context),
         ),
         SizedBox(height: AppTheme.spacingMd.h),
+        */
 
         // Skills Demand
         _buildChartCard(

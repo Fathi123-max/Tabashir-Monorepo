@@ -6,6 +6,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tabashir/core/di/injection.dart';
 import 'package:tabashir/core/network/models/resume_response/resume_item.dart';
 import 'package:tabashir/features/profile/domain/repositories/profile_repository.dart';
+import 'package:tabashir/features/resume/presentation/cubit/resume_review_cubit.dart';
+import 'package:tabashir/features/resume/presentation/screens/resume_review_screen.dart';
 import '../screens/main_app_shell.dart';
 import 'package:tabashir/features/home/presentation/screens/home_screen.dart';
 import 'package:tabashir/features/jobs/presentation/screens/jobs_screen.dart';
@@ -54,7 +56,9 @@ class StreamListenable extends ChangeNotifier {
 
 final GoRouter appRouter = GoRouter(
   initialLocation: RouteNames.splash,
-  refreshListenable: StreamListenable(AuthSessionService.instance.authStateStream),
+  refreshListenable: StreamListenable(
+    AuthSessionService.instance.authStateStream,
+  ),
   redirect: (context, state) async {
     final authService = AuthSessionService.instance;
     final isAuthenticated = await authService.isAuthenticated;
@@ -314,14 +318,9 @@ final GoRouter appRouter = GoRouter(
       name: 'resume-review-screen',
       builder: (context, state) {
         final parsedData = state.extra as Map<String, dynamic>? ?? {};
-        // Placeholder for now, parsedData is received
-        return Scaffold(
-          appBar: AppBar(
-            title: const Text('Resume Review'),
-          ),
-          body: const Center(
-            child: Text('Review your resume details'),
-          ),
+        return BlocProvider(
+          create: (_) => getIt<ResumeReviewCubit>(param1: parsedData),
+          child: const ResumeReviewScreen(),
         );
       },
     ),

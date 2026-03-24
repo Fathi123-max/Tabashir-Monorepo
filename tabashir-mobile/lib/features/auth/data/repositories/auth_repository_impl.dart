@@ -145,12 +145,24 @@ class AuthRepositoryImpl implements AuthRepository {
   @override
   Future<AuthResponse> appleSignIn({
     required String identityToken,
+    String? email,
+    String? givenName,
+    String? familyName,
   }) async {
     try {
       // Call Apple Sign-In API endpoint
-      final request = {
+      final request = <String, dynamic>{
         'identityToken': identityToken,
       };
+      
+      if (email != null) request['email'] = email;
+      
+      if (givenName != null || familyName != null) {
+        request['fullName'] = {
+          if (givenName != null) 'givenName': givenName,
+          if (familyName != null) 'familyName': familyName,
+        };
+      }
 
       final response = await _authApiService.appleSignIn(
         request,
@@ -168,6 +180,40 @@ class AuthRepositoryImpl implements AuthRepository {
       throw _handleDioError(e);
     } catch (e) {
       throw Exception('Apple sign-in failed: $e');
+    }
+  }
+
+  @override
+  Future<AuthResponse> googleSignIn({
+    required String idToken,
+    String? email,
+    String? name,
+  }) async {
+    try {
+      // Call Google Sign-In API endpoint
+      final request = <String, dynamic>{
+        'idToken': idToken,
+      };
+
+      if (email != null) request['email'] = email;
+      if (name != null) request['name'] = name;
+
+      final response = await _authApiService.googleSignIn(
+        request,
+      );
+
+      if (response.response.statusCode == 200 ||
+          response.response.statusCode == 201) {
+        return response.data;
+      } else {
+        throw Exception(
+          'Google sign-in failed with status: ${response.response.statusCode}',
+        );
+      }
+    } on DioException catch (e) {
+      throw _handleDioError(e);
+    } catch (e) {
+      throw Exception('Google sign-in failed: $e');
     }
   }
 

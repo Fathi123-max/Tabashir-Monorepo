@@ -22,6 +22,8 @@ _HomeDashboardResponse _$HomeDashboardResponseFromJson(
   profileCompletionPercentage: (json['profileCompletionPercentage'] as num)
       .toInt(),
   applicationSuccessRate: (json['applicationSuccessRate'] as num).toInt(),
+  avgMarketSalary: json['avgMarketSalary'] as String?,
+  totalApplications: (json['totalApplications'] as num?)?.toInt(),
   jobsByCity: (json['jobsByCity'] as Map<String, dynamic>?)?.map(
     (k, e) => MapEntry(k, (e as num).toInt()),
   ),
@@ -43,6 +45,8 @@ Map<String, dynamic> _$HomeDashboardResponseToJson(
   'matchDistribution': instance.matchDistribution,
   'profileCompletionPercentage': instance.profileCompletionPercentage,
   'applicationSuccessRate': instance.applicationSuccessRate,
+  'avgMarketSalary': instance.avgMarketSalary,
+  'totalApplications': instance.totalApplications,
   'jobsByCity': instance.jobsByCity,
   'monthlyJobCounts': instance.monthlyJobCounts,
 };

@@ -63,6 +63,9 @@ class AppleSignInService {
       // Backend will verify the token with Apple and return JWT
       final response = await _repository.appleSignIn(
         identityToken: identityToken,
+        email: appleCredential.email,
+        givenName: appleCredential.givenName,
+        familyName: appleCredential.familyName,
       );
 
       // Store the JWT token from backend in AuthSessionService

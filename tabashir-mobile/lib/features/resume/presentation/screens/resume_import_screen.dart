@@ -149,113 +149,97 @@ class ResumeImportScreen extends StatelessWidget {
     final theme = Theme.of(context);
     final fileName = resume.name;
 
-    return Container(
-      width: double.infinity,
-      padding: EdgeInsets.all(AppTheme.spacingLg.w),
-      decoration: BoxDecoration(
-        color: theme.cardTheme.color,
-        borderRadius: BorderRadius.circular(AppTheme.radiusLarge.r),
-        border: Border.all(
-          color: AppTheme.primaryColor.withOpacity(0.3),
+    return Hero(
+      tag: 'resume-review-card',
+      child: Container(
+        width: double.infinity,
+        padding: EdgeInsets.all(AppTheme.spacingLg.w),
+        decoration: BoxDecoration(
+          color: theme.cardTheme.color,
+          borderRadius: BorderRadius.circular(AppTheme.radiusLarge.r),
+          border: Border.all(
+            color: AppTheme.primaryColor.withOpacity(0.3),
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: AppTheme.primaryColor.withOpacity(0.05),
+              blurRadius: 10,
+              offset: const Offset(0, 4),
+            ),
+          ],
         ),
-        boxShadow: [
-          BoxShadow(
-            color: AppTheme.primaryColor.withOpacity(0.05),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
-          ),
-        ],
-      ),
-      child: Column(
-        children: [
-          Container(
-            padding: EdgeInsets.all(AppTheme.spacingMd.w),
-            decoration: BoxDecoration(
-              color: AppTheme.primaryColor.withOpacity(0.1),
-              shape: BoxShape.circle,
+        child: Column(
+          children: [
+            Container(
+              padding: EdgeInsets.all(AppTheme.spacingMd.w),
+              decoration: BoxDecoration(
+                color: AppTheme.primaryColor.withOpacity(0.1),
+                shape: BoxShape.circle,
+              ),
+              child: Icon(
+                Icons.check_circle,
+                color: AppTheme.primaryColor,
+                size: 48.sp,
+              ),
             ),
-            child: Icon(
-              Icons.check_circle,
-              color: AppTheme.primaryColor,
-              size: 48.sp,
-            ),
-          ),
-          SizedBox(height: AppTheme.spacingMd.h),
-          Text(
-            'Resume Uploaded!',
-            style: theme.textTheme.titleLarge?.copyWith(
-              fontWeight: FontWeight.bold,
-              color: theme.colorScheme.onSurface,
-            ),
-          ),
-          SizedBox(height: AppTheme.spacingSm.h),
-          Text(
-            fileName,
-            style: theme.textTheme.bodyMedium?.copyWith(
-              color: theme.textTheme.bodyMedium?.color?.withOpacity(0.7),
-            ),
-            textAlign: TextAlign.center,
-          ),
-          SizedBox(height: AppTheme.spacingMd.h),
-          if (parsedData != null && parsedData.isNotEmpty)
-            _buildParsedDataPreview(parsedData: parsedData),
-          if (parsedData != null && parsedData.isNotEmpty)
             SizedBox(height: AppTheme.spacingMd.h),
-          SizedBox(
-            width: double.infinity,
-            child: ElevatedButton(
-              onPressed: () async {
-                if (parsedData == null || parsedData.isEmpty) {
-                  _completeOnboardingAndNavigate(context);
-                  return;
-                }
-
-                // Show loading indicator
-                showDialog<void>(
-                  context: context,
-                  barrierDismissible: false,
-                  builder: (context) => const Center(
-                    child: CircularProgressIndicator(),
-                  ),
-                );
-
-                try {
-                  final profileCubit = context.read<ProfileCubit>();
-                  await profileCubit.prefillFromParsedResume(parsedData);
-
-                  if (context.mounted) {
-                    Navigator.of(context).pop(); // Close loading dialog
-                    _completeOnboardingAndNavigate(context);
-                  }
-                } catch (e) {
-                  if (context.mounted) {
-                    Navigator.of(context).pop(); // Close loading dialog
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text('Error updating profile: $e')),
-                    );
-                    // Do NOT navigate on error, allow user to retry
-                  }
-                }
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: AppTheme.primaryColor,
-                foregroundColor: Colors.white,
-                padding: EdgeInsets.symmetric(vertical: AppTheme.spacingMd.h),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(AppTheme.radiusMedium.r),
+            Material(
+              type: MaterialType.transparency,
+              child: Text(
+                'Resume Uploaded!',
+                style: theme.textTheme.titleLarge?.copyWith(
+                  fontWeight: FontWeight.bold,
+                  color: theme.colorScheme.onSurface,
                 ),
               ),
-              child: const Text('Continue'),
             ),
-          ),
-          SizedBox(height: AppTheme.spacingSm.h),
-          TextButton(
-            onPressed: () {
-              context.read<ResumeImportCubit>().pickResumeFile();
-            },
-            child: const Text('Upload a different file'),
-          ),
-        ],
+            SizedBox(height: AppTheme.spacingSm.h),
+            Material(
+              type: MaterialType.transparency,
+              child: Text(
+                fileName,
+                style: theme.textTheme.bodyMedium?.copyWith(
+                  color: theme.textTheme.bodyMedium?.color?.withOpacity(0.7),
+                ),
+                textAlign: TextAlign.center,
+              ),
+            ),
+            SizedBox(height: AppTheme.spacingMd.h),
+            if (parsedData != null && parsedData.isNotEmpty)
+              _buildParsedDataPreview(parsedData: parsedData),
+            if (parsedData != null && parsedData.isNotEmpty)
+              SizedBox(height: AppTheme.spacingMd.h),
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton(
+                onPressed: () async {
+                  if (parsedData == null || parsedData.isEmpty) {
+                    _completeOnboardingAndNavigate(context);
+                    return;
+                  }
+
+                  context.push(RouteNames.resumeReview, extra: parsedData);
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: AppTheme.primaryColor,
+                  foregroundColor: Colors.white,
+                  padding: EdgeInsets.symmetric(vertical: AppTheme.spacingMd.h),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(AppTheme.radiusMedium.r),
+                  ),
+                ),
+                child: const Text('Continue'),
+              ),
+            ),
+            SizedBox(height: AppTheme.spacingSm.h),
+            TextButton(
+              onPressed: () {
+                context.read<ResumeImportCubit>().pickResumeFile();
+              },
+              child: const Text('Upload a different file'),
+            ),
+          ],
+        ),
       ),
     );
   }

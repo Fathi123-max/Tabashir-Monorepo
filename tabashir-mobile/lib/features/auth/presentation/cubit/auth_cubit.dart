@@ -25,13 +25,15 @@ class AuthCubit extends Cubit<AuthState> {
     required String email,
     required String password,
   }) async {
-    emit(
-      state.copyWith(
-        status: AuthStatus.loading,
-        email: email,
-        password: password,
-      ),
-    );
+    if (!isClosed) {
+      emit(
+        state.copyWith(
+          status: AuthStatus.loading,
+          email: email,
+          password: password,
+        ),
+      );
+    }
 
     try {
       final response = await _repository.login(
@@ -68,29 +70,35 @@ class AuthCubit extends Cubit<AuthState> {
       // Reset application initialization state on successful login
       getIt<AppInitializationCubit>().reset();
 
-      emit(
-        state.copyWith(
-          status: AuthStatus.loginSuccess,
-          isEmailVerified: true, // Assume email is verified after login
-        ),
-      );
+      if (!isClosed) {
+        emit(
+          state.copyWith(
+            status: AuthStatus.loginSuccess,
+            isEmailVerified: true, // Assume email is verified after login
+          ),
+        );
+      }
     } on Exception catch (e) {
       // Extract the error message from the exception
       final errorMessage = e.toString().replaceFirst('Exception: ', '');
-      emit(
-        state.copyWith(
-          status: AuthStatus.error,
-          errorMessage: errorMessage,
-        ),
-      );
+      if (!isClosed) {
+        emit(
+          state.copyWith(
+            status: AuthStatus.error,
+            errorMessage: errorMessage,
+          ),
+        );
+      }
     } catch (e) {
       // Catch any other unexpected errors
-      emit(
-        state.copyWith(
-          status: AuthStatus.error,
-          errorMessage: 'An unexpected error occurred. Please try again.',
-        ),
-      );
+      if (!isClosed) {
+        emit(
+          state.copyWith(
+            status: AuthStatus.error,
+            errorMessage: 'An unexpected error occurred. Please try again.',
+          ),
+        );
+      }
     }
   }
 
@@ -101,15 +109,17 @@ class AuthCubit extends Cubit<AuthState> {
     required String name,
     String userType = 'CANDIDATE',
   }) async {
-    emit(
-      state.copyWith(
-        status: AuthStatus.loading,
-        email: email,
-        password: password,
-        name: name,
-        userType: userType,
-      ),
-    );
+    if (!isClosed) {
+      emit(
+        state.copyWith(
+          status: AuthStatus.loading,
+          email: email,
+          password: password,
+          name: name,
+          userType: userType,
+        ),
+      );
+    }
 
     try {
       final response = await _repository.register(
@@ -147,66 +157,80 @@ class AuthCubit extends Cubit<AuthState> {
       // Reset application initialization state on successful registration
       getIt<AppInitializationCubit>().reset();
 
-      emit(
-        state.copyWith(
-          status: AuthStatus.registerSuccess,
-          isEmailVerified: false,
-        ),
-      );
+      if (!isClosed) {
+        emit(
+          state.copyWith(
+            status: AuthStatus.registerSuccess,
+            isEmailVerified: false,
+          ),
+        );
+      }
     } on Exception catch (e) {
       // Extract the error message from the exception
       final errorMessage = e.toString().replaceFirst('Exception: ', '');
-      emit(
-        state.copyWith(
-          status: AuthStatus.error,
-          errorMessage: errorMessage,
-        ),
-      );
+      if (!isClosed) {
+        emit(
+          state.copyWith(
+            status: AuthStatus.error,
+            errorMessage: errorMessage,
+          ),
+        );
+      }
     } catch (e) {
       // Catch any other unexpected errors
-      emit(
-        state.copyWith(
-          status: AuthStatus.error,
-          errorMessage: 'An unexpected error occurred. Please try again.',
-        ),
-      );
+      if (!isClosed) {
+        emit(
+          state.copyWith(
+            status: AuthStatus.error,
+            errorMessage: 'An unexpected error occurred. Please try again.',
+          ),
+        );
+      }
     }
   }
 
   /// Send verification email
   Future<void> sendVerificationEmail({required String email}) async {
-    emit(
-      state.copyWith(
-        status: AuthStatus.loading,
-        email: email,
-      ),
-    );
+    if (!isClosed) {
+      emit(
+        state.copyWith(
+          status: AuthStatus.loading,
+          email: email,
+        ),
+      );
+    }
 
     try {
       final response = await _repository.sendVerificationEmail(email: email);
 
-      emit(
-        state.copyWith(
-          status: AuthStatus.emailSent,
-        ),
-      );
+      if (!isClosed) {
+        emit(
+          state.copyWith(
+            status: AuthStatus.emailSent,
+          ),
+        );
+      }
     } on Exception catch (e) {
       // Extract the error message from the exception
       final errorMessage = e.toString().replaceFirst('Exception: ', '');
-      emit(
-        state.copyWith(
-          status: AuthStatus.error,
-          errorMessage: errorMessage,
-        ),
-      );
+      if (!isClosed) {
+        emit(
+          state.copyWith(
+            status: AuthStatus.error,
+            errorMessage: errorMessage,
+          ),
+        );
+      }
     } catch (e) {
       // Catch any other unexpected errors
-      emit(
-        state.copyWith(
-          status: AuthStatus.error,
-          errorMessage: 'An unexpected error occurred. Please try again.',
-        ),
-      );
+      if (!isClosed) {
+        emit(
+          state.copyWith(
+            status: AuthStatus.error,
+            errorMessage: 'An unexpected error occurred. Please try again.',
+          ),
+        );
+      }
     }
   }
 
@@ -215,13 +239,15 @@ class AuthCubit extends Cubit<AuthState> {
     required String email,
     required String code,
   }) async {
-    emit(
-      state.copyWith(
-        status: AuthStatus.loading,
-        email: email,
-        verificationCode: code,
-      ),
-    );
+    if (!isClosed) {
+      emit(
+        state.copyWith(
+          status: AuthStatus.loading,
+          email: email,
+          verificationCode: code,
+        ),
+      );
+    }
 
     try {
       final response = await _repository.verifyEmail(
@@ -229,29 +255,35 @@ class AuthCubit extends Cubit<AuthState> {
         code: code,
       );
 
-      emit(
-        state.copyWith(
-          status: AuthStatus.emailVerified,
-          isEmailVerified: true,
-        ),
-      );
+      if (!isClosed) {
+        emit(
+          state.copyWith(
+            status: AuthStatus.emailVerified,
+            isEmailVerified: true,
+          ),
+        );
+      }
     } on Exception catch (e) {
       // Extract the error message from the exception
       final errorMessage = e.toString().replaceFirst('Exception: ', '');
-      emit(
-        state.copyWith(
-          status: AuthStatus.error,
-          errorMessage: errorMessage,
-        ),
-      );
+      if (!isClosed) {
+        emit(
+          state.copyWith(
+            status: AuthStatus.error,
+            errorMessage: errorMessage,
+          ),
+        );
+      }
     } catch (e) {
       // Catch any other unexpected errors
-      emit(
-        state.copyWith(
-          status: AuthStatus.error,
-          errorMessage: 'An unexpected error occurred. Please try again.',
-        ),
-      );
+      if (!isClosed) {
+        emit(
+          state.copyWith(
+            status: AuthStatus.error,
+            errorMessage: 'An unexpected error occurred. Please try again.',
+          ),
+        );
+      }
     }
   }
 

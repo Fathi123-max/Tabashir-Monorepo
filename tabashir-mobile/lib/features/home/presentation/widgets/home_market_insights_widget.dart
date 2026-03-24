@@ -187,6 +187,7 @@ class HomeMarketInsightsWidget extends StatelessWidget {
               ),
             ],
           ),
+          /*
           SizedBox(height: AppTheme.spacingMd.h),
           // Second row: Avg Applications and Total Applications
           Row(
@@ -209,6 +210,7 @@ class HomeMarketInsightsWidget extends StatelessWidget {
               ),
             ],
           ),
+          */
         ],
       ),
     );

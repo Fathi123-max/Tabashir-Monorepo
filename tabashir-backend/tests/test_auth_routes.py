@@ -1,7 +1,8 @@
 import pytest
 import json
 import sys
-sys.path.insert(0, '/Users/Apple/Documents/tabashir')
+import os
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 from app import create_app
 
@@ -15,7 +16,7 @@ def client():
 
 def test_login_missing_fields(client):
     """Test that login returns 400 when email or password is missing"""
-    response = client.post('/api/auth/login',
+    response = client.post('/api/v1/auth/login',
         data=json.dumps({"email": "test@example.com"}),
         content_type='application/json'
     )
@@ -25,7 +26,7 @@ def test_login_missing_fields(client):
 
 def test_login_empty_body(client):
     """Test that login returns 400 when request body is empty"""
-    response = client.post('/api/auth/login',
+    response = client.post('/api/v1/auth/login',
         data=json.dumps({}),
         content_type='application/json'
     )
@@ -37,11 +38,11 @@ def test_login_empty_body(client):
 def test_login_success(client):
     """Test successful login - requires database"""
     # First create a test user in DB
-    from app.database.prisma_db import execute_prisma_query
+    from app.database.db import execute_query
     from app.services.password_service import hash_password
 
     # Create test user
-    execute_prisma_query(
+    execute_query(
         """INSERT INTO users (id, email, password, name, "userType", "createdAt", "updatedAt")
            VALUES (%s, %s, %s, %s, %s, NOW(), NOW())
            ON CONFLICT (email) DO NOTHING""",
@@ -49,7 +50,7 @@ def test_login_success(client):
         commit=True
     )
 
-    response = client.post('/api/auth/login',
+    response = client.post('/api/v1/auth/login',
         data=json.dumps({"email": "test@example.com", "password": "password123"}),
         content_type='application/json'
     )
@@ -63,7 +64,7 @@ def test_login_success(client):
 @pytest.mark.database
 def test_login_invalid_credentials(client):
     """Test login with invalid credentials - requires database"""
-    response = client.post('/api/auth/login',
+    response = client.post('/api/v1/auth/login',
         data=json.dumps({"email": "wrong@example.com", "password": "wrong"}),
         content_type='application/json'
     )

@@ -39,6 +39,12 @@ abstract class AuthApiService {
     @Body() Map<String, dynamic> request,
   );
 
+  /// Sign in with Google ID
+  @POST('/auth/google-signin')
+  Future<HttpResponse<AuthResponse>> googleSignIn(
+    @Body() Map<String, dynamic> request,
+  );
+
   /// Delete user account
   @DELETE('/auth/account')
   Future<void> deleteAccount();

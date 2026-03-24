@@ -47,7 +47,7 @@ class AuthDioClient {
           if (error.response?.statusCode == 401) {
             print('[AUTH_DIO] 401 Unauthorized for path: $requestPath');
 
-            // Check if this is an auth endpoint
+            // Check if this is an auth endpoint where 401 is expected or fatal
             final authEndpoints = [
               '/auth/login',
               '/auth/register',
@@ -59,19 +59,29 @@ class AuthDioClient {
               (path) => requestPath.contains(path),
             );
 
-            if (isAuthEndpoint) {
-              print('[AUTH_DIO] 401 on auth endpoint - Clearing session');
+            // If it's a refresh endpoint itself that failed with 401, it's a fatal session expiry
+            if (requestPath.contains('/auth/refresh')) {
+              print('[AUTH_DIO] 401 on refresh endpoint - SESSION EXPIRED');
               await AuthSessionService.instance.setLoggedOut();
+              return handler.next(error);
+            }
+
+            // If it's login/register, don't logout, just pass the error
+            if (isAuthEndpoint) {
+              print('[AUTH_DIO] 401 on login/register - No action needed');
               return handler.next(error);
             }
 
             // For non-auth endpoints, try to refresh the token
             print('[AUTH_DIO] Attempting token refresh...');
             try {
-              final newToken = await AuthSessionService.instance.refreshAccessToken();
-              
+              final newToken =
+                  await AuthSessionService.instance.refreshAccessToken();
+
               if (newToken != null) {
-                print('[AUTH_DIO] Token refreshed, retrying original request...');
+                print(
+                  '[AUTH_DIO] Token refreshed successfully, retrying original request...',
+                );
 
                 // Clone the original request with the new token
                 final opts = error.requestOptions;
@@ -82,19 +92,24 @@ class AuthDioClient {
                   final response = await _dio.fetch(opts);
                   return handler.resolve(response);
                 } on DioException catch (retryError) {
-                  print('[AUTH_DIO] ❌ Retry failed: ${retryError.message}');
+                  print(
+                    '[AUTH_DIO] ❌ Retry failed with error: ${retryError.message}',
+                  );
                   return handler.next(retryError);
                 }
               } else {
-                print('[AUTH_DIO] ❌ Token refresh returned null');
+                print(
+                  '[AUTH_DIO] ❌ Token refresh returned null (Unauthorized) - SESSION EXPIRED',
+                );
+                await AuthSessionService.instance.setLoggedOut();
               }
             } catch (e) {
-              print('[AUTH_DIO] ❌ Token refresh exception: $e');
+              print('[AUTH_DIO] ❌ Token refresh failed with exception: $e');
+              print('[AUTH_DIO] ⚠️ Network or server error - KEEPING SESSION ALIVE');
+              // Don't call setLoggedOut() here for network errors
+              // This allows the user to retry later when they have connection
+              return handler.next(error);
             }
-
-            // If refresh failed or returned null, clear auth state
-            print('[AUTH_DIO] Session expired - Logging out');
-            await AuthSessionService.instance.setLoggedOut();
           }
 
           return handler.next(error);

@@ -40,5 +40,16 @@ abstract class AuthRepository {
   /// Returns [AuthResponse] with user data and tokens
   Future<AuthResponse> appleSignIn({
     required String identityToken,
+    String? email,
+    String? givenName,
+    String? familyName,
+  });
+
+  /// Sign in with Google ID
+  /// Returns [AuthResponse] with user data and tokens
+  Future<AuthResponse> googleSignIn({
+    required String idToken,
+    String? email,
+    String? name,
   });
 }
