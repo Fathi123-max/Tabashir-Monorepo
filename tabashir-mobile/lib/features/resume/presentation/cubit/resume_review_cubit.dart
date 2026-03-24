@@ -29,14 +29,24 @@ class ResumeReviewCubit extends Cubit<ResumeReviewState> {
     if (phone != null) newData['phone'] = phone;
     if (location != null) newData['location'] = location;
     if (linkedin != null) newData['linkedin'] = linkedin;
-    emit(state.copyWith(data: newData, status: ResumeReviewStatus.editing));
+    emit(state.copyWith(
+      data: newData,
+      status: ResumeReviewStatus.editing,
+      profileSynced: false,
+      vaultSynced: false,
+    ));
   }
 
   void updateSummary(String summary) {
     if (isClosed) return;
     final newData = Map<String, dynamic>.from(state.data);
     newData['summary'] = summary;
-    emit(state.copyWith(data: newData, status: ResumeReviewStatus.editing));
+    emit(state.copyWith(
+      data: newData,
+      status: ResumeReviewStatus.editing,
+      profileSynced: false,
+      vaultSynced: false,
+    ));
   }
 
   void addExperience(Map<String, dynamic> experience) {
@@ -45,7 +55,12 @@ class ResumeReviewCubit extends Cubit<ResumeReviewState> {
     final experiences = List<Map<String, dynamic>>.from(newData['experience'] ?? []);
     experiences.add(experience);
     newData['experience'] = experiences;
-    emit(state.copyWith(data: newData, status: ResumeReviewStatus.editing));
+    emit(state.copyWith(
+      data: newData,
+      status: ResumeReviewStatus.editing,
+      profileSynced: false,
+      vaultSynced: false,
+    ));
   }
 
   void removeExperience(int index) {
@@ -55,7 +70,12 @@ class ResumeReviewCubit extends Cubit<ResumeReviewState> {
     if (index >= 0 && index < experiences.length) {
       experiences.removeAt(index);
       newData['experience'] = experiences;
-      emit(state.copyWith(data: newData, status: ResumeReviewStatus.editing));
+      emit(state.copyWith(
+        data: newData,
+        status: ResumeReviewStatus.editing,
+        profileSynced: false,
+        vaultSynced: false,
+      ));
     }
   }
 
@@ -63,7 +83,12 @@ class ResumeReviewCubit extends Cubit<ResumeReviewState> {
     if (isClosed) return;
     final newData = Map<String, dynamic>.from(state.data);
     newData['skills'] = skills;
-    emit(state.copyWith(data: newData, status: ResumeReviewStatus.editing));
+    emit(state.copyWith(
+      data: newData,
+      status: ResumeReviewStatus.editing,
+      profileSynced: false,
+      vaultSynced: false,
+    ));
   }
 
   Future<void> confirmAndSave() async {
