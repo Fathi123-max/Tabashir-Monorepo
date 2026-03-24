@@ -309,6 +309,22 @@ final GoRouter appRouter = GoRouter(
         return ResumePreviewScreen(resume: resume);
       },
     ),
+    GoRoute(
+      path: RouteNames.resumeReview,
+      name: 'resume-review-screen',
+      builder: (context, state) {
+        final parsedData = state.extra as Map<String, dynamic>? ?? {};
+        // Placeholder for now, parsedData is received
+        return Scaffold(
+          appBar: AppBar(
+            title: const Text('Resume Review'),
+          ),
+          body: const Center(
+            child: Text('Review your resume details'),
+          ),
+        );
+      },
+    ),
   ],
   // Error page if no route matches
   errorBuilder: (context, state) =>

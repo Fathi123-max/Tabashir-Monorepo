@@ -47,4 +47,5 @@ class RouteNames {
 
   /// Resume routes
   static const String resumePreview = '/resume-preview';
+  static const String resumeReview = '/resume-review';
 }
