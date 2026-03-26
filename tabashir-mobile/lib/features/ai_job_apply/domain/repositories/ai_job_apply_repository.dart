@@ -23,6 +23,18 @@ abstract class AiJobApplyRepository {
     required String gender,
   });
 
+  /// Add new client and apply to jobs using AI
+  /// Returns [JobsMatchResponse] with matching results
+  Future<JobsMatchResponse> addClient({
+    required String email,
+    required Uint8List fileBytes,
+    required String fileName,
+    required List<String> positions,
+    required List<String> locations,
+    required String nationality,
+    required String gender,
+  });
+
   /// Get available resumes for selection
   /// Returns list of [ResumeSelectionModel]
   Future<List<ResumeSelectionModel>> getAvailableResumes({
@@ -103,5 +115,12 @@ abstract class AiJobApplyRepository {
     required String fileName,
     String? nationality,
     String? gender,
+  });
+
+  /// Suggest job titles based on resume
+  /// Returns list of suggested job titles
+  Future<List<String>> suggestJobTitles({
+    required Uint8List fileBytes,
+    required String fileName,
   });
 }

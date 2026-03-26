@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'dart:typed_data';
-import 'dart:io';
 
 import 'package:dio/dio.dart';
 import 'package:injectable/injectable.dart';
@@ -68,6 +67,46 @@ class AiJobApplyRepositoryImpl implements AiJobApplyRepository {
       throw Exception('Failed to apply to jobs: ${e.message}');
     } catch (e) {
       throw Exception('Failed to apply to jobs: $e');
+    }
+  }
+
+  @override
+  Future<JobsMatchResponse> addClient({
+    required String email,
+    required Uint8List fileBytes,
+    required String fileName,
+    required List<String> positions,
+    required List<String> locations,
+    required String nationality,
+    required String gender,
+  }) async {
+    try {
+      // Convert Uint8List to MultipartFile
+      final multipartFile = MultipartFile.fromBytes(
+        fileBytes,
+        filename: fileName,
+      );
+
+      // Call the API with MultipartFile
+      final response = await _tabashirApiService.addClient(
+        email,
+        multipartFile,
+        nationality,
+        gender,
+        locations,
+        positions,
+      );
+
+      final applyResponse = response.data;
+
+      return JobsMatchResponse(
+        matchedJobs: [], // API doesn't return matched jobs list
+        total: applyResponse.summary.rankingResult.matchesFound,
+      );
+    } on DioException catch (e) {
+      throw Exception('Failed to add client: ${e.message}');
+    } catch (e) {
+      throw Exception('Failed to add client: $e');
     }
   }
 
@@ -358,6 +397,31 @@ class AiJobApplyRepositoryImpl implements AiJobApplyRepository {
       throw Exception('Failed to apply to specific job: ${e.message}');
     } catch (e) {
       throw Exception('Failed to apply to specific job: $e');
+    }
+  }
+
+  @override
+  Future<List<String>> suggestJobTitles({
+    required Uint8List fileBytes,
+    required String fileName,
+  }) async {
+    try {
+      // Convert Uint8List to MultipartFile
+      final multipartFile = MultipartFile.fromBytes(
+        fileBytes,
+        filename: fileName,
+      );
+
+      // Call the API with MultipartFile
+      final response = await _tabashirApiService.suggestJobTitles(
+        multipartFile,
+      );
+
+      return response.data.suggestedJobTitles;
+    } on DioException catch (e) {
+      throw Exception('Failed to suggest job titles: ${e.message}');
+    } catch (e) {
+      throw Exception('Failed to suggest job titles: $e');
     }
   }
 }
