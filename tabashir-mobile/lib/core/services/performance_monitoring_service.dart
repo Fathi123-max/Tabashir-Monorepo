@@ -77,8 +77,9 @@ class PerformanceMonitoringService {
       final prefs = await SharedPreferences.getInstance();
       final metricsHistory = prefs.getString(_metricsHistoryKey);
 
-      final history =
-          metricsHistory != null ? _parseJson(metricsHistory) : <String, dynamic>{};
+      final history = metricsHistory != null
+          ? _parseJson(metricsHistory)
+          : <String, dynamic>{};
 
       if (!history.containsKey(operationName)) {
         history[operationName] = {'durations': [], 'count': 0, 'total': 0};

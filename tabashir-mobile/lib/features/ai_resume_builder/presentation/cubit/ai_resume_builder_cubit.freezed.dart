@@ -14,7 +14,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$AiResumeBuilderState {
 
- ResumeData get resumeData; bool get isLoading; List<String> get errors;
+ ResumeData get resumeData; bool get isLoading; List<String> get errors; String get selectedTemplateId; bool get isGenerating; ResumeItem? get generationResult;
 /// Create a copy of AiResumeBuilderState
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -25,16 +25,16 @@ $AiResumeBuilderStateCopyWith<AiResumeBuilderState> get copyWith => _$AiResumeBu
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is AiResumeBuilderState&&(identical(other.resumeData, resumeData) || other.resumeData == resumeData)&&(identical(other.isLoading, isLoading) || other.isLoading == isLoading)&&const DeepCollectionEquality().equals(other.errors, errors));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is AiResumeBuilderState&&(identical(other.resumeData, resumeData) || other.resumeData == resumeData)&&(identical(other.isLoading, isLoading) || other.isLoading == isLoading)&&const DeepCollectionEquality().equals(other.errors, errors)&&(identical(other.selectedTemplateId, selectedTemplateId) || other.selectedTemplateId == selectedTemplateId)&&(identical(other.isGenerating, isGenerating) || other.isGenerating == isGenerating)&&(identical(other.generationResult, generationResult) || other.generationResult == generationResult));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,resumeData,isLoading,const DeepCollectionEquality().hash(errors));
+int get hashCode => Object.hash(runtimeType,resumeData,isLoading,const DeepCollectionEquality().hash(errors),selectedTemplateId,isGenerating,generationResult);
 
 @override
 String toString() {
-  return 'AiResumeBuilderState(resumeData: $resumeData, isLoading: $isLoading, errors: $errors)';
+  return 'AiResumeBuilderState(resumeData: $resumeData, isLoading: $isLoading, errors: $errors, selectedTemplateId: $selectedTemplateId, isGenerating: $isGenerating, generationResult: $generationResult)';
 }
 
 
@@ -45,11 +45,11 @@ abstract mixin class $AiResumeBuilderStateCopyWith<$Res>  {
   factory $AiResumeBuilderStateCopyWith(AiResumeBuilderState value, $Res Function(AiResumeBuilderState) _then) = _$AiResumeBuilderStateCopyWithImpl;
 @useResult
 $Res call({
- ResumeData resumeData, bool isLoading, List<String> errors
+ ResumeData resumeData, bool isLoading, List<String> errors, String selectedTemplateId, bool isGenerating, ResumeItem? generationResult
 });
 
 
-$ResumeDataCopyWith<$Res> get resumeData;
+$ResumeDataCopyWith<$Res> get resumeData;$ResumeItemCopyWith<$Res>? get generationResult;
 
 }
 /// @nodoc
@@ -62,12 +62,15 @@ class _$AiResumeBuilderStateCopyWithImpl<$Res>
 
 /// Create a copy of AiResumeBuilderState
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? resumeData = null,Object? isLoading = null,Object? errors = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? resumeData = null,Object? isLoading = null,Object? errors = null,Object? selectedTemplateId = null,Object? isGenerating = null,Object? generationResult = freezed,}) {
   return _then(_self.copyWith(
 resumeData: null == resumeData ? _self.resumeData : resumeData // ignore: cast_nullable_to_non_nullable
 as ResumeData,isLoading: null == isLoading ? _self.isLoading : isLoading // ignore: cast_nullable_to_non_nullable
 as bool,errors: null == errors ? _self.errors : errors // ignore: cast_nullable_to_non_nullable
-as List<String>,
+as List<String>,selectedTemplateId: null == selectedTemplateId ? _self.selectedTemplateId : selectedTemplateId // ignore: cast_nullable_to_non_nullable
+as String,isGenerating: null == isGenerating ? _self.isGenerating : isGenerating // ignore: cast_nullable_to_non_nullable
+as bool,generationResult: freezed == generationResult ? _self.generationResult : generationResult // ignore: cast_nullable_to_non_nullable
+as ResumeItem?,
   ));
 }
 /// Create a copy of AiResumeBuilderState
@@ -78,6 +81,18 @@ $ResumeDataCopyWith<$Res> get resumeData {
   
   return $ResumeDataCopyWith<$Res>(_self.resumeData, (value) {
     return _then(_self.copyWith(resumeData: value));
+  });
+}/// Create a copy of AiResumeBuilderState
+/// with the given fields replaced by the non-null parameter values.
+@override
+@pragma('vm:prefer-inline')
+$ResumeItemCopyWith<$Res>? get generationResult {
+    if (_self.generationResult == null) {
+    return null;
+  }
+
+  return $ResumeItemCopyWith<$Res>(_self.generationResult!, (value) {
+    return _then(_self.copyWith(generationResult: value));
   });
 }
 }
@@ -158,10 +173,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( ResumeData resumeData,  bool isLoading,  List<String> errors)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( ResumeData resumeData,  bool isLoading,  List<String> errors,  String selectedTemplateId,  bool isGenerating,  ResumeItem? generationResult)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _AiResumeBuilderState() when $default != null:
-return $default(_that.resumeData,_that.isLoading,_that.errors);case _:
+return $default(_that.resumeData,_that.isLoading,_that.errors,_that.selectedTemplateId,_that.isGenerating,_that.generationResult);case _:
   return orElse();
 
 }
@@ -179,10 +194,10 @@ return $default(_that.resumeData,_that.isLoading,_that.errors);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( ResumeData resumeData,  bool isLoading,  List<String> errors)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( ResumeData resumeData,  bool isLoading,  List<String> errors,  String selectedTemplateId,  bool isGenerating,  ResumeItem? generationResult)  $default,) {final _that = this;
 switch (_that) {
 case _AiResumeBuilderState():
-return $default(_that.resumeData,_that.isLoading,_that.errors);}
+return $default(_that.resumeData,_that.isLoading,_that.errors,_that.selectedTemplateId,_that.isGenerating,_that.generationResult);}
 }
 /// A variant of `when` that fallback to returning `null`
 ///
@@ -196,10 +211,10 @@ return $default(_that.resumeData,_that.isLoading,_that.errors);}
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( ResumeData resumeData,  bool isLoading,  List<String> errors)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( ResumeData resumeData,  bool isLoading,  List<String> errors,  String selectedTemplateId,  bool isGenerating,  ResumeItem? generationResult)?  $default,) {final _that = this;
 switch (_that) {
 case _AiResumeBuilderState() when $default != null:
-return $default(_that.resumeData,_that.isLoading,_that.errors);case _:
+return $default(_that.resumeData,_that.isLoading,_that.errors,_that.selectedTemplateId,_that.isGenerating,_that.generationResult);case _:
   return null;
 
 }
@@ -211,7 +226,7 @@ return $default(_that.resumeData,_that.isLoading,_that.errors);case _:
 
 
 class _AiResumeBuilderState extends AiResumeBuilderState {
-  const _AiResumeBuilderState({this.resumeData = const ResumeData(), this.isLoading = false, final  List<String> errors = const <String>[]}): _errors = errors,super._();
+  const _AiResumeBuilderState({this.resumeData = const ResumeData(), this.isLoading = false, final  List<String> errors = const <String>[], this.selectedTemplateId = 'regular', this.isGenerating = false, this.generationResult}): _errors = errors,super._();
   
 
 @override@JsonKey() final  ResumeData resumeData;
@@ -223,6 +238,9 @@ class _AiResumeBuilderState extends AiResumeBuilderState {
   return EqualUnmodifiableListView(_errors);
 }
 
+@override@JsonKey() final  String selectedTemplateId;
+@override@JsonKey() final  bool isGenerating;
+@override final  ResumeItem? generationResult;
 
 /// Create a copy of AiResumeBuilderState
 /// with the given fields replaced by the non-null parameter values.
@@ -234,16 +252,16 @@ _$AiResumeBuilderStateCopyWith<_AiResumeBuilderState> get copyWith => __$AiResum
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _AiResumeBuilderState&&(identical(other.resumeData, resumeData) || other.resumeData == resumeData)&&(identical(other.isLoading, isLoading) || other.isLoading == isLoading)&&const DeepCollectionEquality().equals(other._errors, _errors));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _AiResumeBuilderState&&(identical(other.resumeData, resumeData) || other.resumeData == resumeData)&&(identical(other.isLoading, isLoading) || other.isLoading == isLoading)&&const DeepCollectionEquality().equals(other._errors, _errors)&&(identical(other.selectedTemplateId, selectedTemplateId) || other.selectedTemplateId == selectedTemplateId)&&(identical(other.isGenerating, isGenerating) || other.isGenerating == isGenerating)&&(identical(other.generationResult, generationResult) || other.generationResult == generationResult));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,resumeData,isLoading,const DeepCollectionEquality().hash(_errors));
+int get hashCode => Object.hash(runtimeType,resumeData,isLoading,const DeepCollectionEquality().hash(_errors),selectedTemplateId,isGenerating,generationResult);
 
 @override
 String toString() {
-  return 'AiResumeBuilderState(resumeData: $resumeData, isLoading: $isLoading, errors: $errors)';
+  return 'AiResumeBuilderState(resumeData: $resumeData, isLoading: $isLoading, errors: $errors, selectedTemplateId: $selectedTemplateId, isGenerating: $isGenerating, generationResult: $generationResult)';
 }
 
 
@@ -254,11 +272,11 @@ abstract mixin class _$AiResumeBuilderStateCopyWith<$Res> implements $AiResumeBu
   factory _$AiResumeBuilderStateCopyWith(_AiResumeBuilderState value, $Res Function(_AiResumeBuilderState) _then) = __$AiResumeBuilderStateCopyWithImpl;
 @override @useResult
 $Res call({
- ResumeData resumeData, bool isLoading, List<String> errors
+ ResumeData resumeData, bool isLoading, List<String> errors, String selectedTemplateId, bool isGenerating, ResumeItem? generationResult
 });
 
 
-@override $ResumeDataCopyWith<$Res> get resumeData;
+@override $ResumeDataCopyWith<$Res> get resumeData;@override $ResumeItemCopyWith<$Res>? get generationResult;
 
 }
 /// @nodoc
@@ -271,12 +289,15 @@ class __$AiResumeBuilderStateCopyWithImpl<$Res>
 
 /// Create a copy of AiResumeBuilderState
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? resumeData = null,Object? isLoading = null,Object? errors = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? resumeData = null,Object? isLoading = null,Object? errors = null,Object? selectedTemplateId = null,Object? isGenerating = null,Object? generationResult = freezed,}) {
   return _then(_AiResumeBuilderState(
 resumeData: null == resumeData ? _self.resumeData : resumeData // ignore: cast_nullable_to_non_nullable
 as ResumeData,isLoading: null == isLoading ? _self.isLoading : isLoading // ignore: cast_nullable_to_non_nullable
 as bool,errors: null == errors ? _self._errors : errors // ignore: cast_nullable_to_non_nullable
-as List<String>,
+as List<String>,selectedTemplateId: null == selectedTemplateId ? _self.selectedTemplateId : selectedTemplateId // ignore: cast_nullable_to_non_nullable
+as String,isGenerating: null == isGenerating ? _self.isGenerating : isGenerating // ignore: cast_nullable_to_non_nullable
+as bool,generationResult: freezed == generationResult ? _self.generationResult : generationResult // ignore: cast_nullable_to_non_nullable
+as ResumeItem?,
   ));
 }
 
@@ -288,6 +309,18 @@ $ResumeDataCopyWith<$Res> get resumeData {
   
   return $ResumeDataCopyWith<$Res>(_self.resumeData, (value) {
     return _then(_self.copyWith(resumeData: value));
+  });
+}/// Create a copy of AiResumeBuilderState
+/// with the given fields replaced by the non-null parameter values.
+@override
+@pragma('vm:prefer-inline')
+$ResumeItemCopyWith<$Res>? get generationResult {
+    if (_self.generationResult == null) {
+    return null;
+  }
+
+  return $ResumeItemCopyWith<$Res>(_self.generationResult!, (value) {
+    return _then(_self.copyWith(generationResult: value));
   });
 }
 }

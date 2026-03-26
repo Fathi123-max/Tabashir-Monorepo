@@ -189,6 +189,108 @@ class Resume:
             convert(output_path, pdf_path)
         except Exception as e:
             print(f"Error rendering template: {e}")
+            raise
+
+    def to_dict(self) -> dict:
+        """Converts Resume object to dictionary."""
+        return {
+            "header": vars(self.header),
+            "objective": self.objective.objective if self.objective else "",
+            "education": [vars(edu) for edu in self.education],
+            "work": [vars(work) for work in self.work],
+            "leadership": [vars(l) for l in self.lship] if self.lship else [],
+            "projects": [vars(p) for p in self.projects] if self.projects else [],
+            "skills": {
+                "softskills": self.skills.softskills,
+                "skillset": self.skills.skillset,
+                "training": self.skills.training if self.skills.training else []
+            },
+            "languages": format_languages(self.languages.langs) if self.languages else [],
+            "keywords": self.keywords if self.keywords else [],
+            "source_data": self.source_data
+        }
+
+    @staticmethod
+    def from_dict(data: dict) -> 'Resume':
+        """Converts dictionary to Resume object with defaults for missing fields."""
+        h = data.get('header', {})
+        header = Header(
+            email=h.get('email', ''),
+            location=h.get('location', h.get('address', '')),
+            name=h.get('name', ''),
+            phone=h.get('phone', ''),
+            github=h.get('github'),
+            linkedin=h.get('linkedin'),
+            nationality=h.get('nationality')
+        )
+
+        objective = CareerObjective(data.get('objective', ''))
+
+        education = []
+        for edu in data.get('education', []):
+            education.append(EducationExperience(
+                coursework=edu.get('coursework', []),
+                date=edu.get('date', ''),
+                details=edu.get('details', []),
+                location=edu.get('location', ''),
+                major=edu.get('major', ''),
+                degree=edu.get('degree', ''),
+                university=edu.get('university', ''),
+                GPA=edu.get('GPA', edu.get('gpa', ''))
+            ))
+
+        work = []
+        for w in data.get('work', []):
+            work.append(WorkAndLeadershipExperience(
+                company=w.get('company', ''),
+                date=w.get('date', ''),
+                details=w.get('details', []),
+                location=w.get('location', ''),
+                position=w.get('position', '')
+            ))
+
+        leadership = []
+        for l in data.get('leadership', []):
+            leadership.append(WorkAndLeadershipExperience(
+                company=l.get('company', ''),
+                date=l.get('date', ''),
+                details=l.get('details', []),
+                location=l.get('location', ''),
+                position=l.get('position', '')
+            ))
+
+        projects = []
+        for p in data.get('projects', []):
+            projects.append(Project(
+                date=p.get('date', ''),
+                details=p.get('details', []),
+                location=p.get('location', ''),
+                title=p.get('title', ''),
+                position=p.get('position', '')
+            ))
+
+        skills_data = data.get('skills', {})
+        skills = Skills(
+            softskills=skills_data.get('softskills', []),
+            skillset=skills_data.get('skillset', []),
+            training=skills_data.get('training', [])
+        )
+
+        languages = Languages(data.get('languages', []))
+        keywords = data.get('keywords', [])
+
+        return Resume(
+            education=education,
+            header=header,
+            objective=objective,
+            skills=skills,
+            languages=languages,
+            work=work,
+            lship=leadership,
+            projects=projects,
+            keywords=keywords,
+            source_data=data.get('source_data')
+        )
 
 def format_languages(lang_list):
     formatted = []

@@ -5,7 +5,7 @@ part 'save_and_generate_request.freezed.dart';
 part 'save_and_generate_request.g.dart';
 
 @freezed
-class SaveAndGenerateRequest with _$SaveAndGenerateRequest {
+sealed class SaveAndGenerateRequest with _$SaveAndGenerateRequest {
   @JsonSerializable(fieldRename: FieldRename.snake)
   const factory SaveAndGenerateRequest({
     required ResumeData resumeData,
@@ -15,6 +15,4 @@ class SaveAndGenerateRequest with _$SaveAndGenerateRequest {
 
   factory SaveAndGenerateRequest.fromJson(Map<String, dynamic> json) =>
       _$SaveAndGenerateRequestFromJson(json);
-
-  Map<String, dynamic> toJson();
 }

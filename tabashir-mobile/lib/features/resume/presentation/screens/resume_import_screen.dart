@@ -225,7 +225,9 @@ class ResumeImportScreen extends StatelessWidget {
                   foregroundColor: Colors.white,
                   padding: EdgeInsets.symmetric(vertical: AppTheme.spacingMd.h),
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(AppTheme.radiusMedium.r),
+                    borderRadius: BorderRadius.circular(
+                      AppTheme.radiusMedium.r,
+                    ),
                   ),
                 ),
                 child: const Text('Continue'),

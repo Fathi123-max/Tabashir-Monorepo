@@ -3,7 +3,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:tabashir/core/theme/app_theme.dart';
-import '../../data/models/resume_models.dart';
+import '../../../../core/network/models/ai_resume/resume_models.dart';
 
 class AiResumeBuilderHeader extends StatelessWidget {
   const AiResumeBuilderHeader({
@@ -97,6 +97,7 @@ class AiResumeBuilderHeader extends StatelessWidget {
       'Work Experience'.tr(),
       'Education'.tr(),
       'Skills'.tr(),
+      'Template'.tr(),
     ];
 
     return Row(

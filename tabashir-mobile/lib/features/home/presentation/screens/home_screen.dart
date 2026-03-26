@@ -60,7 +60,8 @@ class _HomeScreenState extends State<HomeScreen> {
 
     final locations = <String>{};
     for (final job in jobs) {
-      final location = (job['location'] ?? job['vacancy_city']) as String? ?? '';
+      final location =
+          (job['location'] ?? job['vacancy_city']) as String? ?? '';
       if (location.isNotEmpty) {
         locations.add(location);
       }

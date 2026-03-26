@@ -18,6 +18,7 @@ import 'package:tabashir/features/profile/presentation/screens/settings_screen.d
 import 'package:tabashir/features/profile/presentation/cubit/profile_cubit.dart';
 import 'package:tabashir/features/profile/presentation/cubit/change_password_cubit.dart';
 import 'package:tabashir/features/ai_resume_builder/presentation/screens/ai_resume_builder_screen.dart';
+import 'package:tabashir/features/ai_resume_builder/presentation/screens/resume_success_screen.dart';
 import 'package:tabashir/features/ai_job_apply/presentation/screens/ai_job_apply_unified_screen.dart';
 import 'package:tabashir/features/job_applications/presentation/screens/applications_list_screen.dart';
 import 'package:tabashir/features/notifications/presentation/screens/notifications_screen.dart';
@@ -230,6 +231,14 @@ final GoRouter appRouter = GoRouter(
       path: RouteNames.aiResumeBuilder,
       name: 'ai-resume-builder-screen',
       builder: (context, state) => const AiResumeBuilderScreen(),
+    ),
+    GoRoute(
+      path: RouteNames.aiResumeBuilderSuccess,
+      name: 'ai-resume-builder-success-screen',
+      builder: (context, state) {
+        final resume = state.extra! as ResumeItem;
+        return ResumeSuccessScreen(resume: resume);
+      },
     ),
     GoRoute(
       path: RouteNames.aiJobApply,

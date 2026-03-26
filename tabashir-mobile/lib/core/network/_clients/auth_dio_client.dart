@@ -37,8 +37,10 @@ class AuthDioClient {
         },
         onError: (error, handler) async {
           final requestPath = error.requestOptions.path;
-          print('[AUTH_DIO] ❌ Request to $requestPath failed: ${error.response?.statusCode}');
-          
+          print(
+            '[AUTH_DIO] ❌ Request to $requestPath failed: ${error.response?.statusCode}',
+          );
+
           if (error.response?.data != null) {
             print('[AUTH_DIO] Error response: ${error.response?.data}');
           }
@@ -75,8 +77,8 @@ class AuthDioClient {
             // For non-auth endpoints, try to refresh the token
             print('[AUTH_DIO] Attempting token refresh...');
             try {
-              final newToken =
-                  await AuthSessionService.instance.refreshAccessToken();
+              final newToken = await AuthSessionService.instance
+                  .refreshAccessToken();
 
               if (newToken != null) {
                 print(
@@ -105,7 +107,9 @@ class AuthDioClient {
               }
             } catch (e) {
               print('[AUTH_DIO] ❌ Token refresh failed with exception: $e');
-              print('[AUTH_DIO] ⚠️ Network or server error - KEEPING SESSION ALIVE');
+              print(
+                '[AUTH_DIO] ⚠️ Network or server error - KEEPING SESSION ALIVE',
+              );
               // Don't call setLoggedOut() here for network errors
               // This allows the user to retry later when they have connection
               return handler.next(error);

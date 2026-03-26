@@ -55,28 +55,46 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('Personal Info'), findsOneWidget);
-    
+
     // Scroll until elements are visible
     final scrollable = find.byType(Scrollable).first;
-    
+
     final summaryFinder = find.text('Summary');
-    await tester.scrollUntilVisible(summaryFinder, 100.0, scrollable: scrollable);
+    await tester.scrollUntilVisible(
+      summaryFinder,
+      100.0,
+      scrollable: scrollable,
+    );
     expect(summaryFinder, findsOneWidget);
 
     final experienceFinder = find.text('Experience');
-    await tester.scrollUntilVisible(experienceFinder, 100.0, scrollable: scrollable);
+    await tester.scrollUntilVisible(
+      experienceFinder,
+      100.0,
+      scrollable: scrollable,
+    );
     expect(experienceFinder, findsOneWidget);
 
     final educationFinder = find.text('Education');
-    await tester.scrollUntilVisible(educationFinder, 100.0, scrollable: scrollable);
+    await tester.scrollUntilVisible(
+      educationFinder,
+      100.0,
+      scrollable: scrollable,
+    );
     expect(educationFinder, findsOneWidget);
 
     final skillsFinder = find.text('Skills');
-    await tester.scrollUntilVisible(skillsFinder, 100.0, scrollable: scrollable);
+    await tester.scrollUntilVisible(
+      skillsFinder,
+      100.0,
+      scrollable: scrollable,
+    );
     expect(skillsFinder, findsOneWidget);
   });
 
-  testWidgets('Confirm button is disabled when critical fields are missing', (tester) async {
+  testWidgets('Confirm button is disabled when critical fields are missing', (
+    tester,
+  ) async {
     when(mockResumeReviewCubit.state).thenReturn(
       const ResumeReviewState(data: {}),
     );
@@ -88,7 +106,9 @@ void main() {
     expect(button.onPressed, isNull);
   });
 
-  testWidgets('Confirm button is enabled when critical fields are present', (tester) async {
+  testWidgets('Confirm button is enabled when critical fields are present', (
+    tester,
+  ) async {
     when(mockResumeReviewCubit.state).thenReturn(
       ResumeReviewState(data: testData),
     );

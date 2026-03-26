@@ -80,14 +80,18 @@ class AppInitializationCubit extends Cubit<AppInitializationState> {
         unauthenticated: (_) => true,
         orElse: () => false,
       );
-      
+
       if (isUnauthenticated) {
-        print('[APP_INIT] Authentication failed during initialization. User is logged out. Continuing gracefully.');
+        print(
+          '[APP_INIT] Authentication failed during initialization. User is logged out. Continuing gracefully.',
+        );
         if (!isClosed) {
-          emit(state.copyWith(
-            isInitialized: true,
-            isLoading: false,
-          ));
+          emit(
+            state.copyWith(
+              isInitialized: true,
+              isLoading: false,
+            ),
+          );
         }
         return;
       }

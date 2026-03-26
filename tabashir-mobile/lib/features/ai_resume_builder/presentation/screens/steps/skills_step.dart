@@ -7,7 +7,7 @@ import 'package:tabashir/core/theme/app_theme.dart';
 import 'package:tabashir/features/ai_resume_builder/presentation/cubit/ai_resume_builder_cubit.dart';
 import 'package:tabashir/features/ai_resume_builder/presentation/widgets/shared/form_fields.dart';
 
-import '../../../data/models/resume_models.dart';
+import '../../../../../core/network/models/ai_resume/resume_models.dart';
 
 class SkillsStep extends StatelessWidget {
   const SkillsStep({super.key});

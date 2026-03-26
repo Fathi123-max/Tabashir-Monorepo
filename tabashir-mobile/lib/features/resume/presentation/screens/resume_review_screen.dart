@@ -48,22 +48,28 @@ class ResumeReviewScreen extends StatelessWidget {
                         SizedBox(height: AppTheme.spacingLg.h),
                         _PersonalInfoSection(data: state.data),
                         SizedBox(height: AppTheme.spacingLg.h),
-                        _SummarySection(summary: state.data['summary'] as String?),
+                        _SummarySection(
+                          summary: state.data['summary'] as String?,
+                        ),
                         SizedBox(height: AppTheme.spacingLg.h),
                         _ExperienceSection(
-                          experience: (state.data['experience'] as List?)
-                              ?.cast<Map<String, dynamic>>() ??
+                          experience:
+                              (state.data['experience'] as List?)
+                                  ?.cast<Map<String, dynamic>>() ??
                               [],
                         ),
                         SizedBox(height: AppTheme.spacingLg.h),
                         _EducationSection(
-                          education: (state.data['education'] as List?)
-                              ?.cast<Map<String, dynamic>>() ??
+                          education:
+                              (state.data['education'] as List?)
+                                  ?.cast<Map<String, dynamic>>() ??
                               [],
                         ),
                         SizedBox(height: AppTheme.spacingLg.h),
                         _SkillsSection(
-                          skills: (state.data['skills'] as List?)?.cast<String>() ?? [],
+                          skills:
+                              (state.data['skills'] as List?)?.cast<String>() ??
+                              [],
                         ),
                         SizedBox(height: 100.h), // Space for footer
                       ]),
@@ -86,7 +92,10 @@ class ResumeReviewScreen extends StatelessWidget {
 
   Widget _buildHeroCard(BuildContext context, ResumeReviewState state) {
     final theme = Theme.of(context);
-    final name = state.data['fullName'] as String? ?? state.data['name'] as String? ?? 'No Name';
+    final name =
+        state.data['fullName'] as String? ??
+        state.data['name'] as String? ??
+        'No Name';
 
     return Hero(
       tag: 'resume-review-card',
@@ -123,7 +132,9 @@ class ResumeReviewScreen extends StatelessWidget {
               type: MaterialType.transparency,
               child: Text(
                 name,
-                style: theme.textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
+                style: theme.textTheme.titleLarge?.copyWith(
+                  fontWeight: FontWeight.bold,
+                ),
                 textAlign: TextAlign.center,
               ),
             ),
@@ -142,7 +153,11 @@ class ResumeReviewScreen extends StatelessWidget {
   }
 
   Widget _buildFooter(BuildContext context, ResumeReviewState state) {
-    final hasName = (state.data['fullName'] as String? ?? state.data['name'] as String? ?? '').isNotEmpty;
+    final hasName =
+        (state.data['fullName'] as String? ??
+                state.data['name'] as String? ??
+                '')
+            .isNotEmpty;
     final hasEmail = (state.data['email'] as String? ?? '').isNotEmpty;
     final isValid = hasName && hasEmail;
 
@@ -163,9 +178,13 @@ class ResumeReviewScreen extends StatelessWidget {
         child: SizedBox(
           width: double.infinity,
           child: ElevatedButton(
-            onPressed: isValid ? () => context.read<ResumeReviewCubit>().confirmAndSave() : null,
+            onPressed: isValid
+                ? () => context.read<ResumeReviewCubit>().confirmAndSave()
+                : null,
             style: AppTheme.primaryButtonStyle.copyWith(
-              padding: WidgetStatePropertyAll(EdgeInsets.symmetric(vertical: 16.h)),
+              padding: WidgetStatePropertyAll(
+                EdgeInsets.symmetric(vertical: 16.h),
+              ),
             ),
             child: const Text('Confirm & Save'),
           ),
@@ -201,7 +220,8 @@ class ResumeReviewScreen extends StatelessWidget {
                   Iconsax.magicpen,
                   size: 14,
                   color: AppTheme.accentColor,
-                ),            ],
+                ),
+            ],
           ),
           SizedBox(height: AppTheme.spacingXs.h),
           InkWell(
@@ -216,10 +236,9 @@ class ResumeReviewScreen extends StatelessWidget {
                 vertical: AppTheme.spacingSm.h,
               ),
               decoration: BoxDecoration(
-                color:
-                    showError
-                        ? AppTheme.errorColor.withOpacity(0.05)
-                        : theme.cardTheme.color,
+                color: showError
+                    ? AppTheme.errorColor.withOpacity(0.05)
+                    : theme.cardTheme.color,
                 borderRadius: BorderRadius.circular(AppTheme.radiusSmall.r),
                 border: Border.all(
                   color: showError ? AppTheme.errorColor : AppTheme.borderLight,
@@ -228,10 +247,9 @@ class ResumeReviewScreen extends StatelessWidget {
               child: Text(
                 isEmpty ? 'Not found' : value!,
                 style: theme.textTheme.bodyMedium?.copyWith(
-                  color:
-                      isEmpty
-                          ? AppTheme.textMutedLight
-                          : theme.textTheme.bodyMedium?.color,
+                  color: isEmpty
+                      ? AppTheme.textMutedLight
+                      : theme.textTheme.bodyMedium?.color,
                   fontStyle: isEmpty ? FontStyle.italic : null,
                 ),
               ),
@@ -252,19 +270,18 @@ class ResumeReviewScreen extends StatelessWidget {
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
-      builder:
-          (context) => _EditItemSheet(
-            title: 'Edit $label',
-            initialData: {'value': initialValue},
-            fields: [
-              {
-                'key': 'value',
-                'label': label,
-                'maxLines': label == 'Summary' ? 5 : 1,
-              },
-            ],
-            onSave: (data) => onSave(data['value'] as String),
-          ),
+      builder: (context) => _EditItemSheet(
+        title: 'Edit $label',
+        initialData: {'value': initialValue},
+        fields: [
+          {
+            'key': 'value',
+            'label': label,
+            'maxLines': label == 'Summary' ? 5 : 1,
+          },
+        ],
+        onSave: (data) => onSave(data['value'] as String),
+      ),
     );
   }
 }
@@ -451,7 +468,8 @@ class _ExperienceSection extends StatelessWidget {
             return _ReviewItemTile(
               title: exp['position'] ?? 'Unknown Position',
               subtitle: exp['company'] ?? 'Unknown Company',
-              date: '${exp['startDate'] ?? ''} - ${exp['endDate'] ?? 'Present'}',
+              date:
+                  '${exp['startDate'] ?? ''} - ${exp['endDate'] ?? 'Present'}',
               onEdit: () {
                 _showEditExperienceSheet(context, exp, index);
               },
@@ -474,26 +492,25 @@ class _ExperienceSection extends StatelessWidget {
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
-      builder:
-          (context) => _EditItemSheet(
-            title: index == -1 ? 'Add Experience' : 'Edit Experience',
-            initialData: exp,
-            fields: const [
-              {'key': 'position', 'label': 'Position'},
-              {'key': 'company', 'label': 'Company'},
-              {'key': 'startDate', 'label': 'Start Date'},
-              {'key': 'endDate', 'label': 'End Date'},
-              {'key': 'description', 'label': 'Description', 'maxLines': 4},
-            ],
-            onSave: (newData) {
-              if (index == -1) {
-                cubit.addExperience(newData);
-              } else {
-                cubit.removeExperience(index);
-                cubit.addExperience(newData);
-              }
-            },
-          ),
+      builder: (context) => _EditItemSheet(
+        title: index == -1 ? 'Add Experience' : 'Edit Experience',
+        initialData: exp,
+        fields: const [
+          {'key': 'position', 'label': 'Position'},
+          {'key': 'company', 'label': 'Company'},
+          {'key': 'startDate', 'label': 'Start Date'},
+          {'key': 'endDate', 'label': 'End Date'},
+          {'key': 'description', 'label': 'Description', 'maxLines': 4},
+        ],
+        onSave: (newData) {
+          if (index == -1) {
+            cubit.addExperience(newData);
+          } else {
+            cubit.removeExperience(index);
+            cubit.addExperience(newData);
+          }
+        },
+      ),
     );
   }
 }
@@ -514,7 +531,10 @@ class _EducationSection extends StatelessWidget {
         if (education.isEmpty)
           Padding(
             padding: EdgeInsets.all(AppTheme.spacingMd.w),
-            child: Text('No education extracted', style: theme.textTheme.bodySmall),
+            child: Text(
+              'No education extracted',
+              style: theme.textTheme.bodySmall,
+            ),
           )
         else
           ...education.asMap().entries.map((entry) {
@@ -533,7 +553,11 @@ class _EducationSection extends StatelessWidget {
     );
   }
 
-  void _showEditEducationSheet(BuildContext context, Map<String, dynamic> edu, int index) {
+  void _showEditEducationSheet(
+    BuildContext context,
+    Map<String, dynamic> edu,
+    int index,
+  ) {
     showModalBottomSheet<void>(
       context: context,
       isScrollControlled: true,
@@ -578,25 +602,27 @@ class _SkillsSection extends StatelessWidget {
         if (skills.isEmpty)
           Padding(
             padding: EdgeInsets.all(AppTheme.spacingMd.w),
-            child: Text('No skills extracted', style: theme.textTheme.bodySmall),
+            child: Text(
+              'No skills extracted',
+              style: theme.textTheme.bodySmall,
+            ),
           )
         else
           Wrap(
             spacing: AppTheme.spacingSm.w,
             runSpacing: AppTheme.spacingSm.h,
-            children:
-                skills
-                    .map(
-                      (skill) => Chip(
-                        label: Text(skill),
-                        onDeleted: () {
-                          final newSkills = List<String>.from(skills);
-                          newSkills.remove(skill);
-                          cubit.updateSkills(newSkills);
-                        },
-                      ),
-                    )
-                    .toList(),
+            children: skills
+                .map(
+                  (skill) => Chip(
+                    label: Text(skill),
+                    onDeleted: () {
+                      final newSkills = List<String>.from(skills);
+                      newSkills.remove(skill);
+                      cubit.updateSkills(newSkills);
+                    },
+                  ),
+                )
+                .toList(),
           ),
       ],
     );
@@ -607,32 +633,31 @@ class _SkillsSection extends StatelessWidget {
     final controller = TextEditingController();
     showDialog<void>(
       context: context,
-      builder:
-          (context) => AlertDialog(
-            title: const Text('Add Skill'),
-            content: TextField(
-              controller: controller,
-              decoration: const InputDecoration(hintText: 'Enter skill name'),
-              autofocus: true,
-            ),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.pop(context),
-                child: const Text('Cancel'),
-              ),
-              TextButton(
-                onPressed: () {
-                  if (controller.text.trim().isNotEmpty) {
-                    final newSkills = List<String>.from(skills);
-                    newSkills.add(controller.text.trim());
-                    cubit.updateSkills(newSkills);
-                  }
-                  Navigator.pop(context);
-                },
-                child: const Text('Add'),
-              ),
-            ],
+      builder: (context) => AlertDialog(
+        title: const Text('Add Skill'),
+        content: TextField(
+          controller: controller,
+          decoration: const InputDecoration(hintText: 'Enter skill name'),
+          autofocus: true,
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Cancel'),
           ),
+          TextButton(
+            onPressed: () {
+              if (controller.text.trim().isNotEmpty) {
+                final newSkills = List<String>.from(skills);
+                newSkills.add(controller.text.trim());
+                cubit.updateSkills(newSkills);
+              }
+              Navigator.pop(context);
+            },
+            child: const Text('Add'),
+          ),
+        ],
+      ),
     );
   }
 }
@@ -723,7 +748,9 @@ class _EditItemSheetState extends State<_EditItemSheet> {
       ),
       decoration: BoxDecoration(
         color: theme.scaffoldBackgroundColor,
-        borderRadius: BorderRadius.vertical(top: Radius.circular(AppTheme.radiusLarge.r)),
+        borderRadius: BorderRadius.vertical(
+          top: Radius.circular(AppTheme.radiusLarge.r),
+        ),
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,

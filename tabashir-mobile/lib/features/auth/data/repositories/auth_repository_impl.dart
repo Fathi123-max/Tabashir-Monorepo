@@ -154,9 +154,9 @@ class AuthRepositoryImpl implements AuthRepository {
       final request = <String, dynamic>{
         'identityToken': identityToken,
       };
-      
+
       if (email != null) request['email'] = email;
-      
+
       if (givenName != null || familyName != null) {
         request['fullName'] = {
           if (givenName != null) 'givenName': givenName,

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
+import 'package:tabashir/core/router/route_names.dart';
 import 'package:tabashir/core/theme/app_theme.dart';
 import '../cubit/ai_resume_builder_cubit.dart';
 import '../widgets/ai_resume_builder_header.dart';
@@ -57,14 +58,10 @@ class AiResumeBuilderView extends StatelessWidget {
         }
 
         if (state.generationResult != null && !state.isGenerating) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text('CV generated successfully!'.tr()),
-              backgroundColor: AppTheme.successColor,
-            ),
+          context.pushReplacement(
+            RouteNames.aiResumeBuilderSuccess,
+            extra: state.generationResult,
           );
-          // Navigate back or to the resume details
-          context.pop();
         }
       },
       builder: (context, state) => Stack(

@@ -18,6 +18,7 @@ class RouteNames {
   static const String applications = '/applications';
   static const String aiResume = '/ai-resume';
   static const String aiResumeBuilder = '/ai-resume-builder';
+  static const String aiResumeBuilderSuccess = '/ai-resume-builder/success';
   static const String aiJobApply = '/ai-job-apply';
   static const String aiJobApplyTargetRoles = '/ai-job-apply/target-roles';
   static const String aiJobApplyLocationPreferences =

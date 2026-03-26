@@ -27,6 +27,7 @@ export 'job_details_response.dart';
 export 'job_update_model.dart';
 export 'jobs_count_response.dart';
 export 'jobs_match_response.dart';
+export 'suggest_job_titles_response.dart';
 export 'payment/checkout_session_request.dart';
 export 'payment/checkout_session_response.dart';
 export 'payment/latest_payment_response.dart';

@@ -21,6 +21,7 @@ import '../../models/job_update_response.dart';
 import '../../models/jobs_monthly_count_response.dart';
 import '../../models/job_applicants_count_response.dart';
 import '../../models/send_linkedin_email_request.dart';
+import '../../models/suggest_job_titles_response.dart';
 
 part 'tabashir_api_service.g.dart';
 
@@ -45,6 +46,18 @@ abstract class TabashirApiService {
   @POST('/apply')
   @MultiPart()
   Future<HttpResponse<ApplyJobsResponse>> applyJobs(
+    @Part(name: 'email') String email,
+    @Part() MultipartFile file,
+    @Part(name: 'nationality') String nationality,
+    @Part(name: 'gender') String gender,
+    @Part(name: 'locations') List<String> locations,
+    @Part(name: 'positions') List<String> positions,
+  );
+
+  /// POST endpoint to add a new client and find matching jobs
+  @POST('/add_client')
+  @MultiPart()
+  Future<HttpResponse<ApplyJobsResponse>> addClient(
     @Part(name: 'email') String email,
     @Part() MultipartFile file,
     @Part(name: 'nationality') String nationality,
@@ -158,6 +171,13 @@ abstract class TabashirApiService {
   @POST('/send-linkedin-email')
   Future<HttpResponse<void>> sendLinkedInEmail(
     @Body() SendLinkedInEmailRequest request,
+  );
+
+  /// Suggest job titles based on CV
+  @POST('/suggest-job-titles')
+  @MultiPart()
+  Future<HttpResponse<SuggestJobTitlesResponse>> suggestJobTitles(
+    @Part() MultipartFile file,
   );
 
   /// Health check

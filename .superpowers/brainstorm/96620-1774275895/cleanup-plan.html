@@ -1,0 +1,75 @@
+<h2>Home Page Clean-up Plan</h2>
+<p class="subtitle">Identify and address static/fake data components</p>
+
+<div class="cards" data-multiselect>
+  <div class="card" data-choice="activity-timeline" onclick="toggleSelect(this)">
+    <div class="card-image" style="background: #f8fafc; padding: 20px; border-radius: 8px;">
+      <div class="mock-nav" style="margin-bottom: 10px; background: #e2e8f0;">Activity Timeline</div>
+      <div style="font-size: 12px; color: #64748b;">
+        • Application Submitted (Oct 24, 2023)<br>
+        • Profile Updated (Oct 23, 2023)<br>
+        • Resume Uploaded (Oct 22, 2023)
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>Activity Timeline</h3>
+      <p><span class="label" style="background: #ef4444; color: white; padding: 2px 6px; border-radius: 4px;">FULLY STATIC</span></p>
+      <p>Hardcoded in Flutter. No backend data exists yet.</p>
+      <p><strong>Action:</strong> Hide until backend is ready.</p>
+    </div>
+  </div>
+
+  <div class="card" data-choice="job-level" onclick="toggleSelect(this)">
+    <div class="card-image" style="background: #f8fafc; padding: 20px; border-radius: 8px;">
+      <div class="mock-nav" style="margin-bottom: 10px; background: #e2e8f0;">Job Card Detail</div>
+      <div style="padding: 8px; background: white; border: 1px solid #e2e8f0; border-radius: 4px;">
+        <div style="font-weight: bold;">Senior Flutter Developer</div>
+        <div style="font-size: 11px; color: #3b82f6;">Level: Not specified</div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>Job Level Label</h3>
+      <p><span class="label" style="background: #f59e0b; color: white; padding: 2px 6px; border-radius: 4px;">MISMATCH</span></p>
+      <p>Hardcoded fallback in Flutter (Not specified). DB has no 'level' field.</p>
+      <p><strong>Action:</strong> Hide label until DB is updated.</p>
+    </div>
+  </div>
+
+  <div class="card" data-choice="market-insights" onclick="toggleSelect(this)">
+    <div class="card-image" style="background: #f8fafc; padding: 20px; border-radius: 8px;">
+      <div class="mock-nav" style="margin-bottom: 10px; background: #e2e8f0;">Market Insights</div>
+      <div style="display: flex; gap: 4px;">
+        <div style="flex: 1; height: 40px; background: #cbd5e1;"></div>
+        <div style="flex: 1; height: 60px; background: #94a3b8;"></div>
+        <div style="flex: 1; height: 30px; background: #cbd5e1;"></div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>Market Insights / Trends</h3>
+      <p><span class="label" style="background: #3b82f6; color: white; padding: 2px 6px; border-radius: 4px;">FAKE BACKEND DATA</span></p>
+      <p>Backend returns static lists (JavaScript, Python, Dubai) instead of real Job table counts.</p>
+      <p><strong>Action:</strong> Replace with real SQL aggregations.</p>
+    </div>
+  </div>
+</div>
+
+<div class="section">
+  <h3>Strategy: "Clean Slate" Implementation</h3>
+  <div class="pros-cons">
+    <div class="pros">
+      <h4>Pros</h4>
+      <ul>
+        <li>Removes embarrassing "stale" dates (Oct 2023)</li>
+        <li>Ensures all visible data is 100% real and personalized</li>
+        <li>Simplifies UI until features are fully built</li>
+      </ul>
+    </div>
+    <div class="cons">
+      <h4>Cons</h4>
+      <ul>
+        <li>Temporary "empty" sections (like Activity)</li>
+        <li>Requires small changes across Flutter and Python</li>
+      </ul>
+    </div>
+  </div>
+</div>

@@ -123,8 +123,9 @@ class ResumeVaultCubit extends Cubit<ResumeVaultState> {
       await _repository.deleteResume(resumeId: id);
       print('🔵 [RESUME_VAULT_CUBIT] ✅ Repository delete successful');
 
-      final updatedResumes =
-          state.resumes.where((ResumeItem r) => r.id != id).toList();
+      final updatedResumes = state.resumes
+          .where((ResumeItem r) => r.id != id)
+          .toList();
       print(
         '🔵 [RESUME_VAULT_CUBIT] Updated resumes count: ${updatedResumes.length}',
       );
@@ -294,7 +295,9 @@ class ResumeVaultCubit extends Cubit<ResumeVaultState> {
         print('🔵 [RESUME_VAULT_CUBIT] Triggering HomeCubit refresh...');
         getIt<HomeCubit>().loadHomeData(forceRefresh: true);
       } catch (e) {
-        print('🔵 [RESUME_VAULT_CUBIT] Failed to trigger HomeCubit refresh: $e');
+        print(
+          '🔵 [RESUME_VAULT_CUBIT] Failed to trigger HomeCubit refresh: $e',
+        );
       }
     } catch (e, stackTrace) {
       print('🔴 [RESUME_VAULT_CUBIT] ❌ Error uploading: $e');

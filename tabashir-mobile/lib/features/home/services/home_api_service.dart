@@ -81,7 +81,6 @@ class HomeApiService {
         '[HOME_API_SERVICE] Fetched ${finalFeaturedJobs.length} featured jobs',
       );
 
-
       // Format match distribution as "inReview | interviews | offers"
       final matchDistribution = '$inReview | $interviews | $offers';
 
@@ -103,7 +102,6 @@ class HomeApiService {
         profileCompletionPercentage: profileCompletionPercentage,
         applicationSuccessRate: applicationSuccessRate,
       );
-
     } catch (e) {
       print('[HOME_API_SERVICE] Error: $e');
       rethrow;

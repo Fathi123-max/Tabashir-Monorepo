@@ -217,11 +217,18 @@ class _HomeJobCardsHorizontalListWidgetState
                     2; // First 2 cards show "Apply Now", rest show "View Details"
 
                 return HomeJobCardWidget(
-                  title: (job['title'] ?? job['job_title']) as String? ?? 'Untitled Position',
-                  company: (job['company'] ?? job['company_name']) as String? ?? 'Unknown Company',
+                  title:
+                      (job['title'] ?? job['job_title']) as String? ??
+                      'Untitled Position',
+                  company:
+                      (job['company'] ?? job['company_name']) as String? ??
+                      'Unknown Company',
                   employmentType:
-                      (job['employmentType'] ?? job['job_type']) as String? ?? 'Full-time',
-                  level: (job['level'] ?? 'Not specified') as String? ?? 'Not specified',
+                      (job['employmentType'] ?? job['job_type']) as String? ??
+                      'Full-time',
+                  level:
+                      (job['level'] ?? 'Not specified') as String? ??
+                      'Not specified',
                   matchPercentage: job['matchPercentage'] as String? ?? 'N/A',
                   isBookmarked: savedJobs.contains(job['id']?.toString()),
                   isPrimary: isPrimary,

@@ -126,10 +126,7 @@ return $default(_that);case _:
 final _that = this;
 switch (_that) {
 case _SaveAndGenerateRequest():
-return $default(_that);case _:
-  throw StateError('Unexpected subclass');
-
-}
+return $default(_that);}
 }
 /// A variant of `map` that fallback to returning `null`.
 ///
@@ -188,10 +185,7 @@ return $default(_that.resumeData,_that.templateId,_that.filename);case _:
 @optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( ResumeData resumeData,  String? templateId,  String? filename)  $default,) {final _that = this;
 switch (_that) {
 case _SaveAndGenerateRequest():
-return $default(_that.resumeData,_that.templateId,_that.filename);case _:
-  throw StateError('Unexpected subclass');
-
-}
+return $default(_that.resumeData,_that.templateId,_that.filename);}
 }
 /// A variant of `when` that fallback to returning `null`
 ///

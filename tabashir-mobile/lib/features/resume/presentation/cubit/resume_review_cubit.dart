@@ -29,53 +29,65 @@ class ResumeReviewCubit extends Cubit<ResumeReviewState> {
     if (phone != null) newData['phone'] = phone;
     if (location != null) newData['location'] = location;
     if (linkedin != null) newData['linkedin'] = linkedin;
-    emit(state.copyWith(
-      data: newData,
-      status: ResumeReviewStatus.editing,
-      profileSynced: false,
-      vaultSynced: false,
-    ));
+    emit(
+      state.copyWith(
+        data: newData,
+        status: ResumeReviewStatus.editing,
+        profileSynced: false,
+        vaultSynced: false,
+      ),
+    );
   }
 
   void updateSummary(String summary) {
     if (isClosed) return;
     final newData = Map<String, dynamic>.from(state.data);
     newData['summary'] = summary;
-    emit(state.copyWith(
-      data: newData,
-      status: ResumeReviewStatus.editing,
-      profileSynced: false,
-      vaultSynced: false,
-    ));
+    emit(
+      state.copyWith(
+        data: newData,
+        status: ResumeReviewStatus.editing,
+        profileSynced: false,
+        vaultSynced: false,
+      ),
+    );
   }
 
   void addExperience(Map<String, dynamic> experience) {
     if (isClosed) return;
     final newData = Map<String, dynamic>.from(state.data);
-    final experiences = List<Map<String, dynamic>>.from(newData['experience'] ?? []);
+    final experiences = List<Map<String, dynamic>>.from(
+      newData['experience'] ?? [],
+    );
     experiences.add(experience);
     newData['experience'] = experiences;
-    emit(state.copyWith(
-      data: newData,
-      status: ResumeReviewStatus.editing,
-      profileSynced: false,
-      vaultSynced: false,
-    ));
+    emit(
+      state.copyWith(
+        data: newData,
+        status: ResumeReviewStatus.editing,
+        profileSynced: false,
+        vaultSynced: false,
+      ),
+    );
   }
 
   void removeExperience(int index) {
     if (isClosed) return;
     final newData = Map<String, dynamic>.from(state.data);
-    final experiences = List<Map<String, dynamic>>.from(newData['experience'] ?? []);
+    final experiences = List<Map<String, dynamic>>.from(
+      newData['experience'] ?? [],
+    );
     if (index >= 0 && index < experiences.length) {
       experiences.removeAt(index);
       newData['experience'] = experiences;
-      emit(state.copyWith(
-        data: newData,
-        status: ResumeReviewStatus.editing,
-        profileSynced: false,
-        vaultSynced: false,
-      ));
+      emit(
+        state.copyWith(
+          data: newData,
+          status: ResumeReviewStatus.editing,
+          profileSynced: false,
+          vaultSynced: false,
+        ),
+      );
     }
   }
 
@@ -83,17 +95,21 @@ class ResumeReviewCubit extends Cubit<ResumeReviewState> {
     if (isClosed) return;
     final newData = Map<String, dynamic>.from(state.data);
     newData['skills'] = skills;
-    emit(state.copyWith(
-      data: newData,
-      status: ResumeReviewStatus.editing,
-      profileSynced: false,
-      vaultSynced: false,
-    ));
+    emit(
+      state.copyWith(
+        data: newData,
+        status: ResumeReviewStatus.editing,
+        profileSynced: false,
+        vaultSynced: false,
+      ),
+    );
   }
 
   Future<void> confirmAndSave() async {
     if (isClosed) return;
-    emit(state.copyWith(status: ResumeReviewStatus.syncing, errorMessage: null));
+    emit(
+      state.copyWith(status: ResumeReviewStatus.syncing, errorMessage: null),
+    );
 
     // 1. Sync Profile
     if (!state.profileSynced) {
@@ -104,10 +120,12 @@ class ResumeReviewCubit extends Cubit<ResumeReviewState> {
         }
       } catch (e) {
         if (!isClosed) {
-          emit(state.copyWith(
-            status: ResumeReviewStatus.failure,
-            errorMessage: 'Profile sync failed: ${e.toString()}',
-          ));
+          emit(
+            state.copyWith(
+              status: ResumeReviewStatus.failure,
+              errorMessage: 'Profile sync failed: ${e.toString()}',
+            ),
+          );
         }
         return;
       }
@@ -122,10 +140,12 @@ class ResumeReviewCubit extends Cubit<ResumeReviewState> {
         }
       } catch (e) {
         if (!isClosed) {
-          emit(state.copyWith(
-            status: ResumeReviewStatus.failure,
-            errorMessage: 'Vault sync failed: ${e.toString()}',
-          ));
+          emit(
+            state.copyWith(
+              status: ResumeReviewStatus.failure,
+              errorMessage: 'Vault sync failed: ${e.toString()}',
+            ),
+          );
         }
         return;
       }

@@ -5,7 +5,7 @@ import 'package:tabashir/core/network/models/ai_resume/create_ai_resume_request.
 import 'package:tabashir/core/network/models/ai_resume/create_ai_resume_response.dart';
 import 'package:tabashir/core/network/services/ai_resume/ai_resume_api_service.dart';
 import 'package:tabashir/core/services/isar_service.dart';
-import 'package:tabashir/features/ai_resume_builder/data/models/resume_models.dart';
+import 'package:tabashir/core/network/models/ai_resume/resume_models.dart';
 import 'package:tabashir/features/ai_resume_builder/domain/repositories/ai_resume_builder_repository.dart';
 
 /// Implementation of AiResumeBuilderRepository

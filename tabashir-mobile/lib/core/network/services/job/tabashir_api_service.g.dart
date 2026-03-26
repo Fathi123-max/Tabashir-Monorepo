@@ -130,6 +130,56 @@ class _TabashirApiService implements TabashirApiService {
   }
 
   @override
+  Future<HttpResponse<ApplyJobsResponse>> addClient(
+    String email,
+    MultipartFile file,
+    String nationality,
+    String gender,
+    List<String> locations,
+    List<String> positions,
+  ) async {
+    final _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _headers = <String, dynamic>{};
+    final _data = FormData();
+    _data.fields.add(MapEntry('email', email));
+    _data.files.add(MapEntry('file', file));
+    _data.fields.add(MapEntry('nationality', nationality));
+    _data.fields.add(MapEntry('gender', gender));
+    locations.forEach((i) {
+      _data.fields.add(MapEntry('locations', i));
+    });
+    positions.forEach((i) {
+      _data.fields.add(MapEntry('positions', i));
+    });
+    final _options = _setStreamType<HttpResponse<ApplyJobsResponse>>(
+      Options(
+            method: 'POST',
+            headers: _headers,
+            extra: _extra,
+            contentType: 'multipart/form-data',
+          )
+          .compose(
+            _dio.options,
+            '/add_client',
+            queryParameters: queryParameters,
+            data: _data,
+          )
+          .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
+    );
+    final _result = await _dio.fetch<Map<String, dynamic>>(_options);
+    late ApplyJobsResponse _value;
+    try {
+      _value = ApplyJobsResponse.fromJson(_result.data!);
+    } on Object catch (e, s) {
+      errorLogger?.logError(e, s, _options);
+      rethrow;
+    }
+    final httpResponse = HttpResponse(_value, _result);
+    return httpResponse;
+  }
+
+  @override
   Future<HttpResponse<List<int>>> formatCV(
     MultipartFile file,
     String? outputLanguage,
@@ -578,6 +628,42 @@ class _TabashirApiService implements TabashirApiService {
     );
     final _result = await _dio.fetch<void>(_options);
     final httpResponse = HttpResponse(null, _result);
+    return httpResponse;
+  }
+
+  @override
+  Future<HttpResponse<SuggestJobTitlesResponse>> suggestJobTitles(
+    MultipartFile file,
+  ) async {
+    final _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _headers = <String, dynamic>{};
+    final _data = FormData();
+    _data.files.add(MapEntry('file', file));
+    final _options = _setStreamType<HttpResponse<SuggestJobTitlesResponse>>(
+      Options(
+            method: 'POST',
+            headers: _headers,
+            extra: _extra,
+            contentType: 'multipart/form-data',
+          )
+          .compose(
+            _dio.options,
+            '/suggest-job-titles',
+            queryParameters: queryParameters,
+            data: _data,
+          )
+          .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
+    );
+    final _result = await _dio.fetch<Map<String, dynamic>>(_options);
+    late SuggestJobTitlesResponse _value;
+    try {
+      _value = SuggestJobTitlesResponse.fromJson(_result.data!);
+    } on Object catch (e, s) {
+      errorLogger?.logError(e, s, _options);
+      rethrow;
+    }
+    final httpResponse = HttpResponse(_value, _result);
     return httpResponse;
   }
 

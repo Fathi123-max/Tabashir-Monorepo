@@ -73,7 +73,8 @@ class HomeCubit extends Cubit<HomeState> {
 
       // Process recommendations to include match percentage
       List<Map<String, dynamic>> processedRecommendations = [];
-      if (recommendationsData != null && recommendationsData['recommendations'] != null) {
+      if (recommendationsData != null &&
+          recommendationsData['recommendations'] != null) {
         final recs = recommendationsData['recommendations'] as List<dynamic>;
         processedRecommendations = recs.map((job) {
           final jobMap = job as Map<String, dynamic>;
@@ -115,8 +116,8 @@ class HomeCubit extends Cubit<HomeState> {
         emit(
           state.copyWith(
             isLoading: false,
-            jobs: processedRecommendations.isNotEmpty 
-                ? processedRecommendations 
+            jobs: processedRecommendations.isNotEmpty
+                ? processedRecommendations
                 : featuredJobsForUI,
             matches: dashboardData.totalMatches,
             companiesViewed: dashboardData.companiesViewed,

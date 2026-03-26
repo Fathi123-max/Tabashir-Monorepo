@@ -37,8 +37,10 @@ class BackendDioClient {
         },
         onError: (error, handler) async {
           final requestPath = error.requestOptions.path;
-          print('[BACKEND_DIO] ❌ Request to $requestPath failed: ${error.response?.statusCode}');
-          
+          print(
+            '[BACKEND_DIO] ❌ Request to $requestPath failed: ${error.response?.statusCode}',
+          );
+
           if (error.response?.data != null) {
             print('[BACKEND_DIO] Error response: ${error.response?.data}');
           }
@@ -57,8 +59,8 @@ class BackendDioClient {
             // For non-auth endpoints, try to refresh the token
             print('[BACKEND_DIO] Attempting token refresh...');
             try {
-              final newToken =
-                  await AuthSessionService.instance.refreshAccessToken();
+              final newToken = await AuthSessionService.instance
+                  .refreshAccessToken();
 
               if (newToken != null) {
                 print(
@@ -87,7 +89,9 @@ class BackendDioClient {
               }
             } catch (e) {
               print('[BACKEND_DIO] ❌ Token refresh failed with exception: $e');
-              print('[BACKEND_DIO] ⚠️ Network or server error - KEEPING SESSION ALIVE');
+              print(
+                '[BACKEND_DIO] ⚠️ Network or server error - KEEPING SESSION ALIVE',
+              );
               // Don't call setLoggedOut() here for network errors
               // This allows the user to retry later when they have connection
               return handler.next(error);

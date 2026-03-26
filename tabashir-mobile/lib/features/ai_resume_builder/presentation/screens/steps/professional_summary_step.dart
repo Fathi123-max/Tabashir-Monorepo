@@ -6,7 +6,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:tabashir/core/theme/app_theme.dart';
 import 'package:tabashir/features/ai_resume_builder/presentation/cubit/ai_resume_builder_cubit.dart';
 
-import '../../../data/models/resume_models.dart';
+import '../../../../../core/network/models/ai_resume/resume_models.dart';
 
 class ProfessionalSummaryStep extends StatelessWidget {
   const ProfessionalSummaryStep({super.key});

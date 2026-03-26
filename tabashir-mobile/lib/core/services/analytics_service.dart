@@ -332,8 +332,9 @@ class AnalyticsService {
       final prefs = await SharedPreferences.getInstance();
       final eventHistory = prefs.getString(_eventHistoryKey);
 
-      final events =
-          eventHistory != null ? _parseJson(eventHistory) : <String, dynamic>{};
+      final events = eventHistory != null
+          ? _parseJson(eventHistory)
+          : <String, dynamic>{};
 
       final eventKey = '${event.name}_${DateTime.now().millisecondsSinceEpoch}';
       events[eventKey] = {

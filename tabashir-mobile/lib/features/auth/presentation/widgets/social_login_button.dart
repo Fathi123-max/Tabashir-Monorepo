@@ -103,7 +103,10 @@ class SocialLoginButton extends StatelessWidget {
               'assets/images/apple.svg',
               width: 24.w,
               height: 24.w,
-              colorFilter: const ColorFilter.mode(Colors.black, BlendMode.srcIn),
+              colorFilter: const ColorFilter.mode(
+                Colors.black,
+                BlendMode.srcIn,
+              ),
             ),
             SizedBox(width: AppTheme.spacingSm.w),
             Text(
