@@ -77,6 +77,8 @@ import '../../features/onboarding/data/repositories/onboarding_repository_impl.d
     as _i452;
 import '../../features/onboarding/domain/repositories/onboarding_repository.dart'
     as _i430;
+import '../../features/onboarding/presentation/cubit/onboarding_wizard_cubit.dart'
+    as _i891;
 import '../../features/payments/data/repositories/payment_repository_impl.dart'
     as _i842;
 import '../../features/payments/domain/repositories/payment_repository.dart'
@@ -355,6 +357,12 @@ extension GetItInjectableX on _i174.GetIt {
     );
     gh.lazySingleton<_i9.HomeCubit>(
       () => _i9.HomeCubit(gh<_i184.HomeApiService>()),
+    );
+    gh.factory<_i891.OnboardingWizardCubit>(
+      () => _i891.OnboardingWizardCubit(
+        gh<_i588.AiJobApplyRepository>(),
+        gh<_i36.ProfileCubit>(),
+      ),
     );
     gh.factory<_i674.SettingsRepository>(
       () => _i955.SettingsRepositoryImpl(gh<_i527.LocalStorageService>()),
