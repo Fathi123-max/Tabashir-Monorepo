@@ -283,11 +283,11 @@ class Analytics(Resource):
         # 3. Monthly Applications
         try:
             monthly_apps = execute_query(
-                '''SELECT to_char("createdAt", 'Mon') as month, COUNT(*) as count 
+                '''SELECT to_char("appliedAt", 'Mon') as month, COUNT(*) as count 
                    FROM "JobApplication" 
-                   WHERE "userId" = %s AND "createdAt" > NOW() - INTERVAL '6 months' 
-                   GROUP BY month, date_trunc('month', "createdAt")
-                   ORDER BY date_trunc('month', "createdAt")''',
+                   WHERE "userId" = %s AND "appliedAt" > NOW() - INTERVAL '6 months' 
+                   GROUP BY month, date_trunc('month', "appliedAt")
+                   ORDER BY date_trunc('month', "appliedAt")''',
                 (user_id,), fetch_all=True
             )
         except Exception as e:

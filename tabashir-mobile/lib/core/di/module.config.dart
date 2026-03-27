@@ -248,21 +248,11 @@ extension GetItInjectableX on _i174.GetIt {
     gh.singleton<_i469.OneSignalNotificationServiceBase>(
       () => _i469.OneSignalNotificationService.create(),
     );
-    gh.factory<_i894.ProfileRepository>(
-      () => _i334.ProfileRepositoryImpl(
-        gh<_i676.UserApiService>(),
-        gh<_i692.AuthApiService>(),
-        gh<_i790.ProfileIsarRepository>(),
-      ),
-    );
     gh.factory<_i860.JobApplicationsRepository>(
       () => _i760.JobApplicationsRepositoryImpl(gh<_i1.TabashirApiService>()),
     );
     gh.factory<_i656.JobDetailsService>(
       () => _i656.JobDetailsService(gh<_i973.JobsRepository>()),
-    );
-    gh.lazySingleton<_i36.ProfileCubit>(
-      () => _i36.ProfileCubit(gh<_i894.ProfileRepository>()),
     );
     gh.factory<_i27.AiResumeRepository>(
       () => _i351.AiResumeRepositoryImpl(gh<_i1058.AiResumeApiService>()),
@@ -355,6 +345,14 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factory<_i302.UploadRepository>(
       () => _i63.UploadRepositoryImpl(gh<_i772.UploadApiService>()),
     );
+    gh.factory<_i894.ProfileRepository>(
+      () => _i334.ProfileRepositoryImpl(
+        gh<_i676.UserApiService>(),
+        gh<_i692.AuthApiService>(),
+        gh<_i790.ProfileIsarRepository>(),
+        gh<_i1.TabashirApiService>(),
+      ),
+    );
     gh.lazySingleton<_i9.HomeCubit>(
       () => _i9.HomeCubit(gh<_i184.HomeApiService>()),
     );
@@ -377,19 +375,8 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factory<_i357.SearchRepository>(
       () => _i1017.SearchRepositoryImpl(gh<_i792.IsarService>()),
     );
-    gh.factory<_i222.AiJobApplyCubit>(
-      () => _i222.AiJobApplyCubit(
-        gh<_i588.AiJobApplyRepository>(),
-        gh<_i229.ResumeVaultRepository>(),
-        gh<_i36.ProfileCubit>(),
-      ),
-    );
     gh.lazySingleton<_i938.ResumeVaultCubit>(
       () => _i938.ResumeVaultCubit(gh<_i229.ResumeVaultRepository>()),
-    );
-    gh.factory<_i117.AuthCubit>(
-      () =>
-          _i117.AuthCubit(gh<_i787.AuthRepository>(), gh<_i36.ProfileCubit>()),
     );
     gh.lazySingleton<_i731.AppInitializationCubit>(
       () => _i731.AppInitializationCubit(
@@ -410,6 +397,9 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i229.ResumeVaultRepository>(),
       ),
     );
+    gh.lazySingleton<_i36.ProfileCubit>(
+      () => _i36.ProfileCubit(gh<_i894.ProfileRepository>()),
+    );
     gh.factory<_i331.Cubit<_i949.SubscriptionState>>(
       () => _i949.SubscriptionCubit(gh<_i185.SubscriptionRepository>()),
     );
@@ -422,6 +412,17 @@ extension GetItInjectableX on _i174.GetIt {
     );
     gh.factory<_i331.Cubit<_i895.UploadState>>(
       () => _i895.UploadCubit(gh<_i302.UploadRepository>()),
+    );
+    gh.factory<_i222.AiJobApplyCubit>(
+      () => _i222.AiJobApplyCubit(
+        gh<_i588.AiJobApplyRepository>(),
+        gh<_i229.ResumeVaultRepository>(),
+        gh<_i36.ProfileCubit>(),
+      ),
+    );
+    gh.factory<_i117.AuthCubit>(
+      () =>
+          _i117.AuthCubit(gh<_i787.AuthRepository>(), gh<_i36.ProfileCubit>()),
     );
     gh.factory<_i891.OnboardingWizardCubit>(
       () => _i891.OnboardingWizardCubit(

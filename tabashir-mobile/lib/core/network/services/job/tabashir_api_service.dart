@@ -22,13 +22,18 @@ import '../../models/jobs_monthly_count_response.dart';
 import '../../models/job_applicants_count_response.dart';
 import '../../models/send_linkedin_email_request.dart';
 import '../../models/suggest_job_titles_response.dart';
+import 'package:tabashir/core/network/models/job/ai_client_response.dart';
 
 part 'tabashir_api_service.g.dart';
 
 /// REST API client for Tabashir backend
 @RestApi(baseUrl: '/api/v1/resumes')
 abstract class TabashirApiService {
-  factory TabashirApiService(Dio dio) = _TabashirApiService;
+  factory TabashirApiService(Dio dio, {String baseUrl}) = _TabashirApiService;
+
+  /// GET endpoint to fetch AI client profile data
+  @GET('/client')
+  Future<HttpResponse<AiClientResponse>> getClient();
 
   /// GET endpoint to fetch job application rankings for a given email
   @GET('/applied-jobs')
@@ -60,6 +65,18 @@ abstract class TabashirApiService {
   Future<HttpResponse<ApplyJobsResponse>> addClient(
     @Part(name: 'email') String email,
     @Part() MultipartFile file,
+    @Part(name: 'nationality') String nationality,
+    @Part(name: 'gender') String gender,
+    @Part(name: 'locations') List<String> locations,
+    @Part(name: 'positions') List<String> positions,
+  );
+
+  /// PUT endpoint to update an existing client and refresh job matching
+  @PUT('/update_client')
+  @MultiPart()
+  Future<HttpResponse<ApplyJobsResponse>> updateClient(
+    @Part(name: 'email') String email,
+    @Part(name: 'file') MultipartFile? file,
     @Part(name: 'nationality') String nationality,
     @Part(name: 'gender') String gender,
     @Part(name: 'locations') List<String> locations,

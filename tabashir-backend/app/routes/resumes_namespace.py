@@ -29,9 +29,9 @@ from app.services.cv_processor import cv_formatter
 from app.services.profile_sync_service import ProfileSyncService
 from app.services.arabic_translator import translate_docx_to_arabic
 from app.services.job_apply import (
-    process_ai_job_input, process_ai_job_input_not_active, serialize_row,
+    process_ai_job_input, process_ai_job_input_not_active, update_ai_job_input_not_active, serialize_row,
     get_client_job_settings, activate_client_job_apply, suggest_job_titles_from_resume,
-    get_client_cv_filename, convert_docx_to_pdf, update_client_cv_filename,
+    get_client_cv_filename, convert_docx_to_pdf, update_client_cv_filename, get_client_data,
     main as run_ranking_main, apply_single_job, apply as apply_jobs
 )
 from app.services.send_linkedin_email import send_email
@@ -803,6 +803,10 @@ apply_parser.add_argument('gender', type=str, location='form', required=True, he
 apply_parser.add_argument('locations', type=str, location='form', action='append', required=True, help='Preferred locations (list)')
 apply_parser.add_argument('positions', type=str, location='form', action='append', required=True, help='Preferred positions (list)')
 
+update_client_parser = apply_parser.copy()
+update_client_parser.replace_argument('file', type=FileStorage, location='files', required=False, help='Resume file (optional)')
+
+
 
 @resumes_ns.route('/apply')
 class ApplyJobs(Resource):
@@ -1005,6 +1009,149 @@ class AddClient(Resource):
             "error": error_detail
         })
         return make_response(response, status_code)
+
+
+@resumes_ns.route('/update_client')
+class UpdateClient(Resource):
+    @resumes_ns.expect(update_client_parser)
+    @resumes_ns.response(HTTPStatus.OK.value, 'Successfully updated client and ranked jobs')
+    @resumes_ns.response(HTTPStatus.BAD_REQUEST.value, 'Invalid input')
+    @resumes_ns.response(HTTPStatus.INTERNAL_SERVER_ERROR.value, 'Internal server error during processing')
+    def put(self):
+        """
+        PUT endpoint to update an existing client's resume and job matching criteria.
+        """
+        temp_input_path = None
+        try:
+            email, file, nationality, gender, preferred_positions, location_preference = self._validate_and_extract_request(request)
+            preferred_positions_str = ", ".join(p.strip() for p in preferred_positions if p.strip())
+            location_preference_str = ", ".join(l.strip() for l in location_preference if l.strip())
+            
+            if file:
+                filename = secure_filename(file.filename)
+                base_name = os.path.splitext(filename)[0]
+                temp_input_path = Config.TEMP_FOLDER / filename
+                file.save(temp_input_path)
+
+            email_updated = update_ai_job_input_not_active(
+                email=email, resume_path=temp_input_path, nationality=nationality, 
+                gender=gender,  location_preferred=location_preference_str, 
+                preferred_positions=preferred_positions_str
+            )
+            
+            if not email_updated:
+                raise ValueError("Failed to update client. Email may not exist.")
+
+            ranking_result = run_ranking_main(client_email=email)
+            if not ranking_result:
+                raise ValueError("Failed to rank jobs after update")
+
+            summary = {
+                "email": email,
+                "ranking_result": ranking_result,
+                "apply_result": None,
+                "message": "Updated profile and refreshed job rankings."
+            }
+
+            return jsonify({
+                "success": True,
+                "message": "Successfully updated CV and ranking",
+                "summary": summary
+            })
+
+        except ValueError as ve:
+            return self._error_response("Invalid input", str(ve), HTTPStatus.BAD_REQUEST.value)
+        except Exception as e:
+            return self._error_response("Client update failed", str(e), HTTPStatus.INTERNAL_SERVER_ERROR.value)
+        finally:
+            if temp_input_path and os.path.exists(temp_input_path):
+                os.remove(temp_input_path)
+
+    def _validate_and_extract_request(self, req):
+        """Validate and extract request parameters"""
+        email = req.form.get('email')
+        if not email:
+            raise ValueError("Missing required field: email")
+
+        file = req.files.get('file')
+        if file and file.filename != '':
+            if not allowed_file(file.filename):
+                raise ValueError("File type not allowed. Supported types: PDF, DOCX, RTF")
+        else:
+            file = None
+
+        preferred_positions = req.form.getlist('positions')
+        if not preferred_positions:
+            raise ValueError("At least one preferred position is required")
+
+        location_preference = req.form.getlist('locations')
+        if not location_preference:
+            raise ValueError("Location preference is required")
+
+        nationality = req.form.get('nationality', '').strip().lower()
+        if not nationality:
+            raise ValueError("Nationality is required")
+
+        gender = req.form.get('gender', '').strip().lower()
+        if not gender:
+            raise ValueError("Gender is required")
+
+        return email, file, nationality, gender, preferred_positions, location_preference
+
+    def _error_response(self, message, error_detail, status_code):
+        response = jsonify({
+            "success": False,
+            "message": message,
+            "error": error_detail
+        })
+        return make_response(response, status_code)
+
+
+@resumes_ns.route('/client')
+class ClientProfile(Resource):
+    @jwt_required
+    @resumes_ns.doc(security='Bearer Auth')
+    @resumes_ns.response(HTTPStatus.OK.value, 'Successfully retrieved client profile')
+    @resumes_ns.response(HTTPStatus.UNAUTHORIZED.value, 'Missing or invalid token')
+    @resumes_ns.response(HTTPStatus.NOT_FOUND.value, 'Client profile not found')
+    @resumes_ns.response(HTTPStatus.INTERNAL_SERVER_ERROR.value, 'Internal server error')
+    def get(self):
+        """
+        GET endpoint to retrieve an existing client's profile from the AI database.
+        """
+        try:
+            email = getattr(request, 'user_email', None)
+            print(f"[CLIENT_PROFILE] GET /client called")
+            print(f"[CLIENT_PROFILE] user_email from request: {email!r}")
+            print(f"[CLIENT_PROFILE] user_id from request: {getattr(request, 'user_id', None)!r}")
+
+            if not email:
+                print("[CLIENT_PROFILE] ❌ No email found on request object")
+                return {"success": False, "message": "User email not found in token"}, HTTPStatus.BAD_REQUEST.value
+
+            print(f"[CLIENT_PROFILE] Looking up client data for: {email}")
+            client_data = get_client_data(email)
+            print(f"[CLIENT_PROFILE] client_data result: {client_data}")
+
+            if not client_data:
+                print(f"[CLIENT_PROFILE] ❌ Error fetching client data for email: {email}")
+                return {"success": False, "message": "Failed to fetch client profile from AI database"}, HTTPStatus.INTERNAL_SERVER_ERROR.value
+
+            print(f"[CLIENT_PROFILE] ✅ Successfully returned client data")
+            return {
+                "success": True,
+                "data": client_data
+            }, HTTPStatus.OK.value
+
+        except Exception as e:
+            import traceback
+            print(f"[CLIENT_PROFILE] ❌ Unexpected error: {e}")
+            traceback.print_exc()
+            return {
+                "success": False,
+                "message": "Failed to retrieve client data",
+                "error": str(e)
+            }, HTTPStatus.INTERNAL_SERVER_ERROR.value
 
 
 activate_job_apply_parser = reqparse.RequestParser()
@@ -1236,11 +1383,11 @@ class AppliedJobs(Resource):
                     """
             cursor.execute(query, (email,))
             rows = cursor.fetchall()
-
             if not rows:
                 return {
                     "success": True,
                     "message": f"No applied jobs found for {email}",
+                    "email": email,
                     "jobs": []
                 }, HTTPStatus.OK
 
@@ -1251,17 +1398,18 @@ class AppliedJobs(Resource):
 
                 jobs.append({
                     "job_title": job_title.strip().title() if job_title else "",
-                    "job_id": job_id.strip() if job_id else "",
-                    "status": status.strip().lower() if status else "",
-                    "location": location.strip().title() if location else "",
-                    "applied": apply_date.strip() if apply_date else "",
-                    "experience": experience.strip().capitalize() if experience else "",
-                    "company": company.strip().title() if company else ""
+                    "job_id": str(job_id).strip() if job_id else "",
+                    "status": str(status).strip().lower() if status else "",
+                    "location": str(location).strip().title() if location else "",
+                    "applied": str(apply_date).strip() if apply_date else "",
+                    "experience": str(experience).strip().capitalize() if experience else "",
+                    "company": str(company).strip().title() if company else ""
                 })
 
             return {
                 "success": True,
                 "email": email,
+                "message": f"Successfully fetched {len(jobs)} applied jobs",
                 "jobs": jobs
             }, HTTPStatus.OK
 

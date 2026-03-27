@@ -173,7 +173,14 @@ def process_ai_job_input(email, resume_path, nationality, gender, location_prefe
 
         cursor.execute("SELECT 1 FROM clients WHERE email = %s", (data['email'],))
         if cursor.fetchone():
-            print(f"Email {data['email']} already exists.")
+            print(f"Email {data['email']} already exists. Updating...")
+            update_data = {k: v for k, v in data.items() if k != 'email'}
+            set_clause = ", ".join([f"{k} = %s" for k in update_data.keys()])
+            query = f"UPDATE clients SET {set_clause} WHERE email = %s"
+            values = list(update_data.values())
+            values.append(data['email'])
+            cursor.execute(query, tuple(values))
+            conn.commit()
             mark_timestamp_as_processed(conn, timestamp)
             return data['email']
 
@@ -264,7 +271,15 @@ def process_ai_job_input_not_active(email, resume_path, nationality, gender, loc
 
         cursor.execute("SELECT 1 FROM clients WHERE email = %s", (data['email'],))
         if cursor.fetchone():
-            print(f"Email {data['email']} already exists.")
+            # Client already exists, update their record instead of just returning
+            print(f"Email {data['email']} already exists in AI DB. Updating...")
+            update_data = {k: v for k, v in data.items() if k != 'email'}
+            set_clause = ", ".join([f"{k} = %s" for k in update_data.keys()])
+            query = f"UPDATE clients SET {set_clause} WHERE email = %s"
+            values = list(update_data.values())
+            values.append(data['email'])
+            cursor.execute(query, tuple(values))
+            conn.commit()
             mark_timestamp_as_processed(conn, timestamp)
             return data['email']
 
@@ -278,6 +293,79 @@ def process_ai_job_input_not_active(email, resume_path, nationality, gender, loc
         return data['email']
    except Exception as e:
         print(f"Error processing CV: {e}")
+        return None
+
+def update_ai_job_input_not_active(email, resume_path, nationality, gender, location_preferred, preferred_positions):
+   try:
+        timestamp = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+        if resume_path:
+            SERVER_CV_DIR = str(Config.CV_STORAGE_PATH / "temp_CVs")
+            os.makedirs(SERVER_CV_DIR, exist_ok=True)
+            resume_path = str(resume_path)
+
+            backup_path = os.path.join(
+                SERVER_CV_DIR,
+                os.path.basename(resume_path)
+            )
+            shutil.copy2(resume_path, backup_path)
+
+            cv_text = extract_cv_data(resume_path)
+            cv_data = parse_cv_data(cv_text)
+
+            positions = preferred_positions if preferred_positions else cv_data.get('positions', 'General Positions')
+            job_location_based = location_preferred if location_preferred else cv_data.get('Location')
+
+            data = {
+                'name': cv_data.get('Name', ''),
+                'major': cv_data.get('Major', ''),
+                'filename': os.path.basename(resume_path),
+                'fcv_as_string': cv_text,
+                'phone_number': cv_data.get('Phone Number', ''),
+                'location': ', '.join(job_location_based) if isinstance(job_location_based, list) else job_location_based,
+                'skills': cv_data.get('Skills', ''),
+                'keywords': cv_data.get('Keywords', ''),
+                'degree': cv_data.get('Degree', ''),
+                'GPA': cv_data.get('GPA', ''),
+                'job_location_based': ', '.join(job_location_based) if isinstance(job_location_based, list) else job_location_based,
+                'gender': gender,
+                'nationality': nationality,
+                'positions': ', '.join(positions.split(', ')) if isinstance(positions, str) else positions
+            }
+        else:
+            data = {
+                'gender': gender,
+                'nationality': nationality,
+                'location': location_preferred,
+                'job_location_based': location_preferred,
+                'positions': preferred_positions
+            }
+
+        conn = psycopg2.connect(
+            dbname=Config.AI_POSTGRES_DB, user=Config.AI_POSTGRES_USER, password=Config.AI_POSTGRES_PASSWORD,
+            host=Config.AI_POSTGRES_HOST, port=Config.AI_POSTGRES_PORT
+        )
+        conn.autocommit = False
+        cursor = conn.cursor()
+
+        set_clause = ", ".join([f"{k} = %s" for k in data.keys()])
+        query = f"UPDATE clients SET {set_clause} WHERE email = %s"
+        
+        values = list(data.values())
+        values.append(email)
+        
+        cursor.execute(query, tuple(values))
+        
+        if cursor.rowcount == 0:
+            print(f"Email {email} does not exist for update.")
+            conn.rollback()
+            return None
+
+        conn.commit()
+
+        mark_timestamp_as_processed(conn, timestamp)
+        return email
+   except Exception as e:
+        print(f"Error processing CV for update: {e}")
         return None
    
 def activate_client_job_apply(email, jobs_number):
@@ -537,6 +625,52 @@ def update_client_cv_filename(email, new_filename):
         if conn:
             conn.rollback()
         raise Exception(f"Database error while updating CV filename: {e}")
+
+    finally:
+        if conn:
+            conn.close()
+
+def get_client_data(email):
+    """Fetch client profile data from the AI database clients table."""
+    conn = None
+    try:
+        conn = psycopg2.connect(
+            dbname=Config.AI_POSTGRES_DB,
+            user=Config.AI_POSTGRES_USER,
+            password=Config.AI_POSTGRES_PASSWORD,
+            host=Config.AI_POSTGRES_HOST,
+            port=Config.AI_POSTGRES_PORT
+        )
+
+        query = """
+            SELECT nationality, gender, job_location_based, positions, filename 
+            FROM clients 
+            WHERE email = %s
+        """
+
+        with conn.cursor() as cur:
+            cur.execute(query, (email,))
+            row = cur.fetchone()
+            
+            if row:
+                return {
+                    "nationality": row[0],
+                    "gender": row[1],
+                    "location": row[2],
+                    "positions": row[3],
+                    "filename": row[4]
+                }
+            return {
+                "nationality": None,
+                "gender": None,
+                "location": None,
+                "positions": None,
+                "filename": None
+            }
+
+    except psycopg2.Error as e:
+        print(f"Error fetching client data: {e}")
+        return None
 
     finally:
         if conn:

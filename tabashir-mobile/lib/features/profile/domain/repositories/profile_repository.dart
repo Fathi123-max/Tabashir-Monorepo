@@ -3,6 +3,7 @@ import 'package:tabashir/core/network/models/candidate/personal_info_request.dar
 import 'package:tabashir/core/network/models/candidate/professional_info_request.dart';
 import 'package:tabashir/core/network/models/candidate/onboarding_response.dart';
 import 'package:tabashir/core/network/models/profile/profile_update_request.dart';
+import 'package:tabashir/core/network/models/job/ai_client_response.dart';
 
 /// Repository interface for profile operations
 /// Defines the contract for profile data operations
@@ -15,6 +16,19 @@ abstract class ProfileRepository {
   /// This is a general profile update for all user types
   Future<void> updateProfile({
     required ProfileUpdateRequest profileUpdate,
+  });
+
+  /// Fetch client details from the AI DB
+  Future<AiClientData?> getClient();
+
+  /// Update client with specific details and trigger AI job matching
+  Future<void> updateClient({
+    required String email,
+    String? cvPath,
+    required String nationality,
+    required String gender,
+    required List<String> locations,
+    required List<String> positions,
   });
 
   /// Update candidate personal information

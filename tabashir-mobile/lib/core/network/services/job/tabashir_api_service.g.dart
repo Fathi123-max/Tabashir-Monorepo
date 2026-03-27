@@ -22,6 +22,34 @@ class _TabashirApiService implements TabashirApiService {
   final ParseErrorLogger? errorLogger;
 
   @override
+  Future<HttpResponse<AiClientResponse>> getClient() async {
+    final _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _headers = <String, dynamic>{};
+    const Map<String, dynamic>? _data = null;
+    final _options = _setStreamType<HttpResponse<AiClientResponse>>(
+      Options(method: 'GET', headers: _headers, extra: _extra)
+          .compose(
+            _dio.options,
+            '/client',
+            queryParameters: queryParameters,
+            data: _data,
+          )
+          .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
+    );
+    final _result = await _dio.fetch<Map<String, dynamic>>(_options);
+    late AiClientResponse _value;
+    try {
+      _value = AiClientResponse.fromJson(_result.data!);
+    } on Object catch (e, s) {
+      errorLogger?.logError(e, s, _options);
+      rethrow;
+    }
+    final httpResponse = HttpResponse(_value, _result);
+    return httpResponse;
+  }
+
+  @override
   Future<HttpResponse<AppliedJobsResponse>> getAppliedJobs(String email) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{r'email': email};
@@ -162,6 +190,59 @@ class _TabashirApiService implements TabashirApiService {
           .compose(
             _dio.options,
             '/add_client',
+            queryParameters: queryParameters,
+            data: _data,
+          )
+          .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
+    );
+    final _result = await _dio.fetch<Map<String, dynamic>>(_options);
+    late ApplyJobsResponse _value;
+    try {
+      _value = ApplyJobsResponse.fromJson(_result.data!);
+    } on Object catch (e, s) {
+      errorLogger?.logError(e, s, _options);
+      rethrow;
+    }
+    final httpResponse = HttpResponse(_value, _result);
+    return httpResponse;
+  }
+
+  @override
+  Future<HttpResponse<ApplyJobsResponse>> updateClient(
+    String email,
+    MultipartFile? file,
+    String nationality,
+    String gender,
+    List<String> locations,
+    List<String> positions,
+  ) async {
+    final _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    queryParameters.removeWhere((k, v) => v == null);
+    final _headers = <String, dynamic>{};
+    final _data = FormData();
+    _data.fields.add(MapEntry('email', email));
+    if (file != null) {
+      _data.files.add(MapEntry('file', file));
+    }
+    _data.fields.add(MapEntry('nationality', nationality));
+    _data.fields.add(MapEntry('gender', gender));
+    locations.forEach((i) {
+      _data.fields.add(MapEntry('locations', i));
+    });
+    positions.forEach((i) {
+      _data.fields.add(MapEntry('positions', i));
+    });
+    final _options = _setStreamType<HttpResponse<ApplyJobsResponse>>(
+      Options(
+            method: 'PUT',
+            headers: _headers,
+            extra: _extra,
+            contentType: 'multipart/form-data',
+          )
+          .compose(
+            _dio.options,
+            '/update_client',
             queryParameters: queryParameters,
             data: _data,
           )

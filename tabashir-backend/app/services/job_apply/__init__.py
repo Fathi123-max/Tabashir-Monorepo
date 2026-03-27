@@ -1,3 +1,3 @@
-from app.services.job_apply.process_cv import process_ai_job_input, process_ai_job_input_not_active, serialize_row,get_client_job_settings,activate_client_job_apply, suggest_job_titles_from_resume, get_client_cv_filename, convert_docx_to_pdf, update_client_cv_filename
+from app.services.job_apply.process_cv import process_ai_job_input, process_ai_job_input_not_active, update_ai_job_input_not_active, serialize_row,get_client_job_settings,activate_client_job_apply, suggest_job_titles_from_resume, get_client_cv_filename, convert_docx_to_pdf, update_client_cv_filename, get_client_data
 from app.services.job_apply.ranking import main
 from app.services.job_apply.ai_job_apply import apply, apply_single_job

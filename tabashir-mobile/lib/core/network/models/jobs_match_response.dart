@@ -66,7 +66,7 @@ sealed class ApplyJobsResponse with _$ApplyJobsResponse {
 sealed class ApplySummary with _$ApplySummary {
   const factory ApplySummary({
     /// Apply result
-    @JsonKey(name: 'apply_result') required ApplyResult applyResult,
+    @JsonKey(name: 'apply_result') ApplyResult? applyResult,
 
     /// Client email
     required String email,

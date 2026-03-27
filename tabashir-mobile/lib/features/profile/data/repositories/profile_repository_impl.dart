@@ -7,6 +7,8 @@ import 'package:tabashir/core/network/models/candidate/personal_info_request.dar
 import 'package:tabashir/core/network/models/candidate/professional_info_request.dart';
 import 'package:tabashir/core/network/models/candidate/onboarding_response.dart';
 import 'package:tabashir/core/network/models/profile/profile_update_request.dart';
+import 'package:tabashir/core/network/models/job/ai_client_response.dart';
+import 'package:tabashir/core/network/services/job/tabashir_api_service.dart';
 import 'package:tabashir/core/network/services/user/user_api_service.dart';
 import 'package:tabashir/core/network/services/auth/auth_api_service.dart';
 import 'package:tabashir/features/profile/domain/repositories/profile_repository.dart';
@@ -19,11 +21,13 @@ class ProfileRepositoryImpl implements ProfileRepository {
     this._userApiService,
     this._authApiService,
     this._profileIsarRepository,
+    this._tabashirApiService,
   );
 
   final UserApiService _userApiService;
   final AuthApiService _authApiService;
   final ProfileIsarRepository _profileIsarRepository;
+  final TabashirApiService _tabashirApiService;
 
   @override
   Future<UserProfileResponse> getUserProfile() async {
@@ -227,6 +231,87 @@ class ProfileRepositoryImpl implements ProfileRepository {
       print('\n[PROFILE_REPO] ❌ Unexpected exception: $e');
       print('########## [PROFILE_REPO] FAILED ##########\n\n');
       throw Exception('Failed to update profile: $e');
+    }
+  }
+
+  @override
+  Future<void> updateClient({
+    required String email,
+    String? cvPath,
+    required String nationality,
+    required String gender,
+    required List<String> locations,
+    required List<String> positions,
+  }) async {
+    print('\n\n########## [PROFILE_REPO] UPDATE CLIENT CALLED ##########');
+    try {
+      print('[PROFILE_REPO] Calling TabashirApiService.updateClient()...');
+      final file = cvPath != null && cvPath.isNotEmpty 
+          ? await MultipartFile.fromFile(cvPath) 
+          : null;
+      
+      final response = await _tabashirApiService.updateClient(
+        email,
+        file,
+        nationality,
+        gender,
+        locations,
+        positions,
+      );
+
+      print('\n[PROFILE_REPO] ✅ API call completed');
+      print('[PROFILE_REPO] Response status: ${response.response.statusCode}');
+
+      if (response.response.statusCode == 200 ||
+          response.response.statusCode == 201) {
+        print('[PROFILE_REPO] ✅ Client updated successfully');
+        print('########## [PROFILE_REPO] SUCCESS ##########\n\n');
+        return;
+      } else {
+        print(
+          '[PROFILE_REPO] ❌ API returned error status: ${response.response.statusCode}',
+        );
+        throw Exception(
+          'Failed to update client with status: ${response.response.statusCode}',
+        );
+      }
+    } on DioException catch (e) {
+      print('\n[PROFILE_REPO] ❌ DioException occurred');
+      print('[PROFILE_REPO] Type: ${e.type}');
+      print('[PROFILE_REPO] Message: ${e.message}');
+      if (e.response != null) {
+        print('[PROFILE_REPO] Response status: ${e.response?.statusCode}');
+        print('[PROFILE_REPO] Response data: ${e.response?.data}');
+      }
+      print('########## [PROFILE_REPO] FAILED ##########\n\n');
+      throw _handleDioError(e);
+    } catch (e) {
+      print('\n[PROFILE_REPO] ❌ Unexpected exception: $e');
+      print('########## [PROFILE_REPO] FAILED ##########\n\n');
+      throw Exception('Failed to update client: $e');
+    }
+  }
+
+  @override
+  Future<AiClientData?> getClient() async {
+    print('\n\n########## [PROFILE_REPO] GET CLIENT CALLED ##########');
+    try {
+      final response = await _tabashirApiService.getClient();
+      if (response.response.statusCode == 200) {
+        print('[PROFILE_REPO] ✅ Client data fetched');
+        return response.data.data;
+      } else if (response.response.statusCode == 404) {
+        print('[PROFILE_REPO] Client profile not found in AI DB');
+        return null;
+      } else {
+        throw Exception('Unexpected status: ${response.response.statusCode}');
+      }
+    } on DioException catch (e) {
+      print('[PROFILE_REPO] ❌ DioException: ${e.message}');
+      return null; // Non-fatal - AI profile may not exist yet
+    } catch (e) {
+      print('[PROFILE_REPO] ❌ Error fetching client: $e');
+      return null;
     }
   }
 
