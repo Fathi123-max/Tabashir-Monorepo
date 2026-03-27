@@ -444,17 +444,14 @@ class ProfileCubit extends Cubit<ProfileState> {
 
     return FormGroup({
       'name': FormControl<String>(value: cleanValue(profile.name)),
-      'jobTitle': FormControl<String>(value: cleanValue(profile.jobTitle)),
-      'location': FormControl<String>(value: cleanValue(profile.location)),
       'email': FormControl<String>(value: cleanValue(profile.email)),
-      'phone': FormControl<String>(value: cleanValue(profile.phone)),
       'nationality': FormControl<String>(
         value: cleanValue(profile.nationality),
       ),
       'gender': FormControl<String>(value: cleanValue(profile.gender)),
-      'company': FormControl<String>(value: cleanValue(profile.company)),
-      'education': FormControl<String>(value: cleanValue(profile.education)),
-      'linkedin': FormControl<String>(value: cleanValue(profile.linkedin)),
+      'location': FormControl<String>(value: cleanValue(profile.location)),
+      'jobTitle': FormControl<String>(value: cleanValue(profile.jobTitle)),
+      'cv': FormControl<String>(value: ''),
     });
   }
 
@@ -463,29 +460,19 @@ class ProfileCubit extends Cubit<ProfileState> {
     emit(state.copyWith(status: ProfileStatus.loading));
 
     try {
-      final linkedinValue = form.control('linkedin').value as String? ?? '';
-      final normalizedLinkedin = _normalizeLinkedInUrl(linkedinValue);
 
-      // Clean up "Not specified" values
-      String? cleanValue(dynamic value) {
-        final str = value as String?;
-        if (str == null || str.isEmpty || str == 'Not specified') {
-          return '';
-        }
-        return str;
-      }
 
       final profileUpdate = ProfileUpdateRequest(
         name: form.control('name').value as String,
         email: form.control('email').value as String,
-        phone: form.control('phone').value as String,
+        phone: state.profile?.phone ?? '',
         nationality: form.control('nationality').value as String,
         gender: form.control('gender').value as String,
-        jobTitle: form.control('jobTitle').value as String,
-        location: cleanValue(form.control('location').value) ?? '',
-        company: cleanValue(form.control('company').value) ?? '',
-        education: cleanValue(form.control('education').value) ?? '',
-        linkedin: normalizedLinkedin,
+        jobTitle: form.contains('jobTitle') ? (form.control('jobTitle').value as String? ?? '') : (state.profile?.jobTitle ?? ''),
+        location: form.contains('location') ? (form.control('location').value as String? ?? '') : (state.profile?.location ?? ''),
+        company: state.profile?.company ?? '',
+        education: state.profile?.education ?? '',
+        linkedin: state.profile?.linkedin ?? '',
       );
 
       await _repository.updateProfile(profileUpdate: profileUpdate);
@@ -540,26 +527,6 @@ class ProfileCubit extends Cubit<ProfileState> {
     }
   }
 
-  /// Normalizes LinkedIn URL to standard format
-  String _normalizeLinkedInUrl(String url) {
-    if (url.isEmpty) return url;
-
-    var normalizedUrl = url.trim();
-
-    // Add https:// if missing protocol
-    if (!normalizedUrl.startsWith('http://') &&
-        !normalizedUrl.startsWith('https://')) {
-      normalizedUrl = 'https://$normalizedUrl';
-    }
-
-    // Ensure it's linkedin.com domain
-    final uri = Uri.parse(normalizedUrl);
-    if (!uri.host.contains('linkedin.com')) {
-      return normalizedUrl;
-    }
-
-    return normalizedUrl;
-  }
 
   /// Map comprehensive API user profile to UI format
   ProfileData _mapUserProfileToUI(UserProfileResponse response) {

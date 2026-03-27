@@ -187,11 +187,7 @@ class AppBottomNavigationBar extends StatelessWidget {
       icon: Icons.work_outline,
       activeIcon: Icons.work,
     ),
-    NavigationItem(
-      title: 'Vault'.tr(),
-      icon: Icons.folder_outlined,
-      activeIcon: Icons.folder,
-    ),
+
     NavigationItem(
       title: 'Services'.tr(),
       icon: Icons.business_outlined,

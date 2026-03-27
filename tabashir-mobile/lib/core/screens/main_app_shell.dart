@@ -8,7 +8,7 @@ import 'package:tabashir/features/jobs/presentation/cubit/jobs_cubit.dart';
 import 'package:tabashir/features/jobs/presentation/screens/jobs_screen.dart';
 import 'package:tabashir/features/profile/presentation/screens/profile_screen.dart';
 import 'package:tabashir/features/services/presentation/screens/services_screen.dart';
-import 'package:tabashir/features/resume/presentation/screens/resume_vault_screen.dart';
+
 import 'package:tabashir/features/resume/presentation/cubit/resume_vault_cubit.dart';
 import 'package:tabashir/features/notifications/presentation/screens/notifications_screen.dart';
 import 'package:tabashir/features/shared/widgets/widgets.dart';
@@ -47,7 +47,7 @@ class _MainAppShellState extends State<MainAppShell> {
       },
       child: const JobsScreen(),
     ),
-    const ResumeVaultScreen(),
+
     const ServicesScreen(),
     const ProfileScreen(),
   ];

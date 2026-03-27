@@ -167,19 +167,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             );
                           },
                         ),
-                        SizedBox(height: AppTheme.spacingSm.h),
-                        InfoItem(
-                          icon: Icons.phone_outlined,
-                          text: state.profile!.phone.isEmpty
-                              ? 'Not specified'.tr()
-                              : state.profile!.phone,
-                          onEdit: () {
-                            context.push(
-                              RouteNames.editProfile,
-                              extra: _profileCubit,
-                            );
-                          },
-                        ),
+
                         SizedBox(height: AppTheme.spacingSm.h),
                         InfoItem(
                           icon: Icons.public_outlined,
@@ -208,40 +196,27 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         ),
                         SizedBox(height: AppTheme.spacingLg.h),
 
-                        // Professional Details Section
-                        _sectionHeader('Professional Details'.tr(), theme),
+                        // Target Details Section
+                        _sectionHeader('Target Details'.tr(), theme),
                         SizedBox(height: AppTheme.spacingMd.h),
                         InfoItem(
+                          icon: Icons.location_on_outlined,
+                          text: state.profile!.location.isEmpty
+                              ? 'Target locations not specified'.tr()
+                              : state.profile!.location,
+                          onEdit: () {
+                            context.push(
+                              RouteNames.editProfile,
+                              extra: _profileCubit,
+                            );
+                          },
+                        ),
+                        SizedBox(height: AppTheme.spacingSm.h),
+                        InfoItem(
                           icon: Icons.work_outline,
-                          text: state.profile!.company.isEmpty
-                              ? 'Not specified'.tr()
-                              : state.profile!.company,
-                          onEdit: () {
-                            context.push(
-                              RouteNames.editProfile,
-                              extra: _profileCubit,
-                            );
-                          },
-                        ),
-                        SizedBox(height: AppTheme.spacingSm.h),
-                        InfoItem(
-                          icon: Icons.school_outlined,
-                          text: state.profile!.education.isEmpty
-                              ? 'Not specified'.tr()
-                              : state.profile!.education,
-                          onEdit: () {
-                            context.push(
-                              RouteNames.editProfile,
-                              extra: _profileCubit,
-                            );
-                          },
-                        ),
-                        SizedBox(height: AppTheme.spacingSm.h),
-                        InfoItem(
-                          icon: Icons.link,
-                          text: state.profile!.linkedin.isEmpty
-                              ? 'Not specified'.tr()
-                              : state.profile!.linkedin,
+                          text: state.profile!.jobTitle.isEmpty
+                              ? 'Target roles not specified'.tr()
+                              : state.profile!.jobTitle,
                           onEdit: () {
                             context.push(
                               RouteNames.editProfile,
@@ -251,7 +226,20 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         ),
                         SizedBox(height: AppTheme.spacingLg.h),
 
-                        // // Account Activity Section
+                        // Resume Section
+                        _sectionHeader('Resume / CV'.tr(), theme),
+                        SizedBox(height: AppTheme.spacingMd.h),
+                        InfoItem(
+                          icon: Icons.description_outlined,
+                          text: 'Resume upload will be added in the next step'.tr(),
+                          onEdit: () {
+                            context.push(
+                              RouteNames.editProfile,
+                              extra: _profileCubit,
+                            );
+                          },
+                        ),
+                        SizedBox(height: AppTheme.spacingLg.h),                        // // Account Activity Section
                         // _sectionHeader('Account Activity'.tr(), theme),
                         // SizedBox(height: AppTheme.spacingMd.h),
                         // InfoItem(

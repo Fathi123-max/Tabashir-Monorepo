@@ -221,20 +221,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                           'Invalid email format'.tr(),
                     },
                   ),
-                  SizedBox(height: AppTheme.spacingMd.h),
-                  ReactiveTextField<String>(
-                    formControlName: 'phone',
-                    decoration: InputDecoration(
-                      labelText: 'Phone Number'.tr(),
-                      prefixIcon: const Icon(Icons.phone_outlined),
-                      border: const OutlineInputBorder(),
-                    ),
-                    keyboardType: TextInputType.phone,
-                    validationMessages: {
-                      ValidationMessage.required: (_) =>
-                          'Phone number is required'.tr(),
-                    },
-                  ),
+
                   SizedBox(height: AppTheme.spacingMd.h),
                   ReactiveDropdownSearch<String>(
                     formControlName: 'nationality',
@@ -257,69 +244,53 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                   ),
                   SizedBox(height: AppTheme.spacingLg.h),
 
-                  // Professional Details Section
+                  // Target Details Section
                   Text(
-                    'Professional Details'.tr(),
+                    'Target Details'.tr(),
                     style: theme.textTheme.titleLarge?.copyWith(
                       fontWeight: FontWeight.bold,
                     ),
                   ),
                   SizedBox(height: AppTheme.spacingMd.h),
                   ReactiveTextField<String>(
-                    formControlName: 'jobTitle',
-                    decoration: InputDecoration(
-                      labelText: 'Job Title'.tr(),
-                      prefixIcon: const Icon(Icons.work_outline),
-                      border: const OutlineInputBorder(),
-                    ),
-                    validationMessages: {
-                      ValidationMessage.required: (_) =>
-                          'Job title is required'.tr(),
-                    },
-                  ),
-                  SizedBox(height: AppTheme.spacingMd.h),
-                  ReactiveTextField<String>(
                     formControlName: 'location',
                     decoration: InputDecoration(
-                      labelText: 'Location'.tr(),
+                      labelText: 'Target Locations (e.g. Dubai, London)'.tr(),
                       prefixIcon: const Icon(Icons.location_on_outlined),
                       border: const OutlineInputBorder(),
                     ),
                   ),
                   SizedBox(height: AppTheme.spacingMd.h),
                   ReactiveTextField<String>(
-                    formControlName: 'company',
+                    formControlName: 'jobTitle',
                     decoration: InputDecoration(
-                      labelText: 'Company'.tr(),
-                      prefixIcon: const Icon(Icons.business_outlined),
+                      labelText: 'Target Roles / Positions'.tr(),
+                      prefixIcon: const Icon(Icons.work_outline),
                       border: const OutlineInputBorder(),
                     ),
-                  ),
-                  SizedBox(height: AppTheme.spacingMd.h),
-                  ReactiveTextField<String>(
-                    formControlName: 'education',
-                    decoration: InputDecoration(
-                      labelText: 'Education'.tr(),
-                      prefixIcon: const Icon(Icons.school_outlined),
-                      border: const OutlineInputBorder(),
-                    ),
-                  ),
-                  SizedBox(height: AppTheme.spacingMd.h),
-                  ReactiveTextField<String>(
-                    formControlName: 'linkedin',
-                    decoration: InputDecoration(
-                      labelText: 'LinkedIn Profile'.tr(),
-                      hintText: 'https://linkedin.com/in/yourprofile',
-                      prefixIcon: const Icon(Icons.link_outlined),
-                      border: const OutlineInputBorder(),
-                    ),
-                    keyboardType: TextInputType.url,
-                    validationMessages: {
-                      'linkedinUrl': (_) =>
-                          'Please enter a valid LinkedIn URL'.tr(),
-                    },
                   ),
                   SizedBox(height: AppTheme.spacingLg.h),
+
+                  // Resume Section
+                  Text(
+                    'Resume / CV'.tr(),
+                    style: theme.textTheme.titleLarge?.copyWith(
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  SizedBox(height: AppTheme.spacingMd.h),
+                  ReactiveTextField<String>(
+                    formControlName: 'cv',
+                    decoration: InputDecoration(
+                      labelText: 'Resume Filename'.tr(),
+                      prefixIcon: const Icon(Icons.description_outlined),
+                      border: const OutlineInputBorder(),
+                      helperText: 'CV upload functionality will be linked in the update client API.',
+                    ),
+                  ),
+                  SizedBox(height: AppTheme.spacingLg.h),
+
+
 
                   // Save Button
                   SizedBox(
@@ -430,14 +401,11 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   FormGroup _createBasicForm() => fb.group(<String, Object>{
     'name': FormControl<String>(value: ''),
     'email': FormControl<String>(value: ''),
-    'phone': FormControl<String>(value: ''),
     'nationality': FormControl<String>(value: ''),
     'gender': FormControl<String>(value: ''),
-    'jobTitle': FormControl<String>(value: ''),
     'location': FormControl<String>(value: ''),
-    'company': FormControl<String>(value: ''),
-    'education': FormControl<String>(value: ''),
-    'linkedin': FormControl<String>(value: ''),
+    'jobTitle': FormControl<String>(value: ''),
+    'cv': FormControl<String>(value: ''),
   });
 
   /// Clean "Not specified" values to empty strings
@@ -455,14 +423,15 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
 
     form.control('name').value = _cleanValue(profile.name);
     form.control('email').value = _cleanValue(profile.email);
-    form.control('phone').value = _cleanValue(profile.phone);
     form.control('nationality').value = _cleanValue(profile.nationality);
     form.control('gender').value = _cleanValue(profile.gender);
-    form.control('jobTitle').value = _cleanValue(profile.jobTitle);
     form.control('location').value = _cleanValue(profile.location);
-    form.control('company').value = _cleanValue(profile.company);
-    form.control('education').value = _cleanValue(profile.education);
-    form.control('linkedin').value = _cleanValue(profile.linkedin);
+    form.control('jobTitle').value = _cleanValue(profile.jobTitle);
+    
+    // Check if cv form control exists before updating
+    if (form.contains('cv')) {
+      form.control('cv').value = '';
+    }
 
     print('[EDIT_PROFILE] Form updated. Current values: ${form.value}');
   }
