@@ -1,0 +1,49 @@
+<h2>Final Onboarding Wizard Design</h2>
+<p class="subtitle">A tailored UAE-first onboarding experience for new candidates.</p>
+
+<div class="section">
+  <h3>The Complete Onboarding Flow</h3>
+  <div class="mockup">
+    <div class="mockup-header">Onboarding Wizard (5 Steps)</div>
+    <div class="mockup-body">
+      <div style="display: flex; flex-direction: column; gap: 12px; padding: 10px;">
+        <div class="option">
+          <div class="letter">1</div>
+          <div class="content"><strong>Resume Upload:</strong> User selects PDF/DOCX. <br/><small>Backend Suggests Titles in the background.</small></div>
+        </div>
+        <div class="option">
+          <div class="letter">2</div>
+          <div class="content"><strong>Target Roles:</strong> Multi-select chips pre-filled by <code>/suggest-job-titles</code>.</div>
+        </div>
+        <div class="option" style="border-color: #0D57E1; background: #eff6ff;">
+          <div class="letter">3</div>
+          <div class="content"><strong>UAE Locations:</strong> Interactive grid of UAE Cities:
+            <div style="display:flex; gap:5px; margin-top:5px; flex-wrap: wrap;">
+              <span class="label" style="background:#0D57E1; color:white; padding:2px 8px; border-radius:10px;">Dubai</span>
+              <span class="label" style="background:#0D57E1; color:white; padding:2px 8px; border-radius:10px;">Abu Dhabi</span>
+              <span class="label" style="background:#0D57E1; color:white; padding:2px 8px; border-radius:10px;">Sharjah</span>
+              <span class="label" style="background:#ddd; padding:2px 8px; border-radius:10px;">Ajman</span>
+            </div>
+          </div>
+        </div>
+        <div class="option">
+          <div class="letter">4</div>
+          <div class="content"><strong>Personal Details:</strong> Nationality and Gender confirmation.</div>
+        </div>
+        <div class="option" style="border-color: #10b981; background: #f0fdf4;">
+          <div class="letter">5</div>
+          <div class="content"><strong>Processing:</strong> Elegant loading screen &rarr; <code>add_client</code> call &rarr; Home Dashboard.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="section">
+  <h3>Technical Architecture</h3>
+  <ul>
+    <li><strong>Navigation:</strong> Triggered immediately after Signup success. Replaces <code>resumeImport</code> route with <code>onboardingWizard</code>.</li>
+    <li><strong>API Integration:</strong> Adds <code>suggestJobTitles</code> and <code>addClient</code> to <code>TabashirApiService</code>.</li>
+    <li><strong>State:</strong> <code>OnboardingCubit</code> handles cross-step data persistence and final submission logic.</li>
+  </ul>
+</div>

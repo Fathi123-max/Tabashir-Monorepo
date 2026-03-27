@@ -247,6 +247,25 @@ def init_tables_and_seed(db_name):
             );
         """)
 
+        # ProcessedTimestamps Table
+        cursor.execute("""
+            CREATE TABLE IF NOT EXISTS ProcessedTimestamps (
+                id SERIAL PRIMARY KEY,
+                timestamp TEXT,
+                created_at TIMESTAMP DEFAULT NOW()
+            );
+        """)
+
+        # Blocked Table
+        cursor.execute("""
+            CREATE TABLE IF NOT EXISTS blocked (
+                id SERIAL PRIMARY KEY,
+                email TEXT,
+                job_title TEXT,
+                created_at TIMESTAMP DEFAULT NOW()
+            );
+        """)
+
         # -------------------------------------------------------------------
         # 2. SEED MOCK DATA
         # -------------------------------------------------------------------

@@ -110,7 +110,7 @@ def update_status_to_applied(conn, match_id):
         cursor = conn.cursor()
 
         cursor.execute("""
-                       UPDATE Rankings
+                       UPDATE rankings
                        SET status = 'applied'
                        WHERE id = %s
                        """, (match_id,))
@@ -129,7 +129,7 @@ def decrement_jobs_to_apply(conn, client_email):
         cursor = conn.cursor()
 
         cursor.execute("""
-                       UPDATE Clients
+                       UPDATE clients
                        SET jobs_to_apply_number = jobs_to_apply_number - 1
                        WHERE email = %s
                          AND jobs_to_apply_number > 0
@@ -163,14 +163,13 @@ def apply(email, file_path):
                               location,
                               skills,
                               keywords,
-                              Job_Description,
+                              job_description,
                               filename,
-                              Job_Application_Email,
-                              Job_Title,
-                              Degree
-                       FROM Rankings
+                              job_application_email,
+                              job_title,
+                              degree
+                       FROM rankings
                        WHERE status = 'pending' and email = %s
-                         AND id > '44467'
                        """, (email,))
         matches = cursor.fetchall()
         match_id = None

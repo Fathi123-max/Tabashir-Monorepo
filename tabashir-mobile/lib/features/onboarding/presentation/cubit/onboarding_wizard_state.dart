@@ -5,7 +5,7 @@ import 'package:tabashir/core/network/models/jobs_match_response.dart';
 part 'onboarding_wizard_state.freezed.dart';
 
 @freezed
-class OnboardingWizardState with _$OnboardingWizardState {
+sealed class OnboardingWizardState with _$OnboardingWizardState {
   const factory OnboardingWizardState({
     @Default(1) int currentStep,
     Uint8List? fileBytes,

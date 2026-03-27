@@ -635,17 +635,26 @@ class SaveAndGenerate(Resource):
         """
         POST endpoint to save resume data and generate the document.
         """
+        import traceback
         user_id = request.user_id
+        print(f"DEBUG: SaveAndGenerate.post called for user_id: {user_id}")
         try:
             data = request.json
+            if not data:
+                print("DEBUG: Request body is empty")
+                raise ValueError("Request body is empty")
+                
             resume_data = data.get('resume_data')
             template_id = data.get('template_id', 'regular').lower()
             filename = data.get('filename', 'resume.docx')
 
+            print(f"DEBUG: Input data - template_id: {template_id}, filename: {filename}")
             if not resume_data:
+                print("DEBUG: Missing resume_data in request")
                 raise ValueError("Missing 'resume_data' in request")
 
             # 1. Ensure Candidate exists for this user
+            print("DEBUG: Checking/Creating Candidate")
             candidate = execute_query(
                 'SELECT id FROM "Candidate" WHERE "userId" = %s',
                 (user_id,),
@@ -654,6 +663,7 @@ class SaveAndGenerate(Resource):
             
             if not candidate:
                 candidate_id = str(uuid.uuid4())
+                print(f"DEBUG: Creating new Candidate with id: {candidate_id}")
                 execute_query(
                     'INSERT INTO "Candidate" (id, "userId", "createdAt", "updatedAt") VALUES (%s, %s, NOW(), NOW())',
                     (candidate_id, user_id),
@@ -661,33 +671,43 @@ class SaveAndGenerate(Resource):
                 )
             else:
                 candidate_id = candidate['id']
+                print(f"DEBUG: Found existing Candidate with id: {candidate_id}")
 
             # 2. Deserialize resume
+            print("DEBUG: Deserializing resume data")
             resume_obj = Resume.from_dict(resume_data)
             resume_obj.source_data = resume_data
 
             # 3. Generate file
+            print("DEBUG: Generating document")
             unique_filename = f"{uuid.uuid4()}_{secure_filename(filename)}"
             os.makedirs(Config.CV_STORAGE_PATH, exist_ok=True)
             file_path = Config.CV_STORAGE_PATH / unique_filename
 
             template_path = Config.ARABIC_TEMPLATE_PATH if template_id == 'arabic' else Config.REGULAR_TEMPLATE_PATH
-            # Ensure it is a string for write_document
+            print(f"DEBUG: Using template at: {template_path}")
+            
             resume_obj.write_document(str(template_path), str(file_path))
+            print(f"DEBUG: Document generated successfully at: {file_path}")
 
             # 4. Create Resume record
+            print("DEBUG: Creating Resume record in DB")
             resume_id = str(uuid.uuid4())
             original_url = unique_filename
             
             try:
+                # Use the original source_data for DB storage to keep it compatible with mobile app
                 execute_query(
                     """INSERT INTO "Resume" 
                        (id, "candidateId", filename, "originalUrl", "isAiResume", "sourceData", "createdAt", "updatedAt") 
                        VALUES (%s, %s, %s, %s, %s, %s, NOW(), NOW())""",
-                    (resume_id, candidate_id, filename, original_url, True, json.dumps(resume_obj.to_dict())),
+                    (resume_id, candidate_id, filename, original_url, True, json.dumps(resume_obj.source_data)),
                     commit=True
                 )
+                print(f"DEBUG: Resume record created with id: {resume_id}")
             except Exception as db_err:
+                print(f"DEBUG: DB Error during Resume insertion: {db_err}")
+                traceback.print_exc()
                 # Cleanup generated files if DB fails
                 if os.path.exists(file_path):
                     os.remove(file_path)
@@ -696,27 +716,28 @@ class SaveAndGenerate(Resource):
                     os.remove(pdf_path)
                 raise db_err
 
-            # Return the full ResumeItem object
+            # Return ONLY the resume dictionary, not wrapped in {success, resume}
+            # because ResumeApiService.saveAndGenerate expects ResumeItem directly.
             base_url = request.host_url.rstrip('/')
             return {
-                "success": True,
-                "message": "Resume saved and generated successfully",
-                "resume": {
-                    "id": resume_id,
-                    "filename": filename,
-                    "originalUrl": f"{base_url}/api/v1/resumes/{resume_id}/download",
-                    "formatedUrl": None,
-                    "isAiResume": True,
-                    "sourceData": resume_obj.to_dict(),
-                    "createdAt": datetime.utcnow().isoformat(),
-                    "updatedAt": datetime.utcnow().isoformat()
-                }
+                "id": resume_id,
+                "filename": filename,
+                "originalUrl": f"{base_url}/api/v1/resumes/{resume_id}/download",
+                "formatedUrl": None,
+                "isAiResume": True,
+                "sourceData": resume_obj.source_data,
+                "createdAt": datetime.utcnow().isoformat(),
+                "updatedAt": datetime.utcnow().isoformat()
             }, HTTPStatus.CREATED
 
         except ValueError as ve:
+            print(f"DEBUG: ValueError: {ve}")
             return {"success": False, "message": "Invalid input", "error": str(ve)}, HTTPStatus.BAD_REQUEST
         except Exception as e:
-            return {"success": False, "message": "Failed to save and generate resume", "error": str(e)}, HTTPStatus.INTERNAL_SERVER_ERROR
+            print(f"DEBUG: Unexpected Error in SaveAndGenerate.post:")
+            traceback.print_exc()
+            error_msg = str(e) or type(e).__name__
+            return {"success": False, "message": "Failed to save and generate resume", "error": error_msg}, HTTPStatus.INTERNAL_SERVER_ERROR
 
 
 @resumes_ns.route('/format-cv-object')
@@ -808,7 +829,7 @@ class ApplyJobs(Resource):
                 email=email, resume_path=temp_input_path, nationality=nationality, gender=gender,  location_preferred=location_preference_str, preferred_positions=preferred_positions_str
             )
             if not email:
-                raise ValueError("Email not found in the resume. Please provide a valid resume with email address.")
+                raise ValueError("Failed to process resume. Please ensure the file is a valid PDF or DOCX and contains your contact information.")
 
             ranking_result = run_ranking_main(client_email=email)
             if not ranking_result:
@@ -912,7 +933,7 @@ class AddClient(Resource):
                 email=email, resume_path=temp_input_path, nationality=nationality, gender=gender,  location_preferred=location_preference_str, preferred_positions=preferred_positions_str
             )
             if not email:
-                raise ValueError("Email not found in the resume. Please provide a valid resume with email address.")
+                raise ValueError("Failed to process resume. Please ensure the file is a valid PDF or DOCX and contains your contact information.")
 
             ranking_result = run_ranking_main(client_email=email)
             if not ranking_result:
@@ -1061,8 +1082,8 @@ class ActivateJobApply(Resource):
             if not filename:
                 return {"success": False, "message": "Client CV not found"}, 404
             temp_input_path = Config.TEMP_FOLDER / filename
-            cv_dir = Path("/var/www/AI_Job_Matching_and_Apply/temp_CVs")
-            cv_dir_2 = Path("/var/www/AI_Job_Matching_and_Apply/CVs")
+            cv_dir = Config.CV_STORAGE_PATH / "temp_CVs"
+            cv_dir_2 = Config.CV_STORAGE_PATH
             original_cv_path = cv_dir / filename
             print(f"original_cv_path: {original_cv_path}")
             if not original_cv_path.exists():

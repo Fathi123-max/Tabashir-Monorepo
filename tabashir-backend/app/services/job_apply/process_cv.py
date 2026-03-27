@@ -78,16 +78,29 @@ def parse_cv_data(cv_text):
 
 
 def mark_timestamp_as_processed(conn, timestamp):
-    cursor = conn.cursor()
-    query = "INSERT INTO ProcessedTimestamps (timestamp) VALUES (%s)"
-    cursor.execute(query, (timestamp,))
-    conn.commit()
-    cursor.close()
+    try:
+        cursor = conn.cursor()
+        # Ensure the table exists
+        cursor.execute("""
+            CREATE TABLE IF NOT EXISTS ProcessedTimestamps (
+                id SERIAL PRIMARY KEY,
+                timestamp TEXT,
+                created_at TIMESTAMP DEFAULT NOW()
+            );
+        """)
+        conn.commit()
+
+        query = "INSERT INTO ProcessedTimestamps (timestamp) VALUES (%s)"
+        cursor.execute(query, (timestamp,))
+        conn.commit()
+        cursor.close()
+    except Exception as e:
+        print(f"Warning: Failed to mark timestamp as processed: {e}")
 
 
 def process_ai_job_input(email, resume_path, nationality, gender, location_preferred, preferred_positions):
     try:
-        SERVER_CV_DIR = "/var/www/AI_Job_Matching_and_Apply/CVs"
+        SERVER_CV_DIR = str(Config.CV_STORAGE_PATH)
         os.makedirs(SERVER_CV_DIR, exist_ok=True)
 
 
@@ -132,7 +145,33 @@ def process_ai_job_input(email, resume_path, nationality, gender, location_prefe
         conn.autocommit = False
         cursor = conn.cursor()
 
-        cursor.execute("SELECT 1 FROM Clients WHERE email = %s", (data['email'],))
+        # Ensure clients table exists
+        cursor.execute("""
+            CREATE TABLE IF NOT EXISTS clients (
+                id SERIAL PRIMARY KEY,
+                email TEXT UNIQUE,
+                name TEXT,
+                positions TEXT,
+                skills TEXT,
+                location TEXT,
+                major TEXT,
+                keywords TEXT,
+                gender TEXT,
+                nationality TEXT,
+                degree TEXT,
+                filename TEXT,
+                jobs_to_apply_number INTEGER DEFAULT 0,
+                job_location_based TEXT,
+                job_matching INTEGER DEFAULT 0,
+                fcv_as_string TEXT,
+                phone_number TEXT,
+                date_in TEXT,
+                gpa TEXT
+            );
+        """)
+        conn.commit()
+
+        cursor.execute("SELECT 1 FROM clients WHERE email = %s", (data['email'],))
         if cursor.fetchone():
             print(f"Email {data['email']} already exists.")
             mark_timestamp_as_processed(conn, timestamp)
@@ -140,7 +179,7 @@ def process_ai_job_input(email, resume_path, nationality, gender, location_prefe
 
         columns = ', '.join(data.keys())
         placeholders = ', '.join(['%s'] * len(data))
-        query = f"INSERT INTO Clients ({columns}) VALUES ({placeholders})"
+        query = f"INSERT INTO clients ({columns}) VALUES ({placeholders})"
         cursor.execute(query, tuple(data.values()))
         conn.commit()
 
@@ -152,7 +191,7 @@ def process_ai_job_input(email, resume_path, nationality, gender, location_prefe
 
 def process_ai_job_input_not_active(email, resume_path, nationality, gender, location_preferred, preferred_positions):
    try:
-        SERVER_CV_DIR = "/var/www/AI_Job_Matching_and_Apply/temp_CVs"
+        SERVER_CV_DIR = str(Config.CV_STORAGE_PATH / "temp_CVs")
         os.makedirs(SERVER_CV_DIR, exist_ok=True)
         resume_path = str(resume_path)
 
@@ -197,7 +236,33 @@ def process_ai_job_input_not_active(email, resume_path, nationality, gender, loc
         conn.autocommit = False
         cursor = conn.cursor()
 
-        cursor.execute("SELECT 1 FROM Clients WHERE email = %s", (data['email'],))
+        # Ensure clients table exists
+        cursor.execute("""
+            CREATE TABLE IF NOT EXISTS clients (
+                id SERIAL PRIMARY KEY,
+                email TEXT UNIQUE,
+                name TEXT,
+                positions TEXT,
+                skills TEXT,
+                location TEXT,
+                major TEXT,
+                keywords TEXT,
+                gender TEXT,
+                nationality TEXT,
+                degree TEXT,
+                filename TEXT,
+                jobs_to_apply_number INTEGER DEFAULT 0,
+                job_location_based TEXT,
+                job_matching INTEGER DEFAULT 0,
+                fcv_as_string TEXT,
+                phone_number TEXT,
+                date_in TEXT,
+                gpa TEXT
+            );
+        """)
+        conn.commit()
+
+        cursor.execute("SELECT 1 FROM clients WHERE email = %s", (data['email'],))
         if cursor.fetchone():
             print(f"Email {data['email']} already exists.")
             mark_timestamp_as_processed(conn, timestamp)
@@ -205,7 +270,7 @@ def process_ai_job_input_not_active(email, resume_path, nationality, gender, loc
 
         columns = ', '.join(data.keys())
         placeholders = ', '.join(['%s'] * len(data))
-        query = f"INSERT INTO Clients ({columns}) VALUES ({placeholders})"
+        query = f"INSERT INTO clients ({columns}) VALUES ({placeholders})"
         cursor.execute(query, tuple(data.values()))
         conn.commit()
 

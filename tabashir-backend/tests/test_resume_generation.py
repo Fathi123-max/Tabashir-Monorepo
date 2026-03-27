@@ -67,12 +67,12 @@ def test_save_and_generate_resume_success(mock_write, mock_query, client, auth_h
         headers=auth_headers
     )
     
-    # It should fail now because the endpoint doesn't exist
+    # It should succeed now
     assert response.status_code == 201
     data = response.get_json()
-    assert data['success'] is True
-    assert 'resume' in data
-    assert 'id' in data['resume']
+    assert 'id' in data
+    assert 'filename' in data
+    assert data['isAiResume'] is True
     
     # Verify write_document was called
     assert mock_write.called
@@ -85,13 +85,13 @@ def test_save_and_generate_resume_success(mock_write, mock_query, client, auth_h
     params = insert_call[0][1]
     assert 'sourceData' in query
     
-    # Find resume_data in params (it should be in source_data field of the serialized Resume)
+    # Find resume_data in params
     resume_data_found = False
     for p in params:
         if isinstance(p, str):
             try:
                 data = json.loads(p)
-                if data.get('source_data') == resume_data:
+                if data == resume_data:
                     resume_data_found = True
                     break
             except:

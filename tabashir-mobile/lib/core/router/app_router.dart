@@ -29,6 +29,7 @@ import 'package:tabashir/features/jobs/presentation/screens/job_details_screen.d
 import 'package:tabashir/features/jobs/presentation/screens/saved_jobs_screen.dart';
 import 'package:tabashir/features/services/presentation/screens/interview_training_coming_soon_screen.dart';
 import 'package:tabashir/features/onboarding/presentation/screens/onboarding_screen.dart';
+import 'package:tabashir/features/onboarding/presentation/screens/onboarding_wizard_screen.dart';
 import 'package:tabashir/features/onboarding/presentation/screens/splash_screen.dart';
 import 'package:tabashir/features/resume/presentation/screens/resume_import_screen.dart';
 import 'package:tabashir/features/resume/presentation/screens/resume_preview_screen.dart';
@@ -190,6 +191,11 @@ final GoRouter appRouter = GoRouter(
       path: RouteNames.onboarding,
       name: 'onboarding-screen',
       builder: (context, state) => const OnboardingScreen(),
+    ),
+    GoRoute(
+      path: RouteNames.onboardingWizard,
+      name: 'onboarding-wizard-screen',
+      builder: (context, state) => const OnboardingWizardScreen(),
     ),
     GoRoute(
       path: RouteNames.resumeImport,

@@ -358,12 +358,6 @@ extension GetItInjectableX on _i174.GetIt {
     gh.lazySingleton<_i9.HomeCubit>(
       () => _i9.HomeCubit(gh<_i184.HomeApiService>()),
     );
-    gh.factory<_i891.OnboardingWizardCubit>(
-      () => _i891.OnboardingWizardCubit(
-        gh<_i588.AiJobApplyRepository>(),
-        gh<_i36.ProfileCubit>(),
-      ),
-    );
     gh.factory<_i674.SettingsRepository>(
       () => _i955.SettingsRepositoryImpl(gh<_i527.LocalStorageService>()),
     );
@@ -428,6 +422,13 @@ extension GetItInjectableX on _i174.GetIt {
     );
     gh.factory<_i331.Cubit<_i895.UploadState>>(
       () => _i895.UploadCubit(gh<_i302.UploadRepository>()),
+    );
+    gh.factory<_i891.OnboardingWizardCubit>(
+      () => _i891.OnboardingWizardCubit(
+        gh<_i588.AiJobApplyRepository>(),
+        gh<_i36.ProfileCubit>(),
+        gh<_i117.AuthCubit>(),
+      ),
     );
     return this;
   }

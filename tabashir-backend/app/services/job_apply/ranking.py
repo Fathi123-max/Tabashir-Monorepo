@@ -280,9 +280,75 @@ def main(client_email):
 
     # Only load necessary columns to reduce memory usage
     print("Loading data from database...")
-    # Replace the jobs_df loading section with the following:
+    
+    # Ensure tables exist
+    cursor.execute("""
+        CREATE TABLE IF NOT EXISTS jobs (
+            id SERIAL PRIMARY KEY,
+            job_title TEXT,
+            job_description TEXT,
+            vacancy_city TEXT,
+            gender TEXT,
+            nationality TEXT,
+            application_email TEXT,
+            job_date TEXT
+        );
+    """)
+    cursor.execute("""
+        CREATE TABLE IF NOT EXISTS clients (
+            id SERIAL PRIMARY KEY,
+            email TEXT UNIQUE,
+            name TEXT,
+            positions TEXT,
+            skills TEXT,
+            location TEXT,
+            major TEXT,
+            keywords TEXT,
+            gender TEXT,
+            nationality TEXT,
+            degree TEXT,
+            filename TEXT,
+            jobs_to_apply_number INTEGER DEFAULT 0,
+            job_location_based TEXT,
+            job_matching INTEGER DEFAULT 0,
+            fcv_as_string TEXT,
+            phone_number TEXT,
+            date_in TEXT,
+            gpa TEXT
+        );
+    """)
+    cursor.execute("""
+        CREATE TABLE IF NOT EXISTS rankings (
+            id SERIAL PRIMARY KEY,
+            client_id TEXT,
+            job_id TEXT,
+            name TEXT,
+            email TEXT,
+            major TEXT,
+            location TEXT,
+            skills TEXT,
+            keywords TEXT,
+            job_title TEXT,
+            job_description TEXT,
+            job_application_email TEXT,
+            filename TEXT,
+            status TEXT DEFAULT 'pending',
+            date TEXT,
+            score REAL,
+            degree TEXT
+        );
+    """)
+    cursor.execute("""
+        CREATE TABLE IF NOT EXISTS blocked (
+            id SERIAL PRIMARY KEY,
+            email TEXT,
+            job_title TEXT,
+            created_at TIMESTAMP DEFAULT NOW()
+        );
+    """)
+    conn.commit()
 
-    # Check if Nationality column exists
+    # Check if Nationality column exists in jobs
     cursor.execute("SELECT column_name FROM information_schema.columns WHERE table_name = 'jobs'")
     columns = [row[0] for row in cursor.fetchall()]
     two_months_ago = (datetime.now() - timedelta(days=60)).strftime("%Y-%m-%d")
@@ -354,13 +420,13 @@ def main(client_email):
     print("Loading existing matches...")
     existing_matches = set()
     try:
-        cursor = conn.cursor()
-        cursor.execute("SELECT email, job_id FROM Rankings")
+        cursor.execute("SELECT email, job_id FROM rankings")
         for email, job_id in cursor.fetchall():
             existing_matches.add(f"{email}_{job_id}")
         print(f"Loaded {len(existing_matches)} existing matches")
     except Exception as e:
         print(f"Error loading existing matches: {e}")
+        conn.rollback() # Reset transaction after error
 
     # Load blocked job-client pairs
     print("Loading blocked job-client pairs...")
@@ -372,6 +438,7 @@ def main(client_email):
         print(f"Loaded {len(blocked_pairs)} blocked pairs")
     except Exception as e:
         print(f"Error loading blocked pairs: {e}")
+        conn.rollback() # Reset transaction after error
 
     print("Starting synchronous processing...")
     all_jobs_data = (jobs_df, clients_df, existing_matches)
@@ -379,52 +446,9 @@ def main(client_email):
 
     print(f"Synchronous processing completed. Found {len(all_matches)} matches in {time.time() - start_time:.1f}s")
 
-    # Create the rankings table if it doesn't exist
-    print("Inserting rankings into database...")
-    cursor.execute("""
-                   CREATE TABLE IF NOT EXISTS rankings
-                   (
-                       id
-                       SERIAL
-                       PRIMARY
-                       KEY,
-                       client_id
-                       TEXT,
-                       job_id
-                       TEXT,
-                       name
-                       TEXT,
-                       email
-                       TEXT,
-                       major
-                       TEXT,
-                       location
-                       TEXT,
-                       skills
-                       TEXT,
-                       keywords
-                       TEXT,
-                       job_title
-                       TEXT,
-                       job_description
-                       TEXT,
-                       job_application_email
-                       TEXT,
-                       filename
-                       TEXT,
-                       status
-                       TEXT,
-                       date
-                       TEXT,
-                       score
-                       REAL,
-                       degree
-                       TEXT
-                   );
-                   """)
-
     # Create indexes for faster lookups
-    cursor.execute("CREATE INDEX IF NOT EXISTS idx_rankings_email_job ON Rankings(email, job_id)")
+    cursor.execute("CREATE INDEX IF NOT EXISTS idx_rankings_email_job ON rankings(email, job_id)")
+    conn.commit()
 
     # Prepare for batch insertion
     inserted = 0
@@ -438,14 +462,14 @@ def main(client_email):
     batch_size = 1000
     batch_values = []
 
-    # Reset the sequence for the Rankings table
+    # Reset the sequence for the rankings table
     cursor.execute("""
-                   SELECT setval(pg_get_serial_sequence('Rankings', 'id'), COALESCE(MAX(id), 1))
-                   FROM Rankings;
+                   SELECT setval(pg_get_serial_sequence('rankings', 'id'), COALESCE(MAX(id), 1))
+                   FROM rankings;
                    """)
     conn.commit()
     insert_query = """
-                   INSERT INTO Rankings (client_id, job_id, name, email, major, location, skills, keywords, job_title, \
+                   INSERT INTO rankings (client_id, job_id, name, email, major, location, skills, keywords, job_title, \
                                          job_description, job_application_email, filename, status, date, score, degree) \
                    VALUES %s ON CONFLICT (id) DO NOTHING; \
                    """

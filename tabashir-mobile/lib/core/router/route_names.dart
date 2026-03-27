@@ -45,6 +45,7 @@ class RouteNames {
 
   /// Onboarding routes
   static const String resumeImport = '/resume-import';
+  static const String onboardingWizard = '/onboarding-wizard';
 
   /// Resume routes
   static const String resumePreview = '/resume-preview';

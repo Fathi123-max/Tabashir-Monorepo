@@ -1,0 +1,53 @@
+<h2>Onboarding Wizard with AI Suggestions</h2>
+<p class="subtitle">A smart onboarding flow that uses lightweight AI to assist the user without long wait times.</p>
+
+<div class="section">
+  <h3>The Optimized Wizard Flow</h3>
+  <div class="mockup">
+    <div class="mockup-header">Wizard Steps (5 Total)</div>
+    <div class="mockup-body">
+      <div style="display: flex; flex-direction: column; gap: 15px; padding: 10px;">
+        <div class="option">
+          <div class="letter">1</div>
+          <div class="content"><strong>Resume Upload:</strong> User selects PDF/DOCX. <br/><small>Immediate call to <code>/suggest-job-titles</code> (very fast).</small></div>
+        </div>
+        <div class="option" style="border-color: #10b981; background: #f0fdf4;">
+          <div class="letter">2</div>
+          <div class="content"><strong>Target Roles:</strong> User sees <strong>Suggested Roles</strong> extracted from their CV. They can select these or add others.</div>
+        </div>
+        <div class="option">
+          <div class="letter">3</div>
+          <div class="content"><strong>Locations:</strong> Select preferred cities/countries.</div>
+        </div>
+        <div class="option">
+          <div class="letter">4</div>
+          <div class="content"><strong>Personal Details:</strong> Confirm Nationality and Gender.</div>
+        </div>
+        <div class="option" style="border-color: #0D57E1; background: #f0f7ff;">
+          <div class="letter">5</div>
+          <div class="content"><strong>Final Review & Processing:</strong> User clicks "Finish" &rarr; Full AI matching begins.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="section">
+  <h3>Technical Detail: /suggest-job-titles</h3>
+  <ul>
+    <li><strong>Request:</strong> Multipart file (The resume).</li>
+    <li><strong>Response:</strong> <code>{"success": true, "suggested_job_titles": ["Full Stack Developer", "Software Engineer", ...]}</code></li>
+    <li><strong>Implementation:</strong> Triggered automatically when Step 1 completes. Pre-populates the chips in Step 2.</li>
+  </ul>
+</div>
+
+<div class="pros-cons">
+  <div class="pros">
+    <h4>Why this is better?</h4>
+    <ul>
+      <li><strong>Reduced Friction:</strong> User doesn't have to type their job titles from scratch.</li>
+      <li><strong>AI Value:</strong> Shows the power of Tabashir early in the onboarding.</li>
+      <li><strong>Accuracy:</strong> Guides the user toward roles that the system actually found in their CV.</li>
+    </ul>
+  </div>
+</div>

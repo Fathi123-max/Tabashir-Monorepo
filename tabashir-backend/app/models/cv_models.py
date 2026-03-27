@@ -1,7 +1,12 @@
 from pathlib import Path
 from typing import Optional
 
-from docx2pdf import convert
+try:
+    from docx2pdf import convert
+except ImportError:
+    convert = None
+    print("Warning: docx2pdf not found, PDF conversion will be disabled")
+
 from docxtpl import DocxTemplate, RichText
 
 
@@ -182,14 +187,29 @@ class Resume:
         }
         try:
             # Render and Save the Document
+            print(f"Rendering template from: {template_path}")
             doc.render(context)
+            
+            print(f"Saving DOCX to: {output_path}")
             doc.save(output_path)
-            output_path = Path(output_path)
-            pdf_path = output_path.with_suffix('.pdf')
-            convert(output_path, pdf_path)
+            
+            output_path_obj = Path(output_path)
+            pdf_path = output_path_obj.with_suffix('.pdf')
+            
+            print(f"Attempting PDF conversion to: {pdf_path}")
+            try:
+                # docx2pdf requires Microsoft Word on macOS/Windows and is often unstable in backends
+                convert(str(output_path), str(pdf_path))
+                print("PDF conversion successful")
+            except Exception as pdf_err:
+                print(f"Warning: PDF conversion failed (this is common in server environments): {pdf_err}")
+                # We don't raise here because we still have the DOCX saved
+                
         except Exception as e:
-            print(f"Error rendering template: {e}")
-            raise
+            import traceback
+            print(f"Error during document generation:")
+            traceback.print_exc()
+            raise Exception(f"Document generation failed: {str(e)}")
 
     def to_dict(self) -> dict:
         """Converts Resume object to dictionary."""
@@ -224,59 +244,185 @@ class Resume:
             nationality=h.get('nationality')
         )
 
-        objective = CareerObjective(data.get('objective', ''))
+        objective_data = data.get('objective', '')
+        if isinstance(objective_data, dict):
+            objective_str = objective_data.get('summary', objective_data.get('objective', ''))
+        else:
+            objective_str = str(objective_data)
+        objective = CareerObjective(objective_str)
 
         education = []
         for edu in data.get('education', []):
+            if not isinstance(edu, dict):
+                continue
+            
+            # Robustly handle details/coursework as string or list
+            raw_details = edu.get('details', [])
+            if isinstance(raw_details, str):
+                raw_details = [raw_details]
+            elif raw_details is None:
+                raw_details = []
+            
+            raw_coursework = edu.get('coursework', [])
+            if isinstance(raw_coursework, str):
+                raw_coursework = [raw_coursework]
+            elif raw_coursework is None:
+                raw_coursework = []
+
+            # Handle date range if missing
+            edu_date = edu.get('date', '')
+            if not edu_date and (edu.get('start_date') or edu.get('startDate')):
+                start = edu.get('start_date') or edu.get('startDate', '')
+                end = edu.get('end_date') or edu.get('endDate', 'Present')
+                # Simple extraction of Year-Month if it's ISO format
+                if isinstance(start, str) and 'T' in start: start = start.split('T')[0]
+                if isinstance(end, str) and 'T' in end: end = end.split('T')[0]
+                edu_date = f"{start} - {end}"
+
             education.append(EducationExperience(
-                coursework=edu.get('coursework', []),
-                date=edu.get('date', ''),
-                details=edu.get('details', []),
-                location=edu.get('location', ''),
+                coursework=raw_coursework,
+                date=edu_date,
+                details=raw_details,
+                location=edu.get('location', edu.get('city', '')),
                 major=edu.get('major', ''),
                 degree=edu.get('degree', ''),
-                university=edu.get('university', ''),
-                GPA=edu.get('GPA', edu.get('gpa', ''))
+                university=edu.get('university', edu.get('school', '')),
+                GPA=str(edu.get('GPA', edu.get('gpa', '')))
             ))
 
         work = []
         for w in data.get('work', []):
+            if not isinstance(w, dict):
+                continue
+            
+            raw_details = w.get('details', [])
+            if isinstance(raw_details, str):
+                raw_details = [raw_details]
+            elif raw_details is None:
+                raw_details = []
+            elif not raw_details and w.get('description'):
+                raw_details = [w.get('description')]
+
+            work_date = w.get('date', '')
+            if not work_date and (w.get('start_date') or w.get('startDate')):
+                start = w.get('start_date') or w.get('startDate', '')
+                end = w.get('end_date') or w.get('endDate', 'Present')
+                if isinstance(start, str) and 'T' in start: start = start.split('T')[0]
+                if isinstance(end, str) and 'T' in end: end = end.split('T')[0]
+                work_date = f"{start} - {end}"
+
             work.append(WorkAndLeadershipExperience(
-                company=w.get('company', ''),
-                date=w.get('date', ''),
-                details=w.get('details', []),
-                location=w.get('location', ''),
+                company=w.get('company', w.get('organization', '')),
+                date=work_date,
+                details=raw_details,
+                location=w.get('location', w.get('city', '')),
                 position=w.get('position', '')
             ))
 
         leadership = []
         for l in data.get('leadership', []):
+            if not isinstance(l, dict):
+                continue
+            
+            raw_details = l.get('details', [])
+            if isinstance(raw_details, str):
+                raw_details = [raw_details]
+            elif raw_details is None:
+                raw_details = []
+            elif not raw_details and l.get('description'):
+                raw_details = [l.get('description')]
+
+            l_date = l.get('date', '')
+            if not l_date and (l.get('start_date') or l.get('startDate')):
+                start = l.get('start_date') or l.get('startDate', '')
+                end = l.get('end_date') or l.get('endDate', 'Present')
+                if isinstance(start, str) and 'T' in start: start = start.split('T')[0]
+                if isinstance(end, str) and 'T' in end: end = end.split('T')[0]
+                l_date = f"{start} - {end}"
+
             leadership.append(WorkAndLeadershipExperience(
-                company=l.get('company', ''),
-                date=l.get('date', ''),
-                details=l.get('details', []),
-                location=l.get('location', ''),
+                company=l.get('company', l.get('organization', '')),
+                date=l_date,
+                details=raw_details,
+                location=l.get('location', l.get('city', '')),
                 position=l.get('position', '')
             ))
 
         projects = []
         for p in data.get('projects', []):
+            if not isinstance(p, dict):
+                continue
+            
+            raw_details = p.get('details', p.get('highlights', []))
+            if isinstance(raw_details, str):
+                raw_details = [raw_details]
+            elif raw_details is None:
+                raw_details = []
+            elif not raw_details and p.get('description'):
+                raw_details = [p.get('description')]
+
+            p_date = p.get('date', '')
+            if not p_date and (p.get('start_date') or p.get('startDate')):
+                start = p.get('start_date') or p.get('startDate', '')
+                end = p.get('end_date') or p.get('endDate', 'Present')
+                if isinstance(start, str) and 'T' in start: start = start.split('T')[0]
+                if isinstance(end, str) and 'T' in end: end = end.split('T')[0]
+                p_date = f"{start} - {end}"
+
             projects.append(Project(
-                date=p.get('date', ''),
-                details=p.get('details', []),
-                location=p.get('location', ''),
-                title=p.get('title', ''),
+                date=p_date,
+                details=raw_details,
+                location=p.get('location', p.get('city', '')),
+                title=p.get('title', p.get('name', '')),
                 position=p.get('position', '')
             ))
 
         skills_data = data.get('skills', {})
-        skills = Skills(
-            softskills=skills_data.get('softskills', []),
-            skillset=skills_data.get('skillset', []),
-            training=skills_data.get('training', [])
-        )
+        if isinstance(skills_data, list):
+            # Handle list of skill objects (common from mobile app)
+            soft_skills = []
+            technical_skills = []
+            training_list = []
+            for s in skills_data:
+                if not isinstance(s, dict):
+                    continue
+                name = s.get('name', '')
+                category = s.get('category', '')
+                if category == 'soft':
+                    soft_skills.append(name)
+                elif category == 'training':
+                    training_list.append(name)
+                else:
+                    technical_skills.append(name)
+            skills = Skills(
+                softskills=soft_skills,
+                skillset=technical_skills,
+                training=training_list
+            )
+        else:
+            skills = Skills(
+                softskills=skills_data.get('softskills', []),
+                skillset=skills_data.get('skillset', []),
+                training=skills_data.get('training', [])
+            )
 
-        languages = Languages(data.get('languages', []))
+        # Handle languages which might be a list of objects or list of strings/lists
+        raw_languages = data.get('languages', [])
+        processed_languages = []
+        if isinstance(raw_languages, list):
+            for lang in raw_languages:
+                if isinstance(lang, dict):
+                    # Handle Language object from mobile: {"name": "English", "proficiency": "Fluent"}
+                    name = lang.get('name', '')
+                    prof = lang.get('proficiency', '')
+                    if name and prof:
+                        processed_languages.append(f"{name} ({prof})")
+                    elif name:
+                        processed_languages.append(name)
+                else:
+                    processed_languages.append(lang)
+        
+        languages = Languages(processed_languages)
         keywords = data.get('keywords', [])
 
         return Resume(

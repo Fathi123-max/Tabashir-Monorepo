@@ -247,6 +247,82 @@ class AiJobApplyCubit extends Cubit<AiJobApplyState> {
     }
   }
 
+  /// Onboard a new client and submit application in one step
+  Future<void> onboardClientAndApply({required String email}) async {
+    if (state.selectedResumeId == null) {
+      emit(
+        state.copyWith(
+          submissionError: 'Please select a resume first',
+          hasError: true,
+        ),
+      );
+      return;
+    }
+
+    emit(state.copyWith(isSubmittingApplication: true, submissionError: ''));
+
+    try {
+      // 1. Get resume file details
+      final resumes = await _resumeVaultRepository.getUserResumes();
+      final selectedResume = resumes.firstWhere(
+        (r) => r.id == state.selectedResumeId,
+        orElse: () => throw Exception('Selected resume not found'),
+      );
+
+      // 2. Read file bytes
+      late final Uint8List fileBytes;
+
+      if (selectedResume.originalUrl != null &&
+          selectedResume.originalUrl!.isNotEmpty) {
+        fileBytes = await _repository.downloadResumeFromCloud(
+          resumeUrl: selectedResume.originalUrl!,
+        );
+      } else {
+        final file = File(selectedResume.filePath);
+        if (!await file.exists()) {
+          throw Exception('Resume file not found. Please re-upload your resume.');
+        }
+        fileBytes = await file.readAsBytes();
+      }
+
+      // 3. Prepare data
+      final positions = state.selectedRoles.map((r) => r.title).toList();
+      if (state.customRoleTitle.isNotEmpty) {
+        positions.add(state.customRoleTitle);
+      }
+
+      final locations = state.selectedLocations.map((l) => l.name).toList();
+
+      // 4. Call addClient instead of applyToJobs
+      final response = await _repository.addClient(
+        email: email,
+        fileBytes: fileBytes,
+        fileName: selectedResume.filename,
+        positions: positions,
+        locations: locations,
+        nationality: state.nationality ?? 'usa',
+        gender: state.gender?.name.toUpperCase() ?? 'MALE',
+      );
+
+      // Trigger home dashboard refresh
+      getIt<HomeCubit>().loadHomeData(forceRefresh: true);
+
+      emit(
+        state.copyWith(
+          isSubmittingApplication: false,
+          submissionResult: response,
+        ),
+      );
+    } catch (e) {
+      emit(
+        state.copyWith(
+          isSubmittingApplication: false,
+          submissionError: e.toString(),
+        ),
+      );
+    }
+  }
+
   // ============ Target Roles Methods ============
 
   /// Load available roles

@@ -154,9 +154,9 @@ class _SignupScreenState extends State<SignupScreen> {
         final isAuthenticated =
             await AuthSessionService.instance.isAuthenticated;
         if (isAuthenticated) {
-          // Navigate to resume import screen for new users
+          // Navigate to onboarding wizard for new users
           if (mounted) {
-            context.go(RouteNames.resumeImport);
+            context.go(RouteNames.onboardingWizard);
           }
         } else {
           // If user is not authenticated, show error message
@@ -238,7 +238,7 @@ class _SignupScreenState extends State<SignupScreen> {
                         onPressed: () async {
                           try {
                             await getIt<GoogleSignInService>().signIn();
-                            if (mounted) context.go('/');
+                            if (mounted) context.go(RouteNames.onboardingWizard);
                           } catch (e) {
                             _showMessage('Google sign-up failed: $e');
                           }
@@ -254,9 +254,9 @@ class _SignupScreenState extends State<SignupScreen> {
                           try {
                             await AppleSignInService.instance.signIn();
                             // Backend verification complete, JWT stored in AuthSessionService
-                            // Navigate to resume import for new users to upload and parse CV
+                            // Navigate to onboarding wizard for new users
                             if (mounted) {
-                              context.go(RouteNames.resumeImport);
+                              context.go(RouteNames.onboardingWizard);
                             }
                           } catch (e) {
                             _showMessage('Apple sign-up failed: $e');

@@ -1,0 +1,53 @@
+<h2>Onboarding Wizard Design</h2>
+<p class="subtitle">A clear, non-AI-blocking flow that captures requirements and then processes them all at once.</p>
+
+<div class="section">
+  <h3>Step-by-Step Flow</h3>
+  <div class="mockup">
+    <div class="mockup-header">Wizard Steps (5 Total)</div>
+    <div class="mockup-body">
+      <div style="display: flex; flex-direction: column; gap: 15px; padding: 10px;">
+        <div class="option">
+          <div class="letter">1</div>
+          <div class="content"><strong>Resume Upload:</strong> User selects PDF/DOCX. No AI parsing yet (fast).</div>
+        </div>
+        <div class="option">
+          <div class="letter">2</div>
+          <div class="content"><strong>Target Roles:</strong> Multi-select from common roles or manual entry.</div>
+        </div>
+        <div class="option">
+          <div class="letter">3</div>
+          <div class="content"><strong>Locations:</strong> Select preferred cities/countries.</div>
+        </div>
+        <div class="option">
+          <div class="letter">4</div>
+          <div class="content"><strong>Personal Details:</strong> Confirm Nationality and Gender.</div>
+        </div>
+        <div class="option" style="border-color: #0D57E1; background: #f0f7ff;">
+          <div class="letter">5</div>
+          <div class="content"><strong>Final Review & Processing:</strong> User clicks "Start My Career Journey" &rarr; <code>add_client</code> runs with full AI matching.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="section">
+  <h3>Key Components</h3>
+  <ul>
+    <li><strong>OnboardingCubit:</strong> Manages the wizard's local state (file bytes, selected roles, locations, details).</li>
+    <li><strong>OnboardingScreen:</strong> A multi-page view using <code>PageView</code> to transition smoothly between steps.</li>
+    <li><strong>ProcessingView:</strong> A beautiful, animated loading state shown while the AI is matching jobs.</li>
+  </ul>
+</div>
+
+<div class="pros-cons">
+  <div class="pros">
+    <h4>User Experience</h4>
+    <ul>
+      <li>Fast initial upload &mdash; no waiting at the start.</li>
+      <li>Clear expectations &mdash; the "Processing" step at the end feels substantial.</li>
+      <li>Highly structured data &mdash; ensures the AI has exactly what it needs for the best match.</li>
+    </ul>
+  </div>
+</div>

@@ -1,0 +1,62 @@
+<h2>How should we handle onboarding?</h2>
+<p class="subtitle">Pick the approach that best fits the desired user experience.</p>
+
+<div class="options">
+  <div class="option" data-choice="step-by-step" onclick="toggleSelect(this)">
+    <div class="letter">A</div>
+    <div class="content">
+      <h3>Multi-Step Wizard</h3>
+      <p>After registration, the user imports their resume, then sees a clear 3-step wizard: 1. Roles, 2. Locations, 3. Personal Details. Finally, it triggers <code>add_client</code> and goes home.</p>
+    </div>
+  </div>
+  <div class="option" data-choice="quick-entry" onclick="toggleSelect(this)">
+    <div class="letter">B</div>
+    <div class="content">
+      <h3>Quick Entry Screen</h3>
+      <p>A single, unified screen after resume import that captures all requirements at once. Best for power users who want to get straight to matching.</p>
+    </div>
+  </div>
+  <div class="option" data-choice="automatic-extraction" onclick="toggleSelect(this)">
+    <div class="letter">C</div>
+    <div class="content">
+      <h3>Smart Extraction + Confirmation</h3>
+      <p>We use the AI-parsed resume data to pre-fill the requirements. The user just reviews and clicks "Confirm & Apply" to trigger <code>add_client</code>.</p>
+    </div>
+  </div>
+</div>
+
+<div class="section">
+  <h3>The Technical Flow</h3>
+  <div class="mockup">
+    <div class="mockup-header">Registration -> Onboarding -> Home</div>
+    <div class="mockup-body">
+      <div style="display: flex; justify-content: space-around; align-items: center; padding: 20px;">
+        <div class="placeholder" style="width: 100px; height: 150px; text-align: center;">Signup Screen</div>
+        <div style="font-size: 24px;">&rarr;</div>
+        <div class="placeholder" style="width: 100px; height: 150px; text-align: center; border-color: #0D57E1;">Resume Import</div>
+        <div style="font-size: 24px;">&rarr;</div>
+        <div class="placeholder" style="width: 120px; height: 150px; text-align: center; background: #eef2ff; border-color: #0D57E1;"><strong>NEW: Onboarding</strong><br/><small>(Positions, Locations, Details)</small></div>
+        <div style="font-size: 24px;">&rarr;</div>
+        <div class="placeholder" style="width: 100px; height: 150px; text-align: center;">Home Screen</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="pros-cons">
+  <div class="pros">
+    <h4>Why do this?</h4>
+    <ul>
+      <li>Higher quality AI matching results.</li>
+      <li>Users get immediate value right after signing up.</li>
+      <li>Reduces friction in finding the first job.</li>
+    </ul>
+  </div>
+  <div class="cons">
+    <h4>Challenges</h4>
+    <ul>
+      <li>Adds 1-2 minutes to the signup process.</li>
+      <li>Requires careful UI design to avoid overwhelming the user.</li>
+    </ul>
+  </div>
+</div>
