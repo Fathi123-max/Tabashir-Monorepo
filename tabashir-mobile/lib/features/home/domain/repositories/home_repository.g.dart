@@ -98,3 +98,12 @@ Map<String, dynamic> _$JobRecommendationToJson(_JobRecommendation instance) =>
       'location': instance.location,
       'matchPercentage': instance.matchPercentage,
     };
+
+_CityJobCount _$CityJobCountFromJson(Map<String, dynamic> json) =>
+    _CityJobCount(
+      city: json['city'] as String,
+      count: (json['count'] as num).toInt(),
+    );
+
+Map<String, dynamic> _$CityJobCountToJson(_CityJobCount instance) =>
+    <String, dynamic>{'city': instance.city, 'count': instance.count};

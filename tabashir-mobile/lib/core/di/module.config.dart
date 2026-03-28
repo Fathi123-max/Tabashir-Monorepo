@@ -254,6 +254,12 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factory<_i656.JobDetailsService>(
       () => _i656.JobDetailsService(gh<_i973.JobsRepository>()),
     );
+    gh.factory<_i0.HomeRepository>(
+      () => _i76.HomeRepositoryImpl(
+        gh<_i792.IsarService>(),
+        gh<_i1.TabashirApiService>(),
+      ),
+    );
     gh.factory<_i27.AiResumeRepository>(
       () => _i351.AiResumeRepositoryImpl(gh<_i1058.AiResumeApiService>()),
     );
@@ -358,9 +364,6 @@ extension GetItInjectableX on _i174.GetIt {
     );
     gh.factory<_i674.SettingsRepository>(
       () => _i955.SettingsRepositoryImpl(gh<_i527.LocalStorageService>()),
-    );
-    gh.factory<_i0.HomeRepository>(
-      () => _i76.HomeRepositoryImpl(gh<_i792.IsarService>()),
     );
     gh.factory<_i532.JobsCubit>(
       () => _i532.JobsCubit(

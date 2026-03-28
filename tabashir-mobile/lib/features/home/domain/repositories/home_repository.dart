@@ -63,6 +63,17 @@ sealed class JobRecommendation with _$JobRecommendation {
       _$JobRecommendationFromJson(json);
 }
 
+@freezed
+sealed class CityJobCount with _$CityJobCount {
+  const factory CityJobCount({
+    required String city,
+    required int count,
+  }) = _CityJobCount;
+
+  factory CityJobCount.fromJson(Map<String, dynamic> json) =>
+      _$CityJobCountFromJson(json);
+}
+
 /// Repository interface for home dashboard operations
 /// Defines the contract for home screen data operations
 abstract class HomeRepository {
@@ -122,5 +133,26 @@ abstract class HomeRepository {
     String? category,
     int page = 1,
     int limit = 20,
+  });
+
+  /// Get the AI client profile
+  Future<Map<String, dynamic>> getClientProfile();
+
+  /// Get applied jobs count
+  Future<int> getAppliedJobsCount({required String email});
+
+  /// Get AI matched jobs
+  Future<List<JobRecommendation>> getMatchedJobs({
+    required String email,
+    int limit = 10,
+  });
+
+  /// Get job counts grouped by city
+  Future<List<CityJobCount>> getJobsCountByCity();
+
+  /// Get latest jobs
+  Future<List<Map<String, dynamic>>> getLatestJobs({
+    int page = 1,
+    int limit = 10,
   });
 }

@@ -1,10 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:get_it/get_it.dart';
-import 'package:tabashir/core/di/injection.dart';
 import 'package:tabashir/core/theme/app_theme.dart';
 import 'package:tabashir/features/home/presentation/screens/home_screen.dart';
-import 'package:tabashir/features/jobs/presentation/cubit/jobs_cubit.dart';
 import 'package:tabashir/features/jobs/presentation/screens/jobs_screen.dart';
 import 'package:tabashir/features/profile/presentation/screens/profile_screen.dart';
 import 'package:tabashir/features/services/presentation/screens/services_screen.dart';
@@ -39,14 +35,7 @@ class _MainAppShellState extends State<MainAppShell> {
     HomeScreen(
       onTabChange: widget.onTabChange,
     ),
-    BlocProvider(
-      create: (context) {
-        final cubit = getIt<JobsCubit>();
-        cubit.initializeState();
-        return cubit;
-      },
-      child: const JobsScreen(),
-    ),
+    const JobsScreen(),
 
     const ServicesScreen(),
     const ProfileScreen(),

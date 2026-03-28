@@ -154,9 +154,11 @@ class _SignupScreenState extends State<SignupScreen> {
         final isAuthenticated =
             await AuthSessionService.instance.isAuthenticated;
         if (isAuthenticated) {
-          // Navigate to onboarding wizard for new users
+          // Navigate to onboarding wizard for new users, delayed to avoid GoRouter concurrent mutation with refreshListenable
           if (mounted) {
-            context.go(RouteNames.onboardingWizard);
+            Future.delayed(const Duration(milliseconds: 150), () {
+              if (mounted) context.go(RouteNames.onboardingWizard);
+            });
           }
         } else {
           // If user is not authenticated, show error message
@@ -238,7 +240,11 @@ class _SignupScreenState extends State<SignupScreen> {
                         onPressed: () async {
                           try {
                             await getIt<GoogleSignInService>().signIn();
-                            if (mounted) context.go(RouteNames.onboardingWizard);
+                            if (mounted) {
+                              Future.delayed(const Duration(milliseconds: 150), () {
+                                if (mounted) context.go(RouteNames.onboardingWizard);
+                              });
+                            }
                           } catch (e) {
                             _showMessage('Google sign-up failed: $e');
                           }
@@ -256,7 +262,9 @@ class _SignupScreenState extends State<SignupScreen> {
                             // Backend verification complete, JWT stored in AuthSessionService
                             // Navigate to onboarding wizard for new users
                             if (mounted) {
-                              context.go(RouteNames.onboardingWizard);
+                              Future.delayed(const Duration(milliseconds: 150), () {
+                                if (mounted) context.go(RouteNames.onboardingWizard);
+                              });
                             }
                           } catch (e) {
                             _showMessage('Apple sign-up failed: $e');

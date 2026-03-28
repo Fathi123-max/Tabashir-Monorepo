@@ -1,3 +1,4 @@
+// ignore_for_file: unused_element, unused_import
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -38,6 +39,7 @@ class HomeAnalyticsWidget extends StatelessWidget {
         SizedBox(height: AppTheme.spacingMd.h),
         */
 
+        /*
         // Match Score Distribution
         _buildChartCard(
           context,
@@ -46,6 +48,7 @@ class HomeAnalyticsWidget extends StatelessWidget {
           _buildMatchScoreChart(context),
         ),
         SizedBox(height: AppTheme.spacingMd.h),
+        */
 
         /*
         // Monthly Applications Trend
@@ -58,6 +61,7 @@ class HomeAnalyticsWidget extends StatelessWidget {
         SizedBox(height: AppTheme.spacingMd.h),
         */
 
+        /*
         // Skills Demand
         _buildChartCard(
           context,
@@ -65,6 +69,7 @@ class HomeAnalyticsWidget extends StatelessWidget {
           Iconsax.code,
           _buildSkillsDemandChart(context),
         ),
+        */
       ],
     );
   }

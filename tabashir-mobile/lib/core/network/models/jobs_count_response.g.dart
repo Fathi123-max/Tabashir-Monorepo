@@ -10,12 +10,12 @@ _JobsCountResponse _$JobsCountResponseFromJson(Map<String, dynamic> json) =>
     _JobsCountResponse(
       success: json['success'] as bool,
       email: json['email'] as String,
-      appliedJobsCount: (json['appliedJobsCount'] as num).toInt(),
+      appliedJobsCount: (json['applied_jobs_count'] as num).toInt(),
     );
 
 Map<String, dynamic> _$JobsCountResponseToJson(_JobsCountResponse instance) =>
     <String, dynamic>{
       'success': instance.success,
       'email': instance.email,
-      'appliedJobsCount': instance.appliedJobsCount,
+      'applied_jobs_count': instance.appliedJobsCount,
     };

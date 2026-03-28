@@ -14,7 +14,7 @@ sealed class JobsCountResponse with _$JobsCountResponse {
     required String email,
 
     /// Count of applied jobs
-    required int appliedJobsCount,
+    @JsonKey(name: 'applied_jobs_count') required int appliedJobsCount,
   }) = _JobsCountResponse;
 
   factory JobsCountResponse.fromJson(Map<String, dynamic> json) =>

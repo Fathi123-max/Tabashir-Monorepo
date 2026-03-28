@@ -1,5 +1,6 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:tabashir/core/network/models/user/user_profile_response.dart';
+import 'package:tabashir/features/home/domain/repositories/home_repository.dart';
 
 part 'home_state.freezed.dart';
 
@@ -33,5 +34,11 @@ sealed class HomeState with _$HomeState {
     @Default(0) int applicationSuccessRate,
     @Default('N/A') String avgMarketSalary,
     @Default(0) int totalApplications,
+
+    // AI Enhanced Native Fields
+    Map<String, dynamic>? clientProfile,
+    @Default([]) List<CityJobCount> cityJobCounts,
+    @Default([]) List<Map<String, dynamic>> latestJobsList,
+    @Default([]) List<JobRecommendation> matchedJobsList,
   }) = _HomeState;
 }

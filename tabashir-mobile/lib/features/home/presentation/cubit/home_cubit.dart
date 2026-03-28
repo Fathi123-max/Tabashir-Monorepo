@@ -5,6 +5,7 @@ import 'package:tabashir/core/network/models/user/user_profile_response.dart';
 import 'package:tabashir/core/network/models/home_dashboard_response.dart';
 import 'package:tabashir/core/services/job_match_service.dart';
 import '../../services/home_api_service.dart';
+import 'package:tabashir/features/home/domain/repositories/home_repository.dart';
 import 'home_state.dart';
 
 @lazySingleton
@@ -13,6 +14,7 @@ class HomeCubit extends Cubit<HomeState> {
 
   final HomeApiService _homeApiService;
   final JobMatchService _jobMatchService = getIt<JobMatchService>();
+  final HomeRepository _homeRepository = getIt<HomeRepository>();
   bool _isDataLoaded = false;
 
   void updateLoading(bool isLoading) {
@@ -157,6 +159,58 @@ class HomeCubit extends Cubit<HomeState> {
   }) async {
     print('[HOME_CUBIT] Refreshing home data...');
     await loadHomeData(userProfile: userProfile);
+  }
+
+  /// Load new Native AI enhanced home screen data
+  Future<void> loadAiEnhancedHomeData({
+    required String email,
+  }) async {
+    print('[HOME_CUBIT] Loading AI enhanced home data...');
+    if (isClosed) return;
+    emit(state.copyWith(isLoading: true, error: false));
+
+    try {
+      final results = await Future.wait([
+        _homeRepository.getClientProfile(),
+        _homeRepository.getAppliedJobsCount(email: email),
+        _homeRepository.getMatchedJobs(email: email, limit: 10),
+        _homeRepository.getJobsCountByCity(),
+        _homeRepository.getLatestJobs(limit: 10),
+      ]).catchError((Object error) {
+        print('[HOME_CUBIT] Error loading AI enhanced data: $error');
+        // Return typed defaults if fetching fails
+        return <Object>[
+          <String, dynamic>{},
+          0,
+          <JobRecommendation>[],
+          <CityJobCount>[],
+          <Map<String, dynamic>>[],
+        ];
+      });
+
+      final clientProfile = results[0] as Map<String, dynamic>? ?? {};
+      final appliedJobsCount = results[1] as int? ?? 0;
+      final matchedJobs = results[2] as List<JobRecommendation>? ?? [];
+      final cityCounts = results[3] as List<CityJobCount>? ?? [];
+      final latestJobs = results[4] as List<Map<String, dynamic>>? ?? [];
+
+      if (isClosed) return;
+      emit(
+        state.copyWith(
+          isLoading: false,
+          clientProfile: clientProfile.isEmpty ? null : clientProfile,
+          totalApplications: appliedJobsCount,
+          matchedJobsList: matchedJobs,
+          cityJobCounts: cityCounts,
+          latestJobsList: latestJobs,
+        ),
+      );
+
+      print('[HOME_CUBIT] Successfully loaded AI enhanced home data');
+    } catch (e) {
+      print('[HOME_CUBIT] Error loading AI enhanced home data: $e');
+      updateError('Failed to load AI enhanced home data: $e');
+    }
   }
 
   /// Get a specific job by ID from the featured jobs list

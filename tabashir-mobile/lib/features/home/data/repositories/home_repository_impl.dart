@@ -3,14 +3,17 @@ import 'dart:convert';
 import 'package:injectable/injectable.dart';
 import 'package:tabashir/core/services/isar_service.dart';
 import 'package:tabashir/features/home/domain/repositories/home_repository.dart';
+import 'package:tabashir/core/network/services/job/tabashir_api_service.dart';
+import 'package:tabashir/core/network/models/email_model.dart';
 
 /// Implementation of [HomeRepository]
 /// Handles home dashboard operations using [IsarService] for local storage
 @Injectable(as: HomeRepository)
 class HomeRepositoryImpl implements HomeRepository {
-  HomeRepositoryImpl(this._isarService);
+  HomeRepositoryImpl(this._isarService, this._tabashirApiService);
 
   final IsarService _isarService;
+  final TabashirApiService _tabashirApiService;
 
   @override
   Future<DashboardData> getDashboardData({
@@ -292,6 +295,91 @@ class HomeRepositoryImpl implements HomeRepository {
       );
     } catch (e) {
       throw Exception('Failed to search jobs: $e');
+    }
+  }
+
+  @override
+  Future<Map<String, dynamic>> getClientProfile() async {
+    try {
+      final response = await _tabashirApiService.getClient();
+      final aiClientData = response.data.data;
+      if (aiClientData != null) {
+        return {
+          'nationality': aiClientData.nationality,
+          'gender': aiClientData.gender,
+          'location': aiClientData.location,
+          'positions': aiClientData.positions,
+          'filename': aiClientData.filename,
+        };
+      }
+      return {};
+    } catch (e) {
+      print('Error getting client profile: $e');
+      return {};
+    }
+  }
+
+  @override
+  Future<int> getAppliedJobsCount({required String email}) async {
+    try {
+      final response = await _tabashirApiService.getAppliedJobsCount(EmailModel(email: email));
+      return response.data.appliedJobsCount;
+    } catch (e) {
+      print('Error getting applied jobs count: $e');
+      return 0;
+    }
+  }
+
+  @override
+  Future<List<JobRecommendation>> getMatchedJobs({
+    required String email,
+    int limit = 10,
+  }) async {
+    try {
+      final response = await _tabashirApiService.getJobMatches(email, limit, 1);
+      final jobs = response.data.matchedJobs;
+      return jobs.map((job) {
+        return JobRecommendation(
+          id: job.jobId?.toString() ?? '',
+          title: job.jobTitle ?? 'Unknown Title',
+          company: job.companyName ?? 'Unknown Company',
+          location: job.location ?? '',
+          matchPercentage: 90, // Placeholder, normally from match algorithm
+        );
+      }).toList();
+    } catch (e) {
+      print('Error getting matched jobs: $e');
+      return [];
+    }
+  }
+
+  @override
+  Future<List<CityJobCount>> getJobsCountByCity() async {
+    try {
+      final response = await _tabashirApiService.getJobsCountByCity('');
+      final counts = response.data.data;
+      return counts.map((c) => CityJobCount(
+        city: c.vacancyCity,
+        count: c.count,
+      )).toList();
+    } catch (e) {
+      print('Error getting city counts: $e');
+      return [];
+    }
+  }
+
+  @override
+  Future<List<Map<String, dynamic>>> getLatestJobs({
+    int page = 1,
+    int limit = 10,
+  }) async {
+    try {
+      final response = await _tabashirApiService.getJobs(page: page, limit: limit);
+      final jobs = response.data.jobs ?? [];
+      return jobs.map((j) => j.toJson()).toList();
+    } catch (e) {
+      print('Error getting latest jobs: $e');
+      return [];
     }
   }
 }

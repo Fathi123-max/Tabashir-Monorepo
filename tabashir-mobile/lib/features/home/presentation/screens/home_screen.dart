@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
-import 'package:iconsax/iconsax.dart';
 import 'package:tabashir/core/di/injection.dart';
 import 'package:tabashir/core/network/models/user/user_profile_response.dart';
 import 'package:tabashir/core/theme/app_theme.dart';
@@ -13,7 +12,8 @@ import 'package:tabashir/features/home/presentation/cubit/cubit.dart';
 import 'package:tabashir/features/home/presentation/cubit/app_initialization_cubit.dart';
 import 'package:tabashir/features/home/data/models/app_initialization_state.dart';
 import 'package:tabashir/features/home/presentation/widgets/widgets.dart';
-import 'package:tabashir/features/home/presentation/widgets/home_activity_timeline_widget.dart';
+import 'package:tabashir/features/home/presentation/widgets/home_explore_cities_grid_widget.dart';
+import 'package:tabashir/features/home/presentation/widgets/home_latest_jobs_feed_widget.dart';
 import 'package:tabashir/features/jobs/presentation/cubit/jobs_cubit.dart';
 import 'package:tabashir/shared/widgets/components/standard_fab.dart';
 import 'package:tabashir/shared/widgets/cv_required_blur.dart';
@@ -159,6 +159,11 @@ class _HomeScreenState extends State<HomeScreen> {
                   homeCubit.loadHomeData(
                     userProfile: initState.userProfile!.candidateProfile,
                   );
+                  if (initState.userProfile!.user.email != null) {
+                    homeCubit.loadAiEnhancedHomeData(
+                      email: initState.userProfile!.user.email!,
+                    );
+                  }
                 }
 
                 if (state.isLoading) {
@@ -178,11 +183,16 @@ class _HomeScreenState extends State<HomeScreen> {
                                 .read<AppInitializationCubit>()
                                 .state;
                             if (initState.userProfile != null) {
-                              context.read<HomeCubit>().loadHomeData(
-                                userProfile:
-                                    initState.userProfile!.candidateProfile,
-                              );
-                            }
+                                context.read<HomeCubit>().loadHomeData(
+                                  userProfile:
+                                      initState.userProfile!.candidateProfile,
+                                );
+                                if (initState.userProfile!.user.email != null) {
+                                  context.read<HomeCubit>().loadAiEnhancedHomeData(
+                                    email: initState.userProfile!.user.email!,
+                                  );
+                                }
+                              }
                           },
                           child: Text('Retry'.tr()),
                         ),
@@ -212,7 +222,17 @@ class _HomeScreenState extends State<HomeScreen> {
                                 await context
                                     .read<AppInitializationCubit>()
                                     .initialize();
-                                // HomeCubit will be updated with the new data
+                                final initState = context.read<AppInitializationCubit>().state;
+                                if (initState.userProfile != null) {
+                                  context.read<HomeCubit>().refreshHomeData(
+                                    userProfile: initState.userProfile!.candidateProfile,
+                                  );
+                                  if (initState.userProfile!.user.email != null) {
+                                    context.read<HomeCubit>().loadAiEnhancedHomeData(
+                                      email: initState.userProfile!.user.email!,
+                                    );
+                                  }
+                                }
                               },
                               child: SingleChildScrollView(
                                 physics: const AlwaysScrollableScrollPhysics(),
@@ -274,86 +294,13 @@ class _HomeScreenState extends State<HomeScreen> {
                                     ),
                                     SizedBox(height: AppTheme.spacingMd.h),
 
-                                    // Trending Banner
-                                    Padding(
-                                      padding: EdgeInsets.symmetric(
-                                        horizontal: AppTheme.spacingMd.w,
-                                      ),
-                                      child: HomeTrendingBannerWidget(
-                                        trendingText:
-                                            state.trendingData?['trendingText']
-                                                as String? ??
-                                            '',
-                                        growthPercentage:
-                                            state.trendingData?['growthPercentage']
-                                                as int? ??
-                                            0,
-                                        topSkills:
-                                            (state.trendingData?['topSkills']
-                                                        as List<dynamic>? ??
-                                                    [])
-                                                .map((e) => e.toString())
-                                                .toList(),
-                                        seeOpportunitiesLink:
-                                            state.trendingData?['seeOpportunitiesLink']
-                                                as String?,
-                                      ),
-                                    ),
-                                    SizedBox(height: AppTheme.spacingMd.h),
-
-                                    // Market Insights
-                                    Padding(
-                                      padding: EdgeInsets.symmetric(
-                                        horizontal: AppTheme.spacingMd.w,
-                                      ),
-                                      child: HomeMarketInsightsWidget(
-                                        trendingSkills:
-                                            (state.marketInsights?['trendingSkills']
-                                                        as List<dynamic>? ??
-                                                    [])
-                                                .map(
-                                                  (e) =>
-                                                      e as Map<String, dynamic>,
-                                                )
-                                                .toList(),
-                                        topLocations:
-                                            (state.marketInsights?['topLocations']
-                                                        as List<dynamic>? ??
-                                                    [])
-                                                .map(
-                                                  (e) =>
-                                                      e as Map<String, dynamic>,
-                                                )
-                                                .toList(),
-                                        totalJobs:
-                                            state.marketInsights?['totalJobs']
-                                                as int? ??
-                                            0,
-                                        newJobsThisWeek:
-                                            state.marketInsights?['newJobsThisWeek']
-                                                as int? ??
-                                            0,
-                                        averageApplicationsPerJob:
-                                            (state.marketInsights?['averageApplicationsPerJob']
-                                                    as num?)
-                                                ?.toDouble() ??
-                                            0.0,
-                                        totalApplications:
-                                            state.marketInsights?['totalApplications']
-                                                as int? ??
-                                            0,
-                                      ),
-                                    ),
-                                    SizedBox(height: AppTheme.spacingMd.h),
-
-                                    /*
-                                    // Applications Section
+                                    // Explore Cities Segment
                                     Padding(
                                       padding: EdgeInsets.symmetric(
                                         horizontal: AppTheme.spacingMd.w,
                                       ),
                                       child: Text(
-                                        'Your Applications'.tr(),
+                                        'Explore By City'.tr(),
                                         style: theme.textTheme.headlineMedium
                                             ?.copyWith(
                                               fontWeight: FontWeight.bold,
@@ -361,17 +308,39 @@ class _HomeScreenState extends State<HomeScreen> {
                                       ),
                                     ),
                                     SizedBox(height: AppTheme.spacingMd.h),
-
-                                    // Application Stats
                                     Padding(
                                       padding: EdgeInsets.symmetric(
                                         horizontal: AppTheme.spacingMd.w,
                                       ),
-                                      child: const HomeApplicationStatsWidget(),
+                                      child: HomeExploreCitiesGridWidget(
+                                        cityJobCounts: state.cityJobCounts,
+                                      ),
+                                    ),
+                                    SizedBox(height: AppTheme.spacingLg.h),
+
+                                    // Latest Jobs Segment
+                                    Padding(
+                                      padding: EdgeInsets.symmetric(
+                                        horizontal: AppTheme.spacingMd.w,
+                                      ),
+                                      child: Text(
+                                        'Latest Opportunities'.tr(),
+                                        style: theme.textTheme.headlineMedium
+                                            ?.copyWith(
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                      ),
                                     ),
                                     SizedBox(height: AppTheme.spacingMd.h),
-                                    */
+                                    Padding(
+                                      padding: EdgeInsets.symmetric(
+                                        horizontal: AppTheme.spacingMd.w,
+                                      ),
+                                      child: const HomeLatestJobsFeedWidget(),
+                                    ),
+                                    // SizedBox(height: AppTheme.spacingLg.h),
 
+                                    /*
                                     // Analytics
                                     Padding(
                                       padding: EdgeInsets.symmetric(
@@ -416,6 +385,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                                 .toList(),
                                       ),
                                     ),
+                                    */
                                     SizedBox(height: AppTheme.spacingMd.h),
 
                                     // Quick Actions

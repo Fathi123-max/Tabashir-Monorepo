@@ -68,6 +68,7 @@ class ApiEndpoints {
   static const String resumeTranslate = '/api/v1/resumes/translate';
   static const String resumeSendLinkedInEmail =
       '/api/v1/resumes/send-linkedin-email';
+  static const String resumeClient = '/api/v1/resumes/client';
   static const String resumeHealth = '/api/v1/resumes/health';
 
   // ==========================================
@@ -76,6 +77,7 @@ class ApiEndpoints {
   static const String jobs = '/api/v1/resumes/jobs';
   static const String jobsCountByCity = '/api/v1/resumes/jobs/count-by-city';
   static const String jobsMonthlyCount = '/api/v1/resumes/jobs/monthly-count';
+  static const String jobsMatched = '/api/v1/resumes/jobs/matched';
   static String jobsById(String jobId) => '/api/v1/resumes/jobs/$jobId';
   static String jobsApplicantsCount(String jobId) =>
       '/api/v1/resumes/jobs/$jobId/applicants-count';

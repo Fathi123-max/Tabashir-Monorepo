@@ -26,7 +26,16 @@ class JobsScreen extends StatelessWidget {
   const JobsScreen({super.key});
 
   @override
-  Widget build(BuildContext context) => const JobsView();
+  Widget build(BuildContext context) {
+    return BlocProvider<JobsCubit>(
+      create: (context) {
+        final cubit = getIt<JobsCubit>();
+        cubit.initializeState();
+        return cubit;
+      },
+      child: const JobsView(),
+    );
+  }
 }
 
 class JobsView extends StatefulWidget {

@@ -97,7 +97,7 @@ final GoRouter appRouter = GoRouter(
     if (isAuthenticated &&
         (currentPath == RouteNames.login ||
             currentPath == RouteNames.register)) {
-      return RouteNames.home;
+      return '/';
     }
 
     // Otherwise, allow access

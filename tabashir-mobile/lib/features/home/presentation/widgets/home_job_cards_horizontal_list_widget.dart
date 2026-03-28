@@ -188,16 +188,16 @@ class _HomeJobCardsHorizontalListWidgetState
               ? jobsState.savedJobs
               : <String>{};
 
-          // Get featured jobs from home state (fetched from API)
-          final featuredJobs = homeState.jobs;
+          // Get matched jobs from home state (fetched from AI API)
+          final matchedJobs = homeState.matchedJobsList;
 
           // Show empty state if no jobs
-          if (featuredJobs.isEmpty) {
+          if (matchedJobs.isEmpty) {
             return Container(
               padding: EdgeInsets.all(16.w),
               child: Center(
                 child: Text(
-                  'No featured jobs available'.tr(),
+                  'No AI matches available yet'.tr(),
                   style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                     color: Theme.of(context).colorScheme.onSurfaceVariant,
                   ),
@@ -209,7 +209,7 @@ class _HomeJobCardsHorizontalListWidgetState
           return SingleChildScrollView(
             scrollDirection: Axis.horizontal,
             child: Row(
-              children: featuredJobs.asMap().entries.map((entry) {
+              children: matchedJobs.asMap().entries.map((entry) {
                 final index = entry.key;
                 final job = entry.value;
                 final isPrimary =
@@ -217,45 +217,31 @@ class _HomeJobCardsHorizontalListWidgetState
                     2; // First 2 cards show "Apply Now", rest show "View Details"
 
                 return HomeJobCardWidget(
-                  title:
-                      (job['title'] ?? job['job_title']) as String? ??
-                      'Untitled Position',
-                  company:
-                      (job['company'] ?? job['company_name']) as String? ??
-                      'Unknown Company',
-                  employmentType:
-                      (job['employmentType'] ?? job['job_type']) as String? ??
-                      'Full-time',
-                  level:
-                      (job['level'] ?? 'Not specified') as String? ??
-                      'Not specified',
-                  matchPercentage: job['matchPercentage'] as String? ?? 'N/A',
-                  isBookmarked: savedJobs.contains(job['id']?.toString()),
+                  title: job.title,
+                  company: job.company,
+                  employmentType: 'Full-time', // Add to model if needed
+                  level: 'Not specified',
+                  matchPercentage: '${job.matchPercentage}%',
+                  isBookmarked: savedJobs.contains(job.id),
                   isPrimary: isPrimary,
-                  jobId: job['id']?.toString(),
+                  jobId: job.id,
                   onBookmarkTap: () {
-                    final jobId = job['id']?.toString();
-                    if (jobId != null) {
-                      context.read<JobsCubit>().toggleSaveJob(jobId);
-                    }
+                    context.read<JobsCubit>().toggleSaveJob(job.id);
                   },
                   onApplyTap: () {
-                    final jobId = job['id']?.toString();
-                    if (jobId != null) {
-                      if (isPrimary) {
-                        // First 2 cards: Apply directly
-                        _applyToJob(jobId);
-                      } else {
-                        // Other cards: Navigate to job details
-                        context.pushNamed(
-                          'job-detail-screen',
-                          pathParameters: {'jobId': jobId},
-                        );
-                      }
+                    if (isPrimary) {
+                      // First 2 cards: Apply directly
+                      _applyToJob(job.id);
+                    } else {
+                      // Other cards: Navigate to job details
+                      context.pushNamed(
+                        'job-detail-screen',
+                        pathParameters: {'jobId': job.id},
+                      );
                     }
                   },
-                  isApplied: _appliedJobs.contains(job['id']?.toString()),
-                  isLoading: _applyingJobs.contains(job['id']?.toString()),
+                  isApplied: _appliedJobs.contains(job.id),
+                  isLoading: _applyingJobs.contains(job.id),
                 );
               }).toList(),
             ),

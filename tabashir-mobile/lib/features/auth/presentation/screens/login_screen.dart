@@ -74,10 +74,7 @@ class _LoginScreenState extends State<LoginScreen> {
       // Check the state after login
       final state = _authCubit.state;
       if (state.status == AuthStatus.loginSuccess) {
-        // Token is already set in AuthCubit, just navigate to main app
-        if (mounted) {
-          context.go('/');
-        }
+        // Token is already set in AuthCubit, the router's refreshListenable will redirect to main app.
       } else if (state.status == AuthStatus.error) {
         _showMessage(
           state.errorMessage.isNotEmpty
@@ -134,7 +131,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       onPressed: () async {
                         try {
                           await getIt<GoogleSignInService>().signIn();
-                          if (mounted) context.go('/');
+                          // The router's refreshListenable will automatically redirect
                         } catch (e) {
                           _showMessage('Google sign-in failed: $e');
                         }
@@ -151,9 +148,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         try {
                           await AppleSignInService.instance.signIn();
                           // Backend verification complete, JWT stored in AuthSessionService
-                          if (mounted) {
-                            context.go('/');
-                          }
+                          // The router's refreshListenable will automatically redirect
                         } catch (e) {
                           _showMessage('Apple sign-in failed: $e');
                         }

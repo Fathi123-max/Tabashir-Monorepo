@@ -2169,21 +2169,28 @@ class JobsCountByCity(Resource):
         conn = get_ai_db_connection()
         cursor = conn.cursor()
         try:
-            job_title_keyword = request.args.get('job_title', '').strip().lower()
-            if not job_title_keyword:
-                return {"success": False, "message": "Job title keyword is required"}, HTTPStatus.BAD_REQUEST
+            keyword = request.args.get('keyword', request.args.get('job_title', '')).strip().lower()
 
-            query = """
-                SELECT vacancy_city,
-                       COUNT(*) as count
-                FROM jobs
-                WHERE LOWER(job_title) LIKE %s
-                GROUP BY vacancy_city
-                ORDER BY count DESC;
-            """
-
-            like_pattern = f"%{job_title_keyword}%"
-            cursor.execute(query, (like_pattern,))
+            if not keyword:
+                query = """
+                    SELECT vacancy_city,
+                           COUNT(*) as count
+                    FROM jobs
+                    GROUP BY vacancy_city
+                    ORDER BY count DESC;
+                """
+                cursor.execute(query)
+            else:
+                query = """
+                    SELECT vacancy_city,
+                           COUNT(*) as count
+                    FROM jobs
+                    WHERE LOWER(job_title) LIKE %s
+                    GROUP BY vacancy_city
+                    ORDER BY count DESC;
+                """
+                like_pattern = f"%{keyword}%"
+                cursor.execute(query, (like_pattern,))
 
             rows = cursor.fetchall()
             result = []
@@ -2269,8 +2276,15 @@ class MatchedJobs(Resource):
                """, (email, search_filter, search_filter, search_filter))
 
             columns = [desc[0] for desc in cursor.description]
-            jobs = [dict(zip(columns, row)) for row in cursor.fetchall()]
-            print("Filtered Jobs:", len(jobs))
+            jobs = []
+            for row in cursor.fetchall():
+                job = dict(zip(columns, row))
+                for key, val in job.items():
+                    if isinstance(val, datetime):
+                        job[key] = val.isoformat()
+                jobs.append(job)
+            print(f"Filter term for semantic match: '{filter_term}'")
+            print(f"Filtered Jobs Before Scoring: {len(jobs)}")
 
             # Score and rank jobs
             for job in jobs:
@@ -2279,10 +2293,17 @@ class MatchedJobs(Resource):
                 location_score = semantic_location_match(job['vacancy_city'], user_profile['location'])
 
                 final_score = round((0.4 * title_score + 0.4 * skill_score + 0.2 * location_score), 3)
-                job['match_score'] = round(final_score * 100, 2)  # percentage
+                job['match_percentage'] = str(round(final_score * 100, 2))  # percentage as string
 
-            sorted_matches = sorted(jobs, key=lambda x: (-x['match_score'], x['id']))
+            sorted_matches = sorted(jobs, key=lambda x: (-float(x['match_percentage']), x['id']))
             total_matches = len(sorted_matches)
+
+            print(f"Total Matches After Scoring: {total_matches}")
+            if total_matches > 0:
+                print("Top 5 Matches:")
+                for i, match in enumerate(sorted_matches[:5]):
+                    print(f" {i+1}. Job ID: {match['id']}, Title: '{match['job_title']}', Score: {match['match_percentage']}%")
+
             paginated = sorted_matches[offset:offset + limit]
 
             return {

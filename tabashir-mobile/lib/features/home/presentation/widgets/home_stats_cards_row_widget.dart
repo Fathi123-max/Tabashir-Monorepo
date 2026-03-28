@@ -17,26 +17,14 @@ class HomeStatsCardsRowWidget extends StatelessWidget {
       child: Row(
         children: [
           HomeStatCardWidget(
-            value: state.matches.toString(),
-            label: 'AI Matches Found'.tr(),
-          ),
-          SizedBox(width: AppTheme.spacingSm.w),
-          HomeStatCardWidget(
-            value: state.avgMarketSalary,
-            label: 'Market Salary'.tr(),
-          ),
-          /*
-          SizedBox(width: AppTheme.spacingSm.w),
-          HomeStatCardWidget(
-            value: '${state.applicationSuccessRate}%',
-            label: 'Match Quality'.tr(),
+            value: state.matchedJobsList.length.toString(),
+            label: 'AI Matches'.tr(),
           ),
           SizedBox(width: AppTheme.spacingSm.w),
           HomeStatCardWidget(
             value: state.totalApplications.toString(),
-            label: 'Total Applications'.tr(),
+            label: 'Applied Jobs'.tr(),
           ),
-          */
         ],
       ),
     ),

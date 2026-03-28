@@ -18,7 +18,7 @@ mixin _$JobsCountResponse {
 /// Success status
  bool get success;/// Applicant email
  String get email;/// Count of applied jobs
- int get appliedJobsCount;
+@JsonKey(name: 'applied_jobs_count') int get appliedJobsCount;
 /// Create a copy of JobsCountResponse
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -51,7 +51,7 @@ abstract mixin class $JobsCountResponseCopyWith<$Res>  {
   factory $JobsCountResponseCopyWith(JobsCountResponse value, $Res Function(JobsCountResponse) _then) = _$JobsCountResponseCopyWithImpl;
 @useResult
 $Res call({
- bool success, String email, int appliedJobsCount
+ bool success, String email,@JsonKey(name: 'applied_jobs_count') int appliedJobsCount
 });
 
 
@@ -155,7 +155,7 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( bool success,  String email,  int appliedJobsCount)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( bool success,  String email, @JsonKey(name: 'applied_jobs_count')  int appliedJobsCount)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _JobsCountResponse() when $default != null:
 return $default(_that.success,_that.email,_that.appliedJobsCount);case _:
@@ -176,7 +176,7 @@ return $default(_that.success,_that.email,_that.appliedJobsCount);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( bool success,  String email,  int appliedJobsCount)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( bool success,  String email, @JsonKey(name: 'applied_jobs_count')  int appliedJobsCount)  $default,) {final _that = this;
 switch (_that) {
 case _JobsCountResponse():
 return $default(_that.success,_that.email,_that.appliedJobsCount);}
@@ -193,7 +193,7 @@ return $default(_that.success,_that.email,_that.appliedJobsCount);}
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( bool success,  String email,  int appliedJobsCount)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( bool success,  String email, @JsonKey(name: 'applied_jobs_count')  int appliedJobsCount)?  $default,) {final _that = this;
 switch (_that) {
 case _JobsCountResponse() when $default != null:
 return $default(_that.success,_that.email,_that.appliedJobsCount);case _:
@@ -208,7 +208,7 @@ return $default(_that.success,_that.email,_that.appliedJobsCount);case _:
 @JsonSerializable()
 
 class _JobsCountResponse implements JobsCountResponse {
-  const _JobsCountResponse({required this.success, required this.email, required this.appliedJobsCount});
+  const _JobsCountResponse({required this.success, required this.email, @JsonKey(name: 'applied_jobs_count') required this.appliedJobsCount});
   factory _JobsCountResponse.fromJson(Map<String, dynamic> json) => _$JobsCountResponseFromJson(json);
 
 /// Success status
@@ -216,7 +216,7 @@ class _JobsCountResponse implements JobsCountResponse {
 /// Applicant email
 @override final  String email;
 /// Count of applied jobs
-@override final  int appliedJobsCount;
+@override@JsonKey(name: 'applied_jobs_count') final  int appliedJobsCount;
 
 /// Create a copy of JobsCountResponse
 /// with the given fields replaced by the non-null parameter values.
@@ -251,7 +251,7 @@ abstract mixin class _$JobsCountResponseCopyWith<$Res> implements $JobsCountResp
   factory _$JobsCountResponseCopyWith(_JobsCountResponse value, $Res Function(_JobsCountResponse) _then) = __$JobsCountResponseCopyWithImpl;
 @override @useResult
 $Res call({
- bool success, String email, int appliedJobsCount
+ bool success, String email,@JsonKey(name: 'applied_jobs_count') int appliedJobsCount
 });
 
 
