@@ -117,7 +117,10 @@ final GoRouter appRouter = GoRouter(
     GoRoute(
       path: RouteNames.jobs,
       name: 'jobs-screen',
-      builder: (context, state) => const JobsScreen(),
+      builder: (context, state) {
+        final city = state.uri.queryParameters['city'];
+        return JobsScreen(initialCity: city);
+      },
     ),
     GoRoute(
       path: '${RouteNames.jobDetail}/:jobId',

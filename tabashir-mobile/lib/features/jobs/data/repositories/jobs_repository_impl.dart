@@ -30,9 +30,13 @@ class JobsRepositoryImpl implements JobsRepository {
     int? maxSalary,
     List<String>? skills,
     String? sort,
+    String? email,
   }) async {
     print('\n\n########## [JOBS_REPO] GET JOBS CALLED ##########');
     print('[JOBS_REPO] Pagination params - Page: $page, Limit: $limit');
+    if (email != null) {
+      print('[JOBS_REPO] User Email: $email');
+    }
     if (search != null && search.isNotEmpty) {
       print('[JOBS_REPO] Search query: $search');
     }
@@ -68,6 +72,7 @@ class JobsRepositoryImpl implements JobsRepository {
         maxSalary: maxSalary,
         skills: skills,
         sort: sort,
+        email: email,
       );
 
       print('\n[JOBS_REPO] ✅ API call completed');

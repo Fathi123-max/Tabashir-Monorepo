@@ -1448,11 +1448,24 @@ class Jobs(Resource):
             args = request.args
 
             # Filters
+            # Filters
             email = args.get('email', '').strip()
             search = args.get('search', '').strip()
             location = args.get('location', '').strip()
             experience = args.get('experience', '').strip()
             attendance = args.get('attendance', '').strip().lower()
+            
+            # Advanced Filters (Lists/Ranges)
+            locations = args.getlist('locations') or args.getlist('locations[]')
+            job_types = args.getlist('jobTypes') or args.getlist('jobTypes[]')
+            experience_levels = args.getlist('experienceLevels') or args.getlist('experienceLevels[]')
+            skills = args.getlist('skills') or args.getlist('skills[]')
+            
+            min_salary = args.get('minSalary', '')
+            max_salary = args.get('maxSalary', '')
+            min_salary = int(min_salary) if min_salary.isdigit() else None
+            max_salary = int(max_salary) if max_salary.isdigit() else None
+
             sort = args.get('sort', 'job_date_desc')
             language = args.get('lang', 'en').strip().lower()
             _limit = args.get('limit', '')
@@ -1478,16 +1491,18 @@ class Jobs(Resource):
                     client_id = str(client_row[0])
             
             # Emirates city filter (default) - works for both languages
-            emirates = [
-                'abu dhabi', 'dubai', 'sharjah', 'ajman',
-                'umm al quwain', 'ras al khaimah', 'fujairah'
-            ]
-            if language == 'ar':
-                city_clauses = ["LOWER(COALESCE(vacancy_city_ar, vacancy_city)) ILIKE %s" for _ in emirates]
-            else:
-                city_clauses = ["LOWER(vacancy_city) ILIKE %s" for _ in emirates]
-            where_clauses.append("(" + " OR ".join(city_clauses) + ")")
-            params.extend([f"%{city}%" for city in emirates])
+            # Only apply if no explicit location filters are provided
+            if not location and not locations:
+                emirates = [
+                    'abu dhabi', 'dubai', 'sharjah', 'ajman',
+                    'umm al quwain', 'ras al khaimah', 'fujairah'
+                ]
+                if language == 'ar':
+                    city_clauses = ["LOWER(COALESCE(vacancy_city_ar, vacancy_city)) ILIKE %s" for _ in emirates]
+                else:
+                    city_clauses = ["LOWER(vacancy_city) ILIKE %s" for _ in emirates]
+                where_clauses.append("(" + " OR ".join(city_clauses) + ")")
+                params.extend([f"%{city}%" for city in emirates])
 
             # Search functionality - language specific
             if search:
@@ -1500,29 +1515,78 @@ class Jobs(Resource):
                     where_clauses.append("(LOWER(job_title) ILIKE %s OR LOWER(job_description) ILIKE %s)")
                 params.extend([f"%{search.lower()}%"] * 2)
 
-            # Location filter - language specific
+            # Location filter - single and list
             if location:
                 if language == 'ar':
                     where_clauses.append("LOWER(COALESCE(vacancy_city_ar, vacancy_city)) = LOWER(%s)")
                 else:
                     where_clauses.append("LOWER(vacancy_city) = LOWER(%s)")
                 params.append(location)
+            elif locations:
+                placeholders = ', '.join(['LOWER(%s)'] * len(locations))
+                if language == 'ar':
+                    where_clauses.append(f"LOWER(COALESCE(vacancy_city_ar, vacancy_city)) IN ({placeholders})")
+                else:
+                    where_clauses.append(f"LOWER(vacancy_city) IN ({placeholders})")
+                params.extend(locations)
 
-            # Experience filter - language specific
+            # Experience filter - single and list
             if experience:
                 if language == 'ar':
                     where_clauses.append("LOWER(COALESCE(experience_ar, experience)) = LOWER(%s)")
                 else:
                     where_clauses.append("LOWER(experience) = LOWER(%s)")
                 params.append(experience)
+            elif experience_levels:
+                placeholders = ', '.join(['LOWER(%s)'] * len(experience_levels))
+                if language == 'ar':
+                    where_clauses.append(f"LOWER(COALESCE(experience_ar, experience)) IN ({placeholders})")
+                else:
+                    where_clauses.append(f"LOWER(experience) IN ({placeholders})")
+                params.extend(experience_levels)
 
-            # Attendance filter - language specific
+            # Job Type / Attendance filter
             if attendance:
                 if language == 'ar':
                     where_clauses.append("LOWER(COALESCE(job_description_ar, job_description)) LIKE %s")
                 else:
                     where_clauses.append("LOWER(job_description) LIKE %s")
                 params.append(f"%{attendance}%")
+            elif job_types:
+                type_clauses = []
+                for jtype in job_types:
+                    if language == 'ar':
+                        type_clauses.append("LOWER(COALESCE(job_description_ar, job_description)) LIKE %s")
+                    else:
+                        type_clauses.append("LOWER(job_description) LIKE %s")
+                    params.append(f"%{jtype.lower()}%")
+                where_clauses.append("(" + " OR ".join(type_clauses) + ")")
+
+            # Skills filter
+            if skills:
+                skill_clauses = []
+                for skill in skills:
+                    if language == 'ar':
+                        skill_clauses.append("LOWER(COALESCE(job_description_ar, job_description)) LIKE %s")
+                    else:
+                        skill_clauses.append("LOWER(job_description) LIKE %s")
+                    params.append(f"%{skill.lower()}%")
+                where_clauses.append("(" + " OR ".join(skill_clauses) + ")")
+
+            # Salary range filter
+            if min_salary is not None:
+                if language == 'ar':
+                    where_clauses.append("NULLIF(substring(COALESCE(salary_ar, salary) from '\\d+'), '')::bigint >= %s")
+                else:
+                    where_clauses.append("NULLIF(substring(salary from '\\d+'), '')::bigint >= %s")
+                params.append(min_salary)
+            
+            if max_salary is not None:
+                if language == 'ar':
+                    where_clauses.append("NULLIF(substring(COALESCE(salary_ar, salary) from '\\d+'), '')::bigint <= %s")
+                else:
+                    where_clauses.append("NULLIF(substring(salary from '\\d+'), '')::bigint <= %s")
+                params.append(max_salary)
             
             if where_clauses:
                 where_sql = f"WHERE {' AND '.join(where_clauses)}"
@@ -1551,6 +1615,7 @@ class Jobs(Resource):
                     order_sql = "ORDER BY NULLIF(substring(salary from '\\d+'), '')::bigint ASC"
             else:
                 order_sql = "ORDER BY NULLIF(job_date, 'Nan')::date DESC"
+
             
             # Get total count
             count_query = f"SELECT COUNT(*) FROM jobs {where_sql}"
@@ -1640,6 +1705,22 @@ class Jobs(Resource):
                 for key, value in job.items():
                     if hasattr(value, 'isoformat'):
                         job[key] = value.isoformat()
+                        
+            # --- SAVED JOBS LOGIC ---
+            saved_job_ids = set()
+            if email:
+                try:
+                    user_row = execute_query('SELECT id FROM users WHERE email = %s', (email,), fetch_one=True)
+                    if user_row:
+                        user_id = user_row['id'] if isinstance(user_row, dict) else user_row[0]
+                        saved_entries = execute_query('SELECT "jobId" FROM "SavedJobPost" WHERE "userId" = %s', (user_id,), fetch_all=True)
+                        if saved_entries:
+                            saved_job_ids = {str(sj['jobId'] if isinstance(sj, dict) else sj[0]) for sj in saved_entries}
+                except Exception as e:
+                    print(f"[JOBS_NS] Error fetching saved jobs for is_saved: {e}")
+
+            for job in jobs:
+                job['is_saved'] = str(job['id']) in saved_job_ids
 
             # --- MATCH SCORE LOGIC ---
             match_profile = None

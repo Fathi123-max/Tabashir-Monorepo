@@ -13,9 +13,7 @@ class UnifiedJobCard extends StatelessWidget {
     required this.matchPercentage,
     required this.tags,
     required this.skillsMatch,
-    required this.isSaved,
     this.jobId,
-    this.onSave,
     this.onApply,
     this.isCompact = false,
     super.key,
@@ -28,9 +26,7 @@ class UnifiedJobCard extends StatelessWidget {
   final String matchPercentage;
   final List<String> tags;
   final String skillsMatch;
-  final bool isSaved;
   final String? jobId;
-  final VoidCallback? onSave;
   final VoidCallback? onApply;
   final bool isCompact;
 
@@ -165,20 +161,8 @@ class UnifiedJobCard extends StatelessWidget {
 
             // Actions
             Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              mainAxisAlignment: MainAxisAlignment.end,
               children: [
-                IconButton(
-                  onPressed: onSave ?? () {},
-                  icon: Icon(
-                    isSaved ? Icons.bookmark : Icons.bookmark_border,
-                    color: isSaved
-                        ? theme.colorScheme.primary
-                        : theme.colorScheme.onSurfaceVariant,
-                    size: 24.sp,
-                  ),
-                  padding: EdgeInsets.zero,
-                  constraints: const BoxConstraints(),
-                ),
                 SizedBox(
                   height: 40.h,
                   child: ElevatedButton(

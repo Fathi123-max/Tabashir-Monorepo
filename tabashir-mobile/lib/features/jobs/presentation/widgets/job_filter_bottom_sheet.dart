@@ -25,7 +25,6 @@ class _JobFilterBottomSheetState extends State<JobFilterBottomSheet> {
   late List<String> selectedExperienceLevels;
   late int minSalary;
   late int maxSalary;
-  late List<String> selectedSkills;
 
   @override
   void initState() {
@@ -37,14 +36,12 @@ class _JobFilterBottomSheetState extends State<JobFilterBottomSheet> {
       selectedExperienceLevels = List.from(state.selectedExperienceLevels);
       minSalary = state.minSalary;
       maxSalary = state.maxSalary;
-      selectedSkills = List.from(state.selectedSkills);
     } else {
       selectedLocations = [];
       selectedJobTypes = [];
       selectedExperienceLevels = [];
       minSalary = 0;
-      maxSalary = 500000;
-      selectedSkills = [];
+      maxSalary = 100000;
     }
   }
 
@@ -78,16 +75,6 @@ class _JobFilterBottomSheetState extends State<JobFilterBottomSheet> {
     });
   }
 
-  void _toggleSkill(String skill) {
-    setState(() {
-      if (selectedSkills.contains(skill)) {
-        selectedSkills.remove(skill);
-      } else {
-        selectedSkills.add(skill);
-      }
-    });
-  }
-
   void _applyFilters() {
     widget.jobsCubit.updateLocationFilter(selectedLocations);
     widget.jobsCubit.updateJobTypeFilter(selectedJobTypes);
@@ -95,7 +82,6 @@ class _JobFilterBottomSheetState extends State<JobFilterBottomSheet> {
       selectedExperienceLevels,
     );
     widget.jobsCubit.updateSalaryRange(minSalary, maxSalary);
-    widget.jobsCubit.updateSkillFilter(selectedSkills);
     Navigator.of(context).pop();
   }
 
@@ -104,9 +90,8 @@ class _JobFilterBottomSheetState extends State<JobFilterBottomSheet> {
       selectedLocations.clear();
       selectedJobTypes.clear();
       selectedExperienceLevels.clear();
-      selectedSkills.clear();
       minSalary = 0;
-      maxSalary = 500000;
+      maxSalary = 100000;
     });
     widget.jobsCubit.clearFilters();
   }
@@ -115,8 +100,7 @@ class _JobFilterBottomSheetState extends State<JobFilterBottomSheet> {
       selectedLocations.length +
       selectedJobTypes.length +
       selectedExperienceLevels.length +
-      selectedSkills.length +
-      (minSalary > 0 || maxSalary < 500000 ? 1 : 0);
+      (minSalary > 0 || maxSalary < 100000 ? 1 : 0);
 
   @override
   Widget build(BuildContext context) {
@@ -265,7 +249,7 @@ class _JobFilterBottomSheetState extends State<JobFilterBottomSheet> {
                 SizedBox(height: AppTheme.spacingMd.h),
                 SalaryRangeSlider(
                   min: 0,
-                  max: 500000,
+                  max: 100000,
                   minValue: minSalary,
                   maxValue: maxSalary,
                   onMinChanged: (value) {
@@ -278,15 +262,6 @@ class _JobFilterBottomSheetState extends State<JobFilterBottomSheet> {
                       maxSalary = value;
                     });
                   },
-                ),
-                SizedBox(height: AppTheme.spacingLg.h),
-
-                // Skills Filter
-                _buildFilterSection(
-                  'Skills'.tr(),
-                  cubit.skillOptions,
-                  selectedSkills,
-                  _toggleSkill,
                 ),
                 SizedBox(height: AppTheme.spacingXxl.h),
 

@@ -15,22 +15,24 @@ import 'package:tabashir/features/profile/presentation/cubit/profile_cubit.dart'
 import 'package:tabashir/features/jobs/domain/repositories/jobs_repository.dart';
 
 import 'package:tabashir/features/jobs/presentation/widgets/job_card.dart';
-import 'package:tabashir/features/jobs/presentation/widgets/card_styles.dart';
-import 'package:tabashir/features/jobs/presentation/widgets/sort_option.dart';
 import 'package:tabashir/features/jobs/presentation/widgets/job_filter_bottom_sheet.dart';
-import 'package:tabashir/shared/widgets/components/standard_fab.dart';
 import 'package:tabashir/shared/widgets/cv_required_blur.dart';
 import 'package:tabashir/features/resume/presentation/cubit/resume_vault_cubit.dart';
 
 class JobsScreen extends StatelessWidget {
-  const JobsScreen({super.key});
+  final String? initialCity;
+
+  const JobsScreen({
+    super.key,
+    this.initialCity,
+  });
 
   @override
   Widget build(BuildContext context) {
     return BlocProvider<JobsCubit>(
       create: (context) {
         final cubit = getIt<JobsCubit>();
-        cubit.initializeState();
+        cubit.initializeState(initialCity: initialCity);
         return cubit;
       },
       child: const JobsView(),
@@ -244,7 +246,6 @@ class _JobsViewState extends State<JobsView> {
     // Extract state data with defaults
     var showBanner = true;
     var jobs = <JobUI>[];
-    var savedJobs = <String>{};
     var isLoadingMore = false;
     var hasActiveFilters = false;
     var activeFilterCount = 0;
@@ -252,14 +253,12 @@ class _JobsViewState extends State<JobsView> {
     if (state is JobsStateLoaded) {
       showBanner = state.showBanner;
       jobs = state.jobs;
-      savedJobs = state.savedJobs;
       isLoadingMore = state.isLoadingMore;
       hasActiveFilters =
           state.searchQuery.isNotEmpty ||
           state.selectedLocations.isNotEmpty ||
           state.selectedJobTypes.isNotEmpty ||
           state.selectedExperienceLevels.isNotEmpty ||
-          state.selectedSkills.isNotEmpty ||
           state.minSalary > 0 ||
           state.maxSalary < 500000;
       activeFilterCount =
@@ -267,7 +266,6 @@ class _JobsViewState extends State<JobsView> {
           state.selectedLocations.length +
           state.selectedJobTypes.length +
           state.selectedExperienceLevels.length +
-          state.selectedSkills.length +
           (state.minSalary > 0 ? 1 : 0) +
           (state.maxSalary < 500000 ? 1 : 0);
     }
@@ -307,18 +305,19 @@ class _JobsViewState extends State<JobsView> {
                       context,
                       jobs,
                       isLoadingMore,
-                      savedJobs,
                     ),
                 ],
               ),
             ),
 
+            /*
             // Floating Action Button
             floatingActionButton: StandardFAB(
               icon: Icons.auto_awesome,
               onPressed: () => context.push(RouteNames.aiJobApply),
               useDefaultPositioning: false,
             ),
+            */
           ),
         );
       },
@@ -351,7 +350,7 @@ class _JobsViewState extends State<JobsView> {
               await context.push(RouteNames.savedJobs);
             },
             icon: Icon(
-              Icons.bookmark_outline,
+              Icons.bookmark,
               size: 24.sp,
               color: theme.iconTheme.color,
             ),
@@ -372,7 +371,6 @@ class _JobsViewState extends State<JobsView> {
     BuildContext context,
     List<JobUI> jobs,
     bool isLoadingMore,
-    Set<String> savedJobs,
   ) => Expanded(
     child: RefreshIndicator(
       onRefresh: () async {
@@ -400,9 +398,7 @@ class _JobsViewState extends State<JobsView> {
                 matchPercentage: job.matchPercentage,
                 tags: job.tags,
                 skillsMatch: job.skillsMatch,
-                isSaved: savedJobs.contains(jobId),
                 jobId: jobId,
-                onSave: () => context.read<JobsCubit>().toggleSaveJob(jobId),
                 onApply: () => _applyToJob(jobId),
                 isApplied: job.isApplied || _appliedJobs.contains(jobId),
                 isLoading: _applyingJobs.contains(jobId),
@@ -470,22 +466,7 @@ class _JobsViewState extends State<JobsView> {
                   ),
                 ),
 
-                // AI Sparkle Icon
-                Padding(
-                  padding: EdgeInsets.symmetric(
-                    horizontal: AppTheme.spacingSm.w,
-                  ),
-                  child: IconButton(
-                    onPressed: () {},
-                    icon: Icon(
-                      Icons.auto_awesome,
-                      color: theme.colorScheme.onSurfaceVariant,
-                      size: 20.sp,
-                    ),
-                    padding: EdgeInsets.zero,
-                    constraints: const BoxConstraints(),
-                  ),
-                ),
+
               ],
             ),
           ),

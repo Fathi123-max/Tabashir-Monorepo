@@ -12,35 +12,35 @@ part 'saved_jobs_api_service.g.dart';
 /// - Get all saved job IDs
 /// - Save a job
 /// - Remove a saved job
-@RestApi(baseUrl: '/api/v1')
+@RestApi(baseUrl: '/api/v1/jobs')
 abstract class SavedJobsApiService {
   @factoryMethod
   factory SavedJobsApiService(Dio dio) = _SavedJobsApiService;
 
-  /// GET /jobs/saved-jobs
+  /// GET /api/mobile/saved-jobs
   /// Get all saved job IDs for the authenticated user
-  @GET('/jobs/saved-jobs')
+  @GET('/saved-jobs')
   Future<SavedJobsResponse> getSavedJobs();
 
-  /// POST /jobs/saved-jobs
+  /// POST /api/mobile/saved-jobs
   /// Save a job for the authenticated user
   /// Body: { jobId: String }
-  @POST('/jobs/saved-jobs')
+  @POST('/saved-jobs')
   Future<SavedJobsResponse> saveJob(
     @Body() Map<String, dynamic> requestBody,
   );
 
-  /// DELETE /jobs/saved-jobs/{jobId}
+  /// DELETE /api/mobile/saved-jobs/{jobId}
   /// Remove a job from saved jobs
-  @DELETE('/jobs/saved-jobs/{jobId}')
+  @DELETE('/saved-jobs/{jobId}')
   Future<SavedJobsResponse> unsaveJob(
     @Path('jobId') String jobId,
   );
 
-  /// POST /jobs/sync-jobs
+  /// POST /api/mobile/sync-jobs
   /// Sync jobs from external API to local database
   /// Body: { jobs: Array<{id: string, title: string, ...}> }
-  @POST('/jobs/sync-jobs')
+  @POST('/sync-jobs')
   Future<dynamic> syncJobs(
     @Body() Map<String, dynamic> requestBody,
   );

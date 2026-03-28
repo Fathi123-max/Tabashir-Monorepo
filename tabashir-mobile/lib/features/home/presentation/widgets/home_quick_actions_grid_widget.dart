@@ -17,24 +17,6 @@ class HomeQuickActionsGridWidget extends StatelessWidget {
     mainAxisSpacing: AppTheme.spacingMd.h,
     crossAxisSpacing: AppTheme.spacingMd.w,
     children: [
-      // Upload/Update Resume
-      HomeQuickActionCardWidget(
-        icon: Icons.upload_file_outlined,
-        label: 'Upload/Update\nResume'.tr(),
-        onTap: () {
-          print('[QUICK_ACTIONS] Navigate to Resume Vault');
-          context.push(RouteNames.resumeVault);
-        },
-      ),
-      // AI Job Apply
-      HomeQuickActionCardWidget(
-        icon: Icons.rocket_launch_outlined,
-        label: 'AI Job Apply'.tr(),
-        onTap: () {
-          print('[QUICK_ACTIONS] Navigate to AI Job Apply');
-          context.push(RouteNames.aiJobApply);
-        },
-      ),
       // Saved Jobs
       HomeQuickActionCardWidget(
         icon: Icons.bookmark_outline,

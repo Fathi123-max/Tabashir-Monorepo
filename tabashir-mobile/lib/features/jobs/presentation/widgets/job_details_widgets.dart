@@ -638,12 +638,14 @@ class JobDetailsFooter extends StatelessWidget {
     required this.onSaveForLater,
     this.showLoading = false,
     this.isApplied = false,
+    this.isSaved = false,
     super.key,
   });
   final VoidCallback onApply;
   final VoidCallback onSaveForLater;
   final bool showLoading;
   final bool isApplied;
+  final bool isSaved;
 
   @override
   Widget build(BuildContext context) => Container(
@@ -719,11 +721,11 @@ class JobDetailsFooter extends StatelessWidget {
           child: GestureDetector(
             onTap: onSaveForLater,
             child: Text(
-              'Save for Later'.tr(),
+              isSaved ? 'Saved'.tr() : 'Save for Later'.tr(),
               style: TextStyle(
                 fontSize: 16.sp,
                 fontWeight: FontWeight.w500,
-                color: AppTheme.primaryColor,
+                color: isSaved ? AppTheme.primaryColor : AppTheme.primaryColor,
               ),
             ),
           ),

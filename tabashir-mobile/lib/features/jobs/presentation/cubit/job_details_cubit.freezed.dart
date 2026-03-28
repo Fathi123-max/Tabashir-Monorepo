@@ -128,12 +128,12 @@ return error(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function()?  initial,TResult Function()?  loading,TResult Function( JobDetails jobDetails,  bool isApplied)?  loaded,TResult Function( String message)?  error,required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function()?  initial,TResult Function()?  loading,TResult Function( JobDetails jobDetails,  bool isApplied,  bool isSaved)?  loaded,TResult Function( String message)?  error,required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case JobDetailsInitial() when initial != null:
 return initial();case JobDetailsLoading() when loading != null:
 return loading();case JobDetailsLoaded() when loaded != null:
-return loaded(_that.jobDetails,_that.isApplied);case JobDetailsError() when error != null:
+return loaded(_that.jobDetails,_that.isApplied,_that.isSaved);case JobDetailsError() when error != null:
 return error(_that.message);case _:
   return orElse();
 
@@ -152,12 +152,12 @@ return error(_that.message);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function()  initial,required TResult Function()  loading,required TResult Function( JobDetails jobDetails,  bool isApplied)  loaded,required TResult Function( String message)  error,}) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function()  initial,required TResult Function()  loading,required TResult Function( JobDetails jobDetails,  bool isApplied,  bool isSaved)  loaded,required TResult Function( String message)  error,}) {final _that = this;
 switch (_that) {
 case JobDetailsInitial():
 return initial();case JobDetailsLoading():
 return loading();case JobDetailsLoaded():
-return loaded(_that.jobDetails,_that.isApplied);case JobDetailsError():
+return loaded(_that.jobDetails,_that.isApplied,_that.isSaved);case JobDetailsError():
 return error(_that.message);case _:
   throw StateError('Unexpected subclass');
 
@@ -175,12 +175,12 @@ return error(_that.message);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function()?  initial,TResult? Function()?  loading,TResult? Function( JobDetails jobDetails,  bool isApplied)?  loaded,TResult? Function( String message)?  error,}) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function()?  initial,TResult? Function()?  loading,TResult? Function( JobDetails jobDetails,  bool isApplied,  bool isSaved)?  loaded,TResult? Function( String message)?  error,}) {final _that = this;
 switch (_that) {
 case JobDetailsInitial() when initial != null:
 return initial();case JobDetailsLoading() when loading != null:
 return loading();case JobDetailsLoaded() when loaded != null:
-return loaded(_that.jobDetails,_that.isApplied);case JobDetailsError() when error != null:
+return loaded(_that.jobDetails,_that.isApplied,_that.isSaved);case JobDetailsError() when error != null:
 return error(_that.message);case _:
   return null;
 
@@ -257,11 +257,12 @@ String toString() {
 
 
 class JobDetailsLoaded implements JobDetailsState {
-  const JobDetailsLoaded({required this.jobDetails, this.isApplied = false});
+  const JobDetailsLoaded({required this.jobDetails, this.isApplied = false, this.isSaved = false});
   
 
  final  JobDetails jobDetails;
 @JsonKey() final  bool isApplied;
+@JsonKey() final  bool isSaved;
 
 /// Create a copy of JobDetailsState
 /// with the given fields replaced by the non-null parameter values.
@@ -273,16 +274,16 @@ $JobDetailsLoadedCopyWith<JobDetailsLoaded> get copyWith => _$JobDetailsLoadedCo
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is JobDetailsLoaded&&(identical(other.jobDetails, jobDetails) || other.jobDetails == jobDetails)&&(identical(other.isApplied, isApplied) || other.isApplied == isApplied));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is JobDetailsLoaded&&(identical(other.jobDetails, jobDetails) || other.jobDetails == jobDetails)&&(identical(other.isApplied, isApplied) || other.isApplied == isApplied)&&(identical(other.isSaved, isSaved) || other.isSaved == isSaved));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,jobDetails,isApplied);
+int get hashCode => Object.hash(runtimeType,jobDetails,isApplied,isSaved);
 
 @override
 String toString() {
-  return 'JobDetailsState.loaded(jobDetails: $jobDetails, isApplied: $isApplied)';
+  return 'JobDetailsState.loaded(jobDetails: $jobDetails, isApplied: $isApplied, isSaved: $isSaved)';
 }
 
 
@@ -293,7 +294,7 @@ abstract mixin class $JobDetailsLoadedCopyWith<$Res> implements $JobDetailsState
   factory $JobDetailsLoadedCopyWith(JobDetailsLoaded value, $Res Function(JobDetailsLoaded) _then) = _$JobDetailsLoadedCopyWithImpl;
 @useResult
 $Res call({
- JobDetails jobDetails, bool isApplied
+ JobDetails jobDetails, bool isApplied, bool isSaved
 });
 
 
@@ -310,10 +311,11 @@ class _$JobDetailsLoadedCopyWithImpl<$Res>
 
 /// Create a copy of JobDetailsState
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') $Res call({Object? jobDetails = null,Object? isApplied = null,}) {
+@pragma('vm:prefer-inline') $Res call({Object? jobDetails = null,Object? isApplied = null,Object? isSaved = null,}) {
   return _then(JobDetailsLoaded(
 jobDetails: null == jobDetails ? _self.jobDetails : jobDetails // ignore: cast_nullable_to_non_nullable
 as JobDetails,isApplied: null == isApplied ? _self.isApplied : isApplied // ignore: cast_nullable_to_non_nullable
+as bool,isSaved: null == isSaved ? _self.isSaved : isSaved // ignore: cast_nullable_to_non_nullable
 as bool,
   ));
 }

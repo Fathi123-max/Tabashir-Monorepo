@@ -118,6 +118,7 @@ abstract class TabashirApiService {
     @Query('experience') String? experience,
     @Query('sort') String? sort,
     @Query('lang') String? lang,
+    @Query('email') String? email,
     @Query('locations') List<String>? locations,
     @Query('jobTypes') List<String>? jobTypes,
     @Query('experienceLevels') List<String>? experienceLevels,

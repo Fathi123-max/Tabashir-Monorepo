@@ -15,8 +15,7 @@ class JobsState with _$JobsState {
     @Default([]) List<String> selectedJobTypes,
     @Default([]) List<String> selectedExperienceLevels,
     @Default(0) int minSalary,
-    @Default(500000) int maxSalary,
-    @Default([]) List<String> selectedSkills,
+    @Default(100000) int maxSalary,
     @Default(<String>{}) Set<String> savedJobs,
     // Pagination fields
     @Default(0) int currentPage,

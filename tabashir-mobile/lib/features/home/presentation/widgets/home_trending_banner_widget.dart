@@ -113,9 +113,9 @@ class HomeTrendingBannerWidget extends StatelessWidget {
           ElevatedButton.icon(
             onPressed: () {
               if (seeOpportunitiesLink != null) {
-                context.go(seeOpportunitiesLink!);
+                context.push(seeOpportunitiesLink!);
               } else {
-                context.go('/jobs');
+                context.push('/jobs');
               }
             },
             style: ElevatedButton.styleFrom(

@@ -30,6 +30,7 @@ abstract class JobsRepository {
     int? maxSalary,
     List<String>? skills,
     String? sort,
+    String? email,
   });
 
   /// Get job details by job ID

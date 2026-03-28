@@ -27,6 +27,7 @@ _JobDetailsResponse _$JobDetailsResponseFromJson(Map<String, dynamic> json) =>
       source: json['source'] as String?,
       nationality: json['nationality'] as String?,
       gender: json['gender'] as String?,
+      isSaved: json['is_saved'] as bool?,
       matchPercentage: json['match_percentage'] as String?,
     );
 
@@ -51,5 +52,6 @@ Map<String, dynamic> _$JobDetailsResponseToJson(_JobDetailsResponse instance) =>
       'source': instance.source,
       'nationality': instance.nationality,
       'gender': instance.gender,
+      'is_saved': instance.isSaved,
       'match_percentage': instance.matchPercentage,
     };

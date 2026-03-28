@@ -45,13 +45,13 @@ class _SalaryRangeSliderState extends State<SalaryRangeSlider> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text(
-              'Min: \$${(_minValue / 1000).round()}k',
+              'Min: AED ${(_minValue / 1000).round()}k',
               style: theme.textTheme.bodyMedium?.copyWith(
                 fontWeight: FontWeight.w600,
               ),
             ),
             Text(
-              'Max: \$${(_maxValue / 1000).round()}k',
+              'Max: AED ${(_maxValue / 1000).round()}k',
               style: theme.textTheme.bodyMedium?.copyWith(
                 fontWeight: FontWeight.w600,
               ),
@@ -67,8 +67,8 @@ class _SalaryRangeSliderState extends State<SalaryRangeSlider> {
           activeColor: AppTheme.primaryColor,
           inactiveColor: theme.colorScheme.outline.withOpacity(0.2),
           labels: RangeLabels(
-            '\$${(_minValue / 1000).round()}k',
-            '\$${(_maxValue / 1000).round()}k',
+            'AED ${(_minValue / 1000).round()}k',
+            'AED ${(_maxValue / 1000).round()}k',
           ),
           onChanged: (values) {
             setState(() {
@@ -88,7 +88,7 @@ class _SalaryRangeSliderState extends State<SalaryRangeSlider> {
             borderRadius: BorderRadius.circular(AppTheme.radiusSmall.r),
           ),
           child: Text(
-            'Selected range: \$${(_minValue / 1000).round()}k - \$${(_maxValue / 1000).round()}k',
+            'Selected range: AED ${(_minValue / 1000).round()}k - AED ${(_maxValue / 1000).round()}k',
             textAlign: TextAlign.center,
             style: theme.textTheme.bodySmall?.copyWith(
               color: AppTheme.primaryColor,

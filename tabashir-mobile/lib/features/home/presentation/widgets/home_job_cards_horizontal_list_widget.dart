@@ -9,7 +9,6 @@ import 'package:tabashir/features/ai_job_apply/presentation/cubit/ai_job_apply_s
 import 'package:tabashir/features/home/presentation/cubit/home_cubit.dart';
 import 'package:tabashir/features/home/presentation/cubit/home_state.dart';
 import 'package:tabashir/features/home/presentation/widgets/home_job_card_widget.dart';
-import 'package:tabashir/features/jobs/presentation/cubit/jobs_cubit.dart';
 import 'package:tabashir/features/jobs/domain/repositories/jobs_repository.dart';
 import 'package:tabashir/features/profile/presentation/cubit/profile_cubit.dart';
 
@@ -182,12 +181,6 @@ class _HomeJobCardsHorizontalListWidgetState
       ],
       child: BlocBuilder<HomeCubit, HomeState>(
         builder: (context, homeState) {
-          // Get saved jobs from JobsCubit state
-          final jobsState = context.watch<JobsCubit>().state;
-          final savedJobs = jobsState is JobsStateLoaded
-              ? jobsState.savedJobs
-              : <String>{};
-
           // Get matched jobs from home state (fetched from AI API)
           final matchedJobs = homeState.matchedJobsList;
 
@@ -222,12 +215,8 @@ class _HomeJobCardsHorizontalListWidgetState
                   employmentType: 'Full-time', // Add to model if needed
                   level: 'Not specified',
                   matchPercentage: '${job.matchPercentage}%',
-                  isBookmarked: savedJobs.contains(job.id),
                   isPrimary: isPrimary,
                   jobId: job.id,
-                  onBookmarkTap: () {
-                    context.read<JobsCubit>().toggleSaveJob(job.id);
-                  },
                   onApplyTap: () {
                     if (isPrimary) {
                       // First 2 cards: Apply directly

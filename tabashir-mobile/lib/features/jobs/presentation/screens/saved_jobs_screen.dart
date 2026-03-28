@@ -145,19 +145,7 @@ class SavedJobsView extends StatelessWidget {
                                   tags: job['tags'.tr()] as List<String>,
                                   skillsMatch:
                                       job['skillsMatch'.tr()] as String,
-                                  isSaved: true,
                                   jobId: job['id'.tr()] as String?,
-                                  onSave: () {
-                                    final jobId = job['id'.tr()] as String?;
-                                    if (jobId != null) {
-                                      context
-                                          .read<SavedJobsCubit>()
-                                          .toggleSaveJob(
-                                            jobId,
-                                          );
-                                    }
-                                  },
-
                                   onSalaryIconTap: () {
                                     _handleSalaryIconTap(
                                       context,
@@ -196,9 +184,7 @@ class SavedJobsView extends StatelessWidget {
     required String matchPercentage,
     required List<String> tags,
     required String skillsMatch,
-    required bool isSaved,
     String? jobId,
-    VoidCallback? onSave,
     VoidCallback? onSalaryIconTap,
   }) {
     final cardStyle = JobCardStyle.values.firstWhere(
@@ -215,9 +201,7 @@ class SavedJobsView extends StatelessWidget {
         matchPercentage: matchPercentage,
         tags: tags,
         skillsMatch: skillsMatch,
-        isSaved: isSaved,
         jobId: jobId,
-        onSave: onSave,
         // showApplyButton: false,
       );
     } else {
@@ -229,9 +213,7 @@ class SavedJobsView extends StatelessWidget {
         matchPercentage: matchPercentage,
         tags: tags,
         skillsMatch: skillsMatch,
-        isSaved: isSaved,
         jobId: jobId,
-        onSave: onSave,
         // showApplyButton: false,
       );
     }

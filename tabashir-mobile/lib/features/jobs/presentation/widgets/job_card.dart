@@ -14,9 +14,7 @@ class JobCard extends StatelessWidget {
     required this.matchPercentage,
     required this.tags,
     required this.skillsMatch,
-    required this.isSaved,
     this.jobId,
-    this.onSave,
     this.onApply,
     this.isLoading = false,
     this.isApplied = false,
@@ -29,9 +27,7 @@ class JobCard extends StatelessWidget {
   final String matchPercentage;
   final List<String> tags;
   final String skillsMatch;
-  final bool isSaved;
   final String? jobId;
-  final VoidCallback? onSave;
   final VoidCallback? onApply;
   final bool isLoading;
   final bool isApplied;
@@ -165,20 +161,8 @@ class JobCard extends StatelessWidget {
 
             // Actions
             Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              mainAxisAlignment: MainAxisAlignment.end,
               children: [
-                IconButton(
-                  onPressed: onSave ?? () {},
-                  icon: Icon(
-                    isSaved ? Icons.bookmark : Icons.bookmark_border,
-                    color: isSaved
-                        ? theme.colorScheme.primary
-                        : theme.colorScheme.onSurfaceVariant,
-                    size: 24.sp,
-                  ),
-                  padding: EdgeInsets.zero,
-                  constraints: const BoxConstraints(),
-                ),
                 SizedBox(
                   height: 40.h,
                   child: ElevatedButton(

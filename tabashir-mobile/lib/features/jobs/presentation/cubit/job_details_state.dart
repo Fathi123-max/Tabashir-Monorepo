@@ -7,6 +7,7 @@ class JobDetailsState with _$JobDetailsState {
   const factory JobDetailsState.loaded({
     required JobDetails jobDetails,
     @Default(false) bool isApplied,
+    @Default(false) bool isSaved,
   }) = JobDetailsLoaded;
   const factory JobDetailsState.error(String message) = JobDetailsError;
 }

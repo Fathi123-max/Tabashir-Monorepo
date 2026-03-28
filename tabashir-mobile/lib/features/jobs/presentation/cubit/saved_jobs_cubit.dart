@@ -11,7 +11,7 @@ import 'package:tabashir/features/jobs/presentation/cubit/jobs_cubit.dart';
 part 'saved_jobs_state.dart';
 part 'saved_jobs_cubit.freezed.dart';
 
-@injectable
+@lazySingleton
 class SavedJobsCubit extends Cubit<SavedJobsState> {
   SavedJobsCubit(this._repository) : super(const SavedJobsState.initial()) {
     _savedJobsSubscription = _repository.savedJobsStream.listen((savedIds) {

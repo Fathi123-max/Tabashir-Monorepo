@@ -42,15 +42,23 @@ class SavedJobsRepository {
 
   Future<void> saveJob(String jobId) async {
     try {
-      // Optimistic update
+      print('[SAVED_JOBS_REPO] Saving job $jobId...');
+
+      // Optimistic update for UI responsiveness
       _cachedSavedIds.add(jobId);
       _savedJobsController.add(_cachedSavedIds);
 
-      // Save to local storage only
+      // 1. Save to API first to ensure backend persistence
+      if (_apiService != null) {
+        await _apiService.saveJob({'jobId': jobId});
+        print('[SAVED_JOBS_REPO] Successfully saved job $jobId to API');
+      }
+
+      // 2. Save to local storage for offline access and fallback
       await _saveJobLocally(jobId);
     } catch (e) {
-      print('[SAVED_JOBS_REPO] Error saving job locally: $e');
-      // Revert on failure
+      print('[SAVED_JOBS_REPO] Error saving job: $e');
+      // Revert on failure to keep UI consistent with reality
       _cachedSavedIds.remove(jobId);
       _savedJobsController.add(_cachedSavedIds);
       rethrow;
@@ -59,14 +67,22 @@ class SavedJobsRepository {
 
   Future<void> removeSavedJob(String jobId) async {
     try {
+      print('[SAVED_JOBS_REPO] Removing saved job $jobId...');
+
       // Optimistic update
       _cachedSavedIds.remove(jobId);
       _savedJobsController.add(_cachedSavedIds);
 
-      // Remove from local storage only
+      // 1. Remove from API
+      if (_apiService != null) {
+        await _apiService.unsaveJob(jobId);
+        print('[SAVED_JOBS_REPO] Successfully removed job $jobId from API');
+      }
+
+      // 2. Remove from local storage
       await _removeJobLocally(jobId);
     } catch (e) {
-      print('[SAVED_JOBS_REPO] Error removing saved job locally: $e');
+      print('[SAVED_JOBS_REPO] Error removing saved job: $e');
       // Revert on failure
       _cachedSavedIds.add(jobId);
       _savedJobsController.add(_cachedSavedIds);
@@ -76,6 +92,7 @@ class SavedJobsRepository {
 
   Future<bool> isJobSaved(String jobId) async {
     if (_cachedSavedIds.isEmpty) {
+      // If cache is empty, try to load (this will try API first)
       await getAllSavedJobIds();
     }
     return _cachedSavedIds.contains(jobId);
@@ -83,7 +100,45 @@ class SavedJobsRepository {
 
   Future<List<String>> getAllSavedJobIds() async {
     try {
-      // Load from local storage only
+      print('[SAVED_JOBS_REPO] getAllSavedJobIds() called');
+
+      // 1. Try to fetch from API - this is our source of truth
+      if (_apiService != null) {
+        print('[SAVED_JOBS_REPO] Fetching latest saved jobs from Python API...');
+        final response = await _apiService.getSavedJobs();
+
+        if (response.success) {
+          final rawSavedJobs = response.savedJobs;
+          print('[SAVED_JOBS_REPO] API returned ${rawSavedJobs.length} items');
+
+          // Python backend returns objects, extract IDs
+          final List<String> savedJobIds = [];
+          for (final item in rawSavedJobs) {
+            if (item is String) {
+              savedJobIds.add(item);
+            } else if (item is Map) {
+              final dynamic id = item['id'];
+              if (id != null) {
+                savedJobIds.add(id.toString());
+              }
+            }
+          }
+
+          print(
+            '[SAVED_JOBS_REPO] ✅ Extracted ${savedJobIds.length} saved job IDs',
+          );
+
+          // Update local cache and persistent storage to match API
+          await _saveSavedJobIds(savedJobIds);
+          _cachedSavedIds = savedJobIds.toSet();
+          _savedJobsController.add(_cachedSavedIds);
+
+          return savedJobIds;
+        }
+      }
+
+      // 2. Fallback to local storage if API is null or call fails
+      print('[SAVED_JOBS_REPO] Falling back to local storage...');
       final savedJobIds = await _loadSavedJobIds();
       print(
         '[SAVED_JOBS_REPO] Fetched ${savedJobIds.length} saved jobs from local storage',
@@ -92,26 +147,30 @@ class SavedJobsRepository {
       _savedJobsController.add(_cachedSavedIds);
       return savedJobIds;
     } catch (e) {
-      print(
-        '[SAVED_JOBS_REPO] Error fetching saved jobs from local storage: $e',
-      );
-      return [];
+      print('[SAVED_JOBS_REPO] ❌ Error fetching saved jobs: $e');
+
+      // Final fallback to whatever is in local storage
+      final savedJobIds = await _loadSavedJobIds();
+      _cachedSavedIds = savedJobIds.toSet();
+      _savedJobsController.add(_cachedSavedIds);
+      return savedJobIds;
     }
   }
 
   Future<void> clearAllSavedJobs() async {
-    // Clear locally only
+    // Note: We only clear locally for now as there's no "clear all" API endpoint
     await _clearAllSavedJobsLocally();
     _cachedSavedIds.clear();
     _savedJobsController.add(_cachedSavedIds);
   }
 
   Future<void> syncJobs(List<Map<String, dynamic>> jobs) async {
-    // For now, just sync to local storage
-    print('[SAVED_JOBS_REPO] Synced ${jobs.length} jobs to local storage');
+    // For now, just sync to local storage or API if needed
+    print('[SAVED_JOBS_REPO] Syncing ${jobs.length} jobs to local cache');
+    // Implementation could be added here for background synchronization
   }
 
-  // Local storage methods
+  // Local storage methods (Private)
   Future<void> _saveJobLocally(String jobId) async {
     final savedJobIds = await _loadSavedJobIds();
     if (!savedJobIds.contains(jobId)) {

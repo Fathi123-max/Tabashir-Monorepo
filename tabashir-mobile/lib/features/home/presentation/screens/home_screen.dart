@@ -3,11 +3,9 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:go_router/go_router.dart';
 import 'package:tabashir/core/di/injection.dart';
 import 'package:tabashir/core/network/models/user/user_profile_response.dart';
 import 'package:tabashir/core/theme/app_theme.dart';
-import 'package:tabashir/core/router/route_names.dart';
 import 'package:tabashir/features/home/presentation/cubit/cubit.dart';
 import 'package:tabashir/features/home/presentation/cubit/app_initialization_cubit.dart';
 import 'package:tabashir/features/home/data/models/app_initialization_state.dart';
@@ -15,7 +13,6 @@ import 'package:tabashir/features/home/presentation/widgets/widgets.dart';
 import 'package:tabashir/features/home/presentation/widgets/home_explore_cities_grid_widget.dart';
 import 'package:tabashir/features/home/presentation/widgets/home_latest_jobs_feed_widget.dart';
 import 'package:tabashir/features/jobs/presentation/cubit/jobs_cubit.dart';
-import 'package:tabashir/shared/widgets/components/standard_fab.dart';
 import 'package:tabashir/shared/widgets/cv_required_blur.dart';
 import 'package:tabashir/features/resume/presentation/cubit/resume_vault_cubit.dart';
 
@@ -183,16 +180,18 @@ class _HomeScreenState extends State<HomeScreen> {
                                 .read<AppInitializationCubit>()
                                 .state;
                             if (initState.userProfile != null) {
-                                context.read<HomeCubit>().loadHomeData(
-                                  userProfile:
-                                      initState.userProfile!.candidateProfile,
-                                );
-                                if (initState.userProfile!.user.email != null) {
-                                  context.read<HomeCubit>().loadAiEnhancedHomeData(
-                                    email: initState.userProfile!.user.email!,
-                                  );
-                                }
+                              context.read<HomeCubit>().loadHomeData(
+                                userProfile:
+                                    initState.userProfile!.candidateProfile,
+                              );
+                              if (initState.userProfile!.user.email != null) {
+                                context
+                                    .read<HomeCubit>()
+                                    .loadAiEnhancedHomeData(
+                                      email: initState.userProfile!.user.email!,
+                                    );
                               }
+                            }
                           },
                           child: Text('Retry'.tr()),
                         ),
@@ -222,15 +221,24 @@ class _HomeScreenState extends State<HomeScreen> {
                                 await context
                                     .read<AppInitializationCubit>()
                                     .initialize();
-                                final initState = context.read<AppInitializationCubit>().state;
+                                final initState = context
+                                    .read<AppInitializationCubit>()
+                                    .state;
                                 if (initState.userProfile != null) {
                                   context.read<HomeCubit>().refreshHomeData(
-                                    userProfile: initState.userProfile!.candidateProfile,
+                                    userProfile:
+                                        initState.userProfile!.candidateProfile,
                                   );
-                                  if (initState.userProfile!.user.email != null) {
-                                    context.read<HomeCubit>().loadAiEnhancedHomeData(
-                                      email: initState.userProfile!.user.email!,
-                                    );
+                                  if (initState.userProfile!.user.email !=
+                                      null) {
+                                    context
+                                        .read<HomeCubit>()
+                                        .loadAiEnhancedHomeData(
+                                          email: initState
+                                              .userProfile!
+                                              .user
+                                              .email!,
+                                        );
                                   }
                                 }
                               },
@@ -416,6 +424,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               ),
                             ),
 
+                            /*
                             // Floating Action Button
                             StandardFABWithCustomPosition(
                               icon: Icons.auto_awesome,
@@ -424,6 +433,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               right: AppTheme.spacingMd.w,
                               bottom: AppTheme.spacingLg.h,
                             ),
+                            */
                           ],
                         ),
                       ),

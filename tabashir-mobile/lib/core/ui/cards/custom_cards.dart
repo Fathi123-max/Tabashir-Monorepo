@@ -65,8 +65,8 @@ class JobCard extends StatelessWidget {
     required this.postedDate,
     super.key,
     this.onTap,
-    this.isSaved = false,
   });
+
   final String title;
   final String company;
   final String location;
@@ -74,7 +74,6 @@ class JobCard extends StatelessWidget {
   final String type;
   final String postedDate;
   final VoidCallback? onTap;
-  final bool isSaved;
 
   @override
   Widget build(BuildContext context) {
@@ -110,11 +109,6 @@ class JobCard extends StatelessWidget {
                   ],
                 ),
               ),
-              if (isSaved)
-                Icon(
-                  Icons.bookmark,
-                  color: theme.colorScheme.primary,
-                ),
             ],
           ),
           SizedBox(height: AppTheme.spacingSm.h),

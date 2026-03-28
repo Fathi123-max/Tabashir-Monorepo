@@ -24,7 +24,7 @@ class HomeExploreCitiesGridWidget extends StatelessWidget {
           onTap: () {
             // Encode the city name and navigate to jobs screen with filter
             // Adjust the route format based on your router's design
-            context.go('/jobs?city=${Uri.encodeComponent(cityData.city)}');
+            context.push('/jobs?city=${Uri.encodeComponent(cityData.city)}');
           },
           child: Container(
             padding: EdgeInsets.symmetric(

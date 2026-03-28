@@ -14,9 +14,7 @@ abstract class BaseJobCard extends StatelessWidget {
     required this.matchPercentage,
     required this.tags,
     required this.skillsMatch,
-    required this.isSaved,
     this.jobId,
-    this.onSave,
     this.onApply,
     this.onSalaryIconTap,
     this.postedDate,
@@ -31,9 +29,7 @@ abstract class BaseJobCard extends StatelessWidget {
   final String matchPercentage;
   final List<String> tags;
   final String skillsMatch;
-  final bool isSaved;
   final String? jobId;
-  final VoidCallback? onSave;
   final VoidCallback? onApply;
   final VoidCallback? onSalaryIconTap;
   final String? postedDate;
@@ -95,20 +91,8 @@ abstract class BaseJobCard extends StatelessWidget {
 
     return showApplyButton
         ? Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            mainAxisAlignment: MainAxisAlignment.end,
             children: [
-              IconButton(
-                onPressed: onSave ?? () {},
-                icon: Icon(
-                  isSaved ? Icons.bookmark : Icons.bookmark_border,
-                  color: isSaved
-                      ? theme.colorScheme.primary
-                      : theme.colorScheme.onSurfaceVariant,
-                  size: 24.sp,
-                ),
-                padding: EdgeInsets.zero,
-                constraints: const BoxConstraints(),
-              ),
               SizedBox(
                 height: buttonHeight,
                 child: ElevatedButton(
@@ -142,22 +126,7 @@ abstract class BaseJobCard extends StatelessWidget {
               ),
             ],
           )
-        : Row(
-            children: [
-              IconButton(
-                onPressed: onSave ?? () {},
-                icon: Icon(
-                  isSaved ? Icons.bookmark : Icons.bookmark_border,
-                  color: isSaved
-                      ? theme.colorScheme.primary
-                      : theme.colorScheme.onSurfaceVariant,
-                  size: 24.sp,
-                ),
-                padding: EdgeInsets.zero,
-                constraints: const BoxConstraints(),
-              ),
-            ],
-          );
+        : const SizedBox.shrink();
   }
 }
 
@@ -171,9 +140,7 @@ class StandardJobCard extends BaseJobCard {
     required super.matchPercentage,
     required super.tags,
     required super.skillsMatch,
-    required super.isSaved,
     super.jobId,
-    super.onSave,
     super.onApply,
     super.postedDate,
     super.key,
@@ -315,9 +282,7 @@ class CompactJobCard extends BaseJobCard {
     required super.matchPercentage,
     required super.tags,
     required super.skillsMatch,
-    required super.isSaved,
     super.jobId,
-    super.onSave,
     super.onApply,
     super.key,
   });
@@ -414,9 +379,7 @@ class DetailedJobCard extends BaseJobCard {
     required super.matchPercentage,
     required super.tags,
     required super.skillsMatch,
-    required super.isSaved,
     super.jobId,
-    super.onSave,
     super.onApply,
     super.key,
   });
@@ -583,9 +546,7 @@ class MinimalJobCard extends BaseJobCard {
     required super.matchPercentage,
     required super.tags,
     required super.skillsMatch,
-    required super.isSaved,
     super.jobId,
-    super.onSave,
     super.onApply,
     super.postedDate,
     super.key,
@@ -686,20 +647,6 @@ class MinimalJobCard extends BaseJobCard {
                   fontWeight: FontWeight.w600,
                 ),
               ),
-            ),
-            SizedBox(width: AppTheme.spacingSm.w),
-            // Right section - Save button
-            IconButton(
-              onPressed: onSave ?? () {},
-              icon: Icon(
-                isSaved ? Icons.bookmark : Icons.bookmark_border,
-                color: isSaved
-                    ? theme.colorScheme.primary
-                    : theme.colorScheme.onSurfaceVariant,
-                size: 20.sp,
-              ),
-              padding: EdgeInsets.zero,
-              constraints: const BoxConstraints(),
             ),
           ],
         ),

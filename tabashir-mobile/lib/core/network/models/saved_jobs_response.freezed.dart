@@ -16,8 +16,8 @@ T _$identity<T>(T value) => value;
 mixin _$SavedJobsResponse {
 
 /// Success status
- bool get success;/// List of saved job IDs (for GET operations)
- List<String> get savedJobs;/// Count of saved jobs
+ bool get success;/// List of saved job IDs or objects (from GET operations)
+ List<dynamic> get savedJobs;/// Count of saved jobs
  int? get count;/// Success message
  String? get message;/// Error message
  String? get error;
@@ -53,7 +53,7 @@ abstract mixin class $SavedJobsResponseCopyWith<$Res>  {
   factory $SavedJobsResponseCopyWith(SavedJobsResponse value, $Res Function(SavedJobsResponse) _then) = _$SavedJobsResponseCopyWithImpl;
 @useResult
 $Res call({
- bool success, List<String> savedJobs, int? count, String? message, String? error
+ bool success, List<dynamic> savedJobs, int? count, String? message, String? error
 });
 
 
@@ -74,7 +74,7 @@ class _$SavedJobsResponseCopyWithImpl<$Res>
   return _then(_self.copyWith(
 success: null == success ? _self.success : success // ignore: cast_nullable_to_non_nullable
 as bool,savedJobs: null == savedJobs ? _self.savedJobs : savedJobs // ignore: cast_nullable_to_non_nullable
-as List<String>,count: freezed == count ? _self.count : count // ignore: cast_nullable_to_non_nullable
+as List<dynamic>,count: freezed == count ? _self.count : count // ignore: cast_nullable_to_non_nullable
 as int?,message: freezed == message ? _self.message : message // ignore: cast_nullable_to_non_nullable
 as String?,error: freezed == error ? _self.error : error // ignore: cast_nullable_to_non_nullable
 as String?,
@@ -159,7 +159,7 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( bool success,  List<String> savedJobs,  int? count,  String? message,  String? error)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( bool success,  List<dynamic> savedJobs,  int? count,  String? message,  String? error)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _SavedJobsResponse() when $default != null:
 return $default(_that.success,_that.savedJobs,_that.count,_that.message,_that.error);case _:
@@ -180,7 +180,7 @@ return $default(_that.success,_that.savedJobs,_that.count,_that.message,_that.er
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( bool success,  List<String> savedJobs,  int? count,  String? message,  String? error)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( bool success,  List<dynamic> savedJobs,  int? count,  String? message,  String? error)  $default,) {final _that = this;
 switch (_that) {
 case _SavedJobsResponse():
 return $default(_that.success,_that.savedJobs,_that.count,_that.message,_that.error);}
@@ -197,7 +197,7 @@ return $default(_that.success,_that.savedJobs,_that.count,_that.message,_that.er
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( bool success,  List<String> savedJobs,  int? count,  String? message,  String? error)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( bool success,  List<dynamic> savedJobs,  int? count,  String? message,  String? error)?  $default,) {final _that = this;
 switch (_that) {
 case _SavedJobsResponse() when $default != null:
 return $default(_that.success,_that.savedJobs,_that.count,_that.message,_that.error);case _:
@@ -212,15 +212,15 @@ return $default(_that.success,_that.savedJobs,_that.count,_that.message,_that.er
 @JsonSerializable()
 
 class _SavedJobsResponse implements SavedJobsResponse {
-  const _SavedJobsResponse({required this.success, final  List<String> savedJobs = const [], this.count, this.message, this.error}): _savedJobs = savedJobs;
+  const _SavedJobsResponse({required this.success, final  List<dynamic> savedJobs = const [], this.count, this.message, this.error}): _savedJobs = savedJobs;
   factory _SavedJobsResponse.fromJson(Map<String, dynamic> json) => _$SavedJobsResponseFromJson(json);
 
 /// Success status
 @override final  bool success;
-/// List of saved job IDs (for GET operations)
- final  List<String> _savedJobs;
-/// List of saved job IDs (for GET operations)
-@override@JsonKey() List<String> get savedJobs {
+/// List of saved job IDs or objects (from GET operations)
+ final  List<dynamic> _savedJobs;
+/// List of saved job IDs or objects (from GET operations)
+@override@JsonKey() List<dynamic> get savedJobs {
   if (_savedJobs is EqualUnmodifiableListView) return _savedJobs;
   // ignore: implicit_dynamic_type
   return EqualUnmodifiableListView(_savedJobs);
@@ -266,7 +266,7 @@ abstract mixin class _$SavedJobsResponseCopyWith<$Res> implements $SavedJobsResp
   factory _$SavedJobsResponseCopyWith(_SavedJobsResponse value, $Res Function(_SavedJobsResponse) _then) = __$SavedJobsResponseCopyWithImpl;
 @override @useResult
 $Res call({
- bool success, List<String> savedJobs, int? count, String? message, String? error
+ bool success, List<dynamic> savedJobs, int? count, String? message, String? error
 });
 
 
@@ -287,7 +287,7 @@ class __$SavedJobsResponseCopyWithImpl<$Res>
   return _then(_SavedJobsResponse(
 success: null == success ? _self.success : success // ignore: cast_nullable_to_non_nullable
 as bool,savedJobs: null == savedJobs ? _self._savedJobs : savedJobs // ignore: cast_nullable_to_non_nullable
-as List<String>,count: freezed == count ? _self.count : count // ignore: cast_nullable_to_non_nullable
+as List<dynamic>,count: freezed == count ? _self.count : count // ignore: cast_nullable_to_non_nullable
 as int?,message: freezed == message ? _self.message : message // ignore: cast_nullable_to_non_nullable
 as String?,error: freezed == error ? _self.error : error // ignore: cast_nullable_to_non_nullable
 as String?,

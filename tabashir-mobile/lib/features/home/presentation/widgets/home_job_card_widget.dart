@@ -12,10 +12,8 @@ class HomeJobCardWidget extends StatelessWidget {
     required this.employmentType,
     required this.level,
     required this.matchPercentage,
-    required this.isBookmarked,
     required this.isPrimary,
     this.jobId,
-    this.onBookmarkTap,
     this.onApplyTap,
     this.isLoading = false,
     this.isApplied = false,
@@ -26,10 +24,8 @@ class HomeJobCardWidget extends StatelessWidget {
   final String employmentType;
   final String level;
   final String matchPercentage;
-  final bool isBookmarked;
   final bool isPrimary;
   final String? jobId;
-  final VoidCallback? onBookmarkTap;
   final VoidCallback? onApplyTap;
   final bool isLoading;
   final bool isApplied;
@@ -91,31 +87,6 @@ class HomeJobCardWidget extends StatelessWidget {
                           ),
                         ),
                       ],
-                    ),
-                  ),
-                  IconButton(
-                    onPressed: onBookmarkTap,
-                    icon: Icon(
-                      isBookmarked ? Icons.bookmark : Icons.bookmark_border,
-                      color: isBookmarked
-                          ? theme.colorScheme.primary
-                          : theme.colorScheme.onSurfaceVariant,
-                      size: 24.sp,
-                    ),
-                    padding: EdgeInsets.all(4.w),
-                    constraints: BoxConstraints.tight(Size(32.w, 32.h)),
-                    style: IconButton.styleFrom(
-                      backgroundColor: isBookmarked
-                          ? theme.colorScheme.primary.withOpacity(0.1)
-                          : Colors.transparent,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8.r),
-                        side: BorderSide(
-                          color: isBookmarked
-                              ? theme.colorScheme.primary.withOpacity(0.2)
-                              : Colors.transparent,
-                        ),
-                      ),
                     ),
                   ),
                 ],

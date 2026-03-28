@@ -5,7 +5,7 @@ def user_exists(user_id):
     try:
         conn = get_db_connection()
         cur = conn.cursor()
-        cur.execute('SELECT 1 FROM "User" WHERE id = %s LIMIT 1;', (user_id,))
+        cur.execute('SELECT 1 FROM users WHERE id = %s LIMIT 1;', (user_id,))
         exists = cur.fetchone() is not None
         cur.close()
         return exists

@@ -10,8 +10,8 @@ sealed class SavedJobsResponse with _$SavedJobsResponse {
     /// Success status
     required bool success,
 
-    /// List of saved job IDs (for GET operations)
-    @Default([]) List<String> savedJobs,
+    /// List of saved job IDs or objects (from GET operations)
+    @Default([]) List<dynamic> savedJobs,
 
     /// Count of saved jobs
     int? count,

@@ -12,7 +12,6 @@ import 'package:tabashir/features/jobs/presentation/widgets/job_details_widgets.
 // import 'package:tabashir/features/jobs/presentation/widgets/job_details_widgets.dart'; // Removed - SimilarOpportunitiesWidget no longer used
 import 'package:tabashir/features/profile/presentation/cubit/profile_cubit.dart';
 import '../cubit/job_details_cubit.dart';
-import '../cubit/saved_jobs_cubit.dart';
 
 class JobDetailScreen extends StatefulWidget {
   const JobDetailScreen({required this.jobId, super.key});
@@ -56,9 +55,9 @@ class _JobDetailScreenState extends State<JobDetailScreen> {
       BlocProvider(
         create: (context) => getIt<AiJobApplyCubit>(),
       ),
-      // Provide SavedJobsCubit for save functionality
+      // Provide AiJobApplyCubit for application feedback
       BlocProvider(
-        create: (context) => getIt<SavedJobsCubit>(),
+        create: (context) => getIt<AiJobApplyCubit>(),
       ),
     ],
     child: MultiBlocListener(
@@ -115,12 +114,9 @@ class _JobDetailScreenState extends State<JobDetailScreen> {
               tooltip: 'Back'.tr(),
             ),
             actions: [
-              BlocBuilder<SavedJobsCubit, SavedJobsState>(
-                builder: (context, savedState) {
-                  final isSaved = savedState.maybeMap(
-                    loaded: (state) => state.savedJobs.contains(widget.jobId),
-                    orElse: () => false,
-                  );
+              BlocBuilder<JobDetailsCubit, JobDetailsState>(
+                builder: (context, state) {
+                  final isSaved = state is JobDetailsLoaded && state.isSaved;
                   return IconButton(
                     icon: Icon(isSaved ? Icons.star : Icons.star_border),
                     color: isSaved ? AppTheme.primaryColor : null,
@@ -167,6 +163,7 @@ class _JobDetailScreenState extends State<JobDetailScreen> {
           _isApplying ||
           context.watch<AiJobApplyCubit>().state.isSubmittingApplication,
       isApplied: state.isApplied,
+      isSaved: state.isSaved,
     );
   }
 
@@ -339,7 +336,7 @@ class _JobDetailScreenState extends State<JobDetailScreen> {
   }
 
   void _onSave(BuildContext context, String jobId) {
-    context.read<SavedJobsCubit>().toggleSaveJob(jobId);
+    context.read<JobDetailsCubit>().toggleSaveJob(jobId);
   }
 
   void _onViewProfile() {

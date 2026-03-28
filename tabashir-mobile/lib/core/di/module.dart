@@ -127,7 +127,7 @@ abstract class RegisterModule {
 
   @lazySingleton
   SavedJobsApiService get savedJobsApiService =>
-      SavedJobsApiService(authDioClient.dio);
+      SavedJobsApiService(backendDioClient.dio);
 
   @lazySingleton
   SavedJobsRepository get savedJobsRepository =>

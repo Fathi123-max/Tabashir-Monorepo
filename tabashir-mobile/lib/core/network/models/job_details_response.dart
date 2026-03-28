@@ -64,6 +64,9 @@ sealed class JobDetailsResponse with _$JobDetailsResponse {
     /// Gender requirement
     @JsonKey(name: 'gender') String? gender,
 
+    /// Is job saved
+    @JsonKey(name: 'is_saved') bool? isSaved,
+
     /// Match percentage for the job
     @JsonKey(name: 'match_percentage') String? matchPercentage,
   }) = _JobDetailsResponse;

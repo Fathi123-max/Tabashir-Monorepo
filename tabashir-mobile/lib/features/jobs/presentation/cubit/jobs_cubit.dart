@@ -8,6 +8,7 @@ import 'package:tabashir/core/services/applied_jobs_storage.dart';
 import 'package:tabashir/core/services/isar_service.dart';
 import 'package:tabashir/features/jobs/domain/models/job_ui_model.dart';
 import 'package:tabashir/features/jobs/domain/repositories/jobs_repository.dart';
+import 'package:tabashir/features/profile/presentation/cubit/profile_cubit.dart';
 
 part 'jobs_state.dart';
 part 'jobs_cubit.freezed.dart';
@@ -18,6 +19,7 @@ class JobsCubit extends Cubit<JobsState> {
     this._repository,
     this._savedJobsRepository,
     this._appliedJobsStorage,
+    this._profileCubit,
   ) : super(const JobsState.initial()) {
     print('[JOBS_CUBIT] Cubit created');
     _savedJobsSubscription = _savedJobsRepository.savedJobsStream.listen((
@@ -32,6 +34,7 @@ class JobsCubit extends Cubit<JobsState> {
   final JobsRepository _repository;
   final SavedJobsRepository _savedJobsRepository;
   final AppliedJobsStorage _appliedJobsStorage;
+  final ProfileCubit _profileCubit;
   StreamSubscription<Set<String>>? _savedJobsSubscription;
   Set<String> _appliedJobIds = {};
   bool _isInitialized = false;
@@ -47,13 +50,36 @@ class JobsCubit extends Cubit<JobsState> {
 
   /// Initialize the cubit state
   /// Only loads jobs if not already initialized
-  void initializeState() {
+  void initializeState({String? initialCity}) {
     if (_isInitialized) {
+      if (initialCity != null && state is JobsStateLoaded) {
+        final loadedState = state as JobsStateLoaded;
+        emit(
+          loadedState.copyWith(
+            selectedLocations: [initialCity],
+            searchQuery: '',
+            selectedJobTypes: [],
+            selectedExperienceLevels: [],
+            minSalary: 0,
+            maxSalary: 100000,
+          ),
+        );
+        loadJobs(page: 0);
+      }
       print('[JOBS_CUBIT] Already initialized, skipping duplicate load');
       return;
     }
     print('[JOBS_CUBIT] initializeState() called - Will load jobs');
     _isInitialized = true;
+    
+    if (initialCity != null) {
+      emit(
+        JobsState.loaded(
+          selectedLocations: [initialCity],
+        ),
+      );
+    }
+    
     loadJobs();
   }
 
@@ -62,10 +88,14 @@ class JobsCubit extends Cubit<JobsState> {
     'Remote',
     'On-site',
     'Hybrid',
-    'New York, NY',
-    'San Francisco, CA',
-    'London, UK',
-    'Berlin, DE',
+    'Dubai',
+    'Abu Dhabi',
+    'Riyadh',
+    'Sharjah',
+    'Doha',
+    'Jeddah',
+    'Muscat',
+    'Ajman',
   ];
 
   final List<String> jobTypeOptions = [
@@ -73,6 +103,7 @@ class JobsCubit extends Cubit<JobsState> {
     'Part-time',
     'Contract',
     'Internship',
+    'Remote',
   ];
 
   final List<String> experienceLevelOptions = [
@@ -80,18 +111,6 @@ class JobsCubit extends Cubit<JobsState> {
     'Mid-Level',
     'Senior',
     'Lead',
-  ];
-
-  final List<String> skillOptions = [
-    'Flutter',
-    'Dart',
-    'React',
-    'Node.js',
-    'Python',
-    'UI/UX',
-    'Product Design',
-    'JavaScript',
-    'TypeScript',
   ];
 
   /// Load jobs from API with pagination (resets list)
@@ -110,7 +129,6 @@ class JobsCubit extends Cubit<JobsState> {
       List<String>? experienceLevels;
       int? minSalary;
       int? maxSalary;
-      List<String>? skills;
       String? sort;
 
       if (state is JobsStateLoaded) {
@@ -128,14 +146,14 @@ class JobsCubit extends Cubit<JobsState> {
             ? loadedState.selectedExperienceLevels
             : null;
         minSalary = loadedState.minSalary > 0 ? loadedState.minSalary : null;
-        maxSalary = loadedState.maxSalary < 500000
+        maxSalary = loadedState.maxSalary < 100000
             ? loadedState.maxSalary
-            : null;
-        skills = loadedState.selectedSkills.isNotEmpty
-            ? loadedState.selectedSkills
             : null;
         sort = loadedState.selectedSort;
       }
+
+      // Get user email from profile cubit to exclude applied jobs
+      final userEmail = _profileCubit.state.profile?.email;
 
       // Get jobs from repository with pagination, search, and filters
       final jobs = await _repository.getJobs(
@@ -147,8 +165,8 @@ class JobsCubit extends Cubit<JobsState> {
         experienceLevels: experienceLevels,
         minSalary: minSalary,
         maxSalary: maxSalary,
-        skills: skills,
         sort: sort,
+        email: userEmail,
       );
 
       print('[JOBS_CUBIT] API response received - ${jobs.length} jobs');
@@ -299,12 +317,12 @@ class JobsCubit extends Cubit<JobsState> {
       title: job.jobTitle ?? 'Untitled Position',
       company: job.companyName ?? 'Unknown Company',
       location: job.location ?? 'Not specified',
-      salary: job.salary ?? 'Not specified',
+      salary: _formatSalaryDisplay(job.salary),
       salaryValue: _extractSalaryValue(job.salary),
       matchPercentage: '90% Match', // TODO: Calculate from backend
       tags: tags,
       skillsMatch: job.academicQualification ?? 'Qualifications pending',
-      isSaved: savedJobIds.contains(job.jobId?.toString()),
+      isSaved: job.isSaved == true || savedJobIds.contains(job.jobId?.toString()),
       isApplied: _appliedJobIds.contains(job.jobId?.toString()),
       jobType: job.jobType ?? 'Full-time',
       experienceLevel: job.experience ?? 'Not specified',
@@ -315,6 +333,14 @@ class JobsCubit extends Cubit<JobsState> {
       postedDate: postedDate,
       workingDays: job.workingDays,
     );
+  }
+
+  /// Format salary for display (replace $ with AED)
+  String _formatSalaryDisplay(String? salary) {
+    if (salary == null || salary.isEmpty || salary == 'Not specified') {
+      return 'Salary not specified';
+    }
+    return salary.replaceAll('\$', 'AED ');
   }
 
   /// Format job date to relative time (e.g., "2 days ago")
@@ -445,29 +471,15 @@ class JobsCubit extends Cubit<JobsState> {
   }
 
   void updateSalaryRange(int min, int max) {
+    print('[JOBS_CUBIT] updateSalaryRange() called: $min - $max');
     if (state is JobsStateLoaded) {
-      final loadedState = state as JobsStateLoaded;
-      emit(
-        loadedState.copyWith(
-          minSalary: min,
-          maxSalary: max,
-        ),
-      );
-      // Reload jobs with new filter
-      loadJobs();
-    }
-  }
-
-  void updateSkillFilter(List<String> skills) {
-    if (state is JobsStateLoaded) {
-      final loadedState = state as JobsStateLoaded;
-      emit(loadedState.copyWith(selectedSkills: skills));
-      // Reload jobs with new filter
-      loadJobs();
+      emit((state as JobsStateLoaded).copyWith(minSalary: min, maxSalary: max));
+      loadJobs(page: 0);
     }
   }
 
   void clearFilters() {
+    print('[JOBS_CUBIT] clearFilters() called');
     if (state is JobsStateLoaded) {
       final loadedState = state as JobsStateLoaded;
       emit(
@@ -475,13 +487,12 @@ class JobsCubit extends Cubit<JobsState> {
           selectedLocations: [],
           selectedJobTypes: [],
           selectedExperienceLevels: [],
+          searchQuery: '',
           minSalary: 0,
-          maxSalary: 500000,
-          selectedSkills: [],
+          maxSalary: 100000,
         ),
       );
-      // Reload jobs without filters
-      loadJobs();
+      loadJobs(page: 0);
     }
   }
 

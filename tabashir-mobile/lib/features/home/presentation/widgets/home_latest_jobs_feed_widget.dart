@@ -6,7 +6,6 @@ import 'package:go_router/go_router.dart';
 import 'package:tabashir/features/home/presentation/cubit/home_cubit.dart';
 import 'package:tabashir/features/home/presentation/cubit/home_state.dart';
 import 'package:tabashir/features/home/presentation/widgets/home_job_card_widget.dart';
-import 'package:tabashir/features/jobs/presentation/cubit/jobs_cubit.dart';
 
 class HomeLatestJobsFeedWidget extends StatefulWidget {
   const HomeLatestJobsFeedWidget({super.key});
@@ -38,9 +37,6 @@ class _HomeLatestJobsFeedWidgetState extends State<HomeLatestJobsFeedWidget> {
           );
         }
 
-        final jobsState = context.watch<JobsCubit>().state;
-        final savedJobs = jobsState is JobsStateLoaded ? jobsState.savedJobs : <String>{};
-
         return ListView.separated(
           physics: const NeverScrollableScrollPhysics(),
           shrinkWrap: true,
@@ -56,14 +52,8 @@ class _HomeLatestJobsFeedWidgetState extends State<HomeLatestJobsFeedWidget> {
               employmentType: (job['employmentType'] ?? job['job_type']) as String? ?? 'Full-time',
               level: (job['level'] ?? 'Not specified') as String? ?? 'Not specified',
               matchPercentage: job['matchPercentage']?.toString() ?? 'N/A',
-              isBookmarked: savedJobs.contains(jobId),
               isPrimary: false,
               jobId: jobId,
-              onBookmarkTap: () {
-                if (jobId.isNotEmpty) {
-                  context.read<JobsCubit>().toggleSaveJob(jobId);
-                }
-              },
               onApplyTap: () {
                 if (jobId.isNotEmpty) {
                   context.pushNamed(

@@ -4,6 +4,7 @@ from flask import request
 from http import HTTPStatus
 from app.database.db import execute_query
 from app.routes.middleware import jwt_required
+from app.utils.job_sync_utils import sync_job_from_legacy
 
 jobs_ns = Namespace('jobs', description='Job Endpoints')
 
@@ -72,14 +73,19 @@ class SavedJobs(Resource):
             return {"error": "jobId required"}, HTTPStatus.BAD_REQUEST
 
         try:
+            # Check/Sync from legacy database if needed to fulfill foreign key constraint
+            success, msg = sync_job_from_legacy(job_id)
+            if not success and msg != "Invalid Job ID format":
+                print(f"[JOB_SYNC] Warning: {msg}")
+
             execute_query(
                 """INSERT INTO "SavedJobPost" (id, "jobId", "userId", "createdAt", "updatedAt")
                    VALUES (%s, %s, %s, NOW(), NOW())
                    ON CONFLICT DO NOTHING""",
-                (str(uuid.uuid4()), job_id, user_id),
+                (str(uuid.uuid4()), str(job_id), user_id),
                 commit=True
             )
-            return {"success": True, "message": "Job saved", "jobId": job_id}, HTTPStatus.CREATED
+            return {"success": True, "message": "Job saved", "jobId": str(job_id)}, HTTPStatus.CREATED
         except Exception as e:
             return {"error": str(e)}, HTTPStatus.INTERNAL_SERVER_ERROR
 
