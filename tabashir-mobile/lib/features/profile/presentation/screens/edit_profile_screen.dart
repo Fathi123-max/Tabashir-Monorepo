@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:reactive_forms/reactive_forms.dart';
+import 'package:file_picker/file_picker.dart';
 
 import '../../../../core/constants/profile_options.dart';
 import '../../../../core/theme/app_theme.dart';
@@ -48,8 +49,12 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       appBar: AppBar(
         backgroundColor: theme.scaffoldBackgroundColor,
         elevation: 0,
+        surfaceTintColor: Colors.transparent,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios),
+          icon: Icon(
+            Icons.arrow_back_ios_new,
+            size: 20.sp,
+          ),
           onPressed: () => Navigator.of(context).pop(),
         ),
         title: Text(
@@ -77,68 +82,36 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                     : TextButton(
                         onPressed: (_form?.valid ?? false) && !_isUpdating
                             ? () async {
-                                print(
-                                  '\n\n########## [EDIT_PROFILE] APPBAR SAVE BUTTON CLICKED ##########',
-                                );
-                                print(
-                                  '[EDIT_PROFILE] Form valid: ${_form?.valid}',
-                                );
-                                if (_form != null) {
-                                  print(
-                                    '[EDIT_PROFILE] Form values: ${_form!.value}',
-                                  );
-                                  print(
-                                    '[EDIT_PROFILE] Form errors: ${_form!.errors}',
-                                  );
-                                }
-
-                                setState(() {
-                                  _isUpdating = true;
-                                });
+                                setState(() => _isUpdating = true);
                                 try {
                                   await cubit.updateProfile(_form!);
-                                  print(
-                                    '[EDIT_PROFILE] ✅ AppBar: Profile update completed successfully',
-                                  );
-                                  print(
-                                    '[EDIT_PROFILE] Current cubit state: ${cubit.state.profile?.name}',
-                                  );
-
-                                  // Navigate back after successful save
-                                  print(
-                                    '[EDIT_PROFILE] Navigating back to profile screen...',
-                                  );
-                                  if (mounted) {
-                                    Navigator.of(context).pop();
-                                  }
+                                  if (mounted) Navigator.of(context).pop();
                                 } catch (e) {
-                                  print(
-                                    '[EDIT_PROFILE] ❌ AppBar: Profile update error: $e',
-                                  );
-                                  print(
-                                    '[EDIT_PROFILE] Stack trace: ${StackTrace.current}',
-                                  );
+                                  debugPrint('Profile update error: $e');
                                 } finally {
                                   if (mounted) {
-                                    setState(() {
-                                      _isUpdating = false;
-                                    });
+                                    setState(() => _isUpdating = false);
                                   }
-                                  print(
-                                    '########## [EDIT_PROFILE] APPBAR SAVE FLOW COMPLETE ##########\n\n',
-                                  );
                                 }
                               }
                             : null,
+                        style: TextButton.styleFrom(
+                          foregroundColor: AppTheme.primaryColor,
+                          padding: EdgeInsets.symmetric(
+                            horizontal: 16.w,
+                            vertical: 8.h,
+                          ),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(20.r),
+                          ),
+                        ),
                         child: Text(
                           'Save'.tr(),
                           style: theme.textTheme.titleMedium?.copyWith(
                             color: (_form?.valid ?? false) && !_isUpdating
                                 ? AppTheme.primaryColor
-                                : theme.colorScheme.onSurface.withValues(
-                                    alpha: 0.4,
-                                  ),
-                            fontWeight: FontWeight.w600,
+                                : theme.colorScheme.onSurface.withOpacity(0.3),
+                            fontWeight: FontWeight.bold,
                           ),
                         ),
                       ),
@@ -149,245 +122,207 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       ),
       body: BlocBuilder<ProfileCubit, ProfileState>(
         builder: (context, state) {
-          // Create or update form when profile data is available
           if (state.profile != null) {
             if (_form == null) {
-              // Create new form
-              print('[EDIT_PROFILE] Creating new form with profile data');
               _form = cubit.getEditForm(state.profile!);
-              print('[EDIT_PROFILE] Form created. Valid: ${_form!.valid}');
             } else {
-              // Update existing form with profile data
-              print('[EDIT_PROFILE] Updating existing form with profile data');
               _updateFormWithProfile(_form!, state.profile!);
-              print('[EDIT_PROFILE] Form updated. Valid: ${_form!.valid}');
-              if (!_form!.valid) {
-                print(
-                  '[EDIT_PROFILE] Form is INVALID! Errors: ${_form!.errors}',
-                );
-              }
             }
           }
 
-          // Show loading while initial load
           if (state.status == ProfileStatus.loading && _form == null) {
             return const Center(child: CircularProgressIndicator());
           }
 
-          // Fallback to empty form if something went wrong
           _form ??= _createBasicForm();
 
           return ReactiveForm(
-            // Removed BlocBuilder since we're not using cubit state
             formGroup: _form!,
             child: SingleChildScrollView(
-              padding: EdgeInsets.all(AppTheme.spacingMd.w),
+              padding: EdgeInsets.only(
+                left: AppTheme.spacingMd.w,
+                right: AppTheme.spacingMd.w,
+                top: AppTheme.spacingSm.h,
+                bottom: AppTheme.spacingLg.h,
+              ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Personal Information Section
-                  Text(
-                    'Personal Information'.tr(),
-                    style: theme.textTheme.titleLarge?.copyWith(
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  SizedBox(height: AppTheme.spacingMd.h),
-                  ReactiveTextField<String>(
-                    formControlName: 'name',
-                    decoration: InputDecoration(
-                      labelText: 'Full Name'.tr(),
-                      prefixIcon: const Icon(Icons.person_outline),
-                      border: const OutlineInputBorder(),
-                    ),
-                    validationMessages: {
-                      ValidationMessage.required: (_) =>
-                          'Name is required'.tr(),
-                    },
-                  ),
-                  SizedBox(height: AppTheme.spacingMd.h),
-                  ReactiveTextField<String>(
-                    formControlName: 'email',
-                    decoration: InputDecoration(
-                      labelText: 'Email'.tr(),
-                      prefixIcon: const Icon(Icons.email_outlined),
-                      border: const OutlineInputBorder(),
-                    ),
-                    keyboardType: TextInputType.emailAddress,
-                    validationMessages: {
-                      ValidationMessage.required: (_) =>
-                          'Email is required'.tr(),
-                      ValidationMessage.email: (_) =>
-                          'Invalid email format'.tr(),
-                    },
-                  ),
-
-                  SizedBox(height: AppTheme.spacingMd.h),
-                  ReactiveDropdownSearch<String>(
-                    formControlName: 'nationality',
-                    items: nationalityOptions,
-                    itemAsString: (item) => item,
-                    labelText: 'Nationality'.tr(),
-                    hintText: 'Select your nationality'.tr(),
-                    validationMessages: {
-                      ValidationMessage.required: (_) =>
-                          'Nationality is required'.tr(),
-                    },
-                  ),
-                  SizedBox(height: AppTheme.spacingMd.h),
-                  ReactiveGenderDropdown(
-                    formControlName: 'gender',
-                    validationMessages: {
-                      ValidationMessage.required: (_) =>
-                          'Gender is required'.tr(),
-                    },
-                  ),
-                  SizedBox(height: AppTheme.spacingLg.h),
-
-                  // Target Details Section
-                  Text(
-                    'Target Details'.tr(),
-                    style: theme.textTheme.titleLarge?.copyWith(
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  SizedBox(height: AppTheme.spacingMd.h),
-                  ReactiveTextField<String>(
-                    formControlName: 'location',
-                    decoration: InputDecoration(
-                      labelText: 'Target Locations (e.g. Dubai, London)'.tr(),
-                      prefixIcon: const Icon(Icons.location_on_outlined),
-                      border: const OutlineInputBorder(),
-                    ),
-                  ),
-                  SizedBox(height: AppTheme.spacingMd.h),
-                  ReactiveTextField<String>(
-                    formControlName: 'jobTitle',
-                    decoration: InputDecoration(
-                      labelText: 'Target Roles / Positions'.tr(),
-                      prefixIcon: const Icon(Icons.work_outline),
-                      border: const OutlineInputBorder(),
-                    ),
-                  ),
-                  SizedBox(height: AppTheme.spacingLg.h),
-
-                  // Resume Section
-                  Text(
-                    'Resume / CV'.tr(),
-                    style: theme.textTheme.titleLarge?.copyWith(
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  SizedBox(height: AppTheme.spacingMd.h),
-                  ReactiveTextField<String>(
-                    formControlName: 'cv',
-                    decoration: InputDecoration(
-                      labelText: 'Resume Filename'.tr(),
-                      prefixIcon: const Icon(Icons.description_outlined),
-                      border: const OutlineInputBorder(),
-                      helperText: 'CV upload functionality will be linked in the update client API.',
-                    ),
-                  ),
-                  SizedBox(height: AppTheme.spacingLg.h),
-
-
-
-                  // Save Button
-                  SizedBox(
-                    width: double.infinity,
-                    child: ReactiveFormConsumer(
-                      key: const Key('edit_profile_form'),
-                      builder: (context, form, child) => ElevatedButton(
-                        onPressed: form.valid && !_isUpdating
-                            ? () async {
-                                print(
-                                  '\n\n########## [EDIT_PROFILE] SAVE BUTTON CLICKED ##########',
-                                );
-                                print(
-                                  '[EDIT_PROFILE] Form valid: ${form.valid}',
-                                );
-                                print(
-                                  '[EDIT_PROFILE] Form values: ${form.value}',
-                                );
-                                print(
-                                  '[EDIT_PROFILE] Form errors: ${form.errors}',
-                                );
-
-                                setState(() {
-                                  _isUpdating = true;
-                                });
-                                try {
-                                  print(
-                                    '[EDIT_PROFILE] Calling cubit.updateProfile()...',
-                                  );
-                                  await context
-                                      .read<ProfileCubit>()
-                                      .updateProfile(form);
-                                  print(
-                                    '[EDIT_PROFILE] ✅ Profile update completed successfully',
-                                  );
-                                  print(
-                                    '[EDIT_PROFILE] Current cubit state: ${context.read<ProfileCubit>().state.profile?.name}',
-                                  );
-
-                                  // Navigate back after successful save
-                                  print(
-                                    '[EDIT_PROFILE] Navigating back to profile screen...',
-                                  );
-                                  Navigator.of(context).pop();
-                                } catch (e) {
-                                  print(
-                                    '[EDIT_PROFILE] ❌ Profile update error: $e',
-                                  );
-                                  print(
-                                    '[EDIT_PROFILE] Stack trace: ${StackTrace.current}',
-                                  );
-                                } finally {
-                                  if (mounted) {
-                                    setState(() {
-                                      _isUpdating = false;
-                                    });
-                                  }
-                                  print(
-                                    '########## [EDIT_PROFILE] SAVE FLOW COMPLETE ##########\n\n',
-                                  );
-                                }
-                              }
-                            : null,
-                        style: ElevatedButton.styleFrom(
-                          padding: EdgeInsets.symmetric(
-                            vertical: AppTheme.spacingMd.h,
-                          ),
-                          backgroundColor: AppTheme.primaryColor,
-                          foregroundColor: Colors.white,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(
-                              AppTheme.radiusDefault.r,
-                            ),
-                          ),
+                  _sectionHeader('Personal Information'.tr(), theme),
+                  _buildSectionCard(
+                    theme,
+                    children: [
+                      ReactiveTextField<String>(
+                        formControlName: 'name',
+                        decoration: _buildInputDecoration(
+                          theme,
+                          'Full Name'.tr(),
+                          Icons.person_outline,
                         ),
-                        child: _isUpdating
-                            ? SizedBox(
-                                height: 20.h,
-                                width: 20.w,
-                                child: const CircularProgressIndicator(
-                                  strokeWidth: 2,
-                                  valueColor: AlwaysStoppedAnimation<Color>(
-                                    Colors.white,
+                        validationMessages: {
+                          ValidationMessage.required: (_) =>
+                              'Name is required'.tr(),
+                        },
+                      ),
+                      SizedBox(height: AppTheme.spacingMd.h),
+                      ReactiveTextField<String>(
+                        formControlName: 'email',
+                        decoration: _buildInputDecoration(
+                          theme,
+                          'Email'.tr(),
+                          Icons.email_outlined,
+                        ),
+                        keyboardType: TextInputType.emailAddress,
+                        validationMessages: {
+                          ValidationMessage.required: (_) =>
+                              'Email is required'.tr(),
+                          ValidationMessage.email: (_) =>
+                              'Invalid email format'.tr(),
+                        },
+                      ),
+                      SizedBox(height: AppTheme.spacingMd.h),
+                      ReactiveDropdownSearch<String>(
+                        formControlName: 'nationality',
+                        items: nationalityOptions,
+                        itemAsString: (item) => item,
+                        labelText: 'Nationality'.tr(),
+                        hintText: 'Select your nationality'.tr(),
+                        decoration: _buildInputDecoration(
+                          theme,
+                          'Nationality'.tr(),
+                          Icons.public_outlined,
+                        ),
+                        validationMessages: {
+                          ValidationMessage.required: (_) =>
+                              'Nationality is required'.tr(),
+                        },
+                      ),
+                      SizedBox(height: AppTheme.spacingMd.h),
+                      ReactiveGenderDropdown(
+                        formControlName: 'gender',
+                        decoration: _buildInputDecoration(
+                          theme,
+                          'Gender'.tr(),
+                          Icons.person_outline,
+                        ),
+                        validationMessages: {
+                          ValidationMessage.required: (_) =>
+                              'Gender is required'.tr(),
+                        },
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: AppTheme.spacingLg.h),
+                  _sectionHeader('Target Details'.tr(), theme),
+                  _buildSectionCard(
+                    theme,
+                    children: [
+                      ReactiveTextField<String>(
+                        formControlName: 'location',
+                        decoration: _buildInputDecoration(
+                          theme,
+                          'Target Locations (e.g. Dubai, London)'.tr(),
+                          Icons.location_on_outlined,
+                        ),
+                      ),
+                      SizedBox(height: AppTheme.spacingMd.h),
+                      ReactiveTextField<String>(
+                        formControlName: 'jobTitle',
+                        decoration: _buildInputDecoration(
+                          theme,
+                          'Target Roles / Positions'.tr(),
+                          Icons.work_outline,
+                        ),
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: AppTheme.spacingLg.h),
+                  _sectionHeader('Resume / CV'.tr(), theme),
+                  _buildSectionCard(
+                    theme,
+                    children: [
+                      ReactiveValueListenableBuilder<String>(
+                        formControlName: 'cv',
+                        builder: (context, control, child) {
+                          final value = control.value ?? '';
+                          final isLocalFile = value.contains('/') || value.contains('\\');
+                          final hasFile = value.isNotEmpty;
+
+                          return Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Container(
+                                padding: EdgeInsets.all(12.w),
+                                decoration: BoxDecoration(
+                                  color: theme.colorScheme.surfaceContainerHighest.withValues(alpha: 0.2),
+                                  borderRadius: BorderRadius.circular(12.r),
+                                  border: Border.all(
+                                    color: theme.colorScheme.outlineVariant.withValues(alpha: 0.3),
                                   ),
                                 ),
-                              )
-                            : Text(
-                                'Save Changes'.tr(),
-                                style: theme.textTheme.titleMedium?.copyWith(
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.w600,
+                                child: Row(
+                                  children: [
+                                    Icon(
+                                      hasFile ? Icons.description : Icons.upload_file,
+                                      color: hasFile ? theme.colorScheme.primary : theme.colorScheme.onSurfaceVariant,
+                                      size: 24.sp,
+                                    ),
+                                    SizedBox(width: 12.w),
+                                    Expanded(
+                                      child: Column(
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            hasFile ? value.split('/').last : 'No resume uploaded'.tr(),
+                                            style: theme.textTheme.bodyMedium?.copyWith(
+                                              fontWeight: hasFile ? FontWeight.bold : FontWeight.normal,
+                                              color: hasFile ? theme.colorScheme.onSurface : theme.colorScheme.onSurfaceVariant,
+                                            ),
+                                            maxLines: 1,
+                                            overflow: TextOverflow.ellipsis,
+                                          ),
+                                          if (hasFile)
+                                            Text(
+                                              isLocalFile ? 'New file selected'.tr() : 'Current resume'.tr(),
+                                              style: theme.textTheme.labelSmall?.copyWith(
+                                                color: isLocalFile ? Colors.orange : theme.colorScheme.primary,
+                                              ),
+                                            ),
+                                        ],
+                                      ),
+                                    ),
+                                    if (hasFile)
+                                      IconButton(
+                                        icon: Icon(Icons.close, size: 20.sp),
+                                        onPressed: () => control.value = '',
+                                        visualDensity: VisualDensity.compact,
+                                      ),
+                                  ],
                                 ),
                               ),
+                              SizedBox(height: 12.h),
+                              SizedBox(
+                                width: double.infinity,
+                                child: OutlinedButton.icon(
+                                  onPressed: () => _pickCV(control as FormControl<String>),
+                                  icon: Icon(Icons.add_circle_outline, size: 18.sp),
+                                  label: Text(hasFile ? 'Replace Resume'.tr() : 'Upload Resume'.tr()),
+                                  style: OutlinedButton.styleFrom(
+                                    padding: EdgeInsets.symmetric(vertical: 12.h),
+                                    side: BorderSide(color: theme.colorScheme.primary),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(12.r),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          );
+                        },
                       ),
-                    ),
+                    ],
                   ),
-                  SizedBox(height: AppTheme.spacingMd.h),
+                  SizedBox(height: AppTheme.spacingLg.h),
                 ],
               ),
             ),
@@ -397,16 +332,88 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     );
   }
 
+  Widget _sectionHeader(String title, ThemeData theme) => Padding(
+        padding: EdgeInsets.only(left: 4.w, bottom: 8.h),
+        child: Text(
+          title.toUpperCase(),
+          style: theme.textTheme.labelMedium?.copyWith(
+            fontWeight: FontWeight.bold,
+            color: theme.colorScheme.onSurface.withValues(alpha: 0.4),
+            letterSpacing: 1.2,
+          ),
+        ),
+      );
+
+  Widget _buildSectionCard(ThemeData theme, {required List<Widget> children}) {
+    return Container(
+      padding: EdgeInsets.all(AppTheme.spacingMd.w),
+      decoration: BoxDecoration(
+        color: theme.cardColor,
+        borderRadius: BorderRadius.circular(16.r),
+        border: Border.all(
+          color: theme.colorScheme.outlineVariant.withValues(alpha: 0.5),
+          width: 1,
+        ),
+      ),
+      child: Column(
+        children: children,
+      ),
+    );
+  }
+
+  InputDecoration _buildInputDecoration(
+    ThemeData theme,
+    String label,
+    IconData icon,
+  ) {
+    return InputDecoration(
+      labelText: label,
+      prefixIcon: Icon(icon, size: 20.sp),
+      filled: true,
+      fillColor: theme.colorScheme.surfaceContainerHighest.withValues(alpha: 0.3),
+      border: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(12.r),
+        borderSide: BorderSide.none,
+      ),
+      enabledBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(12.r),
+        borderSide: BorderSide(
+          color: theme.colorScheme.outlineVariant.withValues(alpha: 0.3),
+          width: 1,
+        ),
+      ),
+      focusedBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(12.r),
+        borderSide: BorderSide(
+          color: theme.colorScheme.primary.withValues(alpha: 0.5),
+          width: 1.5,
+        ),
+      ),
+      contentPadding: EdgeInsets.symmetric(
+        horizontal: 16.w,
+        vertical: 16.h,
+      ),
+      labelStyle: TextStyle(
+        fontSize: 14.sp,
+        color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
+      ),
+      floatingLabelStyle: TextStyle(
+        fontWeight: FontWeight.bold,
+        color: theme.colorScheme.primary,
+      ),
+    );
+  }
+
   /// Create a basic form with empty/default values
   FormGroup _createBasicForm() => fb.group(<String, Object>{
-    'name': FormControl<String>(value: ''),
-    'email': FormControl<String>(value: ''),
-    'nationality': FormControl<String>(value: ''),
-    'gender': FormControl<String>(value: ''),
-    'location': FormControl<String>(value: ''),
-    'jobTitle': FormControl<String>(value: ''),
-    'cv': FormControl<String>(value: ''),
-  });
+        'name': FormControl<String>(value: ''),
+        'email': FormControl<String>(value: ''),
+        'nationality': FormControl<String>(value: ''),
+        'gender': FormControl<String>(value: ''),
+        'location': FormControl<String>(value: ''),
+        'jobTitle': FormControl<String>(value: ''),
+        'cv': FormControl<String>(value: ''),
+      });
 
   /// Clean "Not specified" values to empty strings
   String _cleanValue(String? value) {
@@ -418,21 +425,34 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
 
   /// Update form controls with profile data
   void _updateFormWithProfile(FormGroup form, ProfileData profile) {
-    print('[EDIT_PROFILE] Updating form with profile data');
-    print('[EDIT_PROFILE] Name: ${profile.name}');
-
     form.control('name').value = _cleanValue(profile.name);
     form.control('email').value = _cleanValue(profile.email);
     form.control('nationality').value = _cleanValue(profile.nationality);
     form.control('gender').value = _cleanValue(profile.gender);
     form.control('location').value = _cleanValue(profile.location);
     form.control('jobTitle').value = _cleanValue(profile.jobTitle);
-    
-    // Check if cv form control exists before updating
-    if (form.contains('cv')) {
-      form.control('cv').value = '';
-    }
 
-    print('[EDIT_PROFILE] Form updated. Current values: ${form.value}');
+    if (form.contains('cv')) {
+      form.control('cv').value = _cleanValue(profile.cvFilename);
+    }
+  }
+
+  Future<void> _pickCV(FormControl<String> control) async {
+    try {
+      final result = await FilePicker.platform.pickFiles(
+        type: FileType.custom,
+        allowedExtensions: ['pdf', 'doc', 'docx'],
+      );
+
+      if (result != null && result.files.single.path != null) {
+        control.value = result.files.single.path;
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Error picking file: $e'.tr())),
+        );
+      }
+    }
   }
 }

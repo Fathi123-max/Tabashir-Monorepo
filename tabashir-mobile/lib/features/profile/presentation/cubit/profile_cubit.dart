@@ -485,7 +485,7 @@ class ProfileCubit extends Cubit<ProfileState> {
       'gender': FormControl<String>(value: cleanValue(profile.gender)),
       'location': FormControl<String>(value: cleanValue(profile.location)),
       'jobTitle': FormControl<String>(value: cleanValue(profile.jobTitle)),
-      'cv': FormControl<String>(value: ''),
+      'cv': FormControl<String>(value: cleanValue(profile.cvFilename)),
     });
   }
 
@@ -497,7 +497,11 @@ class ProfileCubit extends Cubit<ProfileState> {
       final isTargetDetailsUpdate = form.contains('cv') && form.contains('location') && form.contains('jobTitle');
       
       if (isTargetDetailsUpdate) {
-        final cvPath = form.control('cv').value as String?;
+        final cvValue = form.control('cv').value as String?;
+        // Only treat as CV path if it looks like a local file system path (has / or \)
+        final isLocalFile = cvValue != null && (cvValue.contains('/') || cvValue.contains('\\'));
+        final cvPath = isLocalFile ? cvValue : null;
+
         final locStr = form.control('location').value as String? ?? '';
         final locs = locStr.isNotEmpty ? locStr.split(',').map((e) => e.trim()).toList() : <String>[];
         
@@ -629,6 +633,7 @@ class ProfileCubit extends Cubit<ProfileState> {
       linkedin: linkedin,
       profileStrength: profileStrength,
       profileImage: profileImage,
+      cvFilename: aiClientData?.filename,
       userType: user.userType,
       subscriptionPlan: response.subscription?.plan,
       subscriptionStatus: response.subscription?.status,

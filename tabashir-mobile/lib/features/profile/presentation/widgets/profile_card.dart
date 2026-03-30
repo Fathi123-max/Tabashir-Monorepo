@@ -169,37 +169,81 @@ class ProfileCard extends StatelessWidget {
 
           // Profile Strength Banner
           Container(
-            padding: EdgeInsets.symmetric(
-              horizontal: AppTheme.spacingMd.w,
-              vertical: AppTheme.spacingSm.h,
-            ),
+            padding: EdgeInsets.all(AppTheme.spacingMd.w),
             decoration: BoxDecoration(
-              color: AppTheme.primaryColor.withOpacity(0.1),
+              color: AppTheme.primaryColor.withOpacity(0.05),
               borderRadius: BorderRadius.circular(AppTheme.radiusDefault.r),
+              border: Border.all(
+                color: AppTheme.primaryColor.withOpacity(0.1),
+              ),
             ),
-            child: Row(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  '✨',
-                  style: TextStyle(fontSize: 20.sp),
-                ),
-                SizedBox(width: AppTheme.spacingSm.w),
-                Expanded(
-                  child: RichText(
-                    text: TextSpan(
-                      style: theme.textTheme.bodyMedium?.copyWith(
-                        color: AppTheme.primaryColor,
-                        fontWeight: FontWeight.w500,
-                      ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Row(
                       children: [
-                        TextSpan(text: 'Profile Strength: $profileStrength% '),
-                        TextSpan(
-                          text: '— ${_getStrengthLevel(profileStrength)}',
-                          style: const TextStyle(fontWeight: FontWeight.bold),
+                        Text(
+                          '✨',
+                          style: TextStyle(fontSize: 16.sp),
+                        ),
+                        SizedBox(width: AppTheme.spacingSm.w),
+                        Text(
+                          'Profile Strength: $profileStrength%',
+                          style: theme.textTheme.bodyMedium?.copyWith(
+                            color: AppTheme.primaryColor,
+                            fontWeight: FontWeight.w600,
+                          ),
                         ),
                       ],
                     ),
-                  ),
+                    Text(
+                      _getStrengthLevel(profileStrength),
+                      style: theme.textTheme.bodySmall?.copyWith(
+                        color: AppTheme.primaryColor,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
+                ),
+                SizedBox(height: AppTheme.spacingSm.h),
+                // Progress Bar
+                Stack(
+                  children: [
+                    Container(
+                      height: 8.h,
+                      width: double.infinity,
+                      decoration: BoxDecoration(
+                        color: AppTheme.primaryColor.withOpacity(0.1),
+                        borderRadius: BorderRadius.circular(AppTheme.radiusFull),
+                      ),
+                    ),
+                    FractionallySizedBox(
+                      widthFactor: profileStrength / 100,
+                      child: Container(
+                        height: 8.h,
+                        decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                            colors: [
+                              AppTheme.primaryColor.withOpacity(0.7),
+                              AppTheme.primaryColor,
+                            ],
+                          ),
+                          borderRadius:
+                              BorderRadius.circular(AppTheme.radiusFull),
+                          boxShadow: [
+                            BoxShadow(
+                              color: AppTheme.primaryColor.withOpacity(0.2),
+                              blurRadius: 4,
+                              offset: const Offset(0, 2),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ],
             ),
@@ -219,11 +263,11 @@ class ProfileCard extends StatelessWidget {
   Color _getUserTypeColor(String userType) {
     switch (userType.toUpperCase()) {
       case 'CANDIDATE':
-        return Colors.blue;
+        return const Color(0xFF3B82F6); // Refined Blue
       case 'RECRUITER':
-        return Colors.green;
+        return const Color(0xFF10B981); // Refined Green
       case 'ADMIN':
-        return Colors.orange;
+        return const Color(0xFFF59E0B); // Refined Orange
       default:
         return Colors.grey;
     }

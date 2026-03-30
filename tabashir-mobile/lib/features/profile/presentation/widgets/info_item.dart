@@ -20,50 +20,42 @@ class InfoItem extends StatelessWidget {
     final theme = Theme.of(context);
 
     return Container(
-      padding: EdgeInsets.all(AppTheme.spacingMd.w),
+      padding: EdgeInsets.symmetric(
+        horizontal: AppTheme.spacingMd.w,
+        vertical: AppTheme.spacingMd.h,
+      ),
       decoration: BoxDecoration(
         color: theme.cardTheme.color,
         borderRadius: BorderRadius.circular(AppTheme.radiusDefault.r),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.03),
-            blurRadius: 8,
-            offset: const Offset(0, 1),
-          ),
-        ],
+        border: Border.all(
+          color: theme.dividerColor.withOpacity(0.05),
+        ),
       ),
       child: Row(
         children: [
-          Icon(
-            icon,
-            size: 24.sp,
-            color: Theme.of(context).colorScheme.primary,
+          Container(
+            padding: EdgeInsets.all(8.w),
+            decoration: BoxDecoration(
+              color: theme.colorScheme.primary.withOpacity(0.05),
+              borderRadius: BorderRadius.circular(8.r),
+            ),
+            child: Icon(
+              icon,
+              size: 20.sp,
+              color: theme.colorScheme.primary,
+            ),
           ),
           SizedBox(width: AppTheme.spacingMd.w),
           Expanded(
             child: Text(
               text,
-              style: theme.textTheme.bodyLarge,
+              style: theme.textTheme.bodyLarge?.copyWith(
+                fontWeight: FontWeight.w500,
+                letterSpacing: -0.2,
+              ),
             ),
           ),
-          if (trailing != null)
-            trailing!
-          else if (onEdit != null)
-            TextButton(
-              onPressed: onEdit,
-              style: TextButton.styleFrom(
-                padding: EdgeInsets.zero,
-                minimumSize: Size.zero,
-                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-              ),
-              child: Text(
-                'Edit',
-                style: theme.textTheme.bodyMedium?.copyWith(
-                  color: AppTheme.primaryColor,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-            ),
+          if (trailing != null) trailing!,
         ],
       ),
     );

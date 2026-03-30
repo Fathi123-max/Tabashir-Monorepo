@@ -125,11 +125,37 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       // Header
-                      Text(
-                        'My Profile'.tr(),
-                        style: theme.textTheme.displayMedium?.copyWith(
-                          fontWeight: FontWeight.bold,
-                        ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            'My Profile'.tr(),
+                            style: theme.textTheme.displayMedium?.copyWith(
+                              fontWeight: FontWeight.w900,
+                              letterSpacing: -1,
+                            ),
+                          ),
+                          IconButton(
+                            onPressed: () {
+                              context.push(
+                                RouteNames.editProfile,
+                                extra: _profileCubit,
+                              );
+                            },
+                            icon: Container(
+                              padding: EdgeInsets.all(8.w),
+                              decoration: BoxDecoration(
+                                color: theme.colorScheme.primary.withOpacity(0.1),
+                                borderRadius: BorderRadius.circular(12.r),
+                              ),
+                              child: Icon(
+                                Icons.edit_outlined,
+                                color: theme.colorScheme.primary,
+                                size: 20.sp,
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
                       SizedBox(height: AppTheme.spacingLg.h),
 
@@ -160,26 +186,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         InfoItem(
                           icon: Icons.email_outlined,
                           text: state.profile!.email,
-                          onEdit: () {
-                            context.push(
-                              RouteNames.editProfile,
-                              extra: _profileCubit,
-                            );
-                          },
                         ),
-
                         SizedBox(height: AppTheme.spacingSm.h),
                         InfoItem(
                           icon: Icons.public_outlined,
                           text: state.profile!.nationality.isEmpty
                               ? 'Not specified'.tr()
                               : state.profile!.nationality,
-                          onEdit: () {
-                            context.push(
-                              RouteNames.editProfile,
-                              extra: _profileCubit,
-                            );
-                          },
                         ),
                         SizedBox(height: AppTheme.spacingSm.h),
                         InfoItem(
@@ -187,12 +200,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           text: state.profile!.gender.isEmpty
                               ? 'Not specified'.tr()
                               : state.profile!.gender,
-                          onEdit: () {
-                            context.push(
-                              RouteNames.editProfile,
-                              extra: _profileCubit,
-                            );
-                          },
                         ),
                         SizedBox(height: AppTheme.spacingLg.h),
 
@@ -204,12 +211,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           text: state.profile!.location.isEmpty
                               ? 'Target locations not specified'.tr()
                               : state.profile!.location,
-                          onEdit: () {
-                            context.push(
-                              RouteNames.editProfile,
-                              extra: _profileCubit,
-                            );
-                          },
                         ),
                         SizedBox(height: AppTheme.spacingSm.h),
                         InfoItem(
@@ -217,242 +218,33 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           text: state.profile!.jobTitle.isEmpty
                               ? 'Target roles not specified'.tr()
                               : state.profile!.jobTitle,
-                          onEdit: () {
-                            context.push(
-                              RouteNames.editProfile,
-                              extra: _profileCubit,
-                            );
-                          },
                         ),
                         SizedBox(height: AppTheme.spacingLg.h),
 
                         // Resume Section
                         _sectionHeader('Resume / CV'.tr(), theme),
                         SizedBox(height: AppTheme.spacingMd.h),
-                        InfoItem(
-                          icon: Icons.description_outlined,
-                          text: 'Resume upload will be added in the next step'.tr(),
-                          onEdit: () {
-                            context.push(
-                              RouteNames.editProfile,
-                              extra: _profileCubit,
-                            );
-                          },
-                        ),
-                        SizedBox(height: AppTheme.spacingLg.h),                        // // Account Activity Section
-                        // _sectionHeader('Account Activity'.tr(), theme),
-                        // SizedBox(height: AppTheme.spacingMd.h),
-                        // InfoItem(
-                        //   icon: Icons.description_outlined,
-                        //   text:
-                        //       'Total Resumes: ${state.profile!.totalResumes ?? 0}',
-                        //   onEdit: null,
-                        // ),
-                        // SizedBox(height: AppTheme.spacingSm.h),
-                        // InfoItem(
-                        //   icon: Icons.assignment_turned_in_outlined,
-                        //   text:
-                        //       'Total Applications: ${state.profile!.totalApplications ?? 0}',
-                        //   onEdit: null,
-                        // ),
-                        // SizedBox(height: AppTheme.spacingSm.h),
-                        // InfoItem(
-                        //   icon: Icons.bookmark_outline,
-                        //   text: 'Saved Jobs: ${state.profile!.savedJobs ?? 0}',
-                        //   onEdit: null,
-                        // ),
-                        // SizedBox(height: AppTheme.spacingLg.h),
-
-                        // // Subscription & Billing Section
-                        // if (state.profile!.subscriptionPlan != null ||
-                        //     state.profile!.paymentStats != null) ...[
-                        //   _sectionHeader('Subscription & Billing'.tr(), theme),
-                        //   SizedBox(height: AppTheme.spacingMd.h),
-                        //   if (state.profile!.subscriptionPlan != null) ...[
-                        //     InfoItem(
-                        //       icon: Icons.workspace_premium_outlined,
-                        //       text: 'Plan: ${state.profile!.subscriptionPlan}',
-                        //       trailing: Container(
-                        //         padding: EdgeInsets.symmetric(
-                        //           horizontal: 12.w,
-                        //           vertical: 4.h,
-                        //         ),
-                        //         decoration: BoxDecoration(
-                        //           color:
-                        //               (state.profile!.subscriptionStatus ==
-                        //                   'ACTIVE')
-                        //               ? Colors.green.withOpacity(0.1)
-                        //               : Colors.red.withOpacity(0.1),
-                        //           borderRadius: BorderRadius.circular(
-                        //             AppTheme.radiusSmall,
-                        //           ),
-                        //         ),
-                        //         child: Text(
-                        //           state.profile!.subscriptionStatus ?? '',
-                        //           style: theme.textTheme.bodySmall?.copyWith(
-                        //             color:
-                        //                 (state.profile!.subscriptionStatus ==
-                        //                     'ACTIVE')
-                        //                 ? Colors.green
-                        //                 : Colors.red,
-                        //             fontWeight: FontWeight.w600,
-                        //           ),
-                        //         ),
-                        //       ),
-                        //       onEdit: null,
-                        //     ),
-                        //     SizedBox(height: AppTheme.spacingSm.h),
-                        //   ],
-                        //   if (state.profile!.paymentStats != null) ...[
-                        //     InfoItem(
-                        //       icon: Icons.credit_card_outlined,
-                        //       text:
-                        //           'Total Spent: ${state.profile!.paymentStats!.totalAmountSpent} ${state.profile!.paymentStats!.currency ?? "AED"}',
-                        //       onEdit: null,
-                        //     ),
-                        //     SizedBox(height: AppTheme.spacingSm.h),
-                        //     InfoItem(
-                        //       icon: Icons.receipt_long_outlined,
-                        //       text:
-                        //           'Total Payments: ${state.profile!.paymentStats!.totalPayments}',
-                        //       onEdit: null,
-                        //     ),
-                        //   ],
-                        //   SizedBox(height: AppTheme.spacingLg.h),
-                        // ],
-
-                        // // Job Statistics Section (Recruiters/Admins)
-                        // if (state.profile!.userType == 'RECRUITER' ||
-                        //     state.profile!.userType == 'ADMIN') ...[
-                        //   _sectionHeader('Job Statistics'.tr(), theme),
-                        //   SizedBox(height: AppTheme.spacingMd.h),
-                        //   if (state.profile!.jobStats != null) ...[
-                        //     InfoItem(
-                        //       icon: Icons.work_outline,
-                        //       text:
-                        //           'Total Jobs: ${state.profile!.jobStats!.totalJobs}',
-                        //       onEdit: null,
-                        //     ),
-                        //     SizedBox(height: AppTheme.spacingSm.h),
-                        //     InfoItem(
-                        //       icon: Icons.play_circle_outline,
-                        //       text:
-                        //           'Active Jobs: ${state.profile!.jobStats!.activeJobs}',
-                        //       onEdit: null,
-                        //     ),
-                        //     SizedBox(height: AppTheme.spacingSm.h),
-                        //     InfoItem(
-                        //       icon: Icons.people_outline,
-                        //       text:
-                        //           'Applications Received: ${state.profile!.jobStats!.applicationsReceived}',
-                        //       onEdit: null,
-                        //     ),
-                        //   ],
-                        //   SizedBox(height: AppTheme.spacingLg.h),
-                        // ],
-
-                        // // AI Resume Statistics Section (Candidates)
-                        // if (state.profile!.userType == 'CANDIDATE' &&
-                        //     state.profile!.aiResumeStats != null) ...[
-                        //   _sectionHeader('AI Resume Statistics'.tr(), theme),
-                        //   SizedBox(height: AppTheme.spacingMd.h),
-                        //   InfoItem(
-                        //     icon: Icons.psychology_outlined,
-                        //     text:
-                        //         'Total AI Resumes: ${state.profile!.aiResumeStats!.total}',
-                        //     onEdit: null,
-                        //   ),
-                        //   SizedBox(height: AppTheme.spacingSm.h),
-                        //   InfoItem(
-                        //     icon: Icons.drafts_outlined,
-                        //     text:
-                        //         'Draft: ${state.profile!.aiResumeStats!.draft}',
-                        //     onEdit: null,
-                        //   ),
-                        //   SizedBox(height: AppTheme.spacingSm.h),
-                        //   InfoItem(
-                        //     icon: Icons.hourglass_top_outlined,
-                        //     text:
-                        //         'In Progress: ${state.profile!.aiResumeStats!.inProgress}',
-                        //     onEdit: null,
-                        //   ),
-                        //   SizedBox(height: AppTheme.spacingSm.h),
-                        //   InfoItem(
-                        //     icon: Icons.check_circle_outline,
-                        //     text:
-                        //         'Completed: ${state.profile!.aiResumeStats!.completed}',
-                        //     onEdit: null,
-                        //   ),
-                        //   SizedBox(height: AppTheme.spacingLg.h),
-                        // ],
-
-                        // // Admin Permissions Section (Admins Only)
-                        // if (state.profile!.userType == 'ADMIN' &&
-                        //     state.profile!.adminPermissions.isNotEmpty) ...[
-                        //   _sectionHeader('Admin Permissions'.tr(), theme),
-                        //   SizedBox(height: AppTheme.spacingMd.h),
-                        //   Container(
-                        //     padding: EdgeInsets.all(AppTheme.spacingMd.w),
-                        //     decoration: BoxDecoration(
-                        //       color: Colors.grey[50],
-                        //       borderRadius: BorderRadius.circular(
-                        //         AppTheme.radiusDefault,
-                        //       ),
-                        //     ),
-                        //     child: Column(
-                        //       children: state.profile!.adminPermissions.map((
-                        //         permission,
-                        //       ) {
-                        //         return Padding(
-                        //           padding: EdgeInsets.symmetric(
-                        //             vertical: 4.h,
-                        //           ),
-                        //           child: Row(
-                        //             children: [
-                        //               Icon(
-                        //                 Icons.check_circle,
-                        //                 color: Colors.green,
-                        //                 size: 20.w,
-                        //               ),
-                        //               SizedBox(width: AppTheme.spacingSm.w),
-                        //               Expanded(
-                        //                 child: Text(
-                        //                   permission
-                        //                       .replaceAll('_', ' ')
-                        //                       .toUpperCase(),
-                        //                   style: theme.textTheme.bodyMedium,
-                        //                 ),
-                        //               ),
-                        //             ],
-                        //           ),
-                        //         );
-                        //       }).toList(),
-                        //     ),
-                        //   ),
-                        //   SizedBox(height: AppTheme.spacingLg.h),
-                        // ],
-
-                        // Security & Privacy Section
-                        // _sectionHeader('Security & Privacy'.tr(), theme),
-                        // SizedBox(height: AppTheme.spacingMd.h),
-                        // if (state.profile!.security != null) ...[
-                        //   InfoItem(
-                        //     icon: Icons.security_outlined,
-                        //     text:
-                        //         'Active Sessions: ${state.profile!.security!.activeSessions}',
-                        //     onEdit: null,
-                        //   ),
-                        //   SizedBox(height: AppTheme.spacingSm.h),
-                        // ],
-                        // if (state.profile!.connectedAccounts.isNotEmpty) ...[
-                        //   InfoItem(
-                        //     icon: Icons.link_outlined,
-                        //     text:
-                        //         'Connected Accounts: ${state.profile!.connectedAccounts.map((a) => a.provider).join(", ")}',
-                        //     onEdit: null,
-                        //   ),
-                        // ],
-                        // SizedBox(height: AppTheme.spacingLg.h),
+                        state.profile!.cvFilename != null &&
+                                state.profile!.cvFilename!.isNotEmpty
+                            ? InfoItem(
+                                icon: Icons.description_outlined,
+                                text: state.profile!.cvFilename!,
+                                trailing: Icon(
+                                  Icons.check_circle_outline,
+                                  color: theme.colorScheme.primary,
+                                  size: 20.sp,
+                                ),
+                              )
+                            : InfoItem(
+                                icon: Icons.description_outlined,
+                                text: 'No resume uploaded'.tr(),
+                                trailing: Icon(
+                                  Icons.error_outline,
+                                  color: Colors.orange,
+                                  size: 20.sp,
+                                ),
+                              ),
+                        SizedBox(height: AppTheme.spacingLg.h),
 
                         // Account Section
                         _sectionHeader('Account'.tr(), theme),
@@ -572,10 +364,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
-  Widget _sectionHeader(String title, ThemeData theme) => Text(
-    title,
-    style: theme.textTheme.titleLarge?.copyWith(
-      fontWeight: FontWeight.bold,
-    ),
-  );
+  Widget _sectionHeader(String title, ThemeData theme) => Padding(
+        padding: EdgeInsets.only(left: 4.w, bottom: 4.h),
+        child: Text(
+          title,
+          style: theme.textTheme.titleSmall?.copyWith(
+            fontWeight: FontWeight.bold,
+            color: theme.colorScheme.onSurface.withOpacity(0.5),
+            letterSpacing: 1.2,
+          ),
+        ),
+      );
 }

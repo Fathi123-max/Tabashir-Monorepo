@@ -32,6 +32,7 @@ sealed class ProfileData with _$ProfileData {
     required String linkedin,
     required int profileStrength,
     String? profileImage,
+    String? cvFilename,
 
     // Extended user data from comprehensive API
     String? userType,

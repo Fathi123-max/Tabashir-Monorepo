@@ -8,7 +8,7 @@ part of 'tabashir_api_service.dart';
 // RetrofitGenerator
 // **************************************************************************
 
-// ignore_for_file: unnecessary_brace_in_string_interps,no_leading_underscores_for_local_identifiers,unused_element,unnecessary_string_interpolations,unused_element_parameter
+// ignore_for_file: unnecessary_brace_in_string_interps,no_leading_underscores_for_local_identifiers,unused_element,unnecessary_string_interpolations,unused_element_parameter,avoid_unused_constructor_parameters,unreachable_from_main
 
 class _TabashirApiService implements TabashirApiService {
   _TabashirApiService(this._dio, {this.baseUrl, this.errorLogger}) {
@@ -42,7 +42,7 @@ class _TabashirApiService implements TabashirApiService {
     try {
       _value = AiClientResponse.fromJson(_result.data!);
     } on Object catch (e, s) {
-      errorLogger?.logError(e, s, _options);
+      errorLogger?.logError(e, s, _options, response: _result);
       rethrow;
     }
     final httpResponse = HttpResponse(_value, _result);
@@ -70,7 +70,7 @@ class _TabashirApiService implements TabashirApiService {
     try {
       _value = AppliedJobsResponse.fromJson(_result.data!);
     } on Object catch (e, s) {
-      errorLogger?.logError(e, s, _options);
+      errorLogger?.logError(e, s, _options, response: _result);
       rethrow;
     }
     final httpResponse = HttpResponse(_value, _result);
@@ -100,7 +100,7 @@ class _TabashirApiService implements TabashirApiService {
     try {
       _value = JobsCountResponse.fromJson(_result.data!);
     } on Object catch (e, s) {
-      errorLogger?.logError(e, s, _options);
+      errorLogger?.logError(e, s, _options, response: _result);
       rethrow;
     }
     final httpResponse = HttpResponse(_value, _result);
@@ -150,7 +150,7 @@ class _TabashirApiService implements TabashirApiService {
     try {
       _value = ApplyJobsResponse.fromJson(_result.data!);
     } on Object catch (e, s) {
-      errorLogger?.logError(e, s, _options);
+      errorLogger?.logError(e, s, _options, response: _result);
       rethrow;
     }
     final httpResponse = HttpResponse(_value, _result);
@@ -200,7 +200,7 @@ class _TabashirApiService implements TabashirApiService {
     try {
       _value = ApplyJobsResponse.fromJson(_result.data!);
     } on Object catch (e, s) {
-      errorLogger?.logError(e, s, _options);
+      errorLogger?.logError(e, s, _options, response: _result);
       rethrow;
     }
     final httpResponse = HttpResponse(_value, _result);
@@ -253,7 +253,7 @@ class _TabashirApiService implements TabashirApiService {
     try {
       _value = ApplyJobsResponse.fromJson(_result.data!);
     } on Object catch (e, s) {
-      errorLogger?.logError(e, s, _options);
+      errorLogger?.logError(e, s, _options, response: _result);
       rethrow;
     }
     final httpResponse = HttpResponse(_value, _result);
@@ -295,7 +295,7 @@ class _TabashirApiService implements TabashirApiService {
     try {
       _value = _result.data!.cast<int>();
     } on Object catch (e, s) {
-      errorLogger?.logError(e, s, _options);
+      errorLogger?.logError(e, s, _options, response: _result);
       rethrow;
     }
     final httpResponse = HttpResponse(_value, _result);
@@ -325,7 +325,7 @@ class _TabashirApiService implements TabashirApiService {
     try {
       _value = FormattedCVResponse.fromJson(_result.data!);
     } on Object catch (e, s) {
-      errorLogger?.logError(e, s, _options);
+      errorLogger?.logError(e, s, _options, response: _result);
       rethrow;
     }
     final httpResponse = HttpResponse(_value, _result);
@@ -360,7 +360,7 @@ class _TabashirApiService implements TabashirApiService {
     try {
       _value = _result.data!.cast<int>();
     } on Object catch (e, s) {
-      errorLogger?.logError(e, s, _options);
+      errorLogger?.logError(e, s, _options, response: _result);
       rethrow;
     }
     final httpResponse = HttpResponse(_value, _result);
@@ -419,7 +419,7 @@ class _TabashirApiService implements TabashirApiService {
     try {
       _value = JobsListResponse.fromJson(_result.data!);
     } on Object catch (e, s) {
-      errorLogger?.logError(e, s, _options);
+      errorLogger?.logError(e, s, _options, response: _result);
       rethrow;
     }
     final httpResponse = HttpResponse(_value, _result);
@@ -449,7 +449,7 @@ class _TabashirApiService implements TabashirApiService {
     try {
       _value = JobsCountByCityResponse.fromJson(_result.data!);
     } on Object catch (e, s) {
-      errorLogger?.logError(e, s, _options);
+      errorLogger?.logError(e, s, _options, response: _result);
       rethrow;
     }
     final httpResponse = HttpResponse(_value, _result);
@@ -486,7 +486,7 @@ class _TabashirApiService implements TabashirApiService {
     try {
       _value = JobsMatchListResponse.fromJson(_result.data!);
     } on Object catch (e, s) {
-      errorLogger?.logError(e, s, _options);
+      errorLogger?.logError(e, s, _options, response: _result);
       rethrow;
     }
     final httpResponse = HttpResponse(_value, _result);
@@ -516,7 +516,7 @@ class _TabashirApiService implements TabashirApiService {
     try {
       _value = JobsMonthlyCountResponse.fromJson(_result.data!);
     } on Object catch (e, s) {
-      errorLogger?.logError(e, s, _options);
+      errorLogger?.logError(e, s, _options, response: _result);
       rethrow;
     }
     final httpResponse = HttpResponse(_value, _result);
@@ -548,7 +548,7 @@ class _TabashirApiService implements TabashirApiService {
     try {
       _value = JobApiResponse.fromJson(_result.data!);
     } on Object catch (e, s) {
-      errorLogger?.logError(e, s, _options);
+      errorLogger?.logError(e, s, _options, response: _result);
       rethrow;
     }
     final httpResponse = HttpResponse(_value, _result);
@@ -580,7 +580,7 @@ class _TabashirApiService implements TabashirApiService {
     try {
       _value = JobApplicantsCountResponse.fromJson(_result.data!);
     } on Object catch (e, s) {
-      errorLogger?.logError(e, s, _options);
+      errorLogger?.logError(e, s, _options, response: _result);
       rethrow;
     }
     final httpResponse = HttpResponse(_value, _result);
@@ -610,7 +610,7 @@ class _TabashirApiService implements TabashirApiService {
     try {
       _value = JobDetailsResponse.fromJson(_result.data!);
     } on Object catch (e, s) {
-      errorLogger?.logError(e, s, _options);
+      errorLogger?.logError(e, s, _options, response: _result);
       rethrow;
     }
     final httpResponse = HttpResponse(_value, _result);
@@ -641,7 +641,7 @@ class _TabashirApiService implements TabashirApiService {
     try {
       _value = JobUpdateResponse.fromJson(_result.data!);
     } on Object catch (e, s) {
-      errorLogger?.logError(e, s, _options);
+      errorLogger?.logError(e, s, _options, response: _result);
       rethrow;
     }
     final httpResponse = HttpResponse(_value, _result);
@@ -684,7 +684,7 @@ class _TabashirApiService implements TabashirApiService {
     try {
       _value = ApplyToJobResponse.fromJson(_result.data!);
     } on Object catch (e, s) {
-      errorLogger?.logError(e, s, _options);
+      errorLogger?.logError(e, s, _options, response: _result);
       rethrow;
     }
     final httpResponse = HttpResponse(_value, _result);
@@ -743,7 +743,7 @@ class _TabashirApiService implements TabashirApiService {
     try {
       _value = SuggestJobTitlesResponse.fromJson(_result.data!);
     } on Object catch (e, s) {
-      errorLogger?.logError(e, s, _options);
+      errorLogger?.logError(e, s, _options, response: _result);
       rethrow;
     }
     final httpResponse = HttpResponse(_value, _result);
@@ -771,7 +771,7 @@ class _TabashirApiService implements TabashirApiService {
     try {
       _value = _result.data!.cast<String, String>();
     } on Object catch (e, s) {
-      errorLogger?.logError(e, s, _options);
+      errorLogger?.logError(e, s, _options, response: _result);
       rethrow;
     }
     final httpResponse = HttpResponse(_value, _result);

@@ -12,6 +12,7 @@ class ReactiveGenderDropdown extends StatelessWidget {
     this.labelText,
     this.hintText,
     this.validationMessages,
+    this.decoration,
   });
 
   /// The form control name
@@ -26,6 +27,9 @@ class ReactiveGenderDropdown extends StatelessWidget {
   /// Validation messages
   final Map<String, String Function(Object)>? validationMessages;
 
+  /// Custom decoration
+  final InputDecoration? decoration;
+
   @override
   Widget build(BuildContext context) => ReactiveDropdownSearch<String>(
     formControlName: formControlName,
@@ -35,5 +39,6 @@ class ReactiveGenderDropdown extends StatelessWidget {
     labelText: labelText ?? 'Gender',
     hintText: hintText ?? 'Select gender',
     validationMessages: validationMessages,
+    decoration: decoration,
   );
 }

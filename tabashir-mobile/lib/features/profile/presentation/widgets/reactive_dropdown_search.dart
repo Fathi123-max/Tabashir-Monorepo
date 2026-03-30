@@ -15,6 +15,7 @@ class ReactiveDropdownSearch<T> extends ReactiveFormField<T, T> {
     this.hintText,
     this.validationMessages,
     this.showSearch = true,
+    this.decoration,
   }) : super(
          validationMessages: validationMessages,
          builder: (ReactiveFormFieldState<T, T> field) {
@@ -22,10 +23,8 @@ class ReactiveDropdownSearch<T> extends ReactiveFormField<T, T> {
 
            return StatefulBuilder(
              builder: (context, setState) {
-               var searchText = '';
                void updateSearch(String query) {
                  setState(() {
-                   searchText = query;
                    filteredItems
                      ..clear()
                      ..addAll(
@@ -111,10 +110,9 @@ class ReactiveDropdownSearch<T> extends ReactiveFormField<T, T> {
                return InkWell(
                  onTap: showDropdown,
                  child: InputDecorator(
-                   decoration: InputDecoration(
+                   decoration: (decoration ?? const InputDecoration()).copyWith(
                      labelText: labelText,
                      hintText: hintText,
-                     border: const OutlineInputBorder(),
                      errorText: field.errorText,
                      suffixIcon: const Icon(Icons.arrow_drop_down),
                    ),
@@ -136,6 +134,9 @@ class ReactiveDropdownSearch<T> extends ReactiveFormField<T, T> {
            );
          },
        );
+
+  /// Dropdown button decoration
+  final InputDecoration? decoration;
 
   /// List of all available items
   final List<T> items;

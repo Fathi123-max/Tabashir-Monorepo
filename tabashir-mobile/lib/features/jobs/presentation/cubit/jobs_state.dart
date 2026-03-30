@@ -7,7 +7,7 @@ class JobsState with _$JobsState {
   const factory JobsState.loaded({
     @Default('Relevance') String selectedSort,
     @Default(true) bool isGridView,
-    @Default(true) bool showBanner,
+
     @Default('') String searchQuery,
     @Default('standard') String cardStyle,
     @Default([]) List<JobUI> jobs,

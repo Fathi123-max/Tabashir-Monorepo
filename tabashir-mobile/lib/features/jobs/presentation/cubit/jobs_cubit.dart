@@ -389,12 +389,7 @@ class JobsCubit extends Cubit<JobsState> {
     }
   }
 
-  void toggleBannerVisibility() {
-    if (state is JobsStateLoaded) {
-      final loadedState = state as JobsStateLoaded;
-      emit(loadedState.copyWith(showBanner: !loadedState.showBanner));
-    }
-  }
+
 
   void updateSearchQuery(String query) {
     if (state is JobsStateLoaded) {

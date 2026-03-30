@@ -244,14 +244,14 @@ class _JobsViewState extends State<JobsView> {
 
   Widget _buildContent(BuildContext context, JobsState state) {
     // Extract state data with defaults
-    var showBanner = true;
+
     var jobs = <JobUI>[];
     var isLoadingMore = false;
     var hasActiveFilters = false;
     var activeFilterCount = 0;
 
     if (state is JobsStateLoaded) {
-      showBanner = state.showBanner;
+
       jobs = state.jobs;
       isLoadingMore = state.isLoadingMore;
       hasActiveFilters =
@@ -295,7 +295,7 @@ class _JobsViewState extends State<JobsView> {
                   ),
 
                   // AI Banner (if shown)
-                  if (showBanner) _buildAIBanner(context, Theme.of(context)),
+
 
                   // Jobs List or Empty State
                   if (jobs.isEmpty)
@@ -545,49 +545,7 @@ class _JobsViewState extends State<JobsView> {
     ),
   );
 
-  // AI Banner
-  Widget _buildAIBanner(BuildContext context, ThemeData theme) => Container(
-    margin: EdgeInsets.symmetric(
-      horizontal: AppTheme.spacingMd.w,
-    ).copyWith(bottom: AppTheme.spacingSm.h),
-    padding: EdgeInsets.all(AppTheme.spacingSm.w),
-    decoration: BoxDecoration(
-      color: AppTheme.primaryColor.withOpacity(0.1),
-      borderRadius: BorderRadius.circular(AppTheme.radiusDefault.r),
-    ),
-    child: Row(
-      children: [
-        Icon(
-          Icons.auto_awesome,
-          color: AppTheme.primaryColor,
-          size: 20.sp,
-        ),
-        SizedBox(width: AppTheme.spacingSm.w),
-        Expanded(
-          child: Text(
-            'Based on your profile, 14 new jobs match your preferences in the last 24h.'
-                .tr(),
-            style: theme.textTheme.bodySmall?.copyWith(
-              color: AppTheme.primaryColor.withOpacity(0.9),
-              fontWeight: FontWeight.w500,
-            ),
-          ),
-        ),
-        IconButton(
-          onPressed: () {
-            context.read<JobsCubit>().toggleBannerVisibility();
-          },
-          icon: Icon(
-            Icons.close,
-            color: AppTheme.primaryColor,
-            size: 16.sp,
-          ),
-          padding: EdgeInsets.zero,
-          constraints: const BoxConstraints(),
-        ),
-      ],
-    ),
-  );
+
 
   // Card Style Option Widget
   Widget _CardStyleOption({
