@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
@@ -166,9 +167,14 @@ class JobCard extends StatelessWidget {
                 SizedBox(
                   height: 40.h,
                   child: ElevatedButton(
-                    onPressed: (isLoading || isApplied)
-                        ? null
-                        : (onApply ?? () {}),
+                    onPressed: () {
+                      if (jobId != null) {
+                        context.pushNamed(
+                          'job-detail-screen',
+                          pathParameters: {'jobId': jobId!},
+                        );
+                      }
+                    },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: theme.colorScheme.primary,
                       foregroundColor: theme.colorScheme.onPrimary,
@@ -186,25 +192,14 @@ class JobCard extends StatelessWidget {
                         horizontal: AppTheme.spacingMd.w,
                       ),
                     ),
-                    child: isLoading
-                        ? SizedBox(
-                            width: 16.w,
-                            height: 16.h,
-                            child: CircularProgressIndicator(
-                              strokeWidth: 2,
-                              valueColor: AlwaysStoppedAnimation<Color>(
-                                theme.colorScheme.onPrimary,
-                              ),
-                            ),
-                          )
-                        : Text(
-                            isApplied ? 'Applied' : 'Apply',
-                            style: TextStyle(
-                              fontSize: 14.sp,
-                              fontWeight: FontWeight.w600,
-                              color: theme.colorScheme.onPrimary,
-                            ),
-                          ),
+                    child: Text(
+                      'Details'.tr(),
+                      style: TextStyle(
+                        fontSize: 14.sp,
+                        fontWeight: FontWeight.w600,
+                        color: theme.colorScheme.onPrimary,
+                      ),
+                    ),
                   ),
                 ),
               ],

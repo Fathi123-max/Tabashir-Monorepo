@@ -30,6 +30,7 @@ import '../services/analytics_service.dart';
 import '../services/file_service.dart';
 import '../services/google_signin_service.dart';
 import '../services/notification_service.dart';
+import '../network/services/notification/notification_api_service.dart';
 import '../services/stripe_service.dart';
 
 import 'module.config.dart';
@@ -53,8 +54,12 @@ abstract class RegisterModule {
   NotificationService get notificationService => NotificationService.instance;
 
   @lazySingleton
+  NotificationApiService get notificationApiService =>
+      NotificationApiService(authDioClient.dio);
+
+  @lazySingleton
   NotificationsRepository get notificationsRepository =>
-      NotificationsRepositoryImpl();
+      NotificationsRepositoryImpl(notificationApiService);
 
   @lazySingleton
   StripeService get stripeService => StripeService();

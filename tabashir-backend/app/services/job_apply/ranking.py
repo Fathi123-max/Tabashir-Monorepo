@@ -9,6 +9,7 @@ import psycopg2
 from psycopg2.extras import execute_values
 
 from app import Config
+from app.services.notification_service import NotificationService
 
 
 def preprocess_text(text):
@@ -428,6 +429,19 @@ def main(client_email):
         print(f"Error loading existing matches: {e}")
         conn.rollback() # Reset transaction after error
 
+    # Load email to userId mapping from User table for notifications
+    print("Loading email to userId mapping for notifications...")
+    email_to_userid = {}
+    try:
+        cursor.execute("SELECT email, id FROM \"User\"")
+        for email, user_id in cursor.fetchall():
+            if email:
+                email_to_userid[email.lower()] = user_id
+        print(f"Loaded {len(email_to_userid)} email-to-userId mappings")
+    except Exception as e:
+        print(f"Error loading User mappings: {e}")
+        conn.rollback()
+
     # Load blocked job-client pairs
     print("Loading blocked job-client pairs...")
     blocked_pairs = set()
@@ -541,6 +555,32 @@ def main(client_email):
             )
 
             batch_values.append(values)
+
+            # Trigger notification for high-score matches (>= 80%)
+            final_score = round(match['final_score'] * 100, 2)
+            if final_score >= 80.0:
+                user_id = email_to_userid.get(client_email.lower())
+                if user_id:
+                    notif_title = "New Perfect Job Match! 🚀"
+                    notif_message = f"We've found a {final_score}% match for: {job_title}. Check it out!"
+                    notif_data = {
+                        "jobId": str(job_id),
+                        "score": final_score,
+                        "type": "job_match",
+                        "screen": "/job-detail",  # Deep-link for mobile app
+                        "click_action": "FLUTTER_NOTIFICATION_CLICK"
+                    }
+                    # We don't want to block the ranking process if notification fails
+                    try:
+                        NotificationService.create_notification(
+                            user_id=user_id,
+                            title=notif_title,
+                            message=notif_message,
+                            notification_type='job_match',
+                            data=notif_data
+                        )
+                    except Exception as e:
+                        print(f"Failed to trigger notification for match: {e}")
 
             # Insert when batch is full
             if len(batch_values) >= batch_size:

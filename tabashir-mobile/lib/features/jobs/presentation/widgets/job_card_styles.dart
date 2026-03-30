@@ -96,7 +96,7 @@ abstract class BaseJobCard extends StatelessWidget {
               SizedBox(
                 height: buttonHeight,
                 child: ElevatedButton(
-                  onPressed: onApply ?? () {},
+                  onPressed: () => navigateToJobDetails(context),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: theme.colorScheme.primary,
                     foregroundColor: theme.colorScheme.onPrimary,
@@ -115,7 +115,7 @@ abstract class BaseJobCard extends StatelessWidget {
                     ),
                   ),
                   child: Text(
-                    'Apply'.tr(),
+                    'Details'.tr(),
                     style: TextStyle(
                       fontSize: buttonFontSize,
                       fontWeight: FontWeight.w600,

@@ -39,6 +39,7 @@ model User {
     JobApplication   JobApplication[]
     adminPermissions AdminPermissionAssignment[]
     createdCourses   Course[]
+    notifications    Notification[]
 
     @@map("users")
 }
@@ -530,4 +531,22 @@ model Course {
     @@index([createdById])
     @@index([isActive])
     @@index([category])
+}
+
+model Notification {
+    id         String   @id @default(cuid())
+    userId     String
+    user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+    title      String
+    message    String
+    type       String   // e.g., 'job_match', 'application_update', 'interview_scheduled'
+    isRead     Boolean  @default(false)
+    senderId   String?
+    senderName String?
+    data       Json?    // Store additional payload/metadata
+    createdAt  DateTime @default(now())
+    updatedAt  DateTime @updatedAt
+
+    @@index([userId])
+    @@index([isRead])
 }

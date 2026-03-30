@@ -149,6 +149,8 @@ import '../network/services/auth/auth_api_service.dart' as _i692;
 import '../network/services/auth/email_api_service.dart' as _i413;
 import '../network/services/job/saved_jobs_api_service.dart' as _i532;
 import '../network/services/job/tabashir_api_service.dart' as _i1;
+import '../network/services/notification/notification_api_service.dart'
+    as _i711;
 import '../network/services/payment/payment_api_service.dart' as _i932;
 import '../network/services/resume/resume_api_service.dart' as _i914;
 import '../network/services/subscription/subscription_api_service.dart'
@@ -182,6 +184,9 @@ extension GetItInjectableX on _i174.GetIt {
     gh.lazySingleton<_i367.FileService>(() => registerModule.fileService);
     gh.lazySingleton<_i941.NotificationService>(
       () => registerModule.notificationService,
+    );
+    gh.lazySingleton<_i711.NotificationApiService>(
+      () => registerModule.notificationApiService,
     );
     gh.lazySingleton<_i563.NotificationsRepository>(
       () => registerModule.notificationsRepository,

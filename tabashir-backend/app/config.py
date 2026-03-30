@@ -49,5 +49,9 @@ class Config:
     ARABIC_TEMPLATE_PATH = BASE_DIR / os.getenv('TEMPLATE_FOLDER', 'templates') / "Arabic Docxtpl Compatible CV Template.docx"
     REGULAR_TEMPLATE_PATH = BASE_DIR / os.getenv('TEMPLATE_FOLDER', 'templates') / "Docxtpl Compatible CV Template.docx"
     
+    # OneSignal settings
+    ONESIGNAL_APP_ID = os.getenv('ONESIGNAL_APP_ID', 'bf2fbe39-0ab0-41e1-a9cb-1ecefe72474c')
+    ONESIGNAL_API_KEY = os.getenv('ONESIGNAL_API_KEY')
+    
     # Path for storing uploaded resumes permanently
     CV_STORAGE_PATH = BASE_DIR / "CVs"

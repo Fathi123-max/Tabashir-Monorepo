@@ -414,7 +414,16 @@ class NotificationCount(Resource):
     @jwt_required
     def get(self):
         """Get unread notification count"""
-        return {"count": 0}, HTTPStatus.OK
+        user_id = request.user_id
+        try:
+            result = execute_query(
+                'SELECT COUNT(*) as count FROM "Notification" WHERE "userId" = %s AND "isRead" = False',
+                (user_id,), fetch_one=True
+            )
+            return {"count": result.get('count', 0) if result else 0}, HTTPStatus.OK
+        except Exception as e:
+            print(f"[NOTIFICATIONS] Count error: {e}")
+            return {"count": 0}, HTTPStatus.OK
 
 
 @home_ns.route('/ai-job-apply/config')

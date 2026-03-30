@@ -20,6 +20,18 @@ Map<String, dynamic> _$NotificationCountResponseToJson(
   'hasUnread': instance.hasUnread,
 };
 
+_NotificationsListResponse _$NotificationsListResponseFromJson(
+  Map<String, dynamic> json,
+) => _NotificationsListResponse(
+  notifications: (json['notifications'] as List<dynamic>)
+      .map((e) => NotificationModel.fromJson(e as Map<String, dynamic>))
+      .toList(),
+);
+
+Map<String, dynamic> _$NotificationsListResponseToJson(
+  _NotificationsListResponse instance,
+) => <String, dynamic>{'notifications': instance.notifications};
+
 // dart format off
 
 // **************************************************************************
@@ -30,7 +42,7 @@ Map<String, dynamic> _$NotificationCountResponseToJson(
 
 class _NotificationApiService implements NotificationApiService {
   _NotificationApiService(this._dio, {this.baseUrl, this.errorLogger}) {
-    baseUrl ??= '/api/v1/home';
+    baseUrl ??= '/api/mobile/notifications';
   }
 
   final Dio _dio;
@@ -49,7 +61,7 @@ class _NotificationApiService implements NotificationApiService {
       Options(method: 'GET', headers: _headers, extra: _extra)
           .compose(
             _dio.options,
-            '/notifications/count',
+            '/count',
             queryParameters: queryParameters,
             data: _data,
           )
@@ -64,6 +76,58 @@ class _NotificationApiService implements NotificationApiService {
       rethrow;
     }
     final httpResponse = HttpResponse(_value, _result);
+    return httpResponse;
+  }
+
+  @override
+  Future<HttpResponse<NotificationsListResponse>> getNotifications() async {
+    final _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _headers = <String, dynamic>{};
+    const Map<String, dynamic>? _data = null;
+    final _options = _setStreamType<HttpResponse<NotificationsListResponse>>(
+      Options(method: 'GET', headers: _headers, extra: _extra)
+          .compose(
+            _dio.options,
+            '/',
+            queryParameters: queryParameters,
+            data: _data,
+          )
+          .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
+    );
+    final _result = await _dio.fetch<Map<String, dynamic>>(_options);
+    late NotificationsListResponse _value;
+    try {
+      _value = NotificationsListResponse.fromJson(_result.data!);
+    } on Object catch (e, s) {
+      errorLogger?.logError(e, s, _options);
+      rethrow;
+    }
+    final httpResponse = HttpResponse(_value, _result);
+    return httpResponse;
+  }
+
+  @override
+  Future<HttpResponse<void>> markAsRead({
+    required Map<String, dynamic> body,
+  }) async {
+    final _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _headers = <String, dynamic>{};
+    final _data = <String, dynamic>{};
+    _data.addAll(body);
+    final _options = _setStreamType<HttpResponse<void>>(
+      Options(method: 'PATCH', headers: _headers, extra: _extra)
+          .compose(
+            _dio.options,
+            '/',
+            queryParameters: queryParameters,
+            data: _data,
+          )
+          .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
+    );
+    final _result = await _dio.fetch<void>(_options);
+    final httpResponse = HttpResponse(null, _result);
     return httpResponse;
   }
 

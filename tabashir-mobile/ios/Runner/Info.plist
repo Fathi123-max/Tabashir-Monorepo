@@ -1,117 +1,131 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
-  <dict>
-    <key>CFBundleDevelopmentRegion</key>
-    <string>$(DEVELOPMENT_LANGUAGE)</string>
-    <key>CFBundleDisplayName</key>
-    <string>Tabashir</string>
-    <key>CFBundleExecutable</key>
-    <string>$(EXECUTABLE_NAME)</string>
-    <key>CFBundleIdentifier</key>
-    <string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
-    <key>CFBundleInfoDictionaryVersion</key>
-    <string>6.0</string>
-    <key>CFBundleName</key>
-    <string>Tabashir</string>
-    <key>CFBundlePackageType</key>
-    <string>APPL</string>
-    <key>CFBundleShortVersionString</key>
-    <string>$(FLUTTER_BUILD_NAME)</string>
-    <key>CFBundleSignature</key>
-    <string>????</string>
-    <key>CFBundleVersion</key>
-    <string>$(FLUTTER_BUILD_NUMBER)</string>
-    <key>LSRequiresIPhoneOS</key>
-    <true/>
-    <key>UILaunchStoryboardName</key>
-    <string>LaunchScreen</string>
-    <key>UIMainStoryboardFile</key>
-    <string>Main</string>
-    <key>UISupportedInterfaceOrientations</key>
-    <array>
-      <string>UIInterfaceOrientationPortrait</string>
-      <string>UIInterfaceOrientationLandscapeLeft</string>
-      <string>UIInterfaceOrientationLandscapeRight</string>
-    </array>
-    <key>UISupportedInterfaceOrientations~ipad</key>
-    <array>
-      <string>UIInterfaceOrientationPortrait</string>
-      <string>UIInterfaceOrientationPortraitUpsideDown</string>
-      <string>UIInterfaceOrientationLandscapeLeft</string>
-      <string>UIInterfaceOrientationLandscapeRight</string>
-    </array>
-    <key>CADisableMinimumFrameDurationOnPhone</key>
-    <true/>
-    <key>UIApplicationSupportsIndirectInputEvents</key>
-    <true/>
-    <key>NSAppleMusicUsageDescription</key>
-    <string>This app requires access to music library for notification sounds</string>
-    <key>NSBluetoothAlwaysUsageDescription</key>
-    <string>This app requires access to Bluetooth for notification features</string>
-    <key>NSBluetoothPeripheralUsageDescription</key>
-    <string>This app requires access to Bluetooth for notification features</string>
-    <key>NSCalendarsUsageDescription</key>
-    <string>This app requires access to calendars for notification scheduling</string>
-    <key>NSCameraUsageDescription</key>
-    <string>This app requires access to camera for notification features</string>
-    <key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
-    <string>This app requires access to location for notification features</string>
-    <key>NSLocationAlwaysUsageDescription</key>
-    <string>This app requires access to location for notification features</string>
-    <key>NSLocationWhenInUseUsageDescription</key>
-    <string>This app requires access to location for notification features</string>
-    <key>NSMicrophoneUsageDescription</key>
-    <string>This app requires access to microphone for notification features</string>
-    <key>NSMotionUsageDescription</key>
-    <string>This app requires access to motion for notification features</string>
-        <!-- Put me in the [my_project]/ios/Runner/Info.plist file -->
-    <!-- Google Sign-in Section -->
-    <key>CFBundleURLTypes</key>
-    <array>
-      <dict>
-        <key>CFBundleTypeRole</key>
-        <string>Editor</string>
-        <key>CFBundleURLSchemes</key>
-        <array>
-          <!-- TODO Replace this value: -->
-          <!-- Copied from GoogleService-Info.plist key REVERSED_CLIENT_ID -->
-          <string>com.googleusercontent.apps.908457286237-beupfsr9oo6nqbeau81rtgmvpm0f3f73</string>
-        </array>
-      </dict>
-      <!-- Apple Sign-in Section -->
-      <dict>
-        <key>CFBundleURLName</key>
-        <string>ae.tabashir</string>
-        <key>CFBundleURLSchemes</key>
-        <array>
-          <string>ae.tabashir</string>
-        </array>
-      </dict>
-    </array>
-    <!-- End of the Google Sign-in Section -->
-    <key>GIDClientID</key>
-    <string>908457286237-beupfsr9oo6nqbeau81rtgmvpm0f3f73.apps.googleusercontent.com</string>
-    <!-- Apple Sign-in Entitlement -->
-    <key>com.apple.developer.applesignin</key>
-    <array>
-      <string>Default</string>
-    </array>
-    <key>NSPhotoLibraryAddUsageDescription</key>
-    <string>This app requires access to photo library for notification features</string>
-    <key>NSPhotoLibraryUsageDescription</key>
-    <string>This app requires access to photo library for notification features</string>
-    <key>NSRemindersUsageDescription</key>
-    <string>This app requires access to reminders for notification features</string>
-    <key>OneSignalAppIDKey</key>
-    <string>bf2fbe39-0ab0-41e1-a9cb-1ecefe72474c</string>
-    <key>StripePublishableKey</key>
-    <string>pk_test_51234567890abcdef...</string>
-    <key>CFBundleLocalizations</key>
-    <array>
-      <string>en</string>
-      <string>ar</string>
-      <string>es</string>
-    </array>
-  </dict>
+<dict>
+	<key>CADisableMinimumFrameDurationOnPhone</key>
+	<true/>
+	<key>CFBundleDevelopmentRegion</key>
+	<string>$(DEVELOPMENT_LANGUAGE)</string>
+	<key>CFBundleDisplayName</key>
+	<string>Tabashir</string>
+	<key>CFBundleExecutable</key>
+	<string>$(EXECUTABLE_NAME)</string>
+	<key>CFBundleIdentifier</key>
+	<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
+	<key>CFBundleInfoDictionaryVersion</key>
+	<string>6.0</string>
+	<key>CFBundleLocalizations</key>
+	<array>
+		<string>en</string>
+		<string>ar</string>
+		<string>es</string>
+	</array>
+	<key>CFBundleName</key>
+	<string>Tabashir</string>
+	<key>CFBundlePackageType</key>
+	<string>APPL</string>
+	<key>CFBundleShortVersionString</key>
+	<string>$(FLUTTER_BUILD_NAME)</string>
+	<key>CFBundleSignature</key>
+	<string>????</string>
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>com.googleusercontent.apps.908457286237-beupfsr9oo6nqbeau81rtgmvpm0f3f73</string>
+			</array>
+		</dict>
+		<dict>
+			<key>CFBundleURLName</key>
+			<string>ae.tabashir</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>ae.tabashir</string>
+			</array>
+		</dict>
+	</array>
+	<key>CFBundleVersion</key>
+	<string>$(FLUTTER_BUILD_NUMBER)</string>
+	<key>GIDClientID</key>
+	<string>908457286237-beupfsr9oo6nqbeau81rtgmvpm0f3f73.apps.googleusercontent.com</string>
+	<key>LSRequiresIPhoneOS</key>
+	<true/>
+	<key>NSAppleMusicUsageDescription</key>
+	<string>This app requires access to music library for notification sounds</string>
+	<key>NSBluetoothAlwaysUsageDescription</key>
+	<string>This app requires access to Bluetooth for notification features</string>
+	<key>NSBluetoothPeripheralUsageDescription</key>
+	<string>This app requires access to Bluetooth for notification features</string>
+	<key>NSCalendarsUsageDescription</key>
+	<string>This app requires access to calendars for notification scheduling</string>
+	<key>NSCameraUsageDescription</key>
+	<string>This app requires access to camera for notification features</string>
+	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+	<string>This app requires access to location for notification features</string>
+	<key>NSLocationAlwaysUsageDescription</key>
+	<string>This app requires access to location for notification features</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>This app requires access to location for notification features</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>This app requires access to microphone for notification features</string>
+	<key>NSMotionUsageDescription</key>
+	<string>This app requires access to motion for notification features</string>
+	<key>NSPhotoLibraryAddUsageDescription</key>
+	<string>This app requires access to photo library for notification features</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>This app requires access to photo library for notification features</string>
+	<key>NSRemindersUsageDescription</key>
+	<string>This app requires access to reminders for notification features</string>
+	<key>OneSignalAppIDKey</key>
+	<string>bf2fbe39-0ab0-41e1-a9cb-1ecefe72474c</string>
+	<key>StripePublishableKey</key>
+	<string>pk_test_51234567890abcdef...</string>
+	<key>UIApplicationSceneManifest</key>
+	<dict>
+		<key>UIApplicationSupportsMultipleScenes</key>
+		<false/>
+		<key>UISceneConfigurations</key>
+		<dict>
+			<key>UIWindowSceneSessionRoleApplication</key>
+			<array>
+				<dict>
+					<key>UISceneClassName</key>
+					<string>UIWindowScene</string>
+					<key>UISceneConfigurationName</key>
+					<string>flutter</string>
+					<key>UISceneDelegateClassName</key>
+					<string>FlutterSceneDelegate</string>
+					<key>UISceneStoryboardFile</key>
+					<string>Main</string>
+				</dict>
+			</array>
+		</dict>
+	</dict>
+	<key>UIApplicationSupportsIndirectInputEvents</key>
+	<true/>
+	<key>UILaunchStoryboardName</key>
+	<string>LaunchScreen</string>
+	<key>UIMainStoryboardFile</key>
+	<string>Main</string>
+	<key>UISupportedInterfaceOrientations</key>
+	<array>
+		<string>UIInterfaceOrientationPortrait</string>
+		<string>UIInterfaceOrientationLandscapeLeft</string>
+		<string>UIInterfaceOrientationLandscapeRight</string>
+	</array>
+	<key>UISupportedInterfaceOrientations~ipad</key>
+	<array>
+		<string>UIInterfaceOrientationPortrait</string>
+		<string>UIInterfaceOrientationPortraitUpsideDown</string>
+		<string>UIInterfaceOrientationLandscapeLeft</string>
+		<string>UIInterfaceOrientationLandscapeRight</string>
+	</array>
+	<key>com.apple.developer.applesignin</key>
+	<array>
+		<string>Default</string>
+	</array>
+</dict>
 </plist>
