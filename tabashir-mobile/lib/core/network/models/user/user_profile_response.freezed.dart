@@ -549,6 +549,266 @@ $SecurityDataCopyWith<$Res>? get security {
 
 
 /// @nodoc
+mixin _$ResumeInfo {
+
+ String? get fileName; String? get fileUrl;
+/// Create a copy of ResumeInfo
+/// with the given fields replaced by the non-null parameter values.
+@JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+$ResumeInfoCopyWith<ResumeInfo> get copyWith => _$ResumeInfoCopyWithImpl<ResumeInfo>(this as ResumeInfo, _$identity);
+
+  /// Serializes this ResumeInfo to a JSON map.
+  Map<String, dynamic> toJson();
+
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is ResumeInfo&&(identical(other.fileName, fileName) || other.fileName == fileName)&&(identical(other.fileUrl, fileUrl) || other.fileUrl == fileUrl));
+}
+
+@JsonKey(includeFromJson: false, includeToJson: false)
+@override
+int get hashCode => Object.hash(runtimeType,fileName,fileUrl);
+
+@override
+String toString() {
+  return 'ResumeInfo(fileName: $fileName, fileUrl: $fileUrl)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class $ResumeInfoCopyWith<$Res>  {
+  factory $ResumeInfoCopyWith(ResumeInfo value, $Res Function(ResumeInfo) _then) = _$ResumeInfoCopyWithImpl;
+@useResult
+$Res call({
+ String? fileName, String? fileUrl
+});
+
+
+
+
+}
+/// @nodoc
+class _$ResumeInfoCopyWithImpl<$Res>
+    implements $ResumeInfoCopyWith<$Res> {
+  _$ResumeInfoCopyWithImpl(this._self, this._then);
+
+  final ResumeInfo _self;
+  final $Res Function(ResumeInfo) _then;
+
+/// Create a copy of ResumeInfo
+/// with the given fields replaced by the non-null parameter values.
+@pragma('vm:prefer-inline') @override $Res call({Object? fileName = freezed,Object? fileUrl = freezed,}) {
+  return _then(_self.copyWith(
+fileName: freezed == fileName ? _self.fileName : fileName // ignore: cast_nullable_to_non_nullable
+as String?,fileUrl: freezed == fileUrl ? _self.fileUrl : fileUrl // ignore: cast_nullable_to_non_nullable
+as String?,
+  ));
+}
+
+}
+
+
+/// Adds pattern-matching-related methods to [ResumeInfo].
+extension ResumeInfoPatterns on ResumeInfo {
+/// A variant of `map` that fallback to returning `orElse`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeMap<TResult extends Object?>(TResult Function( _ResumeInfo value)?  $default,{required TResult orElse(),}){
+final _that = this;
+switch (_that) {
+case _ResumeInfo() when $default != null:
+return $default(_that);case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// Callbacks receives the raw object, upcasted.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case final Subclass2 value:
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult map<TResult extends Object?>(TResult Function( _ResumeInfo value)  $default,){
+final _that = this;
+switch (_that) {
+case _ResumeInfo():
+return $default(_that);}
+}
+/// A variant of `map` that fallback to returning `null`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>(TResult? Function( _ResumeInfo value)?  $default,){
+final _that = this;
+switch (_that) {
+case _ResumeInfo() when $default != null:
+return $default(_that);case _:
+  return null;
+
+}
+}
+/// A variant of `when` that fallback to an `orElse` callback.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String? fileName,  String? fileUrl)?  $default,{required TResult orElse(),}) {final _that = this;
+switch (_that) {
+case _ResumeInfo() when $default != null:
+return $default(_that.fileName,_that.fileUrl);case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// As opposed to `map`, this offers destructuring.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case Subclass2(:final field2):
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String? fileName,  String? fileUrl)  $default,) {final _that = this;
+switch (_that) {
+case _ResumeInfo():
+return $default(_that.fileName,_that.fileUrl);}
+}
+/// A variant of `when` that fallback to returning `null`
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String? fileName,  String? fileUrl)?  $default,) {final _that = this;
+switch (_that) {
+case _ResumeInfo() when $default != null:
+return $default(_that.fileName,_that.fileUrl);case _:
+  return null;
+
+}
+}
+
+}
+
+/// @nodoc
+@JsonSerializable()
+
+class _ResumeInfo implements ResumeInfo {
+  const _ResumeInfo({this.fileName, this.fileUrl});
+  factory _ResumeInfo.fromJson(Map<String, dynamic> json) => _$ResumeInfoFromJson(json);
+
+@override final  String? fileName;
+@override final  String? fileUrl;
+
+/// Create a copy of ResumeInfo
+/// with the given fields replaced by the non-null parameter values.
+@override @JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+_$ResumeInfoCopyWith<_ResumeInfo> get copyWith => __$ResumeInfoCopyWithImpl<_ResumeInfo>(this, _$identity);
+
+@override
+Map<String, dynamic> toJson() {
+  return _$ResumeInfoToJson(this, );
+}
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _ResumeInfo&&(identical(other.fileName, fileName) || other.fileName == fileName)&&(identical(other.fileUrl, fileUrl) || other.fileUrl == fileUrl));
+}
+
+@JsonKey(includeFromJson: false, includeToJson: false)
+@override
+int get hashCode => Object.hash(runtimeType,fileName,fileUrl);
+
+@override
+String toString() {
+  return 'ResumeInfo(fileName: $fileName, fileUrl: $fileUrl)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class _$ResumeInfoCopyWith<$Res> implements $ResumeInfoCopyWith<$Res> {
+  factory _$ResumeInfoCopyWith(_ResumeInfo value, $Res Function(_ResumeInfo) _then) = __$ResumeInfoCopyWithImpl;
+@override @useResult
+$Res call({
+ String? fileName, String? fileUrl
+});
+
+
+
+
+}
+/// @nodoc
+class __$ResumeInfoCopyWithImpl<$Res>
+    implements _$ResumeInfoCopyWith<$Res> {
+  __$ResumeInfoCopyWithImpl(this._self, this._then);
+
+  final _ResumeInfo _self;
+  final $Res Function(_ResumeInfo) _then;
+
+/// Create a copy of ResumeInfo
+/// with the given fields replaced by the non-null parameter values.
+@override @pragma('vm:prefer-inline') $Res call({Object? fileName = freezed,Object? fileUrl = freezed,}) {
+  return _then(_ResumeInfo(
+fileName: freezed == fileName ? _self.fileName : fileName // ignore: cast_nullable_to_non_nullable
+as String?,fileUrl: freezed == fileUrl ? _self.fileUrl : fileUrl // ignore: cast_nullable_to_non_nullable
+as String?,
+  ));
+}
+
+
+}
+
+
+/// @nodoc
 mixin _$UserData {
 
  String get id; String? get name; String? get email; DateTime? get emailVerified; String? get image; String? get userType; String? get adminRole; int? get jobCount; int? get aiJobApplyCount; DateTime? get createdAt; DateTime? get updatedAt; String? get referralCode; String? get referredBy;
@@ -1400,7 +1660,7 @@ $ApplicationStatusCountsCopyWith<$Res>? get applicationsByStatus {
 /// @nodoc
 mixin _$CandidateProfileData {
 
- String? get id; String? get phone; String? get nationality; String? get gender; List<String>? get languages; int? get age; String? get profilePicture; String? get jobType; List<String>? get skills; String? get experience; String? get education; String? get degree; String? get location; String? get linkedin; bool? get onboardingCompleted; String? get createdAt; String? get updatedAt;
+ String? get id; String? get phone; String? get nationality; String? get gender; List<String>? get languages; int? get age; String? get profilePicture; String? get jobType; List<String>? get skills; String? get experience; String? get education; String? get degree; String? get location; String? get linkedin; bool? get onboardingCompleted; ResumeInfo? get latestResume; String? get createdAt; String? get updatedAt;
 /// Create a copy of CandidateProfileData
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -1413,16 +1673,16 @@ $CandidateProfileDataCopyWith<CandidateProfileData> get copyWith => _$CandidateP
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is CandidateProfileData&&(identical(other.id, id) || other.id == id)&&(identical(other.phone, phone) || other.phone == phone)&&(identical(other.nationality, nationality) || other.nationality == nationality)&&(identical(other.gender, gender) || other.gender == gender)&&const DeepCollectionEquality().equals(other.languages, languages)&&(identical(other.age, age) || other.age == age)&&(identical(other.profilePicture, profilePicture) || other.profilePicture == profilePicture)&&(identical(other.jobType, jobType) || other.jobType == jobType)&&const DeepCollectionEquality().equals(other.skills, skills)&&(identical(other.experience, experience) || other.experience == experience)&&(identical(other.education, education) || other.education == education)&&(identical(other.degree, degree) || other.degree == degree)&&(identical(other.location, location) || other.location == location)&&(identical(other.linkedin, linkedin) || other.linkedin == linkedin)&&(identical(other.onboardingCompleted, onboardingCompleted) || other.onboardingCompleted == onboardingCompleted)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is CandidateProfileData&&(identical(other.id, id) || other.id == id)&&(identical(other.phone, phone) || other.phone == phone)&&(identical(other.nationality, nationality) || other.nationality == nationality)&&(identical(other.gender, gender) || other.gender == gender)&&const DeepCollectionEquality().equals(other.languages, languages)&&(identical(other.age, age) || other.age == age)&&(identical(other.profilePicture, profilePicture) || other.profilePicture == profilePicture)&&(identical(other.jobType, jobType) || other.jobType == jobType)&&const DeepCollectionEquality().equals(other.skills, skills)&&(identical(other.experience, experience) || other.experience == experience)&&(identical(other.education, education) || other.education == education)&&(identical(other.degree, degree) || other.degree == degree)&&(identical(other.location, location) || other.location == location)&&(identical(other.linkedin, linkedin) || other.linkedin == linkedin)&&(identical(other.onboardingCompleted, onboardingCompleted) || other.onboardingCompleted == onboardingCompleted)&&(identical(other.latestResume, latestResume) || other.latestResume == latestResume)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,phone,nationality,gender,const DeepCollectionEquality().hash(languages),age,profilePicture,jobType,const DeepCollectionEquality().hash(skills),experience,education,degree,location,linkedin,onboardingCompleted,createdAt,updatedAt);
+int get hashCode => Object.hash(runtimeType,id,phone,nationality,gender,const DeepCollectionEquality().hash(languages),age,profilePicture,jobType,const DeepCollectionEquality().hash(skills),experience,education,degree,location,linkedin,onboardingCompleted,latestResume,createdAt,updatedAt);
 
 @override
 String toString() {
-  return 'CandidateProfileData(id: $id, phone: $phone, nationality: $nationality, gender: $gender, languages: $languages, age: $age, profilePicture: $profilePicture, jobType: $jobType, skills: $skills, experience: $experience, education: $education, degree: $degree, location: $location, linkedin: $linkedin, onboardingCompleted: $onboardingCompleted, createdAt: $createdAt, updatedAt: $updatedAt)';
+  return 'CandidateProfileData(id: $id, phone: $phone, nationality: $nationality, gender: $gender, languages: $languages, age: $age, profilePicture: $profilePicture, jobType: $jobType, skills: $skills, experience: $experience, education: $education, degree: $degree, location: $location, linkedin: $linkedin, onboardingCompleted: $onboardingCompleted, latestResume: $latestResume, createdAt: $createdAt, updatedAt: $updatedAt)';
 }
 
 
@@ -1433,11 +1693,11 @@ abstract mixin class $CandidateProfileDataCopyWith<$Res>  {
   factory $CandidateProfileDataCopyWith(CandidateProfileData value, $Res Function(CandidateProfileData) _then) = _$CandidateProfileDataCopyWithImpl;
 @useResult
 $Res call({
- String? id, String? phone, String? nationality, String? gender, List<String>? languages, int? age, String? profilePicture, String? jobType, List<String>? skills, String? experience, String? education, String? degree, String? location, String? linkedin, bool? onboardingCompleted, String? createdAt, String? updatedAt
+ String? id, String? phone, String? nationality, String? gender, List<String>? languages, int? age, String? profilePicture, String? jobType, List<String>? skills, String? experience, String? education, String? degree, String? location, String? linkedin, bool? onboardingCompleted, ResumeInfo? latestResume, String? createdAt, String? updatedAt
 });
 
 
-
+$ResumeInfoCopyWith<$Res>? get latestResume;
 
 }
 /// @nodoc
@@ -1450,7 +1710,7 @@ class _$CandidateProfileDataCopyWithImpl<$Res>
 
 /// Create a copy of CandidateProfileData
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? id = freezed,Object? phone = freezed,Object? nationality = freezed,Object? gender = freezed,Object? languages = freezed,Object? age = freezed,Object? profilePicture = freezed,Object? jobType = freezed,Object? skills = freezed,Object? experience = freezed,Object? education = freezed,Object? degree = freezed,Object? location = freezed,Object? linkedin = freezed,Object? onboardingCompleted = freezed,Object? createdAt = freezed,Object? updatedAt = freezed,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? id = freezed,Object? phone = freezed,Object? nationality = freezed,Object? gender = freezed,Object? languages = freezed,Object? age = freezed,Object? profilePicture = freezed,Object? jobType = freezed,Object? skills = freezed,Object? experience = freezed,Object? education = freezed,Object? degree = freezed,Object? location = freezed,Object? linkedin = freezed,Object? onboardingCompleted = freezed,Object? latestResume = freezed,Object? createdAt = freezed,Object? updatedAt = freezed,}) {
   return _then(_self.copyWith(
 id: freezed == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String?,phone: freezed == phone ? _self.phone : phone // ignore: cast_nullable_to_non_nullable
@@ -1467,12 +1727,25 @@ as String?,degree: freezed == degree ? _self.degree : degree // ignore: cast_nul
 as String?,location: freezed == location ? _self.location : location // ignore: cast_nullable_to_non_nullable
 as String?,linkedin: freezed == linkedin ? _self.linkedin : linkedin // ignore: cast_nullable_to_non_nullable
 as String?,onboardingCompleted: freezed == onboardingCompleted ? _self.onboardingCompleted : onboardingCompleted // ignore: cast_nullable_to_non_nullable
-as bool?,createdAt: freezed == createdAt ? _self.createdAt : createdAt // ignore: cast_nullable_to_non_nullable
+as bool?,latestResume: freezed == latestResume ? _self.latestResume : latestResume // ignore: cast_nullable_to_non_nullable
+as ResumeInfo?,createdAt: freezed == createdAt ? _self.createdAt : createdAt // ignore: cast_nullable_to_non_nullable
 as String?,updatedAt: freezed == updatedAt ? _self.updatedAt : updatedAt // ignore: cast_nullable_to_non_nullable
 as String?,
   ));
 }
+/// Create a copy of CandidateProfileData
+/// with the given fields replaced by the non-null parameter values.
+@override
+@pragma('vm:prefer-inline')
+$ResumeInfoCopyWith<$Res>? get latestResume {
+    if (_self.latestResume == null) {
+    return null;
+  }
 
+  return $ResumeInfoCopyWith<$Res>(_self.latestResume!, (value) {
+    return _then(_self.copyWith(latestResume: value));
+  });
+}
 }
 
 
@@ -1551,10 +1824,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String? id,  String? phone,  String? nationality,  String? gender,  List<String>? languages,  int? age,  String? profilePicture,  String? jobType,  List<String>? skills,  String? experience,  String? education,  String? degree,  String? location,  String? linkedin,  bool? onboardingCompleted,  String? createdAt,  String? updatedAt)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String? id,  String? phone,  String? nationality,  String? gender,  List<String>? languages,  int? age,  String? profilePicture,  String? jobType,  List<String>? skills,  String? experience,  String? education,  String? degree,  String? location,  String? linkedin,  bool? onboardingCompleted,  ResumeInfo? latestResume,  String? createdAt,  String? updatedAt)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _CandidateProfileData() when $default != null:
-return $default(_that.id,_that.phone,_that.nationality,_that.gender,_that.languages,_that.age,_that.profilePicture,_that.jobType,_that.skills,_that.experience,_that.education,_that.degree,_that.location,_that.linkedin,_that.onboardingCompleted,_that.createdAt,_that.updatedAt);case _:
+return $default(_that.id,_that.phone,_that.nationality,_that.gender,_that.languages,_that.age,_that.profilePicture,_that.jobType,_that.skills,_that.experience,_that.education,_that.degree,_that.location,_that.linkedin,_that.onboardingCompleted,_that.latestResume,_that.createdAt,_that.updatedAt);case _:
   return orElse();
 
 }
@@ -1572,10 +1845,10 @@ return $default(_that.id,_that.phone,_that.nationality,_that.gender,_that.langua
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String? id,  String? phone,  String? nationality,  String? gender,  List<String>? languages,  int? age,  String? profilePicture,  String? jobType,  List<String>? skills,  String? experience,  String? education,  String? degree,  String? location,  String? linkedin,  bool? onboardingCompleted,  String? createdAt,  String? updatedAt)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String? id,  String? phone,  String? nationality,  String? gender,  List<String>? languages,  int? age,  String? profilePicture,  String? jobType,  List<String>? skills,  String? experience,  String? education,  String? degree,  String? location,  String? linkedin,  bool? onboardingCompleted,  ResumeInfo? latestResume,  String? createdAt,  String? updatedAt)  $default,) {final _that = this;
 switch (_that) {
 case _CandidateProfileData():
-return $default(_that.id,_that.phone,_that.nationality,_that.gender,_that.languages,_that.age,_that.profilePicture,_that.jobType,_that.skills,_that.experience,_that.education,_that.degree,_that.location,_that.linkedin,_that.onboardingCompleted,_that.createdAt,_that.updatedAt);}
+return $default(_that.id,_that.phone,_that.nationality,_that.gender,_that.languages,_that.age,_that.profilePicture,_that.jobType,_that.skills,_that.experience,_that.education,_that.degree,_that.location,_that.linkedin,_that.onboardingCompleted,_that.latestResume,_that.createdAt,_that.updatedAt);}
 }
 /// A variant of `when` that fallback to returning `null`
 ///
@@ -1589,10 +1862,10 @@ return $default(_that.id,_that.phone,_that.nationality,_that.gender,_that.langua
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String? id,  String? phone,  String? nationality,  String? gender,  List<String>? languages,  int? age,  String? profilePicture,  String? jobType,  List<String>? skills,  String? experience,  String? education,  String? degree,  String? location,  String? linkedin,  bool? onboardingCompleted,  String? createdAt,  String? updatedAt)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String? id,  String? phone,  String? nationality,  String? gender,  List<String>? languages,  int? age,  String? profilePicture,  String? jobType,  List<String>? skills,  String? experience,  String? education,  String? degree,  String? location,  String? linkedin,  bool? onboardingCompleted,  ResumeInfo? latestResume,  String? createdAt,  String? updatedAt)?  $default,) {final _that = this;
 switch (_that) {
 case _CandidateProfileData() when $default != null:
-return $default(_that.id,_that.phone,_that.nationality,_that.gender,_that.languages,_that.age,_that.profilePicture,_that.jobType,_that.skills,_that.experience,_that.education,_that.degree,_that.location,_that.linkedin,_that.onboardingCompleted,_that.createdAt,_that.updatedAt);case _:
+return $default(_that.id,_that.phone,_that.nationality,_that.gender,_that.languages,_that.age,_that.profilePicture,_that.jobType,_that.skills,_that.experience,_that.education,_that.degree,_that.location,_that.linkedin,_that.onboardingCompleted,_that.latestResume,_that.createdAt,_that.updatedAt);case _:
   return null;
 
 }
@@ -1604,7 +1877,7 @@ return $default(_that.id,_that.phone,_that.nationality,_that.gender,_that.langua
 @JsonSerializable()
 
 class _CandidateProfileData implements CandidateProfileData {
-  const _CandidateProfileData({this.id, this.phone, this.nationality, this.gender, final  List<String>? languages, this.age, this.profilePicture, this.jobType, final  List<String>? skills, this.experience, this.education, this.degree, this.location, this.linkedin, this.onboardingCompleted, this.createdAt, this.updatedAt}): _languages = languages,_skills = skills;
+  const _CandidateProfileData({this.id, this.phone, this.nationality, this.gender, final  List<String>? languages, this.age, this.profilePicture, this.jobType, final  List<String>? skills, this.experience, this.education, this.degree, this.location, this.linkedin, this.onboardingCompleted, this.latestResume, this.createdAt, this.updatedAt}): _languages = languages,_skills = skills;
   factory _CandidateProfileData.fromJson(Map<String, dynamic> json) => _$CandidateProfileDataFromJson(json);
 
 @override final  String? id;
@@ -1638,6 +1911,7 @@ class _CandidateProfileData implements CandidateProfileData {
 @override final  String? location;
 @override final  String? linkedin;
 @override final  bool? onboardingCompleted;
+@override final  ResumeInfo? latestResume;
 @override final  String? createdAt;
 @override final  String? updatedAt;
 
@@ -1654,16 +1928,16 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _CandidateProfileData&&(identical(other.id, id) || other.id == id)&&(identical(other.phone, phone) || other.phone == phone)&&(identical(other.nationality, nationality) || other.nationality == nationality)&&(identical(other.gender, gender) || other.gender == gender)&&const DeepCollectionEquality().equals(other._languages, _languages)&&(identical(other.age, age) || other.age == age)&&(identical(other.profilePicture, profilePicture) || other.profilePicture == profilePicture)&&(identical(other.jobType, jobType) || other.jobType == jobType)&&const DeepCollectionEquality().equals(other._skills, _skills)&&(identical(other.experience, experience) || other.experience == experience)&&(identical(other.education, education) || other.education == education)&&(identical(other.degree, degree) || other.degree == degree)&&(identical(other.location, location) || other.location == location)&&(identical(other.linkedin, linkedin) || other.linkedin == linkedin)&&(identical(other.onboardingCompleted, onboardingCompleted) || other.onboardingCompleted == onboardingCompleted)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _CandidateProfileData&&(identical(other.id, id) || other.id == id)&&(identical(other.phone, phone) || other.phone == phone)&&(identical(other.nationality, nationality) || other.nationality == nationality)&&(identical(other.gender, gender) || other.gender == gender)&&const DeepCollectionEquality().equals(other._languages, _languages)&&(identical(other.age, age) || other.age == age)&&(identical(other.profilePicture, profilePicture) || other.profilePicture == profilePicture)&&(identical(other.jobType, jobType) || other.jobType == jobType)&&const DeepCollectionEquality().equals(other._skills, _skills)&&(identical(other.experience, experience) || other.experience == experience)&&(identical(other.education, education) || other.education == education)&&(identical(other.degree, degree) || other.degree == degree)&&(identical(other.location, location) || other.location == location)&&(identical(other.linkedin, linkedin) || other.linkedin == linkedin)&&(identical(other.onboardingCompleted, onboardingCompleted) || other.onboardingCompleted == onboardingCompleted)&&(identical(other.latestResume, latestResume) || other.latestResume == latestResume)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,phone,nationality,gender,const DeepCollectionEquality().hash(_languages),age,profilePicture,jobType,const DeepCollectionEquality().hash(_skills),experience,education,degree,location,linkedin,onboardingCompleted,createdAt,updatedAt);
+int get hashCode => Object.hash(runtimeType,id,phone,nationality,gender,const DeepCollectionEquality().hash(_languages),age,profilePicture,jobType,const DeepCollectionEquality().hash(_skills),experience,education,degree,location,linkedin,onboardingCompleted,latestResume,createdAt,updatedAt);
 
 @override
 String toString() {
-  return 'CandidateProfileData(id: $id, phone: $phone, nationality: $nationality, gender: $gender, languages: $languages, age: $age, profilePicture: $profilePicture, jobType: $jobType, skills: $skills, experience: $experience, education: $education, degree: $degree, location: $location, linkedin: $linkedin, onboardingCompleted: $onboardingCompleted, createdAt: $createdAt, updatedAt: $updatedAt)';
+  return 'CandidateProfileData(id: $id, phone: $phone, nationality: $nationality, gender: $gender, languages: $languages, age: $age, profilePicture: $profilePicture, jobType: $jobType, skills: $skills, experience: $experience, education: $education, degree: $degree, location: $location, linkedin: $linkedin, onboardingCompleted: $onboardingCompleted, latestResume: $latestResume, createdAt: $createdAt, updatedAt: $updatedAt)';
 }
 
 
@@ -1674,11 +1948,11 @@ abstract mixin class _$CandidateProfileDataCopyWith<$Res> implements $CandidateP
   factory _$CandidateProfileDataCopyWith(_CandidateProfileData value, $Res Function(_CandidateProfileData) _then) = __$CandidateProfileDataCopyWithImpl;
 @override @useResult
 $Res call({
- String? id, String? phone, String? nationality, String? gender, List<String>? languages, int? age, String? profilePicture, String? jobType, List<String>? skills, String? experience, String? education, String? degree, String? location, String? linkedin, bool? onboardingCompleted, String? createdAt, String? updatedAt
+ String? id, String? phone, String? nationality, String? gender, List<String>? languages, int? age, String? profilePicture, String? jobType, List<String>? skills, String? experience, String? education, String? degree, String? location, String? linkedin, bool? onboardingCompleted, ResumeInfo? latestResume, String? createdAt, String? updatedAt
 });
 
 
-
+@override $ResumeInfoCopyWith<$Res>? get latestResume;
 
 }
 /// @nodoc
@@ -1691,7 +1965,7 @@ class __$CandidateProfileDataCopyWithImpl<$Res>
 
 /// Create a copy of CandidateProfileData
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? id = freezed,Object? phone = freezed,Object? nationality = freezed,Object? gender = freezed,Object? languages = freezed,Object? age = freezed,Object? profilePicture = freezed,Object? jobType = freezed,Object? skills = freezed,Object? experience = freezed,Object? education = freezed,Object? degree = freezed,Object? location = freezed,Object? linkedin = freezed,Object? onboardingCompleted = freezed,Object? createdAt = freezed,Object? updatedAt = freezed,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? id = freezed,Object? phone = freezed,Object? nationality = freezed,Object? gender = freezed,Object? languages = freezed,Object? age = freezed,Object? profilePicture = freezed,Object? jobType = freezed,Object? skills = freezed,Object? experience = freezed,Object? education = freezed,Object? degree = freezed,Object? location = freezed,Object? linkedin = freezed,Object? onboardingCompleted = freezed,Object? latestResume = freezed,Object? createdAt = freezed,Object? updatedAt = freezed,}) {
   return _then(_CandidateProfileData(
 id: freezed == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String?,phone: freezed == phone ? _self.phone : phone // ignore: cast_nullable_to_non_nullable
@@ -1708,13 +1982,26 @@ as String?,degree: freezed == degree ? _self.degree : degree // ignore: cast_nul
 as String?,location: freezed == location ? _self.location : location // ignore: cast_nullable_to_non_nullable
 as String?,linkedin: freezed == linkedin ? _self.linkedin : linkedin // ignore: cast_nullable_to_non_nullable
 as String?,onboardingCompleted: freezed == onboardingCompleted ? _self.onboardingCompleted : onboardingCompleted // ignore: cast_nullable_to_non_nullable
-as bool?,createdAt: freezed == createdAt ? _self.createdAt : createdAt // ignore: cast_nullable_to_non_nullable
+as bool?,latestResume: freezed == latestResume ? _self.latestResume : latestResume // ignore: cast_nullable_to_non_nullable
+as ResumeInfo?,createdAt: freezed == createdAt ? _self.createdAt : createdAt // ignore: cast_nullable_to_non_nullable
 as String?,updatedAt: freezed == updatedAt ? _self.updatedAt : updatedAt // ignore: cast_nullable_to_non_nullable
 as String?,
   ));
 }
 
+/// Create a copy of CandidateProfileData
+/// with the given fields replaced by the non-null parameter values.
+@override
+@pragma('vm:prefer-inline')
+$ResumeInfoCopyWith<$Res>? get latestResume {
+    if (_self.latestResume == null) {
+    return null;
+  }
 
+  return $ResumeInfoCopyWith<$Res>(_self.latestResume!, (value) {
+    return _then(_self.copyWith(latestResume: value));
+  });
+}
 }
 
 

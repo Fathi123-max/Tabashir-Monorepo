@@ -52,7 +52,8 @@ class ResumeSuccessScreen extends StatelessWidget {
               ),
               SizedBox(height: 16.h),
               Text(
-                'Your professional CV has been created and saved to your vault.'.tr(),
+                'Your professional CV has been created and saved to your vault.'
+                    .tr(),
                 style: theme.textTheme.bodyLarge?.copyWith(
                   color: theme.textTheme.bodySmall?.color,
                 ),
@@ -64,7 +65,9 @@ class ResumeSuccessScreen extends StatelessWidget {
                 context,
                 icon: Icons.picture_as_pdf_rounded,
                 label: 'Download PDF'.tr(),
-                onTap: (resume.formatedUrl != null && resume.formatedUrl!.isNotEmpty)
+                onTap:
+                    (resume.formatedUrl != null &&
+                        resume.formatedUrl!.isNotEmpty)
                     ? () => _downloadPdf(context)
                     : null,
                 isPrimary: true,
@@ -74,7 +77,9 @@ class ResumeSuccessScreen extends StatelessWidget {
                 context,
                 icon: Icons.description_rounded,
                 label: 'Share Word File'.tr(),
-                onTap: (resume.originalUrl != null && resume.originalUrl!.isNotEmpty)
+                onTap:
+                    (resume.originalUrl != null &&
+                        resume.originalUrl!.isNotEmpty)
                     ? () => _shareWordFile(context)
                     : null,
                 isPrimary: false,

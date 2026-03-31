@@ -312,4 +312,13 @@ class ResumeVaultCubit extends Cubit<ResumeVaultState> {
       }
     }
   }
+
+  /// Reset the cubit state (for logout/session change)
+  void reset() {
+    print('[RESUME_VAULT_CUBIT] Resetting resume data...');
+    _isInitialized = false;
+    if (!isClosed) {
+      emit(const ResumeVaultState());
+    }
+  }
 }

@@ -7,7 +7,6 @@ import 'package:tabashir/core/network/models/auth/email_verification_response.da
 import 'package:tabashir/core/services/auth_session_service.dart';
 import 'package:tabashir/features/auth/domain/repositories/auth_repository.dart';
 import 'package:tabashir/features/home/presentation/cubit/app_initialization_cubit.dart';
-import 'package:tabashir/features/profile/presentation/cubit/profile_cubit.dart';
 
 part 'auth_state.dart';
 part 'auth_cubit.freezed.dart';
@@ -15,10 +14,9 @@ part 'auth_cubit.g.dart';
 
 @injectable
 class AuthCubit extends Cubit<AuthState> {
-  AuthCubit(this._repository, this._profileCubit) : super(const AuthState());
+  AuthCubit(this._repository) : super(const AuthState());
 
   final AuthRepository _repository;
-  final ProfileCubit _profileCubit;
 
   /// Login user with email and password
   Future<void> login({
@@ -61,13 +59,13 @@ class AuthCubit extends Cubit<AuthState> {
           token: tokenToStore,
           refreshToken: refreshTokenToStore,
         );
-        // Load profile data after successful login
-        await _profileCubit.loadProfileData();
       } else {
         print('[AUTH_CUBIT] WARNING: No access token in response!');
       }
 
       // Reset application initialization state on successful login
+      // This will ensure the next time the user hits the Home screen,
+      // everything is re-initialized with the new token.
       getIt<AppInitializationCubit>().reset();
 
       if (!isClosed) {
@@ -144,8 +142,6 @@ class AuthCubit extends Cubit<AuthState> {
           token: tokenToStore,
           refreshToken: refreshTokenToStore,
         );
-        // Load profile data after successful registration
-        await _profileCubit.loadProfileData();
       } else {
         print('DEBUG: WARNING - No token found in response!');
         // If no token was returned from registration, try to log the user in
@@ -310,8 +306,6 @@ class AuthCubit extends Cubit<AuthState> {
           token: tokenToStore,
           refreshToken: refreshTokenToStore,
         );
-        // Load profile data after successful login
-        await _profileCubit.loadProfileData();
       } else {
         print('DEBUG: WARNING - No token obtained even after login attempt!');
       }

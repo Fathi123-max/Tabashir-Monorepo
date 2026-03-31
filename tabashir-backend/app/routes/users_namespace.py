@@ -4,6 +4,8 @@ from flask import request
 from http import HTTPStatus
 from app.database.db import execute_query
 from app.routes.middleware import jwt_required
+from app.services.job_apply.process_cv import get_client_data
+from app.services.profile_sync_service import ProfileSyncService
 
 users_ns = Namespace('user', description='User Profile Endpoints')
 
@@ -33,10 +35,10 @@ class Profile(Resource):
         user_id = request.user_id
 
         user = execute_query(
-            """SELECT u.id, u.email, u.name, u."userType", u."createdAt",
+            """SELECT u.id, u.email, u.name, u.image, u."userType", u."createdAt",
                       cp.id as profile_id, cp.phone, cp.nationality, cp.gender, cp.languages, cp.age,
                       cp."profilePicture", cp."jobType", cp.skills, cp.experience,
-                      cp.education, cp.degree,
+                      cp.education, cp.degree, cp.location, cp.linkedin,
                       cp."onboardingCompleted"
                FROM users u
                LEFT JOIN "Candidate" c ON c."userId" = u.id
@@ -58,6 +60,7 @@ class Profile(Resource):
                 "id": user_dict['id'],
                 "email": user_dict['email'],
                 "name": user_dict['name'],
+                "image": user_dict.get('image'),
                 "userType": user_dict.get('userType')
             },
             "profile": {
@@ -73,6 +76,8 @@ class Profile(Resource):
                 "experience": user_dict.get('experience'),
                 "education": user_dict.get('education'),
                 "degree": user_dict.get('degree'),
+                "location": user_dict.get('location'),
+                "linkedin": user_dict.get('linkedin'),
                 "onboardingCompleted": user_dict.get('onboardingCompleted', False)
             }
         }, HTTPStatus.OK
@@ -108,7 +113,7 @@ class Profile(Resource):
         if not candidate:
             candidate_id = str(uuid.uuid4())
             execute_query(
-                'INSERT INTO "Candidate" (id, "userId", "createdAt", "updatedAt") VALUES (%s, %s, NOW(), NOW())',
+                'INSERT INTO "Candidate" ("id", "userId", "createdAt", "updatedAt") VALUES (%s, %s, NOW(), NOW())',
                 (candidate_id, user_id),
                 commit=True
             )
@@ -143,12 +148,52 @@ class Profile(Resource):
                 placeholders = ', '.join(['%s'] * len(profile_data))
                 values = [profile_id, candidate['id']] + list(profile_data.values())
                 execute_query(
-                    f'INSERT INTO "CandidateProfile" (id, "candidateId", {columns}, "createdAt", "updatedAt") VALUES (%s, %s, {placeholders}, NOW(), NOW())',
+                    f'INSERT INTO "CandidateProfile" ("id", "candidateId", {columns}, "createdAt", "updatedAt") VALUES (%s, %s, {placeholders}, NOW(), NOW())',
                     values,
                     commit=True
                 )
 
         return {"message": "Profile updated", "success": True, "userId": user_id}, HTTPStatus.OK
+
+
+def _ensure_candidate_exists(user_id):
+    """
+    Ensures that a user has a Candidate and a CandidateProfile record.
+    Returns the updated user record or None if it fails.
+    """
+    from app.database.db import execute_query
+    print(f"[AUTH_SYNC] Checking candidate records for user: {user_id}")
+    
+    # 1. Check if Candidate exists
+    candidate = execute_query('SELECT id FROM "Candidate" WHERE "userId" = %s', (user_id,), fetch_one=True)
+    if not candidate:
+        candidate_id = str(uuid.uuid4())
+        print(f"[AUTH_SYNC] ➕ Creating missing Candidate record for user: {user_id} (ID: {candidate_id})")
+        execute_query(
+            'INSERT INTO "Candidate" ("id", "userId", "createdAt", "updatedAt") VALUES (%s, %s, NOW(), NOW())', 
+            (candidate_id, user_id), 
+            commit=True
+        )
+        candidate = {'id': candidate_id}
+    
+    if not candidate:
+        print(f"[AUTH_SYNC] ❌ Failed to create/find Candidate record")
+        return None
+        
+    candidate_id = candidate['id']
+    
+    # 2. Check if CandidateProfile exists
+    profile = execute_query('SELECT id FROM "CandidateProfile" WHERE "candidateId" = %s', (candidate_id,), fetch_one=True)
+    if not profile:
+        profile_id = str(uuid.uuid4())
+        print(f"[AUTH_SYNC] ➕ Creating missing CandidateProfile for candidate: {candidate_id} (ID: {profile_id})")
+        execute_query(
+            'INSERT INTO "CandidateProfile" ("id", "candidateId", "createdAt", "updatedAt", "onboardingCompleted") VALUES (%s, %s, NOW(), NOW(), false)', 
+            (profile_id, candidate_id), 
+            commit=True
+        )
+    
+    return True
 
 
 @users_ns.route('/me')
@@ -160,10 +205,10 @@ class MobileMe(Resource):
         user_id = request.user_id
 
         user = execute_query(
-            """SELECT u.id, u.email, u.name, u."userType",
+            """SELECT u.id, u.email, u.name, u.image, u."userType",
                       cp.id as profile_id, cp.phone, cp.nationality, cp.gender, cp.languages, cp.age,
                       cp."profilePicture", cp."jobType", cp.skills, cp.experience,
-                      cp.education, cp.degree, cp."onboardingCompleted"
+                      cp.education, cp.degree, cp.location, cp.linkedin, cp."onboardingCompleted"
                FROM users u
                LEFT JOIN "Candidate" c ON c."userId" = u.id
                LEFT JOIN "CandidateProfile" cp ON cp."candidateId" = c.id
@@ -171,6 +216,51 @@ class MobileMe(Resource):
             (user_id,),
             fetch_one=True
         )
+
+        # 1. Auto-Initialization: Create records if they don't exist
+        if user and not user.get('profile_id'):
+            print(f"[ME_API] Profile records missing for {user_id}. Auto-initializating...")
+            _ensure_candidate_exists(user_id)
+            # Re-fetch after creation
+            user = execute_query(
+                """SELECT u.id, u.email, u.name, u.image, u."userType",
+                          cp.id as profile_id, cp.phone, cp.nationality, cp.gender, cp.languages, cp.age,
+                          cp."profilePicture", cp."jobType", cp.skills, cp.experience,
+                          cp.education, cp.degree, cp.location, cp.linkedin, cp."onboardingCompleted"
+                   FROM users u
+                   LEFT JOIN "Candidate" c ON c."userId" = u.id
+                   LEFT JOIN "CandidateProfile" cp ON cp."candidateId" = c.id
+                   WHERE u.id = %s""",
+                (user_id,),
+                fetch_one=True
+            )
+
+        # 2. Lazy Sync: If profile data is missing, try to sync from resume
+        if user and (not user.get('nationality') or not user.get('gender')):
+            print(f"[ME_API] Missing profile data. Triggering lazy sync for {user_id}...")
+            ProfileSyncService.sync_from_user_id(user_id)
+            # Re-fetch after sync
+            user = execute_query(
+                """SELECT u.id, u.email, u.name, u.image, u."userType",
+                          cp.id as profile_id, cp.phone, cp.nationality, cp.gender, cp.languages, cp.age,
+                          cp."profilePicture", cp."jobType", cp.skills, cp.experience,
+                          cp.education, cp.degree, cp.location, cp.linkedin, cp."onboardingCompleted"
+                   FROM users u
+                   LEFT JOIN "Candidate" c ON c."userId" = u.id
+                   LEFT JOIN "CandidateProfile" cp ON cp."candidateId" = c.id
+                   WHERE u.id = %s""",
+                (user_id,),
+                fetch_one=True
+            )
+
+        # 3. AI Client data integration (fallback for missing profile fields)
+        ai_client = None
+        if user and user.get('email'):
+            try:
+                ai_client = get_client_data(user['email'])
+                print(f"[ME_API] Fetched AI client data for {user['email']}: {ai_client}")
+            except Exception as e:
+                print(f"[ME_API] Error fetching AI client data: {e}")
 
         counts = {
             "totalResumes": 0,
@@ -182,6 +272,7 @@ class MobileMe(Resource):
             "rejected": 0
         }
 
+        latest_resume = None
         if user:
             try:
                 # Get resume count
@@ -191,8 +282,33 @@ class MobileMe(Resource):
                 )
                 if res_row:
                     counts['totalResumes'] = res_row.get('count', 0)
-            except Exception:
-                pass
+                
+                # Get latest resume details
+                resume_row = execute_query(
+                    """SELECT r.id, r.filename, r."originalUrl" 
+                       FROM "Resume" r 
+                       JOIN "Candidate" c ON r."candidateId" = c.id 
+                       WHERE c."userId" = %s 
+                       ORDER BY r."createdAt" DESC 
+                       LIMIT 1""",
+                    (user_id,), fetch_one=True
+                )
+                
+                base_url = request.host_url.rstrip('/')
+                if resume_row:
+                    latest_resume = {
+                        "fileUrl": f"{base_url}/api/v1/resumes/{resume_row['id']}/download",
+                        "fileName": resume_row['filename']
+                    }
+                elif ai_client and ai_client.get('filename'):
+                    # Fallback to AI-processed resume if not in main database
+                    latest_resume = {
+                        "fileUrl": f"{base_url}/api/v1/resumes/download/{ai_client['filename']}",
+                        "fileName": ai_client['filename']
+                    }
+            except Exception as e:
+                print(f"[ME_API] Error processing resume info: {e}")
+            
             try:
                 row = execute_query(
                     'SELECT COUNT(*) as count FROM "SavedJobPost" WHERE "userId" = %s',
@@ -223,27 +339,32 @@ class MobileMe(Resource):
             except Exception:
                 pass
 
+        # Final merge of AI fields into the response object
         return {
             "user": {
                 "id": user['id'] if user else user_id,
                 "email": user['email'] if user else '',
                 "name": user['name'] if user else '',
+                "image": user.get('image') if user else None,
                 "userType": user.get('userType', 'CANDIDATE') if user else 'CANDIDATE'
             },
             "candidateProfile": {
                 "id": user.get('profile_id') if user else '',
-                "phone": user.get('phone') if user else '',
-                "nationality": user.get('nationality') if user else '',
-                "gender": user.get('gender') if user else '',
+                "phone": user.get('phone') or (ai_client.get('phone_number') if ai_client else '') or '',
+                "nationality": user.get('nationality') or (ai_client.get('nationality') if ai_client else '') or '',
+                "gender": user.get('gender') or (ai_client.get('gender') if ai_client else '') or '',
                 "languages": user.get('languages') or [] if user else [],
                 "age": user.get('age') if user else None,
                 "profilePicture": user.get('profilePicture') if user else None,
-                "jobType": user.get('jobType') if user else '',
+                "jobType": user.get('jobType') or (ai_client.get('positions') if ai_client else '') or '',
                 "skills": user.get('skills') or [] if user else [],
                 "experience": user.get('experience') if user else '',
                 "education": user.get('education') if user else '',
-                "degree": user.get('degree') if user else '',
-                "onboardingCompleted": user.get('onboardingCompleted', False) if user else False
+                "degree": user.get('degree') or (ai_client.get('degree') if ai_client else '') or '',
+                "location": user.get('location') or (ai_client.get('location') if ai_client else '') or '',
+                "linkedin": user.get('linkedin') if user else '',
+                "onboardingCompleted": user.get('onboardingCompleted', False) if user else False,
+                "latestResume": latest_resume
             },
             "subscription": {
                 "plan": "free",
@@ -254,5 +375,3 @@ class MobileMe(Resource):
             },
             "counts": counts
         }, HTTPStatus.OK
-
-

@@ -24,12 +24,12 @@ class AiResumeBuilderScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => MultiBlocProvider(
-        providers: [
-          BlocProvider(create: (context) => AiResumeBuilderCubit()),
-          BlocProvider(create: (context) => getIt<PaymentCubit>()),
-        ],
-        child: const AiResumeBuilderView(),
-      );
+    providers: [
+      BlocProvider(create: (context) => AiResumeBuilderCubit()),
+      BlocProvider(create: (context) => getIt<PaymentCubit>()),
+    ],
+    child: const AiResumeBuilderView(),
+  );
 }
 
 class AiResumeBuilderView extends StatelessWidget {
@@ -100,7 +100,8 @@ class AiResumeBuilderView extends StatelessWidget {
                 ),
               );
               // Proceed to generate CV with payment confirmation
-              final paymentIntentId = state.paymentIntent?.data?.paymentIntentId;
+              final paymentIntentId =
+                  state.paymentIntent?.data?.paymentIntentId;
               if (paymentIntentId != null) {
                 context.read<AiResumeBuilderCubit>().generateAndSave(
                   paymentIntentId: paymentIntentId,
@@ -293,7 +294,7 @@ class AiResumeBuilderView extends StatelessWidget {
           ElevatedButton(
             onPressed: () {
               Navigator.pop(context);
-              
+
               // Trigger Payment Flow
               context.read<PaymentCubit>().createPaymentIntent(
                 request: const PaymentIntentRequest(

@@ -39,13 +39,13 @@ class ServicesScreen extends StatelessWidget {
 
     // Trigger payment intent creation for LinkedIn Enhancement (19 AED)
     context.read<PaymentCubit>().createPaymentIntent(
-          request: PaymentIntentRequest(
-            userId: userId,
-            serviceId: 'ai-linkedin-enhancement',
-            amount: 19.0, // 19 AED
-            currency: 'aed',
-          ),
-        );
+      request: PaymentIntentRequest(
+        userId: userId,
+        serviceId: 'ai-linkedin-enhancement',
+        amount: 19.0, // 19 AED
+        currency: 'aed',
+      ),
+    );
   }
 
   Future<void> _processLinkedInEnhancement(
@@ -70,7 +70,9 @@ class ServicesScreen extends StatelessWidget {
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('LinkedIn Enhancement request sent successfully!'.tr()),
+            content: Text(
+              'LinkedIn Enhancement request sent successfully!'.tr(),
+            ),
             backgroundColor: Colors.green,
           ),
         );
@@ -79,7 +81,9 @@ class ServicesScreen extends StatelessWidget {
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Failed to process enhancement. Please contact support.'.tr()),
+            content: Text(
+              'Failed to process enhancement. Please contact support.'.tr(),
+            ),
             backgroundColor: AppTheme.errorColor,
           ),
         );
@@ -137,7 +141,8 @@ class ServicesScreen extends StatelessWidget {
                   Expanded(
                     child: ListView(
                       padding: EdgeInsets.only(
-                        bottom: kBottomNavigationBarHeight + AppTheme.spacingLg.h,
+                        bottom:
+                            kBottomNavigationBarHeight + AppTheme.spacingLg.h,
                       ),
                       children: [
                         // Header
@@ -187,8 +192,8 @@ class ServicesScreen extends StatelessWidget {
                                 title: 'AI Resume Optimization'.tr(),
                                 description:
                                     'Get your resume scored and optimized by AI to '
-                                            .tr() +
-                                        'pass ATS and impress recruiters.'.tr(),
+                                        .tr() +
+                                    'pass ATS and impress recruiters.'.tr(),
                                 price: 'Free trial • AED 29'.tr(),
                                 buttonText: 'Get Started'.tr(),
                                 isEnabled: true,
@@ -203,8 +208,8 @@ class ServicesScreen extends StatelessWidget {
                                 title: 'AI LinkedIn Enhancement'.tr(),
                                 description:
                                     'Optimize your LinkedIn profile to attract more '
-                                            .tr() +
-                                        'recruiters and opportunities.'.tr(),
+                                        .tr() +
+                                    'recruiters and opportunities.'.tr(),
                                 price: 'AED 19'.tr(),
                                 buttonText: 'Enhance Now'.tr(),
                                 isEnabled: true,
@@ -219,8 +224,8 @@ class ServicesScreen extends StatelessWidget {
                                 title: 'AI Job Apply Service'.tr(),
                                 description:
                                     'Let our AI find and apply to the best jobs for '
-                                            .tr() +
-                                        'you automatically.'.tr(),
+                                        .tr() +
+                                    'you automatically.'.tr(),
                                 price: 'AED 49'.tr(),
                                 buttonText: 'Auto Apply'.tr(),
                                 isEnabled: true,
@@ -235,8 +240,8 @@ class ServicesScreen extends StatelessWidget {
                                 title: 'Interview Prep AI'.tr(),
                                 description:
                                     'Practice with an AI interviewer and get instant '
-                                            .tr() +
-                                        'feedback to ace your next interview.'.tr(),
+                                        .tr() +
+                                    'feedback to ace your next interview.'.tr(),
                                 price: 'Coming Soon'.tr(),
                                 buttonText: 'Notify Me'.tr(),
                                 isEnabled: true,

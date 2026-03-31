@@ -8,6 +8,7 @@ import 'package:tabashir/core/session/cubit/session_cubit.dart';
 import 'package:tabashir/features/home/data/models/app_initialization_state.dart';
 import 'package:tabashir/features/profile/domain/repositories/profile_repository.dart';
 import 'package:tabashir/features/profile/presentation/cubit/profile_cubit.dart';
+import 'package:tabashir/features/home/presentation/cubit/home_cubit.dart';
 import 'package:tabashir/features/home/services/home_api_service.dart';
 import 'package:tabashir/features/resume/presentation/cubit/resume_vault_cubit.dart';
 import 'package:tabashir/features/resume/domain/repositories/resume_vault_repository.dart';
@@ -55,7 +56,7 @@ class AppInitializationCubit extends Cubit<AppInitializationState> {
 
       // 4. Initialize other cubits with shared data
       print('[APP_INIT] 4/4 Initializing cubits with shared data...');
-      await _initializeCubits(userProfile, resumes);
+      await _initializeCubits(userProfile, resumes, homeDashboard);
       print('[APP_INIT] ✅ Cubits initialized');
 
       // Emit success state with all data
@@ -88,7 +89,8 @@ class AppInitializationCubit extends Cubit<AppInitializationState> {
         if (!isClosed) {
           emit(
             state.copyWith(
-              isInitialized: true,
+              isInitialized:
+                  false, // Don't mark as initialized if we didn't actually load data
               isLoading: false,
             ),
           );
@@ -112,6 +114,7 @@ class AppInitializationCubit extends Cubit<AppInitializationState> {
   Future<void> _initializeCubits(
     UserProfileResponse userProfile,
     List<ResumeItem> resumes,
+    HomeDashboardResponse? homeDashboard,
   ) async {
     try {
       // Initialize ProfileCubit with user profile data
@@ -122,6 +125,15 @@ class AppInitializationCubit extends Cubit<AppInitializationState> {
       final resumeCubit = getIt<ResumeVaultCubit>();
       await resumeCubit.initializeWithResumes(resumes);
 
+      // Initialize HomeCubit with pre-loaded data
+      if (homeDashboard != null) {
+        final homeCubit = getIt<HomeCubit>();
+        homeCubit.initializeWithData(
+          userProfile: userProfile,
+          dashboardData: homeDashboard,
+        );
+      }
+
       print('[APP_INIT] ✅ All cubits initialized with shared data');
     } catch (e) {
       print('[APP_INIT] ⚠️ Error initializing cubits: $e');
@@ -129,8 +141,19 @@ class AppInitializationCubit extends Cubit<AppInitializationState> {
     }
   }
 
-  /// Reset initialization (for logout)
+  /// Reset initialization (for logout/session change)
   void reset() {
+    print('[APP_INIT] Resetting app initialization and sub-cubits...');
+
+    // Reset sub-cubits that hold session data
+    try {
+      getIt<HomeCubit>().reset();
+      getIt<ResumeVaultCubit>().reset();
+      getIt<ProfileCubit>().reset();
+    } catch (e) {
+      print('[APP_INIT] ⚠️ Error resetting sub-cubits: $e');
+    }
+
     if (!isClosed) {
       emit(const AppInitializationState());
     }

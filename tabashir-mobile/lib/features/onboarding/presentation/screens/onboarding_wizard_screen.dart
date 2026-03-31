@@ -49,10 +49,11 @@ class _OnboardingWizardScreenState extends State<OnboardingWizardScreen> {
     return BlocProvider(
       create: (context) => getIt<OnboardingWizardCubit>(),
       child: BlocListener<OnboardingWizardCubit, OnboardingWizardState>(
-        listenWhen: (previous, current) => previous.currentStep != current.currentStep,
+        listenWhen: (previous, current) =>
+            previous.currentStep != current.currentStep,
         listener: (context, state) {
           _onStepChanged(state.currentStep);
-          
+
           if (state.submissionResult != null) {
             // Navigate to results or home
             context.go('/');
@@ -69,21 +70,25 @@ class _OnboardingWizardScreenState extends State<OnboardingWizardScreen> {
                   _buildHeader(context),
                   _buildProgressBar(),
                   Expanded(
-                    child: BlocBuilder<OnboardingWizardCubit, OnboardingWizardState>(
-                      builder: (context, state) {
-                        return PageView(
-                          controller: _pageController,
-                          physics: const NeverScrollableScrollPhysics(),
-                          children: [
-                            _ResumeUploadStep(),
-                            _TargetRolesStep(),
-                            _LocationStep(),
-                            _PersonalDetailsStep(),
-                            _ProcessingStep(),
-                          ],
-                        );
-                      },
-                    ),
+                    child:
+                        BlocBuilder<
+                          OnboardingWizardCubit,
+                          OnboardingWizardState
+                        >(
+                          builder: (context, state) {
+                            return PageView(
+                              controller: _pageController,
+                              physics: const NeverScrollableScrollPhysics(),
+                              children: [
+                                _ResumeUploadStep(),
+                                _TargetRolesStep(),
+                                _LocationStep(),
+                                _PersonalDetailsStep(),
+                                _ProcessingStep(),
+                              ],
+                            );
+                          },
+                        ),
                   ),
                   _buildFooter(),
                 ],
@@ -105,7 +110,8 @@ class _OnboardingWizardScreenState extends State<OnboardingWizardScreen> {
               if (state.currentStep > 1 && state.currentStep < 5) {
                 return IconButton(
                   icon: const Icon(Icons.arrow_back, color: Colors.white),
-                  onPressed: () => context.read<OnboardingWizardCubit>().previousStep(),
+                  onPressed: () =>
+                      context.read<OnboardingWizardCubit>().previousStep(),
                 );
               }
               return const SizedBox.shrink();
@@ -163,7 +169,7 @@ class _OnboardingWizardScreenState extends State<OnboardingWizardScreen> {
     return BlocBuilder<OnboardingWizardCubit, OnboardingWizardState>(
       builder: (context, state) {
         if (state.currentStep == 5) return const SizedBox.shrink();
-        
+
         return Padding(
           padding: EdgeInsets.all(20.w),
           child: Row(
@@ -171,32 +177,56 @@ class _OnboardingWizardScreenState extends State<OnboardingWizardScreen> {
             children: [
               if (state.currentStep > 1)
                 TextButton(
-                  onPressed: () => context.read<OnboardingWizardCubit>().previousStep(),
+                  onPressed: () =>
+                      context.read<OnboardingWizardCubit>().previousStep(),
                   child: Text(
                     'Back',
-                    style: TextStyle(color: Colors.white.withOpacity(0.7), fontSize: 16.sp),
+                    style: TextStyle(
+                      color: Colors.white.withOpacity(0.7),
+                      fontSize: 16.sp,
+                    ),
                   ),
                 )
               else
                 const SizedBox.shrink(),
-              
+
               if (state.currentStep < 4 && state.currentStep > 1)
                 ElevatedButton(
                   style: ElevatedButton.styleFrom(
                     backgroundColor: AppTheme.accentColor,
-                    padding: EdgeInsets.symmetric(horizontal: 32.w, vertical: 12.h),
+                    padding: EdgeInsets.symmetric(
+                      horizontal: 32.w,
+                      vertical: 12.h,
+                    ),
                   ),
-                  onPressed: () => context.read<OnboardingWizardCubit>().nextStep(),
-                  child: Text('Next', style: TextStyle(fontSize: 16.sp, fontWeight: FontWeight.bold)),
+                  onPressed: () =>
+                      context.read<OnboardingWizardCubit>().nextStep(),
+                  child: Text(
+                    'Next',
+                    style: TextStyle(
+                      fontSize: 16.sp,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
                 )
               else if (state.currentStep == 4)
                 ElevatedButton(
                   style: ElevatedButton.styleFrom(
                     backgroundColor: AppTheme.accentColor,
-                    padding: EdgeInsets.symmetric(horizontal: 32.w, vertical: 12.h),
+                    padding: EdgeInsets.symmetric(
+                      horizontal: 32.w,
+                      vertical: 12.h,
+                    ),
                   ),
-                  onPressed: () => context.read<OnboardingWizardCubit>().submitOnboarding(),
-                  child: Text('Finish', style: TextStyle(fontSize: 16.sp, fontWeight: FontWeight.bold)),
+                  onPressed: () =>
+                      context.read<OnboardingWizardCubit>().submitOnboarding(),
+                  child: Text(
+                    'Finish',
+                    style: TextStyle(
+                      fontSize: 16.sp,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
                 ),
             ],
           ),
@@ -216,16 +246,27 @@ class _ResumeUploadStep extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(Icons.cloud_upload_outlined, size: 80.sp, color: Colors.white),
+              Icon(
+                Icons.cloud_upload_outlined,
+                size: 80.sp,
+                color: Colors.white,
+              ),
               SizedBox(height: 24.h),
               Text(
                 'Upload your Resume',
-                style: TextStyle(color: Colors.white, fontSize: 24.sp, fontWeight: FontWeight.bold),
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 24.sp,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
               SizedBox(height: 12.h),
               Text(
                 'We will use AI to suggest the best roles for you',
-                style: TextStyle(color: Colors.white.withOpacity(0.7), fontSize: 16.sp),
+                style: TextStyle(
+                  color: Colors.white.withOpacity(0.7),
+                  fontSize: 16.sp,
+                ),
                 textAlign: TextAlign.center,
               ),
               SizedBox(height: 48.h),
@@ -236,16 +277,28 @@ class _ResumeUploadStep extends StatelessWidget {
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.white,
                     foregroundColor: AppTheme.primaryColor,
-                    padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 16.h),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.r)),
+                    padding: EdgeInsets.symmetric(
+                      horizontal: 24.w,
+                      vertical: 16.h,
+                    ),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12.r),
+                    ),
                   ),
-                  onPressed: () => context.read<OnboardingWizardCubit>().pickFile(),
+                  onPressed: () =>
+                      context.read<OnboardingWizardCubit>().pickFile(),
                   icon: const Icon(Icons.attach_file),
-                  label: Text(state.fileName ?? 'Choose File', style: TextStyle(fontSize: 18.sp)),
+                  label: Text(
+                    state.fileName ?? 'Choose File',
+                    style: TextStyle(fontSize: 18.sp),
+                  ),
                 ),
               if (state.errorMessage != null) ...[
                 SizedBox(height: 16.h),
-                Text(state.errorMessage!, style: TextStyle(color: Colors.redAccent, fontSize: 14.sp)),
+                Text(
+                  state.errorMessage!,
+                  style: TextStyle(color: Colors.redAccent, fontSize: 14.sp),
+                ),
               ],
             ],
           ),
@@ -288,12 +341,19 @@ class _TargetRolesStepState extends State<_TargetRolesStep> {
             children: [
               Text(
                 'Target Roles',
-                style: TextStyle(color: Colors.white, fontSize: 24.sp, fontWeight: FontWeight.bold),
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 24.sp,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
               SizedBox(height: 8.h),
               Text(
                 'Select or add the roles you are interested in',
-                style: TextStyle(color: Colors.white.withOpacity(0.7), fontSize: 16.sp),
+                style: TextStyle(
+                  color: Colors.white.withOpacity(0.7),
+                  fontSize: 16.sp,
+                ),
               ),
               SizedBox(height: 24.h),
               Row(
@@ -306,17 +366,25 @@ class _TargetRolesStepState extends State<_TargetRolesStep> {
                         style: TextStyle(color: Colors.white, fontSize: 16.sp),
                         decoration: InputDecoration(
                           hintText: 'e.g. Flutter Developer',
-                          hintStyle: TextStyle(color: Colors.white.withOpacity(0.5)),
+                          hintStyle: TextStyle(
+                            color: Colors.white.withOpacity(0.5),
+                          ),
                           filled: true,
                           fillColor: Colors.white.withOpacity(0.1),
-                          contentPadding: EdgeInsets.symmetric(horizontal: 16.w),
+                          contentPadding: EdgeInsets.symmetric(
+                            horizontal: 16.w,
+                          ),
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(12.r),
-                            borderSide: BorderSide(color: Colors.white.withOpacity(0.3)),
+                            borderSide: BorderSide(
+                              color: Colors.white.withOpacity(0.3),
+                            ),
                           ),
                           enabledBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(12.r),
-                            borderSide: BorderSide(color: Colors.white.withOpacity(0.3)),
+                            borderSide: BorderSide(
+                              color: Colors.white.withOpacity(0.3),
+                            ),
                           ),
                           focusedBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(12.r),
@@ -352,7 +420,9 @@ class _TargetRolesStepState extends State<_TargetRolesStep> {
                       return RoleChip(
                         role: TargetRoleModel(id: role, title: role),
                         isSelected: state.selectedRoles.contains(role),
-                        onTap: () => context.read<OnboardingWizardCubit>().toggleRole(role),
+                        onTap: () => context
+                            .read<OnboardingWizardCubit>()
+                            .toggleRole(role),
                       );
                     }).toList(),
                   ),
@@ -378,12 +448,19 @@ class _LocationStep extends StatelessWidget {
             children: [
               Text(
                 'Preferred Locations',
-                style: TextStyle(color: Colors.white, fontSize: 24.sp, fontWeight: FontWeight.bold),
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 24.sp,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
               SizedBox(height: 8.h),
               Text(
                 'Where would you like to work in the UAE?',
-                style: TextStyle(color: Colors.white.withOpacity(0.7), fontSize: 16.sp),
+                style: TextStyle(
+                  color: Colors.white.withOpacity(0.7),
+                  fontSize: 16.sp,
+                ),
               ),
               SizedBox(height: 24.h),
               Expanded(
@@ -400,7 +477,9 @@ class _LocationStep extends StatelessWidget {
                     return LocationChip(
                       location: LocationPreferenceModel(id: city, name: city),
                       isSelected: state.selectedLocations.contains(city),
-                      onTap: () => context.read<OnboardingWizardCubit>().toggleLocation(city),
+                      onTap: () => context
+                          .read<OnboardingWizardCubit>()
+                          .toggleLocation(city),
                     );
                   },
                 ),
@@ -414,7 +493,10 @@ class _LocationStep extends StatelessWidget {
 }
 
 class _PersonalDetailsStep extends StatelessWidget {
-  Future<void> _showNationalityPicker(BuildContext context, OnboardingWizardState state) async {
+  Future<void> _showNationalityPicker(
+    BuildContext context,
+    OnboardingWizardState state,
+  ) async {
     final result = await showModalBottomSheet<String>(
       context: context,
       isScrollControlled: true,
@@ -423,9 +505,10 @@ class _PersonalDetailsStep extends StatelessWidget {
         String searchQuery = '';
         return StatefulBuilder(
           builder: (context, setState) {
-            
             final filteredCountries = worldCountries.entries.where((entry) {
-              return entry.value.toLowerCase().contains(searchQuery.toLowerCase());
+              return entry.value.toLowerCase().contains(
+                searchQuery.toLowerCase(),
+              );
             }).toList();
 
             return Container(
@@ -440,7 +523,11 @@ class _PersonalDetailsStep extends StatelessWidget {
                     padding: EdgeInsets.all(20.w),
                     child: Text(
                       'Select Nationality',
-                      style: TextStyle(color: Colors.white, fontSize: 20.sp, fontWeight: FontWeight.bold),
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 20.sp,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ),
                   Padding(
@@ -449,8 +536,13 @@ class _PersonalDetailsStep extends StatelessWidget {
                       style: const TextStyle(color: Colors.white),
                       decoration: InputDecoration(
                         hintText: 'Search...',
-                        hintStyle: TextStyle(color: Colors.white.withOpacity(0.5)),
-                        prefixIcon: const Icon(Icons.search, color: Colors.white),
+                        hintStyle: TextStyle(
+                          color: Colors.white.withOpacity(0.5),
+                        ),
+                        prefixIcon: const Icon(
+                          Icons.search,
+                          color: Colors.white,
+                        ),
                         filled: true,
                         fillColor: Colors.white.withOpacity(0.1),
                         border: OutlineInputBorder(
@@ -468,7 +560,10 @@ class _PersonalDetailsStep extends StatelessWidget {
                       itemBuilder: (context, index) {
                         final country = filteredCountries[index];
                         return ListTile(
-                          title: Text(country.value, style: const TextStyle(color: Colors.white)),
+                          title: Text(
+                            country.value,
+                            style: const TextStyle(color: Colors.white),
+                          ),
                           onTap: () => Navigator.pop(context, country.key),
                         );
                       },
@@ -483,7 +578,9 @@ class _PersonalDetailsStep extends StatelessWidget {
     );
 
     if (result != null && context.mounted) {
-      context.read<OnboardingWizardCubit>().updatePersonalDetails(nationality: result);
+      context.read<OnboardingWizardCubit>().updatePersonalDetails(
+        nationality: result,
+      );
     }
   }
 
@@ -498,18 +595,29 @@ class _PersonalDetailsStep extends StatelessWidget {
             children: [
               Text(
                 'Personal Details',
-                style: TextStyle(color: Colors.white, fontSize: 24.sp, fontWeight: FontWeight.bold),
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 24.sp,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
               SizedBox(height: 24.h),
               Text(
                 'Nationality',
-                style: TextStyle(color: Colors.white, fontSize: 16.sp, fontWeight: FontWeight.w600),
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 16.sp,
+                  fontWeight: FontWeight.w600,
+                ),
               ),
               SizedBox(height: 12.h),
               GestureDetector(
                 onTap: () => _showNationalityPicker(context, state),
                 child: Container(
-                  padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 16.h),
+                  padding: EdgeInsets.symmetric(
+                    horizontal: 16.w,
+                    vertical: 16.h,
+                  ),
                   decoration: BoxDecoration(
                     color: Colors.white.withOpacity(0.1),
                     borderRadius: BorderRadius.circular(12.r),
@@ -519,7 +627,8 @@ class _PersonalDetailsStep extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
-                        worldCountries[state.nationality] ?? 'United Arab Emirates',
+                        worldCountries[state.nationality] ??
+                            'United Arab Emirates',
                         style: TextStyle(color: Colors.white, fontSize: 16.sp),
                       ),
                       const Icon(Icons.arrow_drop_down, color: Colors.white),
@@ -530,7 +639,11 @@ class _PersonalDetailsStep extends StatelessWidget {
               SizedBox(height: 32.h),
               Text(
                 'Gender',
-                style: TextStyle(color: Colors.white, fontSize: 16.sp, fontWeight: FontWeight.w600),
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 16.sp,
+                  fontWeight: FontWeight.w600,
+                ),
               ),
               SizedBox(height: 12.h),
               Row(
@@ -539,7 +652,9 @@ class _PersonalDetailsStep extends StatelessWidget {
                     child: GenderChip(
                       gender: Gender.male,
                       isSelected: state.gender == 'male',
-                      onTap: () => context.read<OnboardingWizardCubit>().updatePersonalDetails(gender: 'male'),
+                      onTap: () => context
+                          .read<OnboardingWizardCubit>()
+                          .updatePersonalDetails(gender: 'male'),
                     ),
                   ),
                   SizedBox(width: 12.w),
@@ -547,7 +662,9 @@ class _PersonalDetailsStep extends StatelessWidget {
                     child: GenderChip(
                       gender: Gender.female,
                       isSelected: state.gender == 'female',
-                      onTap: () => context.read<OnboardingWizardCubit>().updatePersonalDetails(gender: 'female'),
+                      onTap: () => context
+                          .read<OnboardingWizardCubit>()
+                          .updatePersonalDetails(gender: 'female'),
                     ),
                   ),
                 ],
@@ -575,52 +692,87 @@ class _ProcessingStep extends StatelessWidget {
                 SizedBox(height: 24.h),
                 Text(
                   'Processing your application...',
-                  style: TextStyle(color: Colors.white, fontSize: 20.sp, fontWeight: FontWeight.bold),
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 20.sp,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
                 SizedBox(height: 12.h),
                 Text(
                   'Our AI is analyzing your profile to find the best matches',
-                  style: TextStyle(color: Colors.white.withOpacity(0.7), fontSize: 16.sp),
+                  style: TextStyle(
+                    color: Colors.white.withOpacity(0.7),
+                    fontSize: 16.sp,
+                  ),
                   textAlign: TextAlign.center,
                 ),
               ] else if (state.submissionResult != null) ...[
-                Icon(Icons.check_circle_outline, size: 80.sp, color: AppTheme.accentColor),
+                Icon(
+                  Icons.check_circle_outline,
+                  size: 80.sp,
+                  color: AppTheme.accentColor,
+                ),
                 SizedBox(height: 24.h),
                 Text(
                   'All Set!',
-                  style: TextStyle(color: Colors.white, fontSize: 24.sp, fontWeight: FontWeight.bold),
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 24.sp,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
                 SizedBox(height: 12.h),
                 Text(
                   'Your profile has been successfully set up.',
-                  style: TextStyle(color: Colors.white.withOpacity(0.7), fontSize: 16.sp),
+                  style: TextStyle(
+                    color: Colors.white.withOpacity(0.7),
+                    fontSize: 16.sp,
+                  ),
                   textAlign: TextAlign.center,
                 ),
                 SizedBox(height: 48.h),
                 ElevatedButton(
                   style: ElevatedButton.styleFrom(
                     backgroundColor: AppTheme.accentColor,
-                    padding: EdgeInsets.symmetric(horizontal: 48.w, vertical: 16.h),
+                    padding: EdgeInsets.symmetric(
+                      horizontal: 48.w,
+                      vertical: 16.h,
+                    ),
                   ),
                   onPressed: () => context.go('/'),
-                  child: Text('Get Started', style: TextStyle(fontSize: 18.sp, fontWeight: FontWeight.bold)),
+                  child: Text(
+                    'Get Started',
+                    style: TextStyle(
+                      fontSize: 18.sp,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
                 ),
               ] else if (state.errorMessage != null) ...[
                 Icon(Icons.error_outline, size: 80.sp, color: Colors.redAccent),
                 SizedBox(height: 24.h),
                 Text(
                   'Something went wrong',
-                  style: TextStyle(color: Colors.white, fontSize: 20.sp, fontWeight: FontWeight.bold),
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 20.sp,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
                 SizedBox(height: 12.h),
                 Text(
                   state.errorMessage!,
-                  style: TextStyle(color: Colors.white.withOpacity(0.7), fontSize: 14.sp),
+                  style: TextStyle(
+                    color: Colors.white.withOpacity(0.7),
+                    fontSize: 14.sp,
+                  ),
                   textAlign: TextAlign.center,
                 ),
                 SizedBox(height: 32.h),
                 ElevatedButton(
-                  onPressed: () => context.read<OnboardingWizardCubit>().submitOnboarding(),
+                  onPressed: () =>
+                      context.read<OnboardingWizardCubit>().submitOnboarding(),
                   child: const Text('Try Again'),
                 ),
               ],

@@ -22,7 +22,8 @@ class JobDetailsCubit extends Cubit<JobDetailsState> {
     SavedJobsRepository? savedJobsRepository,
     AppliedJobsStorage? appliedJobsStorage,
     ProfileCubit? profileCubit,
-  }) : _savedJobsRepository = savedJobsRepository ?? getIt<SavedJobsRepository>(),
+  }) : _savedJobsRepository =
+           savedJobsRepository ?? getIt<SavedJobsRepository>(),
        _appliedJobsStorage = appliedJobsStorage ?? getIt<AppliedJobsStorage>(),
        _profileCubit = profileCubit,
        super(const JobDetailsState.initial()) {

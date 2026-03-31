@@ -104,7 +104,9 @@ class SavedJobsRepository {
 
       // 1. Try to fetch from API - this is our source of truth
       if (_apiService != null) {
-        print('[SAVED_JOBS_REPO] Fetching latest saved jobs from Python API...');
+        print(
+          '[SAVED_JOBS_REPO] Fetching latest saved jobs from Python API...',
+        );
         final response = await _apiService.getSavedJobs();
 
         if (response.success) {

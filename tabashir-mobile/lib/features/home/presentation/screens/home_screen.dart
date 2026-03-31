@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:tabashir/core/di/injection.dart';
-import 'package:tabashir/core/network/models/user/user_profile_response.dart';
 import 'package:tabashir/core/theme/app_theme.dart';
 import 'package:tabashir/features/home/presentation/cubit/cubit.dart';
 import 'package:tabashir/features/home/presentation/cubit/app_initialization_cubit.dart';
@@ -29,8 +28,6 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  final bool _isInitialized = false;
-
   /// Extract the primary job title from the jobs list
   /// Returns the most common job title or 'relevant' if no jobs
   String? _extractPrimaryJobTitle(List<Map<String, dynamic>> jobs) {
@@ -71,128 +68,64 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
 
-    // Use AppInitializationCubit to load all data once
-    // Use BlocProvider.value to prevent the singleton from being closed
     return BlocProvider.value(
       value: getIt<AppInitializationCubit>()..initialize(),
       child: BlocBuilder<AppInitializationCubit, AppInitializationState>(
         builder: (context, initState) {
-          // Show error if initialization failed
           if (initState.errorMessage != null) {
-            return Scaffold(
-              body: Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text('Error: ${initState.errorMessage}'),
-                    SizedBox(height: 16.h),
-                    ElevatedButton(
-                      onPressed: () {
-                        context.read<AppInitializationCubit>().initialize();
-                      },
-                      child: const Text('Retry'),
-                    ),
-                  ],
-                ),
+            return Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text('Error: ${initState.errorMessage}'),
+                  SizedBox(height: 16.h),
+                  ElevatedButton(
+                    onPressed: () =>
+                        context.read<AppInitializationCubit>().initialize(),
+                    child: const Text('Retry'),
+                  ),
+                ],
               ),
             );
           }
 
-          // Show loading until all data is initialized
           if (!initState.isInitialized || initState.isLoading) {
-            return Scaffold(
-              body: Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const CircularProgressIndicator(),
-                    SizedBox(height: 16.h),
-                    Text(
-                      'Loading your profile...',
-                      style: theme.textTheme.bodyLarge,
-                    ),
-                  ],
-                ),
+            return Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const CircularProgressIndicator(),
+                  SizedBox(height: 16.h),
+                  Text(
+                    'Loading your profile...',
+                    style: theme.textTheme.bodyLarge,
+                  ),
+                ],
               ),
             );
           }
 
-          // Data is loaded, now provide HomeCubit and JobsCubit with the shared data
           return MultiBlocProvider(
             providers: [
-              BlocProvider.value(
-                // Use value to share the singleton instance without disposing it
-                value: getIt<HomeCubit>(),
-              ),
-              BlocProvider(
-                create: (context) => getIt<JobsCubit>(),
-              ),
+              BlocProvider.value(value: getIt<HomeCubit>()),
+              BlocProvider(create: (context) => getIt<JobsCubit>()),
             ],
             child: BlocBuilder<HomeCubit, HomeState>(
               builder: (context, state) {
-                // Update with user data from initialization (only if not already loaded)
-                if (initState.userProfile != null && state.user == null) {
-                  final homeCubit = context.read<HomeCubit>();
-                  homeCubit.updateUserData(
-                    UserData(
-                      id: 'profile_${initState.userProfile!.user.name}',
-                      name: initState.userProfile!.user.name ?? '',
-                      email: initState.userProfile!.user.email ?? '',
-                      emailVerified: initState.userProfile!.user.emailVerified,
-                      image: initState.userProfile!.user.image,
-                      userType:
-                          initState.userProfile!.user.userType ?? 'CANDIDATE',
-                      adminRole: initState.userProfile!.user.adminRole,
-                      jobCount: initState.userProfile!.user.jobCount,
-                      aiJobApplyCount:
-                          initState.userProfile!.user.aiJobApplyCount,
-                      createdAt: initState.userProfile!.user.createdAt,
-                      updatedAt: initState.userProfile!.user.updatedAt,
-                      referralCode: initState.userProfile!.user.referralCode,
-                      referredBy: initState.userProfile!.user.referredBy,
-                    ),
-                  );
-                  // Load home data with shared user profile
-                  homeCubit.loadHomeData(
-                    userProfile: initState.userProfile!.candidateProfile,
-                  );
-                  if (initState.userProfile!.user.email != null) {
-                    homeCubit.loadAiEnhancedHomeData(
-                      email: initState.userProfile!.user.email!,
-                    );
-                  }
-                }
-
-                if (state.isLoading) {
+                if (state.isLoading && state.user == null) {
                   return const Center(child: CircularProgressIndicator());
                 }
 
-                if (state.error) {
+                if (state.error && state.user == null) {
                   return Center(
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Text('Error: ${state.errorMessage}'.tr()),
                         ElevatedButton(
-                          onPressed: () {
-                            // Reload using shared data from AppInitializationCubit
-                            final initState = context
-                                .read<AppInitializationCubit>()
-                                .state;
-                            if (initState.userProfile != null) {
-                              context.read<HomeCubit>().loadHomeData(
-                                userProfile:
-                                    initState.userProfile!.candidateProfile,
-                              );
-                              if (initState.userProfile!.user.email != null) {
-                                context
-                                    .read<HomeCubit>()
-                                    .loadAiEnhancedHomeData(
-                                      email: initState.userProfile!.user.email!,
-                                    );
-                              }
-                            }
-                          },
+                          onPressed: () => context
+                              .read<AppInitializationCubit>()
+                              .initialize(),
                           child: Text('Retry'.tr()),
                         ),
                       ],
@@ -205,236 +138,130 @@ class _HomeScreenState extends State<HomeScreen> {
                     final hasNoCv =
                         resumeState.status == ResumeVaultStatus.success &&
                         resumeState.resumes.isEmpty;
-
                     return CvRequiredBlur(
                       isBlurred: hasNoCv,
                       child: SafeArea(
-                        child: Stack(
-                          children: [
-                            // Main scrollable content with pull-to-refresh
-                            RefreshIndicator(
-                              onRefresh: () async {
-                                print(
-                                  '[HOME_SCREEN] Pull to refresh triggered',
-                                );
-                                // Reload all data using AppInitializationCubit
-                                await context
-                                    .read<AppInitializationCubit>()
-                                    .initialize();
-                                final initState = context
-                                    .read<AppInitializationCubit>()
-                                    .state;
-                                if (initState.userProfile != null) {
-                                  context.read<HomeCubit>().refreshHomeData(
-                                    userProfile:
-                                        initState.userProfile!.candidateProfile,
-                                  );
-                                  if (initState.userProfile!.user.email !=
-                                      null) {
-                                    context
-                                        .read<HomeCubit>()
-                                        .loadAiEnhancedHomeData(
-                                          email: initState
-                                              .userProfile!
-                                              .user
-                                              .email!,
-                                        );
-                                  }
-                                }
-                              },
-                              child: SingleChildScrollView(
-                                physics: const AlwaysScrollableScrollPhysics(),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    // Header - pass user data
-                                    HomeHeaderWidget(user: state.user),
-
-                                    // AI Match Banner
-                                    Padding(
-                                      padding: EdgeInsets.symmetric(
-                                        horizontal: AppTheme.spacingMd.w,
-                                      ),
-                                      child: HomeAIMatchBannerWidget(
-                                        onTabChange: widget.onTabChange,
-                                        matchCount: state.matches,
-                                        jobTitle: _extractPrimaryJobTitle(
-                                          state.jobs,
-                                        ),
-                                        locations: _extractUniqueLocations(
-                                          state.jobs,
-                                        ),
-                                      ),
+                        child: RefreshIndicator(
+                          onRefresh: () async {
+                            await context
+                                .read<AppInitializationCubit>()
+                                .initialize();
+                          },
+                          child: SingleChildScrollView(
+                            physics: const AlwaysScrollableScrollPhysics(),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                HomeHeaderWidget(user: state.user),
+                                Padding(
+                                  padding: EdgeInsets.symmetric(
+                                    horizontal: AppTheme.spacingMd.w,
+                                  ),
+                                  child: HomeAIMatchBannerWidget(
+                                    onTabChange: widget.onTabChange,
+                                    matchCount: state.matches,
+                                    jobTitle: _extractPrimaryJobTitle(
+                                      state.jobs,
                                     ),
-                                    SizedBox(height: AppTheme.spacingMd.h),
-
-                                    // Stats Cards
-                                    Padding(
-                                      padding: EdgeInsets.symmetric(
-                                        horizontal: AppTheme.spacingMd.w,
-                                      ),
-                                      child: const HomeStatsCardsRowWidget(),
+                                    locations: _extractUniqueLocations(
+                                      state.jobs,
                                     ),
-                                    SizedBox(height: AppTheme.spacingLg.h),
-
-                                    // Recommended Section
-                                    Padding(
-                                      padding: EdgeInsets.symmetric(
-                                        horizontal: AppTheme.spacingMd.w,
-                                      ),
-                                      child: Text(
-                                        'Recommended for you'.tr(),
-                                        style: theme.textTheme.headlineMedium
-                                            ?.copyWith(
-                                              fontWeight: FontWeight.bold,
-                                            ),
-                                      ),
-                                    ),
-                                    SizedBox(height: AppTheme.spacingMd.h),
-
-                                    // Job Cards Horizontal List
-                                    Padding(
-                                      padding: EdgeInsets.symmetric(
-                                        horizontal: AppTheme.spacingMd.w,
-                                      ),
-                                      child:
-                                          const HomeJobCardsHorizontalListWidget(),
-                                    ),
-                                    SizedBox(height: AppTheme.spacingMd.h),
-
-                                    // Explore Cities Segment
-                                    Padding(
-                                      padding: EdgeInsets.symmetric(
-                                        horizontal: AppTheme.spacingMd.w,
-                                      ),
-                                      child: Text(
-                                        'Explore By City'.tr(),
-                                        style: theme.textTheme.headlineMedium
-                                            ?.copyWith(
-                                              fontWeight: FontWeight.bold,
-                                            ),
-                                      ),
-                                    ),
-                                    SizedBox(height: AppTheme.spacingMd.h),
-                                    Padding(
-                                      padding: EdgeInsets.symmetric(
-                                        horizontal: AppTheme.spacingMd.w,
-                                      ),
-                                      child: HomeExploreCitiesGridWidget(
-                                        cityJobCounts: state.cityJobCounts,
-                                      ),
-                                    ),
-                                    SizedBox(height: AppTheme.spacingLg.h),
-
-                                    // Latest Jobs Segment
-                                    Padding(
-                                      padding: EdgeInsets.symmetric(
-                                        horizontal: AppTheme.spacingMd.w,
-                                      ),
-                                      child: Text(
-                                        'Latest Opportunities'.tr(),
-                                        style: theme.textTheme.headlineMedium
-                                            ?.copyWith(
-                                              fontWeight: FontWeight.bold,
-                                            ),
-                                      ),
-                                    ),
-                                    SizedBox(height: AppTheme.spacingMd.h),
-                                    Padding(
-                                      padding: EdgeInsets.symmetric(
-                                        horizontal: AppTheme.spacingMd.w,
-                                      ),
-                                      child: const HomeLatestJobsFeedWidget(),
-                                    ),
-                                    // SizedBox(height: AppTheme.spacingLg.h),
-
-                                    /*
-                                    // Analytics
-                                    Padding(
-                                      padding: EdgeInsets.symmetric(
-                                        horizontal: AppTheme.spacingMd.w,
-                                      ),
-                                      child: HomeAnalyticsWidget(
-                                        applicationStatusChart:
-                                            (state.analyticsData?['applicationStatusChart']
-                                                        as List<dynamic>? ??
-                                                    [])
-                                                .map(
-                                                  (e) =>
-                                                      e as Map<String, dynamic>,
-                                                )
-                                                .toList(),
-                                        matchScoreDistribution:
-                                            (state.analyticsData?['matchScoreDistribution']
-                                                        as List<dynamic>? ??
-                                                    [])
-                                                .map(
-                                                  (e) =>
-                                                      e as Map<String, dynamic>,
-                                                )
-                                                .toList(),
-                                        monthlyApplications:
-                                            (state.analyticsData?['monthlyApplications']
-                                                        as List<dynamic>? ??
-                                                    [])
-                                                .map(
-                                                  (e) =>
-                                                      e as Map<String, dynamic>,
-                                                )
-                                                .toList(),
-                                        skillsDemand:
-                                            (state.analyticsData?['skillsDemand']
-                                                        as List<dynamic>? ??
-                                                    [])
-                                                .map(
-                                                  (e) =>
-                                                      e as Map<String, dynamic>,
-                                                )
-                                                .toList(),
-                                      ),
-                                    ),
-                                    */
-                                    SizedBox(height: AppTheme.spacingMd.h),
-
-                                    // Quick Actions
-                                    Padding(
-                                      padding: EdgeInsets.symmetric(
-                                        horizontal: AppTheme.spacingMd.w,
-                                      ),
-                                      child: Text(
-                                        'Quick Actions'.tr(),
-                                        style: theme.textTheme.headlineMedium
-                                            ?.copyWith(
-                                              fontWeight: FontWeight.bold,
-                                            ),
-                                      ),
-                                    ),
-                                    SizedBox(height: AppTheme.spacingMd.h),
-
-                                    // Quick Actions Grid
-                                    Padding(
-                                      padding: EdgeInsets.symmetric(
-                                        horizontal: AppTheme.spacingMd.w,
-                                      ),
-                                      child: const HomeQuickActionsGridWidget(),
-                                    ),
-                                    SizedBox(height: AppTheme.spacingLg.h),
-                                  ],
+                                  ),
                                 ),
-                              ),
+                                SizedBox(height: AppTheme.spacingMd.h),
+                                Padding(
+                                  padding: EdgeInsets.symmetric(
+                                    horizontal: AppTheme.spacingMd.w,
+                                  ),
+                                  child: const HomeStatsCardsRowWidget(),
+                                ),
+                                SizedBox(height: AppTheme.spacingLg.h),
+                                Padding(
+                                  padding: EdgeInsets.symmetric(
+                                    horizontal: AppTheme.spacingMd.w,
+                                  ),
+                                  child: Text(
+                                    'Recommended for you'.tr(),
+                                    style: theme.textTheme.headlineMedium
+                                        ?.copyWith(
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                  ),
+                                ),
+                                SizedBox(height: AppTheme.spacingMd.h),
+                                Padding(
+                                  padding: EdgeInsets.symmetric(
+                                    horizontal: AppTheme.spacingMd.w,
+                                  ),
+                                  child:
+                                      const HomeJobCardsHorizontalListWidget(),
+                                ),
+                                SizedBox(height: AppTheme.spacingMd.h),
+                                Padding(
+                                  padding: EdgeInsets.symmetric(
+                                    horizontal: AppTheme.spacingMd.w,
+                                  ),
+                                  child: Text(
+                                    'Explore By City'.tr(),
+                                    style: theme.textTheme.headlineMedium
+                                        ?.copyWith(
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                  ),
+                                ),
+                                SizedBox(height: AppTheme.spacingMd.h),
+                                Padding(
+                                  padding: EdgeInsets.symmetric(
+                                    horizontal: AppTheme.spacingMd.w,
+                                  ),
+                                  child: HomeExploreCitiesGridWidget(
+                                    cityJobCounts: state.cityJobCounts,
+                                  ),
+                                ),
+                                SizedBox(height: AppTheme.spacingLg.h),
+                                Padding(
+                                  padding: EdgeInsets.symmetric(
+                                    horizontal: AppTheme.spacingMd.w,
+                                  ),
+                                  child: Text(
+                                    'Latest Opportunities'.tr(),
+                                    style: theme.textTheme.headlineMedium
+                                        ?.copyWith(
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                  ),
+                                ),
+                                SizedBox(height: AppTheme.spacingMd.h),
+                                Padding(
+                                  padding: EdgeInsets.symmetric(
+                                    horizontal: AppTheme.spacingMd.w,
+                                  ),
+                                  child: const HomeLatestJobsFeedWidget(),
+                                ),
+                                SizedBox(height: AppTheme.spacingMd.h),
+                                Padding(
+                                  padding: EdgeInsets.symmetric(
+                                    horizontal: AppTheme.spacingMd.w,
+                                  ),
+                                  child: Text(
+                                    'Quick Actions'.tr(),
+                                    style: theme.textTheme.headlineMedium
+                                        ?.copyWith(
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                  ),
+                                ),
+                                SizedBox(height: AppTheme.spacingMd.h),
+                                Padding(
+                                  padding: EdgeInsets.symmetric(
+                                    horizontal: AppTheme.spacingMd.w,
+                                  ),
+                                  child: const HomeQuickActionsGridWidget(),
+                                ),
+                                SizedBox(height: AppTheme.spacingLg.h),
+                              ],
                             ),
-
-                            /*
-                            // Floating Action Button
-                            StandardFABWithCustomPosition(
-                              icon: Icons.auto_awesome,
-                              onPressed: () =>
-                                  context.push(RouteNames.aiJobApply),
-                              right: AppTheme.spacingMd.w,
-                              bottom: AppTheme.spacingLg.h,
-                            ),
-                            */
-                          ],
+                          ),
                         ),
                       ),
                     );

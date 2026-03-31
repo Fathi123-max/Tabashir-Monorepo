@@ -11,7 +11,8 @@ class HomeLatestJobsFeedWidget extends StatefulWidget {
   const HomeLatestJobsFeedWidget({super.key});
 
   @override
-  State<HomeLatestJobsFeedWidget> createState() => _HomeLatestJobsFeedWidgetState();
+  State<HomeLatestJobsFeedWidget> createState() =>
+      _HomeLatestJobsFeedWidgetState();
 }
 
 class _HomeLatestJobsFeedWidgetState extends State<HomeLatestJobsFeedWidget> {
@@ -22,7 +23,7 @@ class _HomeLatestJobsFeedWidgetState extends State<HomeLatestJobsFeedWidget> {
     return BlocBuilder<HomeCubit, HomeState>(
       builder: (context, homeState) {
         final latestJobs = homeState.latestJobsList;
-        
+
         if (latestJobs.isEmpty) {
           return Center(
             child: Padding(
@@ -44,13 +45,22 @@ class _HomeLatestJobsFeedWidgetState extends State<HomeLatestJobsFeedWidget> {
           separatorBuilder: (context, index) => SizedBox(height: 12.h),
           itemBuilder: (context, index) {
             final job = latestJobs[index];
-            final jobId = job['id']?.toString() ?? job['job_id']?.toString() ?? '';
-            
+            final jobId =
+                job['id']?.toString() ?? job['job_id']?.toString() ?? '';
+
             return HomeJobCardWidget(
-              title: (job['title'] ?? job['job_title']) as String? ?? 'Untitled Position',
-              company: (job['company'] ?? job['company_name']) as String? ?? 'Unknown Company',
-              employmentType: (job['employmentType'] ?? job['job_type']) as String? ?? 'Full-time',
-              level: (job['level'] ?? 'Not specified') as String? ?? 'Not specified',
+              title:
+                  (job['title'] ?? job['job_title']) as String? ??
+                  'Untitled Position',
+              company:
+                  (job['company'] ?? job['company_name']) as String? ??
+                  'Unknown Company',
+              employmentType:
+                  (job['employmentType'] ?? job['job_type']) as String? ??
+                  'Full-time',
+              level:
+                  (job['level'] ?? 'Not specified') as String? ??
+                  'Not specified',
               matchPercentage: job['matchPercentage']?.toString() ?? 'N/A',
               isPrimary: false,
               jobId: jobId,

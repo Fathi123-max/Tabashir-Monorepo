@@ -183,22 +183,28 @@ class ProfileCard extends StatelessWidget {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Row(
-                      children: [
-                        Text(
-                          '✨',
-                          style: TextStyle(fontSize: 16.sp),
-                        ),
-                        SizedBox(width: AppTheme.spacingSm.w),
-                        Text(
-                          'Profile Strength: $profileStrength%',
-                          style: theme.textTheme.bodyMedium?.copyWith(
-                            color: AppTheme.primaryColor,
-                            fontWeight: FontWeight.w600,
+                    Expanded(
+                      child: Row(
+                        children: [
+                          Text(
+                            '✨',
+                            style: TextStyle(fontSize: 16.sp),
                           ),
-                        ),
-                      ],
+                          SizedBox(width: AppTheme.spacingSm.w),
+                          Flexible(
+                            child: Text(
+                              'Profile Strength: $profileStrength%',
+                              style: theme.textTheme.bodyMedium?.copyWith(
+                                color: AppTheme.primaryColor,
+                                fontWeight: FontWeight.w600,
+                              ),
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
+                    SizedBox(width: AppTheme.spacingSm.w),
                     Text(
                       _getStrengthLevel(profileStrength),
                       style: theme.textTheme.bodySmall?.copyWith(
@@ -217,7 +223,9 @@ class ProfileCard extends StatelessWidget {
                       width: double.infinity,
                       decoration: BoxDecoration(
                         color: AppTheme.primaryColor.withOpacity(0.1),
-                        borderRadius: BorderRadius.circular(AppTheme.radiusFull),
+                        borderRadius: BorderRadius.circular(
+                          AppTheme.radiusFull,
+                        ),
                       ),
                     ),
                     FractionallySizedBox(
@@ -231,8 +239,9 @@ class ProfileCard extends StatelessWidget {
                               AppTheme.primaryColor,
                             ],
                           ),
-                          borderRadius:
-                              BorderRadius.circular(AppTheme.radiusFull),
+                          borderRadius: BorderRadius.circular(
+                            AppTheme.radiusFull,
+                          ),
                           boxShadow: [
                             BoxShadow(
                               color: AppTheme.primaryColor.withOpacity(0.2),

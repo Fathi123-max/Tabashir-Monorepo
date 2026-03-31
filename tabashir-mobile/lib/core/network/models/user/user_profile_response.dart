@@ -25,6 +25,19 @@ sealed class UserProfileResponse with _$UserProfileResponse {
       _$UserProfileResponseFromJson(json);
 }
 
+/// Resume info for candidate profile
+@freezed
+sealed class ResumeInfo with _$ResumeInfo {
+  const factory ResumeInfo({
+    String? fileName,
+    String? fileUrl,
+  }) = _ResumeInfo;
+
+  factory ResumeInfo.fromJson(Map<String, dynamic> json) =>
+      _$ResumeInfoFromJson(json);
+}
+
+
 /// Core user data
 @freezed
 sealed class UserData with _$UserData {
@@ -95,6 +108,7 @@ sealed class CandidateProfileData with _$CandidateProfileData {
     String? location,
     String? linkedin,
     bool? onboardingCompleted,
+    ResumeInfo? latestResume,
     String? createdAt,
     String? updatedAt,
   }) = _CandidateProfileData;
@@ -102,6 +116,7 @@ sealed class CandidateProfileData with _$CandidateProfileData {
   factory CandidateProfileData.fromJson(Map<String, dynamic> json) =>
       _$CandidateProfileDataFromJson(json);
 }
+
 
 /// Owner profile data
 @freezed

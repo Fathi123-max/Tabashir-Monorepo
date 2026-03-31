@@ -241,9 +241,13 @@ class _SignupScreenState extends State<SignupScreen> {
                           try {
                             await getIt<GoogleSignInService>().signIn();
                             if (mounted) {
-                              Future.delayed(const Duration(milliseconds: 150), () {
-                                if (mounted) context.go(RouteNames.onboardingWizard);
-                              });
+                              Future.delayed(
+                                const Duration(milliseconds: 150),
+                                () {
+                                  if (mounted)
+                                    context.go(RouteNames.onboardingWizard);
+                                },
+                              );
                             }
                           } catch (e) {
                             _showMessage('Google sign-up failed: $e');
@@ -262,9 +266,13 @@ class _SignupScreenState extends State<SignupScreen> {
                             // Backend verification complete, JWT stored in AuthSessionService
                             // Navigate to onboarding wizard for new users
                             if (mounted) {
-                              Future.delayed(const Duration(milliseconds: 150), () {
-                                if (mounted) context.go(RouteNames.onboardingWizard);
-                              });
+                              Future.delayed(
+                                const Duration(milliseconds: 150),
+                                () {
+                                  if (mounted)
+                                    context.go(RouteNames.onboardingWizard);
+                                },
+                              );
                             }
                           } catch (e) {
                             _showMessage('Apple sign-up failed: $e');

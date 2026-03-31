@@ -3,6 +3,7 @@ import 'package:injectable/injectable.dart';
 import 'package:tabashir/core/di/injection.dart';
 import 'package:tabashir/core/network/models/user/user_profile_response.dart';
 import 'package:tabashir/core/network/models/home_dashboard_response.dart';
+import 'package:tabashir/core/network/models/job_details_response.dart';
 import 'package:tabashir/core/services/job_match_service.dart';
 import '../../services/home_api_service.dart';
 import 'package:tabashir/features/home/domain/repositories/home_repository.dart';
@@ -170,29 +171,77 @@ class HomeCubit extends Cubit<HomeState> {
     emit(state.copyWith(isLoading: true, error: false));
 
     try {
-      final results = await Future.wait([
-        _homeRepository.getClientProfile(),
-        _homeRepository.getAppliedJobsCount(email: email),
-        _homeRepository.getMatchedJobs(email: email, limit: 10),
-        _homeRepository.getJobsCountByCity(),
-        _homeRepository.getLatestJobs(limit: 10),
-      ]).catchError((Object error) {
-        print('[HOME_CUBIT] Error loading AI enhanced data: $error');
-        // Return typed defaults if fetching fails
-        return <Object>[
-          <String, dynamic>{},
-          0,
-          <JobRecommendation>[],
-          <CityJobCount>[],
-          <Map<String, dynamic>>[],
-        ];
-      });
+      final results =
+          await Future.wait([
+            _homeRepository.getClientProfile(),
+            _homeRepository.getAppliedJobsCount(email: email),
+            _homeRepository.getMatchedJobs(email: email, limit: 10),
+            _homeRepository.getJobsCountByCity(),
+            _homeRepository.getLatestJobs(limit: 10),
+          ]).catchError((Object error) {
+            print('[HOME_CUBIT] Error loading AI enhanced data: $error');
+            // Return typed defaults if fetching fails
+            return <Object>[
+              <String, dynamic>{},
+              0,
+              <JobRecommendation>[],
+              <CityJobCount>[],
+              <Map<String, dynamic>>[],
+            ];
+          });
 
       final clientProfile = results[0] as Map<String, dynamic>? ?? {};
       final appliedJobsCount = results[1] as int? ?? 0;
       final matchedJobs = results[2] as List<JobRecommendation>? ?? [];
       final cityCounts = results[3] as List<CityJobCount>? ?? [];
       final latestJobs = results[4] as List<Map<String, dynamic>>? ?? [];
+
+      // Create a temporary candidate profile from the simplified client profile map
+      // for matching purposes if we have data
+      CandidateProfileData? profileForMatching;
+      if (clientProfile.isNotEmpty) {
+        profileForMatching = CandidateProfileData(
+          nationality: clientProfile['nationality'] as String?,
+          gender: clientProfile['gender'] as String?,
+          location: clientProfile['location'] as String?,
+          experience: clientProfile['positions'] as String?,
+          skills: (clientProfile['positions'] as String?)
+              ?.split(',')
+              .map((s) => s.trim())
+              .where((s) => s.isNotEmpty)
+              .toList(),
+        );
+      }
+
+      // Process latest jobs to calculate match percentages
+      final processedLatestJobs = latestJobs.map((job) {
+        // If we have a profile, use JobMatchService to calculate percentage
+        if (profileForMatching != null) {
+          try {
+            final jobDetails = JobDetailsResponse.fromJson(job);
+            final matchPercentage = _jobMatchService.calculateMatchPercentage(
+              userProfile: profileForMatching,
+              job: jobDetails,
+            );
+            return {
+              ...job,
+              'matchPercentage': matchPercentage,
+            };
+          } catch (e) {
+            print('[HOME_CUBIT] Error calculating match for job: $e');
+            return {
+              ...job,
+              'matchPercentage': '50% Match',
+            };
+          }
+        }
+        
+        // Default value if no profile available
+        return {
+          ...job,
+          'matchPercentage': '50% Match',
+        };
+      }).toList();
 
       if (isClosed) return;
       emit(
@@ -202,7 +251,7 @@ class HomeCubit extends Cubit<HomeState> {
           totalApplications: appliedJobsCount,
           matchedJobsList: matchedJobs,
           cityJobCounts: cityCounts,
-          latestJobsList: latestJobs,
+          latestJobsList: processedLatestJobs.isNotEmpty ? processedLatestJobs : latestJobs,
         ),
       );
 
@@ -227,6 +276,85 @@ class HomeCubit extends Cubit<HomeState> {
     if (isClosed) return;
     emit(state.copyWith(user: userData));
     print('[HOME_CUBIT] User data updated: ${userData.name}');
+  }
+
+  /// Initialize HomeCubit with pre-loaded data from AppInitializationCubit
+  void initializeWithData({
+    required UserProfileResponse userProfile,
+    required HomeDashboardResponse dashboardData,
+  }) {
+    if (isClosed) return;
+
+    print(
+      '[HOME_CUBIT] Initializing with pre-loaded data for ${userProfile.user.name}',
+    );
+
+    // Update user data first
+    final userData = UserData(
+      id: 'profile_${userProfile.user.name}',
+      name: userProfile.user.name ?? '',
+      email: userProfile.user.email ?? '',
+      emailVerified: userProfile.user.emailVerified,
+      image: userProfile.user.image,
+      userType: userProfile.user.userType ?? 'CANDIDATE',
+      adminRole: userProfile.user.adminRole,
+      jobCount: userProfile.user.jobCount,
+      aiJobApplyCount: userProfile.user.aiJobApplyCount,
+      createdAt: userProfile.user.createdAt,
+      updatedAt: userProfile.user.updatedAt,
+      referralCode: userProfile.user.referralCode,
+      referredBy: userProfile.user.referredBy,
+    );
+
+    // Process featured jobs
+    final featuredJobsForUI = dashboardData.featuredJobs.map(
+      (job) {
+        final matchPercentage = userProfile.candidateProfile != null
+            ? _jobMatchService.calculateMatchPercentage(
+                userProfile: userProfile.candidateProfile!,
+                job: job,
+              )
+            : '50% Match';
+
+        return {
+          'id': job.jobId?.toString() ?? 'unknown',
+          'title': job.jobTitle ?? 'Untitled Position',
+          'company': job.companyName ?? 'Unknown Company',
+          'location': job.location ?? 'Not specified',
+          'employmentType': job.jobType ?? 'Full-time',
+          'level': 'Not specified',
+          'matchPercentage': matchPercentage,
+          'isBookmarked': false,
+          'isPrimary': false,
+        };
+      },
+    ).toList();
+
+    emit(
+      state.copyWith(
+        isLoading: false,
+        user: userData,
+        jobs: featuredJobsForUI,
+        matches: dashboardData.totalMatches,
+        companiesViewed: dashboardData.companiesViewed,
+        matchDistribution: dashboardData.matchDistribution,
+        inReview: dashboardData.inReview,
+        interview: dashboardData.interviews,
+        offer: dashboardData.offers,
+        rejected: dashboardData.rejected,
+        avgMarketSalary: dashboardData.avgMarketSalary ?? 'N/A',
+        totalApplications: dashboardData.totalApplications ?? 0,
+        profileCompletionPercentage: dashboardData.profileCompletionPercentage,
+        applicationSuccessRate: dashboardData.applicationSuccessRate,
+      ),
+    );
+
+    _isDataLoaded = true;
+
+    // Also trigger AI enhanced data load if email is available
+    if (userProfile.user.email != null) {
+      loadAiEnhancedHomeData(email: userProfile.user.email!);
+    }
   }
 
   /// Load trending data from API
@@ -397,6 +525,15 @@ class HomeCubit extends Cubit<HomeState> {
     } catch (e) {
       print('[HOME_CUBIT] Error loading all home data: $e');
       updateError('Failed to load home data: $e');
+    }
+  }
+
+  /// Reset the cubit state (for logout/session change)
+  void reset() {
+    print('[HOME_CUBIT] Resetting home data...');
+    _isDataLoaded = false;
+    if (!isClosed) {
+      emit(const HomeState());
     }
   }
 }

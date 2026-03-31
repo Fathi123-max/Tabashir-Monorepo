@@ -12,7 +12,7 @@ import 'package:tabashir/features/profile/domain/repositories/profile_repository
 import 'package:tabashir/core/network/models/candidate/professional_info_request.dart';
 import 'package:tabashir/core/di/injection.dart';
 import 'package:tabashir/features/home/presentation/cubit/home_cubit.dart';
-import 'package:tabashir/core/network/models/job/ai_client_response.dart';
+import 'package:tabashir/features/home/presentation/cubit/app_initialization_cubit.dart';
 
 part 'profile_state.dart';
 part 'profile_cubit.freezed.dart';
@@ -66,7 +66,6 @@ class ProfileCubit extends Cubit<ProfileState> {
 
     print('[PROFILE_CUBIT] Initializing with shared profile data...');
 
-    // First emit with standard profile data so the UI isn't blocked
     final baseProfile = _mapUserProfileToUI(profileData);
     if (isClosed) return;
     emit(
@@ -80,32 +79,6 @@ class ProfileCubit extends Cubit<ProfileState> {
     _isInitialized = true;
     _isDataLoaded = true;
     print('[PROFILE_CUBIT] ✅ Profile initialized with shared data');
-
-    // Now fetch AI client data in the background and merge it in
-    print('[PROFILE_CUBIT] Fetching AI client data...');
-    try {
-      final aiClientData = await _repository.getClient();
-      if (aiClientData != null && !isClosed) {
-        print('[PROFILE_CUBIT] ✅ AI client data received, merging...');
-        final mergedProfile = _mapUserProfileToUI(
-          profileData,
-          aiClientData: aiClientData,
-        );
-        emit(
-          state.copyWith(
-            status: ProfileStatus.success,
-            profile: mergedProfile,
-            userProfileResponse: profileData,
-          ),
-        );
-        print('[PROFILE_CUBIT] ✅ Profile updated with AI data');
-      } else {
-        print('[PROFILE_CUBIT] ⚠️ No AI client data found (new user or not onboarded)');
-      }
-    } catch (e) {
-      // Non-fatal: AI data fetch failure shouldn't break the profile page
-      print('[PROFILE_CUBIT] ⚠️ Failed to fetch AI client data: $e');
-    }
   }
 
   Future<void> loadProfileData({bool force = false}) async {
@@ -128,17 +101,10 @@ class ProfileCubit extends Cubit<ProfileState> {
     emit(state.copyWith(status: ProfileStatus.loading));
 
     try {
-      // Fetch both standard profile and AI client data in parallel
-      final results = await Future.wait([
-        _repository.getUserProfile(),
-        _repository.getClient(),
-      ]);
+      final response = await _repository.getUserProfile();
 
-      final response = results[0] as UserProfileResponse;
-      final aiClientData = results[1] as AiClientData?;
-
-      // Map to UI format, prioritising AI client data for target fields
-      final profile = _mapUserProfileToUI(response, aiClientData: aiClientData);
+      // Map to UI format
+      final profile = _mapUserProfileToUI(response);
       if (isClosed) return;
       emit(
         state.copyWith(
@@ -207,6 +173,9 @@ class ProfileCubit extends Cubit<ProfileState> {
           profile: null,
         ),
       );
+
+      // Trigger full app state reset
+      getIt<AppInitializationCubit>().reset();
     } catch (e) {
       if (isClosed) return;
       emit(
@@ -237,6 +206,9 @@ class ProfileCubit extends Cubit<ProfileState> {
           profile: null,
         ),
       );
+
+      // Trigger full app state reset
+      getIt<AppInitializationCubit>().reset();
     } on Exception catch (e) {
       if (isClosed) return;
       emit(
@@ -494,20 +466,29 @@ class ProfileCubit extends Cubit<ProfileState> {
     emit(state.copyWith(status: ProfileStatus.loading));
 
     try {
-      final isTargetDetailsUpdate = form.contains('cv') && form.contains('location') && form.contains('jobTitle');
-      
+      final isTargetDetailsUpdate =
+          form.contains('cv') &&
+          form.contains('location') &&
+          form.contains('jobTitle');
+
       if (isTargetDetailsUpdate) {
         final cvValue = form.control('cv').value as String?;
         // Only treat as CV path if it looks like a local file system path (has / or \)
-        final isLocalFile = cvValue != null && (cvValue.contains('/') || cvValue.contains('\\'));
+        final isLocalFile =
+            cvValue != null &&
+            (cvValue.contains('/') || cvValue.contains('\\'));
         final cvPath = isLocalFile ? cvValue : null;
 
         final locStr = form.control('location').value as String? ?? '';
-        final locs = locStr.isNotEmpty ? locStr.split(',').map((e) => e.trim()).toList() : <String>[];
-        
+        final locs = locStr.isNotEmpty
+            ? locStr.split(',').map((e) => e.trim()).toList()
+            : <String>[];
+
         final posStr = form.control('jobTitle').value as String? ?? '';
-        final posList = posStr.isNotEmpty ? posStr.split(',').map((e) => e.trim()).toList() : <String>[];
-        
+        final posList = posStr.isNotEmpty
+            ? posStr.split(',').map((e) => e.trim()).toList()
+            : <String>[];
+
         await _repository.updateClient(
           email: form.control('email').value as String,
           cvPath: cvPath,
@@ -524,8 +505,12 @@ class ProfileCubit extends Cubit<ProfileState> {
         phone: state.profile?.phone ?? '',
         nationality: form.control('nationality').value as String,
         gender: form.control('gender').value as String,
-        jobTitle: form.contains('jobTitle') ? (form.control('jobTitle').value as String? ?? '') : (state.profile?.jobTitle ?? ''),
-        location: form.contains('location') ? (form.control('location').value as String? ?? '') : (state.profile?.location ?? ''),
+        jobTitle: form.contains('jobTitle')
+            ? (form.control('jobTitle').value as String? ?? '')
+            : (state.profile?.jobTitle ?? ''),
+        location: form.contains('location')
+            ? (form.control('location').value as String? ?? '')
+            : (state.profile?.location ?? ''),
         company: state.profile?.company ?? '',
         education: state.profile?.education ?? '',
         linkedin: state.profile?.linkedin ?? '',
@@ -573,15 +558,15 @@ class ProfileCubit extends Cubit<ProfileState> {
     }
   }
 
-
   /// Map comprehensive API user profile to UI format
-  /// [aiClientData] - AI-specific data (locations, positions, nationality, gender) that takes priority
-  ProfileData _mapUserProfileToUI(UserProfileResponse response, {AiClientData? aiClientData}) {
+  ProfileData _mapUserProfileToUI(
+    UserProfileResponse response,
+  ) {
     final user = response.user;
     final candidateProfile = response.candidateProfile;
 
-    // Extract job title from experience or use default
-    final jobTitle = candidateProfile?.experience ?? '';
+    // Extract job title prioritizing jobType (where AI extracted positions go) or experience
+    final jobTitle = candidateProfile?.jobType ?? candidateProfile?.experience ?? '';
 
     // Extract company from recruiter profile (for recruiters) or use empty string
     final company = response.recruiterProfile?.companyName ?? '';
@@ -589,24 +574,23 @@ class ProfileCubit extends Cubit<ProfileState> {
     // Extract education
     final education = candidateProfile?.education ?? '';
 
-    // Extract location and linkedin from candidate profile, but prefer AI client data for location
-    final location = aiClientData?.location ?? candidateProfile?.location ?? '';
+    // Extract location and linkedin from candidate profile
+    final location = candidateProfile?.location ?? '';
     final linkedin = candidateProfile?.linkedin ?? '';
 
-    // Prefer AI client data for nationality and gender if available
-    final nationality = aiClientData?.nationality ?? candidateProfile?.nationality ?? '';
-    final gender = aiClientData?.gender ?? candidateProfile?.gender ?? '';
-
-    // Extract AI-specific target positions from client data
-    final aiPositions = aiClientData?.positions ?? '';
+    // Use candidate profile for nationality and gender (now supported by Python backend)
+    final nationality = candidateProfile?.nationality ?? '';
+    final gender = candidateProfile?.gender ?? '';
 
     // Calculate profile strength based on available data
     var profileStrength = 0;
     if (user.name != null) profileStrength += 15;
     if (user.email != null) profileStrength += 15;
     if (candidateProfile?.phone != null) profileStrength += 10;
-    if (candidateProfile?.nationality != null) profileStrength += 10;
-    if (candidateProfile?.gender != null) profileStrength += 10;
+    if (candidateProfile?.nationality != null &&
+        candidateProfile!.nationality!.isNotEmpty) profileStrength += 10;
+    if (candidateProfile?.gender != null &&
+        candidateProfile!.gender!.isNotEmpty) profileStrength += 10;
     if (candidateProfile?.education != null) profileStrength += 15;
     if (candidateProfile?.experience != null) profileStrength += 15;
     if (candidateProfile?.skills != null &&
@@ -622,7 +606,7 @@ class ProfileCubit extends Cubit<ProfileState> {
 
     return ProfileData(
       name: user.name ?? 'Unknown User',
-      jobTitle: aiPositions.isNotEmpty ? aiPositions : jobTitle,
+      jobTitle: jobTitle,
       location: location,
       email: user.email ?? '',
       phone: candidateProfile?.phone ?? '',
@@ -633,7 +617,7 @@ class ProfileCubit extends Cubit<ProfileState> {
       linkedin: linkedin,
       profileStrength: profileStrength,
       profileImage: profileImage,
-      cvFilename: aiClientData?.filename,
+      cvFilename: candidateProfile?.latestResume?.fileName,
       userType: user.userType,
       subscriptionPlan: response.subscription?.plan,
       subscriptionStatus: response.subscription?.status,
@@ -647,5 +631,15 @@ class ProfileCubit extends Cubit<ProfileState> {
       aiResumeStats: response.aiResumeStats,
       security: response.security,
     );
+  }
+
+  /// Reset the cubit state (for logout/session change)
+  void reset() {
+    print('[PROFILE_CUBIT] Resetting profile data...');
+    _isInitialized = false;
+    _isDataLoaded = false;
+    if (!isClosed) {
+      emit(ProfileState.initial());
+    }
   }
 }

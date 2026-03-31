@@ -280,7 +280,9 @@ class AiJobApplyCubit extends Cubit<AiJobApplyState> {
       } else {
         final file = File(selectedResume.filePath);
         if (!await file.exists()) {
-          throw Exception('Resume file not found. Please re-upload your resume.');
+          throw Exception(
+            'Resume file not found. Please re-upload your resume.',
+          );
         }
         fileBytes = await file.readAsBytes();
       }

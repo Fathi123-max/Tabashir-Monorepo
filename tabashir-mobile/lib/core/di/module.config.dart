@@ -394,6 +394,16 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factory<_i459.JobApplicationsCubit>(
       () => _i459.JobApplicationsCubit(gh<_i860.JobApplicationsRepository>()),
     );
+    gh.factory<_i117.AuthCubit>(
+      () => _i117.AuthCubit(gh<_i787.AuthRepository>()),
+    );
+    gh.factory<_i891.OnboardingWizardCubit>(
+      () => _i891.OnboardingWizardCubit(
+        gh<_i588.AiJobApplyRepository>(),
+        gh<_i36.ProfileCubit>(),
+        gh<_i117.AuthCubit>(),
+      ),
+    );
     gh.factory<_i782.PaymentCubit>(
       () => _i782.PaymentCubit(
         gh<_i315.PaymentRepository>(),
@@ -413,10 +423,6 @@ extension GetItInjectableX on _i174.GetIt {
         initialData: initialData,
       ),
     );
-    gh.factory<_i117.AuthCubit>(
-      () =>
-          _i117.AuthCubit(gh<_i787.AuthRepository>(), gh<_i36.ProfileCubit>()),
-    );
     gh.factory<_i532.JobsCubit>(
       () => _i532.JobsCubit(
         gh<_i973.JobsRepository>(),
@@ -430,13 +436,6 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i588.AiJobApplyRepository>(),
         gh<_i229.ResumeVaultRepository>(),
         gh<_i36.ProfileCubit>(),
-      ),
-    );
-    gh.factory<_i891.OnboardingWizardCubit>(
-      () => _i891.OnboardingWizardCubit(
-        gh<_i588.AiJobApplyRepository>(),
-        gh<_i36.ProfileCubit>(),
-        gh<_i117.AuthCubit>(),
       ),
     );
     return this;

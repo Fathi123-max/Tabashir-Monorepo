@@ -71,7 +71,7 @@ class JobsCubit extends Cubit<JobsState> {
     }
     print('[JOBS_CUBIT] initializeState() called - Will load jobs');
     _isInitialized = true;
-    
+
     if (initialCity != null) {
       emit(
         JobsState.loaded(
@@ -79,7 +79,7 @@ class JobsCubit extends Cubit<JobsState> {
         ),
       );
     }
-    
+
     loadJobs();
   }
 
@@ -322,7 +322,8 @@ class JobsCubit extends Cubit<JobsState> {
       matchPercentage: '90% Match', // TODO: Calculate from backend
       tags: tags,
       skillsMatch: job.academicQualification ?? 'Qualifications pending',
-      isSaved: job.isSaved == true || savedJobIds.contains(job.jobId?.toString()),
+      isSaved:
+          job.isSaved == true || savedJobIds.contains(job.jobId?.toString()),
       isApplied: _appliedJobIds.contains(job.jobId?.toString()),
       jobType: job.jobType ?? 'Full-time',
       experienceLevel: job.experience ?? 'Not specified',
@@ -388,8 +389,6 @@ class JobsCubit extends Cubit<JobsState> {
       loadJobs();
     }
   }
-
-
 
   void updateSearchQuery(String query) {
     if (state is JobsStateLoaded) {

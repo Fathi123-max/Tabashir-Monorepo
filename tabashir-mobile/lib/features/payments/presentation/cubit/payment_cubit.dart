@@ -40,7 +40,7 @@ class PaymentCubit extends Cubit<PaymentState> {
 
     try {
       final response = await _repository.createPaymentIntent(request: request);
-      
+
       final paymentData = response.data;
       if (paymentData != null) {
         // 1. Set Publishable Key dynamically from backend

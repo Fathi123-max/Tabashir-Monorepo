@@ -72,6 +72,17 @@ Map<String, dynamic> _$UserProfileResponseToJson(
   'security': instance.security,
 };
 
+_ResumeInfo _$ResumeInfoFromJson(Map<String, dynamic> json) => _ResumeInfo(
+  fileName: json['fileName'] as String?,
+  fileUrl: json['fileUrl'] as String?,
+);
+
+Map<String, dynamic> _$ResumeInfoToJson(_ResumeInfo instance) =>
+    <String, dynamic>{
+      'fileName': instance.fileName,
+      'fileUrl': instance.fileUrl,
+    };
+
 _UserData _$UserDataFromJson(Map<String, dynamic> json) => _UserData(
   id: json['id'] as String,
   name: json['name'] as String?,
@@ -168,6 +179,9 @@ _CandidateProfileData _$CandidateProfileDataFromJson(
   location: json['location'] as String?,
   linkedin: json['linkedin'] as String?,
   onboardingCompleted: json['onboardingCompleted'] as bool?,
+  latestResume: json['latestResume'] == null
+      ? null
+      : ResumeInfo.fromJson(json['latestResume'] as Map<String, dynamic>),
   createdAt: json['createdAt'] as String?,
   updatedAt: json['updatedAt'] as String?,
 );
@@ -190,6 +204,7 @@ Map<String, dynamic> _$CandidateProfileDataToJson(
   'location': instance.location,
   'linkedin': instance.linkedin,
   'onboardingCompleted': instance.onboardingCompleted,
+  'latestResume': instance.latestResume,
   'createdAt': instance.createdAt,
   'updatedAt': instance.updatedAt,
 };

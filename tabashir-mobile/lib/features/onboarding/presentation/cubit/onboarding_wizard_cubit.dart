@@ -39,12 +39,14 @@ class OnboardingWizardCubit extends Cubit<OnboardingWizardState> {
 
       if (result != null && result.files.single.bytes != null) {
         final file = result.files.single;
-        emit(state.copyWith(
-          fileBytes: file.bytes,
-          fileName: file.name,
-          isLoading: true,
-          errorMessage: null,
-        ));
+        emit(
+          state.copyWith(
+            fileBytes: file.bytes,
+            fileName: file.name,
+            isLoading: true,
+            errorMessage: null,
+          ),
+        );
 
         try {
           final suggestions = await _repository.suggestJobTitles(
@@ -52,24 +54,30 @@ class OnboardingWizardCubit extends Cubit<OnboardingWizardState> {
             fileName: file.name,
           );
 
-          emit(state.copyWith(
-            suggestedRoles: suggestions,
-            isLoading: false,
-            currentStep: 2, // Move to roles step
-          ));
+          emit(
+            state.copyWith(
+              suggestedRoles: suggestions,
+              isLoading: false,
+              currentStep: 2, // Move to roles step
+            ),
+          );
         } catch (e) {
-          emit(state.copyWith(
-            isLoading: false,
-            errorMessage: 'Failed to suggest job titles: ${e.toString()}',
-            currentStep: 2, // Still move to roles step
-          ));
+          emit(
+            state.copyWith(
+              isLoading: false,
+              errorMessage: 'Failed to suggest job titles: ${e.toString()}',
+              currentStep: 2, // Still move to roles step
+            ),
+          );
         }
       }
     } catch (e) {
-      emit(state.copyWith(
-        isLoading: false,
-        errorMessage: e.toString(),
-      ));
+      emit(
+        state.copyWith(
+          isLoading: false,
+          errorMessage: e.toString(),
+        ),
+      );
     }
   }
 
@@ -95,29 +103,33 @@ class OnboardingWizardCubit extends Cubit<OnboardingWizardState> {
 
   void addCustomRole(String role) {
     if (role.trim().isEmpty) return;
-    
+
     final formattedRole = role.trim();
     final suggested = List<String>.from(state.suggestedRoles);
     if (!suggested.contains(formattedRole)) {
       suggested.insert(0, formattedRole);
     }
-    
+
     final selected = List<String>.from(state.selectedRoles);
     if (!selected.contains(formattedRole)) {
       selected.add(formattedRole);
     }
-    
-    emit(state.copyWith(
-      suggestedRoles: suggested,
-      selectedRoles: selected,
-    ));
+
+    emit(
+      state.copyWith(
+        suggestedRoles: suggested,
+        selectedRoles: selected,
+      ),
+    );
   }
 
   void updatePersonalDetails({String? nationality, String? gender}) {
-    emit(state.copyWith(
-      nationality: nationality ?? state.nationality,
-      gender: gender ?? state.gender,
-    ));
+    emit(
+      state.copyWith(
+        nationality: nationality ?? state.nationality,
+        gender: gender ?? state.gender,
+      ),
+    );
   }
 
   void nextStep() {
@@ -138,7 +150,9 @@ class OnboardingWizardCubit extends Cubit<OnboardingWizardState> {
       return;
     }
 
-    emit(state.copyWith(isProcessing: true, errorMessage: null, currentStep: 5));
+    emit(
+      state.copyWith(isProcessing: true, errorMessage: null, currentStep: 5),
+    );
 
     try {
       // Try to get email from profile
@@ -160,10 +174,13 @@ class OnboardingWizardCubit extends Cubit<OnboardingWizardState> {
       }
 
       if (email.isEmpty) {
-        emit(state.copyWith(
-          isProcessing: false,
-          errorMessage: 'Could not find your email. Please try logging in again.',
-        ));
+        emit(
+          state.copyWith(
+            isProcessing: false,
+            errorMessage:
+                'Could not find your email. Please try logging in again.',
+          ),
+        );
         return;
       }
 
@@ -176,15 +193,19 @@ class OnboardingWizardCubit extends Cubit<OnboardingWizardState> {
         nationality: state.nationality,
         gender: state.gender,
       );
-      emit(state.copyWith(
-        isProcessing: false,
-        submissionResult: result,
-      ));
+      emit(
+        state.copyWith(
+          isProcessing: false,
+          submissionResult: result,
+        ),
+      );
     } catch (e) {
-      emit(state.copyWith(
-        isProcessing: false,
-        errorMessage: e.toString(),
-      ));
+      emit(
+        state.copyWith(
+          isProcessing: false,
+          errorMessage: e.toString(),
+        ),
+      );
     }
   }
 }

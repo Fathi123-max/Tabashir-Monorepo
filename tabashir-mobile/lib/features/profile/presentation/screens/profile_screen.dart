@@ -145,7 +145,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             icon: Container(
                               padding: EdgeInsets.all(8.w),
                               decoration: BoxDecoration(
-                                color: theme.colorScheme.primary.withOpacity(0.1),
+                                color: theme.colorScheme.primary.withOpacity(
+                                  0.1,
+                                ),
                                 borderRadius: BorderRadius.circular(12.r),
                               ),
                               child: Icon(
@@ -365,14 +367,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   Widget _sectionHeader(String title, ThemeData theme) => Padding(
-        padding: EdgeInsets.only(left: 4.w, bottom: 4.h),
-        child: Text(
-          title,
-          style: theme.textTheme.titleSmall?.copyWith(
-            fontWeight: FontWeight.bold,
-            color: theme.colorScheme.onSurface.withOpacity(0.5),
-            letterSpacing: 1.2,
-          ),
-        ),
-      );
+    padding: EdgeInsets.only(left: 4.w, bottom: 4.h),
+    child: Text(
+      title,
+      style: theme.textTheme.titleSmall?.copyWith(
+        fontWeight: FontWeight.bold,
+        color: theme.colorScheme.onSurface.withOpacity(0.5),
+        letterSpacing: 1.2,
+      ),
+    ),
+  );
 }

@@ -251,7 +251,6 @@ class _JobsViewState extends State<JobsView> {
     var activeFilterCount = 0;
 
     if (state is JobsStateLoaded) {
-
       jobs = state.jobs;
       isLoadingMore = state.isLoadingMore;
       hasActiveFilters =
@@ -295,7 +294,6 @@ class _JobsViewState extends State<JobsView> {
                   ),
 
                   // AI Banner (if shown)
-
 
                   // Jobs List or Empty State
                   if (jobs.isEmpty)
@@ -465,8 +463,6 @@ class _JobsViewState extends State<JobsView> {
                     },
                   ),
                 ),
-
-
               ],
             ),
           ),
@@ -544,8 +540,6 @@ class _JobsViewState extends State<JobsView> {
       ],
     ),
   );
-
-
 
   // Card Style Option Widget
   Widget _CardStyleOption({

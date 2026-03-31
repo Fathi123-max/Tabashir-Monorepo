@@ -245,7 +245,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                         formControlName: 'cv',
                         builder: (context, control, child) {
                           final value = control.value ?? '';
-                          final isLocalFile = value.contains('/') || value.contains('\\');
+                          final isLocalFile =
+                              value.contains('/') || value.contains('\\');
                           final hasFile = value.isNotEmpty;
 
                           return Column(
@@ -254,39 +255,66 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                               Container(
                                 padding: EdgeInsets.all(12.w),
                                 decoration: BoxDecoration(
-                                  color: theme.colorScheme.surfaceContainerHighest.withValues(alpha: 0.2),
+                                  color: theme
+                                      .colorScheme
+                                      .surfaceContainerHighest
+                                      .withValues(alpha: 0.2),
                                   borderRadius: BorderRadius.circular(12.r),
                                   border: Border.all(
-                                    color: theme.colorScheme.outlineVariant.withValues(alpha: 0.3),
+                                    color: theme.colorScheme.outlineVariant
+                                        .withValues(alpha: 0.3),
                                   ),
                                 ),
                                 child: Row(
                                   children: [
                                     Icon(
-                                      hasFile ? Icons.description : Icons.upload_file,
-                                      color: hasFile ? theme.colorScheme.primary : theme.colorScheme.onSurfaceVariant,
+                                      hasFile
+                                          ? Icons.description
+                                          : Icons.upload_file,
+                                      color: hasFile
+                                          ? theme.colorScheme.primary
+                                          : theme.colorScheme.onSurfaceVariant,
                                       size: 24.sp,
                                     ),
                                     SizedBox(width: 12.w),
                                     Expanded(
                                       child: Column(
-                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
                                         children: [
                                           Text(
-                                            hasFile ? value.split('/').last : 'No resume uploaded'.tr(),
-                                            style: theme.textTheme.bodyMedium?.copyWith(
-                                              fontWeight: hasFile ? FontWeight.bold : FontWeight.normal,
-                                              color: hasFile ? theme.colorScheme.onSurface : theme.colorScheme.onSurfaceVariant,
-                                            ),
+                                            hasFile
+                                                ? value.split('/').last
+                                                : 'No resume uploaded'.tr(),
+                                            style: theme.textTheme.bodyMedium
+                                                ?.copyWith(
+                                                  fontWeight: hasFile
+                                                      ? FontWeight.bold
+                                                      : FontWeight.normal,
+                                                  color: hasFile
+                                                      ? theme
+                                                            .colorScheme
+                                                            .onSurface
+                                                      : theme
+                                                            .colorScheme
+                                                            .onSurfaceVariant,
+                                                ),
                                             maxLines: 1,
                                             overflow: TextOverflow.ellipsis,
                                           ),
                                           if (hasFile)
                                             Text(
-                                              isLocalFile ? 'New file selected'.tr() : 'Current resume'.tr(),
-                                              style: theme.textTheme.labelSmall?.copyWith(
-                                                color: isLocalFile ? Colors.orange : theme.colorScheme.primary,
-                                              ),
+                                              isLocalFile
+                                                  ? 'New file selected'.tr()
+                                                  : 'Current resume'.tr(),
+                                              style: theme.textTheme.labelSmall
+                                                  ?.copyWith(
+                                                    color: isLocalFile
+                                                        ? Colors.orange
+                                                        : theme
+                                                              .colorScheme
+                                                              .primary,
+                                                  ),
                                             ),
                                         ],
                                       ),
@@ -304,12 +332,24 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                               SizedBox(
                                 width: double.infinity,
                                 child: OutlinedButton.icon(
-                                  onPressed: () => _pickCV(control as FormControl<String>),
-                                  icon: Icon(Icons.add_circle_outline, size: 18.sp),
-                                  label: Text(hasFile ? 'Replace Resume'.tr() : 'Upload Resume'.tr()),
+                                  onPressed: () =>
+                                      _pickCV(control as FormControl<String>),
+                                  icon: Icon(
+                                    Icons.add_circle_outline,
+                                    size: 18.sp,
+                                  ),
+                                  label: Text(
+                                    hasFile
+                                        ? 'Replace Resume'.tr()
+                                        : 'Upload Resume'.tr(),
+                                  ),
                                   style: OutlinedButton.styleFrom(
-                                    padding: EdgeInsets.symmetric(vertical: 12.h),
-                                    side: BorderSide(color: theme.colorScheme.primary),
+                                    padding: EdgeInsets.symmetric(
+                                      vertical: 12.h,
+                                    ),
+                                    side: BorderSide(
+                                      color: theme.colorScheme.primary,
+                                    ),
                                     shape: RoundedRectangleBorder(
                                       borderRadius: BorderRadius.circular(12.r),
                                     ),
@@ -333,16 +373,16 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   }
 
   Widget _sectionHeader(String title, ThemeData theme) => Padding(
-        padding: EdgeInsets.only(left: 4.w, bottom: 8.h),
-        child: Text(
-          title.toUpperCase(),
-          style: theme.textTheme.labelMedium?.copyWith(
-            fontWeight: FontWeight.bold,
-            color: theme.colorScheme.onSurface.withValues(alpha: 0.4),
-            letterSpacing: 1.2,
-          ),
-        ),
-      );
+    padding: EdgeInsets.only(left: 4.w, bottom: 8.h),
+    child: Text(
+      title.toUpperCase(),
+      style: theme.textTheme.labelMedium?.copyWith(
+        fontWeight: FontWeight.bold,
+        color: theme.colorScheme.onSurface.withValues(alpha: 0.4),
+        letterSpacing: 1.2,
+      ),
+    ),
+  );
 
   Widget _buildSectionCard(ThemeData theme, {required List<Widget> children}) {
     return Container(
@@ -370,7 +410,9 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       labelText: label,
       prefixIcon: Icon(icon, size: 20.sp),
       filled: true,
-      fillColor: theme.colorScheme.surfaceContainerHighest.withValues(alpha: 0.3),
+      fillColor: theme.colorScheme.surfaceContainerHighest.withValues(
+        alpha: 0.3,
+      ),
       border: OutlineInputBorder(
         borderRadius: BorderRadius.circular(12.r),
         borderSide: BorderSide.none,
@@ -406,14 +448,14 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
 
   /// Create a basic form with empty/default values
   FormGroup _createBasicForm() => fb.group(<String, Object>{
-        'name': FormControl<String>(value: ''),
-        'email': FormControl<String>(value: ''),
-        'nationality': FormControl<String>(value: ''),
-        'gender': FormControl<String>(value: ''),
-        'location': FormControl<String>(value: ''),
-        'jobTitle': FormControl<String>(value: ''),
-        'cv': FormControl<String>(value: ''),
-      });
+    'name': FormControl<String>(value: ''),
+    'email': FormControl<String>(value: ''),
+    'nationality': FormControl<String>(value: ''),
+    'gender': FormControl<String>(value: ''),
+    'location': FormControl<String>(value: ''),
+    'jobTitle': FormControl<String>(value: ''),
+    'cv': FormControl<String>(value: ''),
+  });
 
   /// Clean "Not specified" values to empty strings
   String _cleanValue(String? value) {

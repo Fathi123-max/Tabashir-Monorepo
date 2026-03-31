@@ -4,8 +4,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:tabashir/core/di/injection.dart';
-import 'package:tabashir/features/ai_job_apply/presentation/cubit/ai_job_apply_cubit.dart';
-import 'package:tabashir/features/ai_job_apply/presentation/cubit/ai_job_apply_state.dart';
 import 'package:tabashir/features/home/presentation/cubit/home_cubit.dart';
 import 'package:tabashir/features/home/presentation/cubit/home_state.dart';
 import 'package:tabashir/features/home/presentation/widgets/home_job_card_widget.dart';
@@ -22,19 +20,16 @@ class HomeJobCardsHorizontalListWidget extends StatefulWidget {
 
 class _HomeJobCardsHorizontalListWidgetState
     extends State<HomeJobCardsHorizontalListWidget> {
-  late final AiJobApplyCubit _aiJobApplyCubit;
   late final ProfileCubit _profileCubit;
   late final JobsRepository _jobsRepository;
 
   // Loading states
-  final Set<String> _applyingJobs = <String>{};
   Set<String> _appliedJobs = <String>{};
   bool _isFetchingAppliedJobs = false;
 
   @override
   void initState() {
     super.initState();
-    _aiJobApplyCubit = getIt<AiJobApplyCubit>();
     _profileCubit = getIt<ProfileCubit>();
     _jobsRepository = getIt<JobsRepository>();
 
@@ -78,165 +73,56 @@ class _HomeJobCardsHorizontalListWidgetState
     }
   }
 
-  // Apply to job method
-  Future<void> _applyToJob(String jobId) async {
-    if (_appliedJobs.contains(jobId)) {
-      _showErrorSnackBar('You have already applied to this job.');
-      return;
-    }
-    if (_applyingJobs.contains(jobId)) {
-      return; // Already applying
-    }
-
-    setState(() {
-      _applyingJobs.add(jobId);
-    });
-
-    try {
-      // Get user email from profile
-      final profileState = _profileCubit.state;
-
-      // Debug logging
-      print('[HOME_WIDGET] Profile status: ${profileState.status}');
-      print('[HOME_WIDGET] Profile data: ${profileState.profile}');
-      print('[HOME_WIDGET] Email: ${profileState.profile?.email}');
-
-      // If profile is not loaded, try to load it
-      if (profileState.status == ProfileStatus.initial) {
-        print('[HOME_WIDGET] Profile not loaded, loading now...');
-        await _profileCubit.loadProfileData();
-        // Wait a bit for the load to complete
-        await Future<void>.delayed(const Duration(milliseconds: 500));
-
-        // Check again after loading
-        final updatedState = _profileCubit.state;
-        print('[HOME_WIDGET] Updated profile status: ${updatedState.status}');
-        print('[HOME_WIDGET] Updated profile data: ${updatedState.profile}');
-      }
-
-      if (profileState.status != ProfileStatus.success ||
-          profileState.profile?.email == null ||
-          profileState.profile!.email.isEmpty) {
-        _showErrorSnackBar('User email not found. Please update your profile.');
-        return;
-      }
-
-      final email = profileState.profile!.email;
-
-      // Use AiJobApplyCubit to apply with default resume
-      await _aiJobApplyCubit.applyToSpecificJob(
-        jobId: jobId,
-        email: email,
-      );
-
-      setState(() {
-        _appliedJobs.add(jobId);
-      });
-    } catch (e) {
-      _showErrorSnackBar(e.toString());
-    } finally {
-      setState(() {
-        _applyingJobs.remove(jobId);
-      });
-    }
-  }
-
-  void _showErrorSnackBar(String message) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(message),
-        backgroundColor: Colors.red,
-      ),
-    );
-  }
-
   @override
-  Widget build(BuildContext context) => MultiBlocProvider(
-    providers: [
-      BlocProvider.value(value: _aiJobApplyCubit),
-      BlocProvider.value(value: _profileCubit),
-    ],
-    child: MultiBlocListener(
-      listeners: [
-        // Listen to AI job apply state for application feedback
-        BlocListener<AiJobApplyCubit, AiJobApplyState>(
-          listener: (context, state) {
-            if (state.submissionResult != null) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                  content: Text('Application submitted successfully!'),
-                  backgroundColor: Colors.green,
-                ),
-              );
-            } else if (state.submissionError.isNotEmpty) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text(state.submissionError),
-                  backgroundColor: Colors.red,
+  Widget build(BuildContext context) => BlocProvider.value(
+        value: _profileCubit,
+        child: BlocBuilder<HomeCubit, HomeState>(
+          builder: (context, homeState) {
+            // Get matched jobs from home state (fetched from AI API)
+            final matchedJobs = homeState.matchedJobsList;
+
+            // Show empty state if no jobs
+            if (matchedJobs.isEmpty) {
+              return Container(
+                padding: EdgeInsets.all(16.w),
+                child: Center(
+                  child: Text(
+                    'No AI matches available yet'.tr(),
+                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                          color: Theme.of(context).colorScheme.onSurfaceVariant,
+                        ),
+                  ),
                 ),
               );
             }
-          },
-        ),
-      ],
-      child: BlocBuilder<HomeCubit, HomeState>(
-        builder: (context, homeState) {
-          // Get matched jobs from home state (fetched from AI API)
-          final matchedJobs = homeState.matchedJobsList;
 
-          // Show empty state if no jobs
-          if (matchedJobs.isEmpty) {
-            return Container(
-              padding: EdgeInsets.all(16.w),
-              child: Center(
-                child: Text(
-                  'No AI matches available yet'.tr(),
-                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    color: Theme.of(context).colorScheme.onSurfaceVariant,
-                  ),
-                ),
-              ),
-            );
-          }
+            return SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: Row(
+                children: matchedJobs.map((job) {
+                  const isPrimary = false;
 
-          return SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            child: Row(
-              children: matchedJobs.asMap().entries.map((entry) {
-                final index = entry.key;
-                final job = entry.value;
-                final isPrimary =
-                    index <
-                    2; // First 2 cards show "Apply Now", rest show "View Details"
-
-                return HomeJobCardWidget(
-                  title: job.title,
-                  company: job.company,
-                  employmentType: 'Full-time', // Add to model if needed
-                  level: 'Not specified',
-                  matchPercentage: '${job.matchPercentage}%',
-                  isPrimary: isPrimary,
-                  jobId: job.id,
-                  onApplyTap: () {
-                    if (isPrimary) {
-                      // First 2 cards: Apply directly
-                      _applyToJob(job.id);
-                    } else {
-                      // Other cards: Navigate to job details
-                      context.pushNamed(
+                  return HomeJobCardWidget(
+                    title: job.title,
+                    company: job.company,
+                    employmentType: 'Full-time', // Add to model if needed
+                    level: 'Not specified',
+                    matchPercentage: '${job.matchPercentage}%',
+                    isPrimary: isPrimary,
+                    jobId: job.id,
+                    onApplyTap: () async {
+                      // All cards: Navigate to job details
+                      await context.pushNamed(
                         'job-detail-screen',
                         pathParameters: {'jobId': job.id},
                       );
-                    }
-                  },
-                  isApplied: _appliedJobs.contains(job.id),
-                  isLoading: _applyingJobs.contains(job.id),
-                );
-              }).toList(),
-            ),
-          );
-        },
-      ),
-    ),
-  );
+                    },
+                    isApplied: _appliedJobs.contains(job.id),
+                  );
+                }).toList(),
+              ),
+            );
+          },
+        ),
+      );
 }

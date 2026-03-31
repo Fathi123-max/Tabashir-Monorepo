@@ -246,10 +246,10 @@ class ProfileRepositoryImpl implements ProfileRepository {
     print('\n\n########## [PROFILE_REPO] UPDATE CLIENT CALLED ##########');
     try {
       print('[PROFILE_REPO] Calling TabashirApiService.updateClient()...');
-      final file = cvPath != null && cvPath.isNotEmpty 
-          ? await MultipartFile.fromFile(cvPath) 
+      final file = cvPath != null && cvPath.isNotEmpty
+          ? await MultipartFile.fromFile(cvPath)
           : null;
-      
+
       final response = await _tabashirApiService.updateClient(
         email,
         file,

@@ -15,7 +15,7 @@ class HomeExploreCitiesGridWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (cityJobCounts.isEmpty) return const SizedBox.shrink();
-    
+
     return Wrap(
       spacing: AppTheme.spacingMd.w,
       runSpacing: AppTheme.spacingMd.h,
@@ -39,9 +39,13 @@ class HomeExploreCitiesGridWidget extends StatelessWidget {
               ),
             ),
             child: Row(
-               mainAxisSize: MainAxisSize.min,
+              mainAxisSize: MainAxisSize.min,
               children: [
-                Icon(Icons.location_city, size: 16.sp, color: AppTheme.primaryColor),
+                Icon(
+                  Icons.location_city,
+                  size: 16.sp,
+                  color: AppTheme.primaryColor,
+                ),
                 SizedBox(width: AppTheme.spacingSm.w),
                 Text(
                   cityData.city,

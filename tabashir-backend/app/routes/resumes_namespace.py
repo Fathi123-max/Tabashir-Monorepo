@@ -286,6 +286,26 @@ class ResumeDownload(Resource):
         )
 
 
+@resumes_ns.route('/download/<filename>')
+class ResumeDownloadByFilename(Resource):
+    @resumes_ns.doc(security='Bearer', description='Download a resume by filename (for AI fallbacks)')
+    @jwt_required
+    def get(self, filename):
+        """Download a resume file by its unique filename"""
+        from werkzeug.utils import secure_filename
+        filename = secure_filename(filename)
+        file_path = Config.CV_STORAGE_PATH / filename
+        
+        if not os.path.exists(file_path):
+            return {"success": False, "message": "File not found on server"}, HTTPStatus.NOT_FOUND
+            
+        return send_file(
+            str(file_path),
+            as_attachment=True,
+            download_name=filename
+        )
+
+
 @resumes_ns.route('/<resume_id>/duplicate')
 class ResumeDuplicate(Resource):
     @resumes_ns.doc(security='Bearer')
@@ -1194,6 +1214,16 @@ class ClientProfile(Resource):
             print(f"[CLIENT_PROFILE] Looking up client data for: {email}")
             client_data = get_client_data(email)
             print(f"[CLIENT_PROFILE] client_data result: {client_data}")
+
+            # Lazy Sync: If AI data is incomplete, try to sync from existing resume
+            if client_data and (not client_data.get('nationality') or not client_data.get('gender')):
+                user_id = getattr(request, 'user_id', None)
+                if user_id:
+                    print(f"[CLIENT_PROFILE] AI data incomplete. Triggering lazy sync for {user_id}...")
+                    synced = ProfileSyncService.sync_from_user_id(user_id)
+                    if synced:
+                        print(f"[CLIENT_PROFILE] Lazy sync successful, re-fetching client data")
+                        client_data = get_client_data(email)
 
             if not client_data:
                 print(f"[CLIENT_PROFILE] ❌ Error fetching client data for email: {email}")

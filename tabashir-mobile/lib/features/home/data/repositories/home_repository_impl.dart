@@ -322,7 +322,9 @@ class HomeRepositoryImpl implements HomeRepository {
   @override
   Future<int> getAppliedJobsCount({required String email}) async {
     try {
-      final response = await _tabashirApiService.getAppliedJobsCount(EmailModel(email: email));
+      final response = await _tabashirApiService.getAppliedJobsCount(
+        EmailModel(email: email),
+      );
       return response.data.appliedJobsCount;
     } catch (e) {
       print('Error getting applied jobs count: $e');
@@ -358,10 +360,14 @@ class HomeRepositoryImpl implements HomeRepository {
     try {
       final response = await _tabashirApiService.getJobsCountByCity('');
       final counts = response.data.data;
-      return counts.map((c) => CityJobCount(
-        city: c.vacancyCity,
-        count: c.count,
-      )).toList();
+      return counts
+          .map(
+            (c) => CityJobCount(
+              city: c.vacancyCity,
+              count: c.count,
+            ),
+          )
+          .toList();
     } catch (e) {
       print('Error getting city counts: $e');
       return [];
@@ -374,7 +380,10 @@ class HomeRepositoryImpl implements HomeRepository {
     int limit = 10,
   }) async {
     try {
-      final response = await _tabashirApiService.getJobs(page: page, limit: limit);
+      final response = await _tabashirApiService.getJobs(
+        page: page,
+        limit: limit,
+      );
       final jobs = response.data.jobs ?? [];
       return jobs.map((j) => j.toJson()).toList();
     } catch (e) {
