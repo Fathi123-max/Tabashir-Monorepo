@@ -12,6 +12,7 @@ sealed class SendLinkedInEmailRequest with _$SendLinkedInEmailRequest {
 
     /// Recipient name
     @JsonKey(name: 'recipient_name') required String recipientName,
+    @JsonKey(name: 'payment_intent_id') required String paymentIntentId,
   }) = _SendLinkedInEmailRequest;
 
   factory SendLinkedInEmailRequest.fromJson(Map<String, dynamic> json) =>

@@ -4,7 +4,7 @@ import 'package:flutter/foundation.dart';
 
 import 'package:flutter_stripe/flutter_stripe.dart';
 
-import '../constants/stripe_constants.dart';
+// import '../constants/stripe_constants.dart';
 
 /// Service for handling Stripe payment operations
 /// Provides methods for PaymentSheet, CardField, and native payment methods
@@ -16,8 +16,8 @@ class StripeService {
   /// Initialize Stripe with publishable key
   Future<void> _initializeStripe() async {
     try {
-      // Set publishable key
-      Stripe.publishableKey = StripeConstants.publishableKey;
+      // Set publishable key if available, otherwise will be set dynamically via setPublishableKey
+      // Stripe.publishableKey = StripeConstants.publishableKey;
 
       // Optional: Set merchant identifier for Apple Pay
       if (defaultTargetPlatform == TargetPlatform.iOS) {
@@ -27,6 +27,11 @@ class StripeService {
       debugPrint('Error initializing Stripe: $e');
       rethrow;
     }
+  }
+
+  /// Set publishable key dynamically
+  void setPublishableKey(String key) {
+    Stripe.publishableKey = key;
   }
 
   /// Initialize Payment Sheet

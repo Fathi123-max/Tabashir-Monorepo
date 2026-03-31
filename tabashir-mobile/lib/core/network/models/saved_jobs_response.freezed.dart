@@ -212,11 +212,11 @@ return $default(_that.success,_that.savedJobs,_that.count,_that.message,_that.er
 @JsonSerializable()
 
 class _SavedJobsResponse implements SavedJobsResponse {
-  const _SavedJobsResponse({required this.success, final  List<dynamic> savedJobs = const [], this.count, this.message, this.error}): _savedJobs = savedJobs;
+  const _SavedJobsResponse({this.success = false, final  List<dynamic> savedJobs = const [], this.count, this.message, this.error}): _savedJobs = savedJobs;
   factory _SavedJobsResponse.fromJson(Map<String, dynamic> json) => _$SavedJobsResponseFromJson(json);
 
 /// Success status
-@override final  bool success;
+@override@JsonKey() final  bool success;
 /// List of saved job IDs or objects (from GET operations)
  final  List<dynamic> _savedJobs;
 /// List of saved job IDs or objects (from GET operations)

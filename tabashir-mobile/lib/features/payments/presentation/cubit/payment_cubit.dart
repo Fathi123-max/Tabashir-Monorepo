@@ -17,7 +17,7 @@ part 'payment_state.dart';
 part 'payment_cubit.freezed.dart';
 part 'payment_cubit.g.dart';
 
-@Injectable(as: Cubit)
+@injectable
 class PaymentCubit extends Cubit<PaymentState> {
   PaymentCubit(
     this._repository,
@@ -40,13 +40,32 @@ class PaymentCubit extends Cubit<PaymentState> {
 
     try {
       final response = await _repository.createPaymentIntent(request: request);
+      
+      final paymentData = response.data;
+      if (paymentData != null) {
+        // 1. Set Publishable Key dynamically from backend
+        if (paymentData.publishableKey != null) {
+          _stripeService.setPublishableKey(paymentData.publishableKey!);
+        }
 
-      emit(
-        state.copyWith(
-          status: PaymentStatus.success,
-          paymentIntent: response,
-        ),
-      );
+        // 2. Initialize Payment Sheet
+        await _stripeService.initPaymentSheet(
+          customerId: paymentData.customer ?? '',
+          customerEphemeralKeySecret: paymentData.ephemeralKey ?? '',
+          paymentIntentClientSecret: paymentData.clientSecret ?? '',
+          merchantDisplayName: 'Tabashir',
+        );
+
+        emit(
+          state.copyWith(
+            status: PaymentStatus.success,
+            paymentIntent: response,
+            paymentSheetInitialized: true,
+          ),
+        );
+      } else {
+        throw Exception('Payment data is null');
+      }
     } catch (e) {
       emit(
         state.copyWith(

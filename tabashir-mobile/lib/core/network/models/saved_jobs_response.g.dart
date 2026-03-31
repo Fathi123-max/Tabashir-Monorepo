@@ -8,7 +8,7 @@ part of 'saved_jobs_response.dart';
 
 _SavedJobsResponse _$SavedJobsResponseFromJson(Map<String, dynamic> json) =>
     _SavedJobsResponse(
-      success: json['success'] as bool,
+      success: json['success'] as bool? ?? false,
       savedJobs: json['savedJobs'] as List<dynamic>? ?? const [],
       count: (json['count'] as num?)?.toInt(),
       message: json['message'] as String?,

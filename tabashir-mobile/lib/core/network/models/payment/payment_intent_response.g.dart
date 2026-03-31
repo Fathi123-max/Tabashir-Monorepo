@@ -31,6 +31,9 @@ _PaymentIntentData _$PaymentIntentDataFromJson(Map<String, dynamic> json) =>
       amount: (json['amount'] as num?)?.toDouble(),
       currency: json['currency'] as String?,
       status: json['status'] as String?,
+      ephemeralKey: json['ephemeralKey'] as String?,
+      customer: json['customer'] as String?,
+      publishableKey: json['publishableKey'] as String?,
     );
 
 Map<String, dynamic> _$PaymentIntentDataToJson(_PaymentIntentData instance) =>
@@ -40,4 +43,7 @@ Map<String, dynamic> _$PaymentIntentDataToJson(_PaymentIntentData instance) =>
       'amount': instance.amount,
       'currency': instance.currency,
       'status': instance.status,
+      'ephemeralKey': instance.ephemeralKey,
+      'customer': instance.customer,
+      'publishableKey': instance.publishableKey,
     };

@@ -302,7 +302,7 @@ $PaymentIntentDataCopyWith<$Res>? get data {
 /// @nodoc
 mixin _$PaymentIntentData {
 
- String? get clientSecret; String? get paymentIntentId; double? get amount; String? get currency; String? get status;
+ String? get clientSecret; String? get paymentIntentId; double? get amount; String? get currency; String? get status; String? get ephemeralKey; String? get customer; String? get publishableKey;
 /// Create a copy of PaymentIntentData
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -315,16 +315,16 @@ $PaymentIntentDataCopyWith<PaymentIntentData> get copyWith => _$PaymentIntentDat
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is PaymentIntentData&&(identical(other.clientSecret, clientSecret) || other.clientSecret == clientSecret)&&(identical(other.paymentIntentId, paymentIntentId) || other.paymentIntentId == paymentIntentId)&&(identical(other.amount, amount) || other.amount == amount)&&(identical(other.currency, currency) || other.currency == currency)&&(identical(other.status, status) || other.status == status));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is PaymentIntentData&&(identical(other.clientSecret, clientSecret) || other.clientSecret == clientSecret)&&(identical(other.paymentIntentId, paymentIntentId) || other.paymentIntentId == paymentIntentId)&&(identical(other.amount, amount) || other.amount == amount)&&(identical(other.currency, currency) || other.currency == currency)&&(identical(other.status, status) || other.status == status)&&(identical(other.ephemeralKey, ephemeralKey) || other.ephemeralKey == ephemeralKey)&&(identical(other.customer, customer) || other.customer == customer)&&(identical(other.publishableKey, publishableKey) || other.publishableKey == publishableKey));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,clientSecret,paymentIntentId,amount,currency,status);
+int get hashCode => Object.hash(runtimeType,clientSecret,paymentIntentId,amount,currency,status,ephemeralKey,customer,publishableKey);
 
 @override
 String toString() {
-  return 'PaymentIntentData(clientSecret: $clientSecret, paymentIntentId: $paymentIntentId, amount: $amount, currency: $currency, status: $status)';
+  return 'PaymentIntentData(clientSecret: $clientSecret, paymentIntentId: $paymentIntentId, amount: $amount, currency: $currency, status: $status, ephemeralKey: $ephemeralKey, customer: $customer, publishableKey: $publishableKey)';
 }
 
 
@@ -335,7 +335,7 @@ abstract mixin class $PaymentIntentDataCopyWith<$Res>  {
   factory $PaymentIntentDataCopyWith(PaymentIntentData value, $Res Function(PaymentIntentData) _then) = _$PaymentIntentDataCopyWithImpl;
 @useResult
 $Res call({
- String? clientSecret, String? paymentIntentId, double? amount, String? currency, String? status
+ String? clientSecret, String? paymentIntentId, double? amount, String? currency, String? status, String? ephemeralKey, String? customer, String? publishableKey
 });
 
 
@@ -352,13 +352,16 @@ class _$PaymentIntentDataCopyWithImpl<$Res>
 
 /// Create a copy of PaymentIntentData
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? clientSecret = freezed,Object? paymentIntentId = freezed,Object? amount = freezed,Object? currency = freezed,Object? status = freezed,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? clientSecret = freezed,Object? paymentIntentId = freezed,Object? amount = freezed,Object? currency = freezed,Object? status = freezed,Object? ephemeralKey = freezed,Object? customer = freezed,Object? publishableKey = freezed,}) {
   return _then(_self.copyWith(
 clientSecret: freezed == clientSecret ? _self.clientSecret : clientSecret // ignore: cast_nullable_to_non_nullable
 as String?,paymentIntentId: freezed == paymentIntentId ? _self.paymentIntentId : paymentIntentId // ignore: cast_nullable_to_non_nullable
 as String?,amount: freezed == amount ? _self.amount : amount // ignore: cast_nullable_to_non_nullable
 as double?,currency: freezed == currency ? _self.currency : currency // ignore: cast_nullable_to_non_nullable
 as String?,status: freezed == status ? _self.status : status // ignore: cast_nullable_to_non_nullable
+as String?,ephemeralKey: freezed == ephemeralKey ? _self.ephemeralKey : ephemeralKey // ignore: cast_nullable_to_non_nullable
+as String?,customer: freezed == customer ? _self.customer : customer // ignore: cast_nullable_to_non_nullable
+as String?,publishableKey: freezed == publishableKey ? _self.publishableKey : publishableKey // ignore: cast_nullable_to_non_nullable
 as String?,
   ));
 }
@@ -441,10 +444,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String? clientSecret,  String? paymentIntentId,  double? amount,  String? currency,  String? status)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String? clientSecret,  String? paymentIntentId,  double? amount,  String? currency,  String? status,  String? ephemeralKey,  String? customer,  String? publishableKey)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _PaymentIntentData() when $default != null:
-return $default(_that.clientSecret,_that.paymentIntentId,_that.amount,_that.currency,_that.status);case _:
+return $default(_that.clientSecret,_that.paymentIntentId,_that.amount,_that.currency,_that.status,_that.ephemeralKey,_that.customer,_that.publishableKey);case _:
   return orElse();
 
 }
@@ -462,10 +465,10 @@ return $default(_that.clientSecret,_that.paymentIntentId,_that.amount,_that.curr
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String? clientSecret,  String? paymentIntentId,  double? amount,  String? currency,  String? status)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String? clientSecret,  String? paymentIntentId,  double? amount,  String? currency,  String? status,  String? ephemeralKey,  String? customer,  String? publishableKey)  $default,) {final _that = this;
 switch (_that) {
 case _PaymentIntentData():
-return $default(_that.clientSecret,_that.paymentIntentId,_that.amount,_that.currency,_that.status);}
+return $default(_that.clientSecret,_that.paymentIntentId,_that.amount,_that.currency,_that.status,_that.ephemeralKey,_that.customer,_that.publishableKey);}
 }
 /// A variant of `when` that fallback to returning `null`
 ///
@@ -479,10 +482,10 @@ return $default(_that.clientSecret,_that.paymentIntentId,_that.amount,_that.curr
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String? clientSecret,  String? paymentIntentId,  double? amount,  String? currency,  String? status)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String? clientSecret,  String? paymentIntentId,  double? amount,  String? currency,  String? status,  String? ephemeralKey,  String? customer,  String? publishableKey)?  $default,) {final _that = this;
 switch (_that) {
 case _PaymentIntentData() when $default != null:
-return $default(_that.clientSecret,_that.paymentIntentId,_that.amount,_that.currency,_that.status);case _:
+return $default(_that.clientSecret,_that.paymentIntentId,_that.amount,_that.currency,_that.status,_that.ephemeralKey,_that.customer,_that.publishableKey);case _:
   return null;
 
 }
@@ -494,7 +497,7 @@ return $default(_that.clientSecret,_that.paymentIntentId,_that.amount,_that.curr
 @JsonSerializable()
 
 class _PaymentIntentData implements PaymentIntentData {
-  const _PaymentIntentData({this.clientSecret, this.paymentIntentId, this.amount, this.currency, this.status});
+  const _PaymentIntentData({this.clientSecret, this.paymentIntentId, this.amount, this.currency, this.status, this.ephemeralKey, this.customer, this.publishableKey});
   factory _PaymentIntentData.fromJson(Map<String, dynamic> json) => _$PaymentIntentDataFromJson(json);
 
 @override final  String? clientSecret;
@@ -502,6 +505,9 @@ class _PaymentIntentData implements PaymentIntentData {
 @override final  double? amount;
 @override final  String? currency;
 @override final  String? status;
+@override final  String? ephemeralKey;
+@override final  String? customer;
+@override final  String? publishableKey;
 
 /// Create a copy of PaymentIntentData
 /// with the given fields replaced by the non-null parameter values.
@@ -516,16 +522,16 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _PaymentIntentData&&(identical(other.clientSecret, clientSecret) || other.clientSecret == clientSecret)&&(identical(other.paymentIntentId, paymentIntentId) || other.paymentIntentId == paymentIntentId)&&(identical(other.amount, amount) || other.amount == amount)&&(identical(other.currency, currency) || other.currency == currency)&&(identical(other.status, status) || other.status == status));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _PaymentIntentData&&(identical(other.clientSecret, clientSecret) || other.clientSecret == clientSecret)&&(identical(other.paymentIntentId, paymentIntentId) || other.paymentIntentId == paymentIntentId)&&(identical(other.amount, amount) || other.amount == amount)&&(identical(other.currency, currency) || other.currency == currency)&&(identical(other.status, status) || other.status == status)&&(identical(other.ephemeralKey, ephemeralKey) || other.ephemeralKey == ephemeralKey)&&(identical(other.customer, customer) || other.customer == customer)&&(identical(other.publishableKey, publishableKey) || other.publishableKey == publishableKey));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,clientSecret,paymentIntentId,amount,currency,status);
+int get hashCode => Object.hash(runtimeType,clientSecret,paymentIntentId,amount,currency,status,ephemeralKey,customer,publishableKey);
 
 @override
 String toString() {
-  return 'PaymentIntentData(clientSecret: $clientSecret, paymentIntentId: $paymentIntentId, amount: $amount, currency: $currency, status: $status)';
+  return 'PaymentIntentData(clientSecret: $clientSecret, paymentIntentId: $paymentIntentId, amount: $amount, currency: $currency, status: $status, ephemeralKey: $ephemeralKey, customer: $customer, publishableKey: $publishableKey)';
 }
 
 
@@ -536,7 +542,7 @@ abstract mixin class _$PaymentIntentDataCopyWith<$Res> implements $PaymentIntent
   factory _$PaymentIntentDataCopyWith(_PaymentIntentData value, $Res Function(_PaymentIntentData) _then) = __$PaymentIntentDataCopyWithImpl;
 @override @useResult
 $Res call({
- String? clientSecret, String? paymentIntentId, double? amount, String? currency, String? status
+ String? clientSecret, String? paymentIntentId, double? amount, String? currency, String? status, String? ephemeralKey, String? customer, String? publishableKey
 });
 
 
@@ -553,13 +559,16 @@ class __$PaymentIntentDataCopyWithImpl<$Res>
 
 /// Create a copy of PaymentIntentData
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? clientSecret = freezed,Object? paymentIntentId = freezed,Object? amount = freezed,Object? currency = freezed,Object? status = freezed,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? clientSecret = freezed,Object? paymentIntentId = freezed,Object? amount = freezed,Object? currency = freezed,Object? status = freezed,Object? ephemeralKey = freezed,Object? customer = freezed,Object? publishableKey = freezed,}) {
   return _then(_PaymentIntentData(
 clientSecret: freezed == clientSecret ? _self.clientSecret : clientSecret // ignore: cast_nullable_to_non_nullable
 as String?,paymentIntentId: freezed == paymentIntentId ? _self.paymentIntentId : paymentIntentId // ignore: cast_nullable_to_non_nullable
 as String?,amount: freezed == amount ? _self.amount : amount // ignore: cast_nullable_to_non_nullable
 as double?,currency: freezed == currency ? _self.currency : currency // ignore: cast_nullable_to_non_nullable
 as String?,status: freezed == status ? _self.status : status // ignore: cast_nullable_to_non_nullable
+as String?,ephemeralKey: freezed == ephemeralKey ? _self.ephemeralKey : ephemeralKey // ignore: cast_nullable_to_non_nullable
+as String?,customer: freezed == customer ? _self.customer : customer // ignore: cast_nullable_to_non_nullable
+as String?,publishableKey: freezed == publishableKey ? _self.publishableKey : publishableKey // ignore: cast_nullable_to_non_nullable
 as String?,
   ));
 }

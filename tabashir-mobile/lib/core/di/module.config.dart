@@ -10,7 +10,6 @@
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'package:dio/dio.dart' as _i361;
-import 'package:flutter_bloc/flutter_bloc.dart' as _i331;
 import 'package:get_it/get_it.dart' as _i174;
 import 'package:injectable/injectable.dart' as _i526;
 
@@ -263,8 +262,8 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factory<_i302.UploadRepository>(
       () => _i63.UploadRepositoryImpl(gh<_i772.UploadApiService>()),
     );
-    gh.factory<_i331.Cubit<_i949.SubscriptionState>>(
-      () => _i949.SubscriptionCubit(gh<_i185.SubscriptionRepository>()),
+    gh.factory<_i895.UploadCubit>(
+      () => _i895.UploadCubit(gh<_i302.UploadRepository>()),
     );
     gh.factory<_i1030.ResumeParsingService>(
       () => _i150.ResumeParsingServiceImpl(
@@ -389,20 +388,20 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factory<_i794.MessagesRepository>(
       () => _i20.MessagesRepositoryImpl(gh<_i792.IsarService>()),
     );
-    gh.factory<_i331.Cubit<_i618.AiResumeState>>(
-      () => _i618.AiResumeCubit(gh<_i27.AiResumeRepository>()),
+    gh.factory<_i949.SubscriptionCubit>(
+      () => _i949.SubscriptionCubit(gh<_i185.SubscriptionRepository>()),
     );
-    gh.factory<_i331.Cubit<_i895.UploadState>>(
-      () => _i895.UploadCubit(gh<_i302.UploadRepository>()),
-    );
-    gh.factory<_i331.Cubit<_i459.JobApplicationsState>>(
+    gh.factory<_i459.JobApplicationsCubit>(
       () => _i459.JobApplicationsCubit(gh<_i860.JobApplicationsRepository>()),
     );
-    gh.factory<_i331.Cubit<_i782.PaymentState>>(
+    gh.factory<_i782.PaymentCubit>(
       () => _i782.PaymentCubit(
         gh<_i315.PaymentRepository>(),
         gh<_i333.StripeService>(),
       ),
+    );
+    gh.factory<_i618.AiResumeCubit>(
+      () => _i618.AiResumeCubit(gh<_i27.AiResumeRepository>()),
     );
     gh.factory<_i656.JobDetailsService>(
       () => _i656.JobDetailsService(gh<_i973.JobsRepository>()),

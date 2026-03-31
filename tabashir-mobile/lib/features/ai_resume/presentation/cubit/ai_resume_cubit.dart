@@ -9,7 +9,7 @@ part 'ai_resume_state.dart';
 part 'ai_resume_cubit.freezed.dart';
 part 'ai_resume_cubit.g.dart';
 
-@Injectable(as: Cubit<AiResumeState>)
+@injectable
 class AiResumeCubit extends Cubit<AiResumeState> {
   AiResumeCubit(this._repository) : super(const AiResumeState());
 

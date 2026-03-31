@@ -14,15 +14,22 @@ import 'steps/education_step.dart';
 import 'steps/skills_step.dart';
 import 'steps/template_selection_step.dart';
 import '../../../../core/network/models/ai_resume/resume_models.dart';
+import '../../../../core/network/models/payment/payment_intent_request.dart';
+import '../../../../core/di/injection.dart';
+import '../../../../core/models/stripe/stripe_enums.dart';
+import '../../../payments/presentation/cubit/payment_cubit.dart';
 
 class AiResumeBuilderScreen extends StatelessWidget {
   const AiResumeBuilderScreen({super.key});
 
   @override
-  Widget build(BuildContext context) => BlocProvider(
-    create: (context) => AiResumeBuilderCubit(),
-    child: const AiResumeBuilderView(),
-  );
+  Widget build(BuildContext context) => MultiBlocProvider(
+        providers: [
+          BlocProvider(create: (context) => AiResumeBuilderCubit()),
+          BlocProvider(create: (context) => getIt<PaymentCubit>()),
+        ],
+        child: const AiResumeBuilderView(),
+      );
 }
 
 class AiResumeBuilderView extends StatelessWidget {
@@ -46,82 +53,150 @@ class AiResumeBuilderView extends StatelessWidget {
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       scrolledUnderElevation: 0,
     ),
-    body: BlocConsumer<AiResumeBuilderCubit, AiResumeBuilderState>(
-      listener: (context, state) {
-        if (state.hasErrors) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(state.errors.first),
-              backgroundColor: AppTheme.errorColor,
-            ),
-          );
-        }
+    body: MultiBlocListener(
+      listeners: [
+        BlocListener<AiResumeBuilderCubit, AiResumeBuilderState>(
+          listener: (context, state) {
+            if (state.hasErrors) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text(state.errors.first),
+                  backgroundColor: AppTheme.errorColor,
+                ),
+              );
+            }
 
-        if (state.generationResult != null && !state.isGenerating) {
-          context.pushReplacement(
-            RouteNames.aiResumeBuilderSuccess,
-            extra: state.generationResult,
-          );
-        }
-      },
-      builder: (context, state) => Stack(
-        children: [
-          Column(
-            children: [
-              AiResumeBuilderHeader(
-                currentStep: state.resumeData.currentStep,
-                resumeScore: state.resumeData.resumeScore,
-                onStepTap: (step) {
-                  context.read<AiResumeBuilderCubit>().goToStep(step);
-                },
-              ),
-              Expanded(
-                child: IndexedStack(
-                  index: state.resumeData.currentStep,
-                  children: const [
-                    PersonalDetailsStep(),
-                    ProfessionalSummaryStep(),
-                    WorkExperienceStep(),
-                    EducationStep(),
-                    SkillsStep(),
-                    TemplateSelectionStep(),
-                  ],
+            if (state.generationResult != null && !state.isGenerating) {
+              context.pushReplacement(
+                RouteNames.aiResumeBuilderSuccess,
+                extra: state.generationResult,
+              );
+            }
+          },
+        ),
+        BlocListener<PaymentCubit, PaymentState>(
+          listener: (context, state) {
+            if (state.status == PaymentStatus.failed) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text(state.errorMessage),
+                  backgroundColor: AppTheme.errorColor,
+                ),
+              );
+            }
+
+            if (state.paymentSheetInitialized &&
+                state.status == PaymentStatus.success &&
+                !state.paymentSuccessful) {
+              // Payment sheet is ready, open it
+              context.read<PaymentCubit>().processPaymentSheet();
+            }
+
+            if (state.paymentSuccessful) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text('Payment Successful! Generating CV...'.tr()),
+                  backgroundColor: Colors.green,
+                ),
+              );
+              // Proceed to generate CV with payment confirmation
+              final paymentIntentId = state.paymentIntent?.data?.paymentIntentId;
+              if (paymentIntentId != null) {
+                context.read<AiResumeBuilderCubit>().generateAndSave(
+                  paymentIntentId: paymentIntentId,
+                );
+              }
+              // Reset payment state for next time
+              context.read<PaymentCubit>().reset();
+            }
+          },
+        ),
+        BlocListener<AiResumeBuilderCubit, AiResumeBuilderState>(
+          listenWhen: (previous, current) =>
+              previous.errors != current.errors &&
+              current.errors.isNotEmpty &&
+              !current.isLoading,
+          listener: (context, state) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(
+                  'Generation failed: ${state.errors.first}. If you were charged, please contact support with your payment ID.'
+                      .tr(),
+                ),
+                backgroundColor: Colors.pink,
+                duration: const Duration(seconds: 5),
+                action: SnackBarAction(
+                  label: 'Support'.tr(),
+                  textColor: Colors.white,
+                  onPressed: () {
+                    // Navigate to support or show help
+                  },
                 ),
               ),
-              _buildBottomActions(context, state),
-            ],
-          ),
-          if (state.isGenerating)
-            Container(
-              color: Colors.black.withOpacity(0.5),
-              child: Center(
-                child: Card(
-                  margin: EdgeInsets.symmetric(horizontal: 40.w),
-                  child: Padding(
-                    padding: EdgeInsets.all(AppTheme.spacingLg.w),
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        const CircularProgressIndicator(),
-                        SizedBox(height: AppTheme.spacingLg.h),
-                        Text(
-                          'Generating your professional CV...'.tr(),
-                          textAlign: TextAlign.center,
-                          style: Theme.of(context).textTheme.titleMedium,
-                        ),
-                        SizedBox(height: AppTheme.spacingSm.h),
-                        Text(
-                          'This may take a few moments'.tr(),
-                          textAlign: TextAlign.center,
-                          style: Theme.of(context).textTheme.bodySmall,
-                        ),
-                      ],
+            );
+          },
+        ),
+      ],
+      child: BlocBuilder<AiResumeBuilderCubit, AiResumeBuilderState>(
+        builder: (context, state) => Stack(
+          children: [
+            Column(
+              children: [
+                AiResumeBuilderHeader(
+                  currentStep: state.resumeData.currentStep,
+                  resumeScore: state.resumeData.resumeScore,
+                  onStepTap: (step) {
+                    context.read<AiResumeBuilderCubit>().goToStep(step);
+                  },
+                ),
+                Expanded(
+                  child: IndexedStack(
+                    index: state.resumeData.currentStep,
+                    children: const [
+                      PersonalDetailsStep(),
+                      ProfessionalSummaryStep(),
+                      WorkExperienceStep(),
+                      EducationStep(),
+                      SkillsStep(),
+                      TemplateSelectionStep(),
+                    ],
+                  ),
+                ),
+                _buildBottomActions(context, state),
+              ],
+            ),
+            if (state.isGenerating)
+              Container(
+                color: Colors.black.withOpacity(0.5),
+                child: Center(
+                  child: Card(
+                    margin: EdgeInsets.symmetric(horizontal: 40.w),
+                    child: Padding(
+                      padding: EdgeInsets.all(AppTheme.spacingLg.w),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          const CircularProgressIndicator(),
+                          SizedBox(height: AppTheme.spacingLg.h),
+                          Text(
+                            'Generating your professional CV...'.tr(),
+                            textAlign: TextAlign.center,
+                            style: Theme.of(context).textTheme.titleMedium,
+                          ),
+                          SizedBox(height: AppTheme.spacingSm.h),
+                          Text(
+                            'This may take a few moments'.tr(),
+                            textAlign: TextAlign.center,
+                            style: Theme.of(context).textTheme.bodySmall,
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 ),
               ),
-            ),
-        ],
+          ],
+        ),
       ),
     ),
   );
@@ -218,9 +293,17 @@ class AiResumeBuilderView extends StatelessWidget {
           ElevatedButton(
             onPressed: () {
               Navigator.pop(context);
-              cubit.generateAndSave();
+              
+              // Trigger Payment Flow
+              context.read<PaymentCubit>().createPaymentIntent(
+                request: const PaymentIntentRequest(
+                  amount: 40.0,
+                  serviceId: 'ai-resume-optimization',
+                  currency: 'aed',
+                ),
+              );
             },
-            child: Text('Generate & Save'.tr()),
+            child: Text('Pay & Generate'.tr()),
           ),
         ],
       ),

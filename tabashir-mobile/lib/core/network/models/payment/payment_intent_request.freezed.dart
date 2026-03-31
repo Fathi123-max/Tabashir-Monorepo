@@ -15,7 +15,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$PaymentIntentRequest {
 
- double get amount; String? get currency; String? get plan; String? get userId;
+ double get amount; String? get currency; String? get plan; String? get userId; String? get serviceId; String? get resumeId;
 /// Create a copy of PaymentIntentRequest
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -28,16 +28,16 @@ $PaymentIntentRequestCopyWith<PaymentIntentRequest> get copyWith => _$PaymentInt
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is PaymentIntentRequest&&(identical(other.amount, amount) || other.amount == amount)&&(identical(other.currency, currency) || other.currency == currency)&&(identical(other.plan, plan) || other.plan == plan)&&(identical(other.userId, userId) || other.userId == userId));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is PaymentIntentRequest&&(identical(other.amount, amount) || other.amount == amount)&&(identical(other.currency, currency) || other.currency == currency)&&(identical(other.plan, plan) || other.plan == plan)&&(identical(other.userId, userId) || other.userId == userId)&&(identical(other.serviceId, serviceId) || other.serviceId == serviceId)&&(identical(other.resumeId, resumeId) || other.resumeId == resumeId));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,amount,currency,plan,userId);
+int get hashCode => Object.hash(runtimeType,amount,currency,plan,userId,serviceId,resumeId);
 
 @override
 String toString() {
-  return 'PaymentIntentRequest(amount: $amount, currency: $currency, plan: $plan, userId: $userId)';
+  return 'PaymentIntentRequest(amount: $amount, currency: $currency, plan: $plan, userId: $userId, serviceId: $serviceId, resumeId: $resumeId)';
 }
 
 
@@ -48,7 +48,7 @@ abstract mixin class $PaymentIntentRequestCopyWith<$Res>  {
   factory $PaymentIntentRequestCopyWith(PaymentIntentRequest value, $Res Function(PaymentIntentRequest) _then) = _$PaymentIntentRequestCopyWithImpl;
 @useResult
 $Res call({
- double amount, String? currency, String? plan, String? userId
+ double amount, String? currency, String? plan, String? userId, String? serviceId, String? resumeId
 });
 
 
@@ -65,12 +65,14 @@ class _$PaymentIntentRequestCopyWithImpl<$Res>
 
 /// Create a copy of PaymentIntentRequest
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? amount = null,Object? currency = freezed,Object? plan = freezed,Object? userId = freezed,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? amount = null,Object? currency = freezed,Object? plan = freezed,Object? userId = freezed,Object? serviceId = freezed,Object? resumeId = freezed,}) {
   return _then(_self.copyWith(
 amount: null == amount ? _self.amount : amount // ignore: cast_nullable_to_non_nullable
 as double,currency: freezed == currency ? _self.currency : currency // ignore: cast_nullable_to_non_nullable
 as String?,plan: freezed == plan ? _self.plan : plan // ignore: cast_nullable_to_non_nullable
 as String?,userId: freezed == userId ? _self.userId : userId // ignore: cast_nullable_to_non_nullable
+as String?,serviceId: freezed == serviceId ? _self.serviceId : serviceId // ignore: cast_nullable_to_non_nullable
+as String?,resumeId: freezed == resumeId ? _self.resumeId : resumeId // ignore: cast_nullable_to_non_nullable
 as String?,
   ));
 }
@@ -153,10 +155,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( double amount,  String? currency,  String? plan,  String? userId)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( double amount,  String? currency,  String? plan,  String? userId,  String? serviceId,  String? resumeId)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _PaymentIntentRequest() when $default != null:
-return $default(_that.amount,_that.currency,_that.plan,_that.userId);case _:
+return $default(_that.amount,_that.currency,_that.plan,_that.userId,_that.serviceId,_that.resumeId);case _:
   return orElse();
 
 }
@@ -174,10 +176,10 @@ return $default(_that.amount,_that.currency,_that.plan,_that.userId);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( double amount,  String? currency,  String? plan,  String? userId)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( double amount,  String? currency,  String? plan,  String? userId,  String? serviceId,  String? resumeId)  $default,) {final _that = this;
 switch (_that) {
 case _PaymentIntentRequest():
-return $default(_that.amount,_that.currency,_that.plan,_that.userId);}
+return $default(_that.amount,_that.currency,_that.plan,_that.userId,_that.serviceId,_that.resumeId);}
 }
 /// A variant of `when` that fallback to returning `null`
 ///
@@ -191,10 +193,10 @@ return $default(_that.amount,_that.currency,_that.plan,_that.userId);}
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( double amount,  String? currency,  String? plan,  String? userId)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( double amount,  String? currency,  String? plan,  String? userId,  String? serviceId,  String? resumeId)?  $default,) {final _that = this;
 switch (_that) {
 case _PaymentIntentRequest() when $default != null:
-return $default(_that.amount,_that.currency,_that.plan,_that.userId);case _:
+return $default(_that.amount,_that.currency,_that.plan,_that.userId,_that.serviceId,_that.resumeId);case _:
   return null;
 
 }
@@ -206,13 +208,15 @@ return $default(_that.amount,_that.currency,_that.plan,_that.userId);case _:
 @JsonSerializable()
 
 class _PaymentIntentRequest implements PaymentIntentRequest {
-  const _PaymentIntentRequest({required this.amount, this.currency, this.plan, this.userId});
+  const _PaymentIntentRequest({required this.amount, this.currency, this.plan, this.userId, this.serviceId, this.resumeId});
   factory _PaymentIntentRequest.fromJson(Map<String, dynamic> json) => _$PaymentIntentRequestFromJson(json);
 
 @override final  double amount;
 @override final  String? currency;
 @override final  String? plan;
 @override final  String? userId;
+@override final  String? serviceId;
+@override final  String? resumeId;
 
 /// Create a copy of PaymentIntentRequest
 /// with the given fields replaced by the non-null parameter values.
@@ -227,16 +231,16 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _PaymentIntentRequest&&(identical(other.amount, amount) || other.amount == amount)&&(identical(other.currency, currency) || other.currency == currency)&&(identical(other.plan, plan) || other.plan == plan)&&(identical(other.userId, userId) || other.userId == userId));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _PaymentIntentRequest&&(identical(other.amount, amount) || other.amount == amount)&&(identical(other.currency, currency) || other.currency == currency)&&(identical(other.plan, plan) || other.plan == plan)&&(identical(other.userId, userId) || other.userId == userId)&&(identical(other.serviceId, serviceId) || other.serviceId == serviceId)&&(identical(other.resumeId, resumeId) || other.resumeId == resumeId));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,amount,currency,plan,userId);
+int get hashCode => Object.hash(runtimeType,amount,currency,plan,userId,serviceId,resumeId);
 
 @override
 String toString() {
-  return 'PaymentIntentRequest(amount: $amount, currency: $currency, plan: $plan, userId: $userId)';
+  return 'PaymentIntentRequest(amount: $amount, currency: $currency, plan: $plan, userId: $userId, serviceId: $serviceId, resumeId: $resumeId)';
 }
 
 
@@ -247,7 +251,7 @@ abstract mixin class _$PaymentIntentRequestCopyWith<$Res> implements $PaymentInt
   factory _$PaymentIntentRequestCopyWith(_PaymentIntentRequest value, $Res Function(_PaymentIntentRequest) _then) = __$PaymentIntentRequestCopyWithImpl;
 @override @useResult
 $Res call({
- double amount, String? currency, String? plan, String? userId
+ double amount, String? currency, String? plan, String? userId, String? serviceId, String? resumeId
 });
 
 
@@ -264,12 +268,14 @@ class __$PaymentIntentRequestCopyWithImpl<$Res>
 
 /// Create a copy of PaymentIntentRequest
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? amount = null,Object? currency = freezed,Object? plan = freezed,Object? userId = freezed,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? amount = null,Object? currency = freezed,Object? plan = freezed,Object? userId = freezed,Object? serviceId = freezed,Object? resumeId = freezed,}) {
   return _then(_PaymentIntentRequest(
 amount: null == amount ? _self.amount : amount // ignore: cast_nullable_to_non_nullable
 as double,currency: freezed == currency ? _self.currency : currency // ignore: cast_nullable_to_non_nullable
 as String?,plan: freezed == plan ? _self.plan : plan // ignore: cast_nullable_to_non_nullable
 as String?,userId: freezed == userId ? _self.userId : userId // ignore: cast_nullable_to_non_nullable
+as String?,serviceId: freezed == serviceId ? _self.serviceId : serviceId // ignore: cast_nullable_to_non_nullable
+as String?,resumeId: freezed == resumeId ? _self.resumeId : resumeId // ignore: cast_nullable_to_non_nullable
 as String?,
   ));
 }

@@ -9,7 +9,7 @@ part 'job_applications_state.dart';
 part 'job_applications_cubit.freezed.dart';
 part 'job_applications_cubit.g.dart';
 
-@Injectable(as: Cubit<JobApplicationsState>)
+@injectable
 class JobApplicationsCubit extends Cubit<JobApplicationsState> {
   JobApplicationsCubit(this._repository) : super(const JobApplicationsState());
 

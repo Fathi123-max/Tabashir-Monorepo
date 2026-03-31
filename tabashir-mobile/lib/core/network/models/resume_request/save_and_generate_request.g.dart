@@ -12,6 +12,7 @@ _SaveAndGenerateRequest _$SaveAndGenerateRequestFromJson(
   resumeData: ResumeData.fromJson(json['resume_data'] as Map<String, dynamic>),
   templateId: json['template_id'] as String?,
   filename: json['filename'] as String?,
+  paymentIntentId: json['payment_intent_id'] as String?,
 );
 
 Map<String, dynamic> _$SaveAndGenerateRequestToJson(
@@ -20,4 +21,5 @@ Map<String, dynamic> _$SaveAndGenerateRequestToJson(
   'resume_data': instance.resumeData,
   'template_id': instance.templateId,
   'filename': instance.filename,
+  'payment_intent_id': instance.paymentIntentId,
 };

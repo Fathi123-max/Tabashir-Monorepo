@@ -10,7 +10,7 @@ part 'upload_state.dart';
 part 'upload_cubit.freezed.dart';
 part 'upload_cubit.g.dart';
 
-@Injectable(as: Cubit<UploadState>)
+@injectable
 class UploadCubit extends Cubit<UploadState> {
   UploadCubit(this._repository) : super(const UploadState());
 

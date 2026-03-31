@@ -9,6 +9,7 @@ sealed class AiResumeBuilderState with _$AiResumeBuilderState {
     @Default('regular') String selectedTemplateId,
     @Default(false) bool isGenerating,
     ResumeItem? generationResult,
+    String? paymentIntentId,
   }) = _AiResumeBuilderState;
 
   const AiResumeBuilderState._();

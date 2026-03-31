@@ -28,6 +28,7 @@ from app.services.text_extract_PyMuPDF import extract_text
 from app.services.cv_processor import cv_formatter
 from app.services.profile_sync_service import ProfileSyncService
 from app.services.arabic_translator import translate_docx_to_arabic
+import stripe
 from app.services.job_apply import (
     process_ai_job_input, process_ai_job_input_not_active, update_ai_job_input_not_active, serialize_row,
     get_client_job_settings, activate_client_job_apply, suggest_job_titles_from_resume,
@@ -628,7 +629,9 @@ class SaveAndGenerate(Resource):
     @resumes_ns.expect(resumes_ns.model('SaveAndGenerateInput', {
         'resume_data': fields.Raw(required=True, description='Structured Resume JSON data'),
         'template_id': fields.String(required=False, default='regular', description="Template ID: 'regular' or 'arabic'"),
-        'filename': fields.String(required=False, default='resume.docx', description="Desired filename")
+        'filename': fields.String(required=False, default='resume.docx', description="Desired filename"),
+        'payment_intent_id': fields.String(required=False, description="Stripe Payment Intent ID for verification"),
+        'draft_id': fields.String(required=False, description="Original AiResume draft ID to update")
     }))
     @jwt_required
     def post(self):
@@ -647,72 +650,131 @@ class SaveAndGenerate(Resource):
             resume_data = data.get('resume_data')
             template_id = data.get('template_id', 'regular').lower()
             filename = data.get('filename', 'resume.docx')
+            payment_intent_id = data.get('payment_intent_id')
+            draft_id = data.get('draft_id')
 
-            print(f"DEBUG: Input data - template_id: {template_id}, filename: {filename}")
+            print(f"DEBUG: Input data - template_id: {template_id}, payment_intent_id: {payment_intent_id}, draft_id: {draft_id}")
             if not resume_data:
                 print("DEBUG: Missing resume_data in request")
                 raise ValueError("Missing 'resume_data' in request")
 
-            # 1. Ensure Candidate exists for this user
-            print("DEBUG: Checking/Creating Candidate")
-            candidate = execute_query(
-                'SELECT id FROM "Candidate" WHERE "userId" = %s',
-                (user_id,),
-                fetch_one=True
-            )
-            
-            if not candidate:
-                candidate_id = str(uuid.uuid4())
-                print(f"DEBUG: Creating new Candidate with id: {candidate_id}")
-                execute_query(
-                    'INSERT INTO "Candidate" (id, "userId", "createdAt", "updatedAt") VALUES (%s, %s, NOW(), NOW())',
-                    (candidate_id, user_id),
-                    commit=True
-                )
-            else:
-                candidate_id = candidate['id']
-                print(f"DEBUG: Found existing Candidate with id: {candidate_id}")
+            # 0. Payment Verification (CRITICAL)
+            intent = None
+            if payment_intent_id:
+                print(f"DEBUG: Verifying payment {payment_intent_id}")
+                try:
+                    stripe.api_key = Config.STRIPE_SECRET_KEY
+                    intent = stripe.PaymentIntent.retrieve(payment_intent_id)
+                    
+                    if intent.status != 'succeeded':
+                        return {"success": False, "message": "Payment not completed"}, HTTPStatus.PAYMENT_REQUIRED
+                    
+                    # 0.1 Strict Price Verification (40 AED = 4000 cents)
+                    expected_amount = 4000 
+                    if intent.amount != expected_amount:
+                        print(f"DEBUG: Price mismatch. Expected {expected_amount}, Got {intent.amount}")
+                        return {"success": False, "message": "Invalid payment amount"}, HTTPStatus.BAD_REQUEST
 
-            # 2. Deserialize resume
-            print("DEBUG: Deserializing resume data")
-            resume_obj = Resume.from_dict(resume_data)
-            resume_obj.source_data = resume_data
+                    # Verify metadata to prevent cross-user exploits
+                    metadata_user_id = intent.metadata.get('userId')
+                    metadata_service_id = intent.metadata.get('serviceId')
+                    
+                    if str(metadata_user_id) != str(user_id):
+                        print(f"DEBUG: Payment user mismatch. Metadata: {metadata_user_id}, Current: {user_id}")
+                        return {"success": False, "message": "Payment does not belong to this user"}, HTTPStatus.FORBIDDEN
+                    
+                    if metadata_service_id != 'ai-resume-optimization':
+                        print(f"DEBUG: Service ID mismatch. Metadata: {metadata_service_id}")
+                        return {"success": False, "message": "Invalid service for this payment"}, HTTPStatus.BAD_REQUEST
+                        
+                except Exception as stripe_err:
+                    print(f"DEBUG: Stripe verification error: {stripe_err}")
+                    return {"success": False, "message": "Payment verification failed"}, HTTPStatus.BAD_REQUEST
 
-            # 3. Generate file
-            print("DEBUG: Generating document")
-            unique_filename = f"{uuid.uuid4()}_{secure_filename(filename)}"
-            os.makedirs(Config.CV_STORAGE_PATH, exist_ok=True)
-            file_path = Config.CV_STORAGE_PATH / unique_filename
-
-            template_path = Config.ARABIC_TEMPLATE_PATH if template_id == 'arabic' else Config.REGULAR_TEMPLATE_PATH
-            print(f"DEBUG: Using template at: {template_path}")
-            
-            resume_obj.write_document(str(template_path), str(file_path))
-            print(f"DEBUG: Document generated successfully at: {file_path}")
-
-            # 4. Create Resume record
-            print("DEBUG: Creating Resume record in DB")
-            resume_id = str(uuid.uuid4())
-            original_url = unique_filename
+            # 1. Transactional Database Operations
+            from app.database.db import get_db_connection
+            conn = get_db_connection()
+            conn.autocommit = False # Ensure we are in a transaction
+            cursor = conn.cursor()
             
             try:
-                # Use the original source_data for DB storage to keep it compatible with mobile app
-                execute_query(
+                # 1.1 Idempotency Check: Ensure this payment hasn't been used before
+                if payment_intent_id:
+                    cursor.execute(
+                        'SELECT id FROM "Payment" WHERE "transactionId" = %s AND status = %s',
+                        (payment_intent_id, 'COMPLETED')
+                    )
+                    if cursor.fetchone():
+                        print(f"DEBUG: Payment {payment_intent_id} already used for generation.")
+                        conn.rollback()
+                        return {"success": False, "message": "This payment has already been used"}, HTTPStatus.CONFLICT
+
+                # 1.2 Ensure Candidate exists for this user
+                cursor.execute('SELECT id FROM "Candidate" WHERE "userId" = %s', (user_id,))
+                candidate = cursor.fetchone()
+                
+                if not candidate:
+                    candidate_id = str(uuid.uuid4())
+                    cursor.execute(
+                        'INSERT INTO "Candidate" (id, "userId", "createdAt", "updatedAt") VALUES (%s, %s, NOW(), NOW())',
+                        (candidate_id, user_id)
+                    )
+                else:
+                    candidate_id = candidate['id']
+
+                # 1.3 Resume Generation (Logic remains same, but wrapped in try/except)
+                resume_obj = Resume.from_dict(resume_data)
+                resume_obj.source_data = resume_data
+                unique_filename = f"{uuid.uuid4()}_{secure_filename(filename)}"
+                os.makedirs(Config.CV_STORAGE_PATH, exist_ok=True)
+                file_path = Config.CV_STORAGE_PATH / unique_filename
+                template_path = Config.ARABIC_TEMPLATE_PATH if template_id == 'arabic' else Config.REGULAR_TEMPLATE_PATH
+                resume_obj.write_document(str(template_path), str(file_path))
+
+                # 1.4 Create Resume record
+                resume_id = str(uuid.uuid4())
+                cursor.execute(
                     """INSERT INTO "Resume" 
                        (id, "candidateId", filename, "originalUrl", "isAiResume", "sourceData", "createdAt", "updatedAt") 
                        VALUES (%s, %s, %s, %s, %s, %s, NOW(), NOW())""",
-                    (resume_id, candidate_id, filename, original_url, True, json.dumps(resume_obj.source_data)),
-                    commit=True
+                    (resume_id, candidate_id, filename, unique_filename, True, json.dumps(resume_obj.source_data))
                 )
-                print(f"DEBUG: Resume record created with id: {resume_id}")
+
+                # 1.5 Create/Update Payment Record
+                if payment_intent_id and intent:
+                   cursor.execute(
+                        """INSERT INTO "Payment" 
+                           (id, amount, currency, status, "paymentMethod", "transactionId", "paymentDate", "userId", "createdAt", "updatedAt") 
+                           VALUES (%s, %s, %s, %s, %s, %s, NOW(), %s, NOW(), NOW())
+                           ON CONFLICT ("transactionId") DO UPDATE SET status = 'COMPLETED', "paymentDate" = NOW()""",
+                        (
+                            f"pay_{uuid.uuid4().hex[:12]}", 
+                            intent.amount / 100.0, 
+                            intent.currency.upper(), 
+                            'COMPLETED', 
+                            'stripe', 
+                            payment_intent_id, 
+                            user_id
+                        )
+                    )
+                
+                # 1.6 Update Draft AiResume if draft_id provided
+                if draft_id:
+                    cursor.execute(
+                        'UPDATE "AiResume" SET "paymentStatus" = true, "paymentAmount" = %s, "paymentDate" = NOW(), status = %s WHERE id = %s',
+                        (intent.amount / 100.0 if intent else 0.0, 'COMPLETED', draft_id)
+                    )
+
+                # 1.7 COMMIT EVERYTHING
+                conn.commit()
+                print(f"DEBUG: All records committed for resume: {resume_id}")
+
             except Exception as db_err:
-                print(f"DEBUG: DB Error during Resume insertion: {db_err}")
+                conn.rollback()
+                print(f"DEBUG: DB Transaction Error (ROLLED BACK): {db_err}")
                 traceback.print_exc()
-                # Cleanup generated files if DB fails
                 if os.path.exists(file_path):
                     os.remove(file_path)
-                pdf_path = Path(file_path).with_suffix('.pdf')
-                if os.path.exists(pdf_path):
                     os.remove(pdf_path)
                 raise db_err
 
@@ -2141,37 +2203,97 @@ class AppliedJobsCount(Resource):
 
 send_email_model = resumes_ns.model('SendEmailModel', {
     'recipient_email': fields.String(required=True, description='Recipient email address'),
-    'recipient_name': fields.String(required=True, description='Recipient name')
+    'recipient_name': fields.String(required=True, description='Recipient name'),
+    'payment_intent_id': fields.String(required=True, description='Stripe Payment Intent ID')
 })
 @resumes_ns.route('/send-linkedin-email')
 class SendEmail(Resource):
     @resumes_ns.expect(send_email_model, validate=True)
     def post(self):
         """
-        Send career onboarding email to a candidate.
+        Send career onboarding email to a candidate after verified payment.
         """
         data = request.json
         recipient_email = data.get('recipient_email')
         recipient_name = data.get('recipient_name')
+        payment_intent_id = data.get('payment_intent_id')
         
-        if not recipient_email or not recipient_name:
+        # Determine userId from email if possible, or use a default/session
+        # In this context, we assume the user is authenticated (handled by middleware)
+        user_id = getattr(request, 'user_id', None)
+
+        if not recipient_email or not recipient_name or not payment_intent_id:
             return {
                 "success": False,
-                "message": f"Required data missing"
-            }, HTTPStatus.OK
+                "message": "Required data missing (email, name, or payment_intent_id)"
+            }, HTTPStatus.BAD_REQUEST
 
+        # --- PAYMENT VERIFICATION ---
+        conn = get_ai_db_connection()
+        cursor = conn.cursor()
         try:
+            # 1. Fetch PaymentIntent status from Stripe
+            try:
+                intent = stripe.PaymentIntent.retrieve(payment_intent_id)
+            except Exception as e:
+                return {"success": False, "message": f"Stripe Error: {str(e)}"}, HTTPStatus.BAD_REQUEST
+
+            # 2. Basic Security Checks
+            if intent.status != 'succeeded':
+                return {"success": False, "message": f"Payment not completed ({intent.status})"}, HTTPStatus.PAYMENT_REQUIRED
+            
+            # Verify Service/Metadata
+            stripe_service_id = intent.metadata.get('serviceId')
+            if stripe_service_id != 'ai-linkedin-enhancement':
+                return {"success": False, "message": "Payment is not for LinkedIn Enhancement"}, HTTPStatus.FORBIDDEN
+            
+            # Verify Price (19.00 AED = 1900 cents)
+            if intent.amount_received != 1900:
+                logger.warning(f"Price mismatch: Received {intent.amount_received} instead of 1900")
+                return {"success": False, "message": "Payment amount verification failed"}, HTTPStatus.FORBIDDEN
+
+            # 3. Check Idempotency (Prevent double use of payment)
+            cursor.execute('SELECT id FROM "Payment" WHERE "transactionId" = %s', (payment_intent_id,))
+            if cursor.fetchone():
+                return {"success": False, "message": "This payment has already been used"}, HTTPStatus.CONFLICT
+
+            # 4. Atomic Execution: Record Payment + Send Email
+            # Insert Payment Record
+            payment_id = f"pay_{uuid.uuid4().hex[:12]}"
+            cursor.execute(
+                """
+                INSERT INTO "Payment" 
+                (id, amount, currency, status, "paymentMethod", "transactionId", "paymentDate", "userId", "createdAt", "updatedAt") 
+                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+                """,
+                (
+                    payment_id, 19.0, 'AED', 'COMPLETED', 'stripe', 
+                    payment_intent_id, datetime.now(), user_id, 
+                    datetime.now(), datetime.now()
+                )
+            )
+
+            # Send Email
             send_email(recipient_email, recipient_name)
+
+            conn.commit()
             return {
                 "success": True,
-                "message": f"Email successfully sent to {recipient_email}"
+                "message": f"Payment verified. Email successfully sent to {recipient_email}",
+                "payment_id": payment_id
             }, HTTPStatus.OK
+
         except Exception as e:
+            conn.rollback()
+            logger.error(f"LinkedIn Enhancement Payment Error: {str(e)}")
             return {
                 "success": False,
-                "message": f"Failed to send email to {recipient_email}",
+                "message": "Internal error processing payment/email",
                 "error": str(e)
             }, HTTPStatus.INTERNAL_SERVER_ERROR
+        finally:
+            cursor.close()
+            conn.close()
 
 
 @resumes_ns.route('/jobs/monthly-count')

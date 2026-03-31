@@ -9,7 +9,7 @@ part 'subscription_state.dart';
 part 'subscription_cubit.freezed.dart';
 part 'subscription_cubit.g.dart';
 
-@Injectable(as: Cubit<SubscriptionState>)
+@injectable
 class SubscriptionCubit extends Cubit<SubscriptionState> {
   SubscriptionCubit(this._repository) : super(const SubscriptionState());
 

@@ -16,7 +16,7 @@ abstract class PaymentApiService {
   factory PaymentApiService(Dio dio) = _PaymentApiService;
 
   /// Create payment intent
-  @POST('/payment-intent')
+  @POST('/create-intent')
   Future<HttpResponse<PaymentIntentResponse>> createPaymentIntent(
     @Body() PaymentIntentRequest request,
   );
@@ -28,6 +28,6 @@ abstract class PaymentApiService {
   );
 
   /// Get latest payment info
-  @GET('/payments/latest')
+  @GET('/latest')
   Future<HttpResponse<LatestPaymentResponse>> getLatestPayment();
 }

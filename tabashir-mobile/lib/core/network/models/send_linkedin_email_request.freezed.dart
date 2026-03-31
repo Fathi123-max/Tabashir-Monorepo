@@ -17,7 +17,7 @@ mixin _$SendLinkedInEmailRequest {
 
 /// Recipient email
 @JsonKey(name: 'recipient_email') String get recipientEmail;/// Recipient name
-@JsonKey(name: 'recipient_name') String get recipientName;
+@JsonKey(name: 'recipient_name') String get recipientName;@JsonKey(name: 'payment_intent_id') String get paymentIntentId;
 /// Create a copy of SendLinkedInEmailRequest
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -30,16 +30,16 @@ $SendLinkedInEmailRequestCopyWith<SendLinkedInEmailRequest> get copyWith => _$Se
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is SendLinkedInEmailRequest&&(identical(other.recipientEmail, recipientEmail) || other.recipientEmail == recipientEmail)&&(identical(other.recipientName, recipientName) || other.recipientName == recipientName));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is SendLinkedInEmailRequest&&(identical(other.recipientEmail, recipientEmail) || other.recipientEmail == recipientEmail)&&(identical(other.recipientName, recipientName) || other.recipientName == recipientName)&&(identical(other.paymentIntentId, paymentIntentId) || other.paymentIntentId == paymentIntentId));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,recipientEmail,recipientName);
+int get hashCode => Object.hash(runtimeType,recipientEmail,recipientName,paymentIntentId);
 
 @override
 String toString() {
-  return 'SendLinkedInEmailRequest(recipientEmail: $recipientEmail, recipientName: $recipientName)';
+  return 'SendLinkedInEmailRequest(recipientEmail: $recipientEmail, recipientName: $recipientName, paymentIntentId: $paymentIntentId)';
 }
 
 
@@ -50,7 +50,7 @@ abstract mixin class $SendLinkedInEmailRequestCopyWith<$Res>  {
   factory $SendLinkedInEmailRequestCopyWith(SendLinkedInEmailRequest value, $Res Function(SendLinkedInEmailRequest) _then) = _$SendLinkedInEmailRequestCopyWithImpl;
 @useResult
 $Res call({
-@JsonKey(name: 'recipient_email') String recipientEmail,@JsonKey(name: 'recipient_name') String recipientName
+@JsonKey(name: 'recipient_email') String recipientEmail,@JsonKey(name: 'recipient_name') String recipientName,@JsonKey(name: 'payment_intent_id') String paymentIntentId
 });
 
 
@@ -67,10 +67,11 @@ class _$SendLinkedInEmailRequestCopyWithImpl<$Res>
 
 /// Create a copy of SendLinkedInEmailRequest
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? recipientEmail = null,Object? recipientName = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? recipientEmail = null,Object? recipientName = null,Object? paymentIntentId = null,}) {
   return _then(_self.copyWith(
 recipientEmail: null == recipientEmail ? _self.recipientEmail : recipientEmail // ignore: cast_nullable_to_non_nullable
 as String,recipientName: null == recipientName ? _self.recipientName : recipientName // ignore: cast_nullable_to_non_nullable
+as String,paymentIntentId: null == paymentIntentId ? _self.paymentIntentId : paymentIntentId // ignore: cast_nullable_to_non_nullable
 as String,
   ));
 }
@@ -153,10 +154,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function(@JsonKey(name: 'recipient_email')  String recipientEmail, @JsonKey(name: 'recipient_name')  String recipientName)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function(@JsonKey(name: 'recipient_email')  String recipientEmail, @JsonKey(name: 'recipient_name')  String recipientName, @JsonKey(name: 'payment_intent_id')  String paymentIntentId)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _SendLinkedInEmailRequest() when $default != null:
-return $default(_that.recipientEmail,_that.recipientName);case _:
+return $default(_that.recipientEmail,_that.recipientName,_that.paymentIntentId);case _:
   return orElse();
 
 }
@@ -174,10 +175,10 @@ return $default(_that.recipientEmail,_that.recipientName);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function(@JsonKey(name: 'recipient_email')  String recipientEmail, @JsonKey(name: 'recipient_name')  String recipientName)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function(@JsonKey(name: 'recipient_email')  String recipientEmail, @JsonKey(name: 'recipient_name')  String recipientName, @JsonKey(name: 'payment_intent_id')  String paymentIntentId)  $default,) {final _that = this;
 switch (_that) {
 case _SendLinkedInEmailRequest():
-return $default(_that.recipientEmail,_that.recipientName);}
+return $default(_that.recipientEmail,_that.recipientName,_that.paymentIntentId);}
 }
 /// A variant of `when` that fallback to returning `null`
 ///
@@ -191,10 +192,10 @@ return $default(_that.recipientEmail,_that.recipientName);}
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function(@JsonKey(name: 'recipient_email')  String recipientEmail, @JsonKey(name: 'recipient_name')  String recipientName)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function(@JsonKey(name: 'recipient_email')  String recipientEmail, @JsonKey(name: 'recipient_name')  String recipientName, @JsonKey(name: 'payment_intent_id')  String paymentIntentId)?  $default,) {final _that = this;
 switch (_that) {
 case _SendLinkedInEmailRequest() when $default != null:
-return $default(_that.recipientEmail,_that.recipientName);case _:
+return $default(_that.recipientEmail,_that.recipientName,_that.paymentIntentId);case _:
   return null;
 
 }
@@ -206,13 +207,14 @@ return $default(_that.recipientEmail,_that.recipientName);case _:
 @JsonSerializable()
 
 class _SendLinkedInEmailRequest implements SendLinkedInEmailRequest {
-  const _SendLinkedInEmailRequest({@JsonKey(name: 'recipient_email') required this.recipientEmail, @JsonKey(name: 'recipient_name') required this.recipientName});
+  const _SendLinkedInEmailRequest({@JsonKey(name: 'recipient_email') required this.recipientEmail, @JsonKey(name: 'recipient_name') required this.recipientName, @JsonKey(name: 'payment_intent_id') required this.paymentIntentId});
   factory _SendLinkedInEmailRequest.fromJson(Map<String, dynamic> json) => _$SendLinkedInEmailRequestFromJson(json);
 
 /// Recipient email
 @override@JsonKey(name: 'recipient_email') final  String recipientEmail;
 /// Recipient name
 @override@JsonKey(name: 'recipient_name') final  String recipientName;
+@override@JsonKey(name: 'payment_intent_id') final  String paymentIntentId;
 
 /// Create a copy of SendLinkedInEmailRequest
 /// with the given fields replaced by the non-null parameter values.
@@ -227,16 +229,16 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _SendLinkedInEmailRequest&&(identical(other.recipientEmail, recipientEmail) || other.recipientEmail == recipientEmail)&&(identical(other.recipientName, recipientName) || other.recipientName == recipientName));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _SendLinkedInEmailRequest&&(identical(other.recipientEmail, recipientEmail) || other.recipientEmail == recipientEmail)&&(identical(other.recipientName, recipientName) || other.recipientName == recipientName)&&(identical(other.paymentIntentId, paymentIntentId) || other.paymentIntentId == paymentIntentId));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,recipientEmail,recipientName);
+int get hashCode => Object.hash(runtimeType,recipientEmail,recipientName,paymentIntentId);
 
 @override
 String toString() {
-  return 'SendLinkedInEmailRequest(recipientEmail: $recipientEmail, recipientName: $recipientName)';
+  return 'SendLinkedInEmailRequest(recipientEmail: $recipientEmail, recipientName: $recipientName, paymentIntentId: $paymentIntentId)';
 }
 
 
@@ -247,7 +249,7 @@ abstract mixin class _$SendLinkedInEmailRequestCopyWith<$Res> implements $SendLi
   factory _$SendLinkedInEmailRequestCopyWith(_SendLinkedInEmailRequest value, $Res Function(_SendLinkedInEmailRequest) _then) = __$SendLinkedInEmailRequestCopyWithImpl;
 @override @useResult
 $Res call({
-@JsonKey(name: 'recipient_email') String recipientEmail,@JsonKey(name: 'recipient_name') String recipientName
+@JsonKey(name: 'recipient_email') String recipientEmail,@JsonKey(name: 'recipient_name') String recipientName,@JsonKey(name: 'payment_intent_id') String paymentIntentId
 });
 
 
@@ -264,10 +266,11 @@ class __$SendLinkedInEmailRequestCopyWithImpl<$Res>
 
 /// Create a copy of SendLinkedInEmailRequest
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? recipientEmail = null,Object? recipientName = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? recipientEmail = null,Object? recipientName = null,Object? paymentIntentId = null,}) {
   return _then(_SendLinkedInEmailRequest(
 recipientEmail: null == recipientEmail ? _self.recipientEmail : recipientEmail // ignore: cast_nullable_to_non_nullable
 as String,recipientName: null == recipientName ? _self.recipientName : recipientName // ignore: cast_nullable_to_non_nullable
+as String,paymentIntentId: null == paymentIntentId ? _self.paymentIntentId : paymentIntentId // ignore: cast_nullable_to_non_nullable
 as String,
   ));
 }

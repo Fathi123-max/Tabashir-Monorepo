@@ -117,7 +117,7 @@ class SavedJobsRepository {
             if (item is String) {
               savedJobIds.add(item);
             } else if (item is Map) {
-              final dynamic id = item['id'];
+              final dynamic id = item['id'] ?? item['jobId'];
               if (id != null) {
                 savedJobIds.add(id.toString());
               }

@@ -33,7 +33,7 @@ class _PaymentApiService implements PaymentApiService {
       Options(method: 'POST', headers: _headers, extra: _extra)
           .compose(
             _dio.options,
-            '/payment-intent',
+            '/create-intent',
             queryParameters: queryParameters,
             data: _data,
           )
@@ -91,7 +91,7 @@ class _PaymentApiService implements PaymentApiService {
       Options(method: 'GET', headers: _headers, extra: _extra)
           .compose(
             _dio.options,
-            '/payments/latest',
+            '/latest',
             queryParameters: queryParameters,
             data: _data,
           )

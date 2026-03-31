@@ -25,6 +25,9 @@ sealed class PaymentIntentData with _$PaymentIntentData {
     double? amount,
     String? currency,
     String? status,
+    String? ephemeralKey,
+    String? customer,
+    String? publishableKey,
   }) = _PaymentIntentData;
 
   factory PaymentIntentData.fromJson(Map<String, dynamic> json) =>

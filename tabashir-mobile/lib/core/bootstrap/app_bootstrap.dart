@@ -1,20 +1,20 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
-import 'package:firebase_analytics/firebase_analytics.dart';
-
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:flutter_stripe/flutter_stripe.dart';
 import 'package:tabashir/core/constants/app_constants.dart';
 import 'package:tabashir/core/di/injection.dart';
-import 'package:tabashir/core/services/isar_service.dart';
+import 'package:tabashir/core/di/module.dart';
+import 'package:tabashir/core/error/global_bloc_observer.dart';
+import 'package:tabashir/core/services/google_signin_service.dart';
 import 'package:tabashir/core/services/local_storage_service.dart';
 import 'package:tabashir/core/services/notification_service.dart';
 import 'package:tabashir/core/services/onesignal_notification_service.dart';
-import 'package:tabashir/core/services/google_signin_service.dart';
-import 'package:tabashir/core/di/module.dart';
-import 'package:tabashir/core/error/global_bloc_observer.dart';
 
-import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:tabashir/core/services/isar_service.dart';
 
 // AppBootstrap handles all the initialization logic for the application
 class AppBootstrap {
@@ -55,6 +55,10 @@ class AppBootstrap {
         fallback: AppConstants.googleSignInServerClientId,
       ),
     );
+
+    // Initialize Stripe
+    Stripe.publishableKey = dotenv.get('STRIPE_PUBLISHABLE_KEY', fallback: '');
+    await Stripe.instance.applySettings();
 
     // Set global Bloc observer for error handling
     Bloc.observer = GlobalBlocObserver();

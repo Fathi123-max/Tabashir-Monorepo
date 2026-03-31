@@ -8,6 +8,7 @@ from app.routes.users_namespace import users_ns
 from app.routes.jobs_namespace import jobs_ns
 from app.routes.home_namespace import home_ns
 from app.routes.candidates_namespace import candidates_ns
+from app.routes.payments_namespace import payments_ns
 from app.database.db import get_db_connection
 
 
@@ -46,5 +47,6 @@ def create_app(config_class=Config):
     api.add_namespace(jobs_ns, path='/api/v1/jobs')
     api.add_namespace(home_ns, path='/api/v1/home')
     api.add_namespace(candidates_ns, path='/api/v1/candidates')
+    api.add_namespace(payments_ns, path='/api/v1/payments')
 
     return app

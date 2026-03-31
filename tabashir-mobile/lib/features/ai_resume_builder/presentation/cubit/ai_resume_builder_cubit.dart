@@ -118,7 +118,7 @@ class AiResumeBuilderCubit extends Cubit<AiResumeBuilderState> {
     _updateResumeScore();
   }
 
-  Future<void> generateAndSave() async {
+  Future<void> generateAndSave({String? paymentIntentId}) async {
     emit(state.copyWith(isGenerating: true, errors: []));
 
     try {
@@ -127,6 +127,7 @@ class AiResumeBuilderCubit extends Cubit<AiResumeBuilderState> {
         resumeData: state.resumeData,
         templateId: state.selectedTemplateId,
         filename: 'AI_Resume_${DateTime.now().millisecondsSinceEpoch}.pdf',
+        paymentIntentId: paymentIntentId ?? state.paymentIntentId,
       );
 
       final result = await apiService.saveAndGenerate(request);

@@ -8,7 +8,7 @@ part 'saved_jobs_response.g.dart';
 sealed class SavedJobsResponse with _$SavedJobsResponse {
   const factory SavedJobsResponse({
     /// Success status
-    required bool success,
+    @Default(false) bool success,
 
     /// List of saved job IDs or objects (from GET operations)
     @Default([]) List<dynamic> savedJobs,

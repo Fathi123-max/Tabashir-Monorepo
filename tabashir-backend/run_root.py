@@ -8,6 +8,7 @@ from app.routes.auth_namespace import auth_ns
 from app.routes.profile_namespace import profile_ns
 from app.routes.home_namespace import home_ns
 from app.routes.jobs_namespace import jobs_ns
+from app.routes.payments_namespace import payments_ns
 from flask_restx import Api
 
 def create_app():
@@ -30,6 +31,7 @@ def create_app():
     # api.add_namespace(home_ns, path='/api/mobile/home')
     api.add_namespace(jobs_ns, path='/api')
     api.add_namespace(resume_ns, path='/api/v1/resume')
+    api.add_namespace(payments_ns, path='/api/v1/payments')
 
     # Register blueprints (actual route handlers)
     from app.routes.auth_routes import auth_bp
