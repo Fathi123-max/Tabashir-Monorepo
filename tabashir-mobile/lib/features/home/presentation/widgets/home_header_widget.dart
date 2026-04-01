@@ -36,7 +36,12 @@ class HomeHeaderWidget extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Padding(
-            padding: EdgeInsets.all(AppTheme.spacingMd.w),
+            padding: EdgeInsets.fromLTRB(
+              AppTheme.spacingMd.w,
+              AppTheme.spacingMd.h,
+              AppTheme.spacingMd.w,
+              AppTheme.spacingSm.h,
+            ),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -145,7 +150,7 @@ class HomeHeaderWidget extends StatelessWidget {
           Padding(
             padding: EdgeInsets.symmetric(
               horizontal: AppTheme.spacingMd.w,
-            ).copyWith(bottom: AppTheme.spacingSm.h),
+            ).copyWith(bottom: AppTheme.spacingXs.h),
             child: Text(
               'Here are the best opportunities for you today'.tr(),
               style: theme.textTheme.bodyMedium?.copyWith(

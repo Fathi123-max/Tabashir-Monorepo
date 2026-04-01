@@ -14,8 +14,8 @@ class HomeQuickActionsGridWidget extends StatelessWidget {
     crossAxisCount: 2,
     shrinkWrap: true,
     physics: const NeverScrollableScrollPhysics(),
-    mainAxisSpacing: AppTheme.spacingMd.h,
-    crossAxisSpacing: AppTheme.spacingMd.w,
+    mainAxisSpacing: AppTheme.spacingLg.h,
+    crossAxisSpacing: AppTheme.spacingLg.w,
     children: [
       // Saved Jobs
       HomeQuickActionCardWidget(

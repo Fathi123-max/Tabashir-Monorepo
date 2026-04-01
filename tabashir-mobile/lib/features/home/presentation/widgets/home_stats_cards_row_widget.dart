@@ -14,6 +14,7 @@ class HomeStatsCardsRowWidget extends StatelessWidget {
   Widget build(BuildContext context) => BlocBuilder<HomeCubit, HomeState>(
     builder: (context, state) => SingleChildScrollView(
       scrollDirection: Axis.horizontal,
+      padding: EdgeInsets.symmetric(horizontal: AppTheme.spacingMd.w),
       child: Row(
         children: [
           HomeStatCardWidget(

@@ -66,7 +66,7 @@ class HomeMatchedJobsWidget extends StatelessWidget {
                 ],
               ),
             ),
-            SizedBox(height: AppTheme.spacingMd.h),
+            SizedBox(height: AppTheme.spacingSm.h),
             // Show empty state or job list
             if (matchedJobs.isEmpty)
               _buildEmptyState(theme)
@@ -74,6 +74,7 @@ class HomeMatchedJobsWidget extends StatelessWidget {
               ListView.separated(
                 shrinkWrap: true,
                 physics: const NeverScrollableScrollPhysics(),
+                padding: EdgeInsets.symmetric(horizontal: AppTheme.spacingMd.w),
                 itemCount: matchedJobs.length.clamp(0, 10),
                 separatorBuilder: (context, index) => SizedBox(height: AppTheme.spacingMd.h),
                 itemBuilder: (context, index) {
@@ -138,6 +139,7 @@ class HomeMatchedJobsWidget extends StatelessWidget {
     return Container(
       width: double.infinity,
       padding: EdgeInsets.all(AppTheme.spacingLg.w),
+      margin: EdgeInsets.symmetric(horizontal: AppTheme.spacingMd.w),
       decoration: BoxDecoration(
         color: AppTheme.zinc50,
         borderRadius: BorderRadius.circular(AppTheme.radiusMedium.r),

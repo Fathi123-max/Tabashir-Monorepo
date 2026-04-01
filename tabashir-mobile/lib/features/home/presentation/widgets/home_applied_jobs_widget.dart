@@ -53,7 +53,7 @@ class HomeAppliedJobsWidget extends StatelessWidget {
                 ],
               ),
             ),
-            SizedBox(height: AppTheme.spacingMd.h),
+            SizedBox(height: AppTheme.spacingSm.h),
             // Show empty state or applications list
             if (appliedJobs.isEmpty)
               _buildEmptyState(context, theme)
@@ -66,13 +66,13 @@ class HomeAppliedJobsWidget extends StatelessWidget {
                 ),
                 itemCount: appliedJobs.length.clamp(0, 5), // Show max 5
                 separatorBuilder: (context, index) =>
-                    SizedBox(height: AppTheme.spacingSm.h),
+                    SizedBox(height: AppTheme.spacingMd.h),
                 itemBuilder: (context, index) {
                   final job = appliedJobs[index];
                   return _AppliedJobCard(job: job);
                 },
               ),
-            SizedBox(height: AppTheme.spacingLg.h),
+            SizedBox(height: AppTheme.spacingMd.h),
           ],
         );
       },

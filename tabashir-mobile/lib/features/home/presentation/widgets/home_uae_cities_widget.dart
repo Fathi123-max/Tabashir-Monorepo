@@ -76,13 +76,13 @@ class HomeUAECitiesWidget extends StatelessWidget {
                 ],
               ),
             ),
-            SizedBox(height: AppTheme.spacingMd.h),
+            SizedBox(height: AppTheme.spacingSm.h),
             // Horizontal scrollable chips
             SizedBox(
               height: 48.h,
               child: ListView.builder(
                 scrollDirection: Axis.horizontal,
-                padding: EdgeInsets.only(left: AppTheme.spacingMd.w),
+                padding: EdgeInsets.symmetric(horizontal: AppTheme.spacingMd.w),
                 itemCount: uaeCityCounts.length,
                 itemBuilder: (context, index) {
                   final cityData = uaeCityCounts[index];
@@ -93,7 +93,7 @@ class HomeUAECitiesWidget extends StatelessWidget {
                 },
               ),
             ),
-            SizedBox(height: AppTheme.spacingLg.h),
+            SizedBox(height: AppTheme.spacingMd.h),
           ],
         );
       },
