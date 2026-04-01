@@ -20,12 +20,17 @@ class JobDetailsService {
   Future<JobDetails> getJobDetails(
     String jobId, {
     CandidateProfileData? userProfile,
+    String? userEmail,
   }) async {
     print('[JOB_DETAILS_SERVICE] Fetching job details for jobId: $jobId');
+    print('[JOB_DETAILS_SERVICE] Correlation: userProfile = ${userProfile != null}, userEmail = $userEmail');
 
     try {
-      // Fetch job details from API
-      final jobDetailsResponse = await _jobsRepository.getJobById(jobId: jobId);
+      // Fetch job details from API, passing userEmail for backend matching
+      final jobDetailsResponse = await _jobsRepository.getJobById(
+        jobId: jobId,
+        email: userEmail,
+      );
 
       print('[JOB_DETAILS_SERVICE] Received API response: $jobDetailsResponse');
 
@@ -42,13 +47,9 @@ class JobDetailsService {
     JobDetailsResponse response,
     CandidateProfileData? userProfile,
   ) {
-    // Calculate match percentage using JobMatchService
-    final matchPercentage = userProfile != null
-        ? _jobMatchService.calculateMatchPercentage(
-            userProfile: userProfile,
-            job: response,
-          )
-        : '50% Match'; // Default if no profile
+    // Use match percentage from API response
+    final matchPercentage =
+        _jobMatchService.formatMatchPercentage(response.matchPercentage);
 
     return JobDetails(
       id: response.jobId?.toString() ?? 'unknown',

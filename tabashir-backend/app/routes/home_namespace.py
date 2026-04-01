@@ -3,6 +3,7 @@ from flask import request
 from http import HTTPStatus
 from app.database.db import execute_query
 from app.routes.middleware import jwt_required
+from app.services.job_apply.ai_matching import title_position_match, calculate_skills_match, semantic_location_match
 
 home_ns = Namespace('home', description='Home Dashboard Endpoints')
 
@@ -37,6 +38,21 @@ class Dashboard(Resource):
 
         # 3. Dynamic Matches Count
         total_matches = 0
+        email = request.args.get('email')
+        
+        # Try to get profile if it wasn't found by userId (e.g., if mobile passes email)
+        if not profile and email:
+            try:
+                profile = execute_query(
+                    '''SELECT cp."jobType", cp.skills, cp.location 
+                       FROM "Candidate" c
+                       JOIN "CandidateProfile" cp ON cp."candidateId" = c.id
+                       WHERE c.email = %s''',
+                    (email,), fetch_one=True
+                )
+            except Exception as e:
+                print(f"[DASHBOARD] Profile fetch by email failed: {e}")
+
         if profile and profile.get('skills'):
             try:
                 # Simple overlap check: Job requiredSkills contains any of user skills
@@ -78,16 +94,54 @@ class Dashboard(Resource):
 
         total_apps = sum(r['count'] for r in apps) if apps else 0
 
-        # 6. Recent Jobs
+        # 6. Featured Jobs (Unify match calculation with Jobs List/Details)
         try:
-            recent_jobs = execute_query(
-                """SELECT id, title, company, "companyLogo", "jobType", location
+            featured_jobs = execute_query(
+                """SELECT id, title as job_title, company as entity, "companyLogo", "jobType" as job_type, 
+                          location as vacancy_city, description as job_description
                    FROM "Job" WHERE status = 'ACTIVE'
                    ORDER BY "createdAt" DESC LIMIT 5""",
                 fetch_all=True
             )
-        except Exception:
-            recent_jobs = []
+            
+            # Match calculation logic (same as resumes_namespace.py)
+            match_profile = None
+            if profile:
+                print(f"[DASHBOARD] Profile found for user {user_id}: {profile.get('jobType')}, {len(profile.get('skills') or [])} skills")
+                skills_list = profile.get('skills') or []
+                skills_str = ", ".join(skills_list) if isinstance(skills_list, list) else str(skills_list)
+                match_profile = {
+                    "positions": profile.get('jobType') or "",
+                    "skills": skills_str,
+                    "location": profile.get('location') or ""
+                }
+            else:
+                print(f"[DASHBOARD] ⚠️ No profile found for user {user_id} or email {email}")
+
+            for job in featured_jobs:
+                if match_profile:
+                    try:
+                        title_score = title_position_match(job.get('job_title', ''), match_profile['positions'])
+                        skill_score = calculate_skills_match(job.get('job_description') or job.get('job_title', ''), match_profile['skills'])
+                        location_score = semantic_location_match(job.get('vacancy_city', ''), match_profile['location'])
+
+                        final_score = round((0.4 * title_score + 0.4 * skill_score + 0.2 * location_score), 3)
+                        job['match_percentage'] = str(int(round(final_score * 100, 0)))
+                        print(f"[DASHBOARD] Job {job.get('id')}: {job.get('job_title')} => {job['match_percentage']}% (T:{title_score:.3f}, S:{skill_score:.3f}, L:{location_score:.3f})")
+                    except Exception as e:
+                        print(f"[DASHBOARD] Match calc error for job {job.get('id')}: {e}")
+                        job['match_percentage'] = None  # Return null on error
+                else:
+                    # No profile available - return null instead of '0'
+                    job['match_percentage'] = None
+
+                # Delete description after calculation to keep response slim
+                if 'job_description' in job:
+                    del job['job_description']
+                    
+        except Exception as e:
+            print(f"[DASHBOARD] Featured jobs error: {e}")
+            featured_jobs = []
 
         return {
             "user": {
@@ -105,7 +159,7 @@ class Dashboard(Resource):
                 "offers": _count(['offer', 'OFFER']),
                 "rejected": _count(['rejected', 'REJECTED'])
             },
-            "recentJobs": recent_jobs or []
+            "featuredJobs": featured_jobs or []
         }, HTTPStatus.OK
 
 
@@ -168,46 +222,57 @@ class Recommendations(Resource):
         """Get job recommendations sorted by AI match percentage"""
         user_id = request.user_id
         try:
-            # 1. Get user skills
+            # 1. Get user profile for matching
             profile = execute_query(
-                '''SELECT cp.skills FROM "Candidate" c
+                '''SELECT cp."jobType", cp.skills, cp.location FROM "Candidate" c
                    JOIN "CandidateProfile" cp ON cp."candidateId" = c.id
                    WHERE c."userId" = %s''',
                 (user_id,), fetch_one=True
             )
             
-            user_skills = profile.get('skills') if profile else []
+            # 2. Fetch jobs
+            jobs = execute_query(
+                """SELECT id, title as job_title, company as entity, "companyLogo", "jobType" as job_type,
+                          "salaryMin"::text as salary, location as vacancy_city, description as job_description
+                   FROM "Job"
+                   WHERE status = 'ACTIVE'
+                   ORDER BY "createdAt" DESC LIMIT 15""",
+                fetch_all=True
+            )
+            
+            # 3. Apply AI matching logic to each job
+            match_profile = None
+            if profile:
+                skills_list = profile.get('skills') or []
+                skills_str = ", ".join(skills_list) if isinstance(skills_list, list) else str(skills_list)
+                match_profile = {
+                    "positions": profile.get('jobType') or "",
+                    "skills": skills_str,
+                    "location": profile.get('location') or ""
+                }
 
-            # 2. Fetch jobs and calculate match percentage in SQL
-            if user_skills:
-                # Calculate overlap count / total required skills
-                jobs = execute_query(
-                    """SELECT j.id, j.title, j.company, j."companyLogo", j."jobType",
-                              j."salaryMin", j."salaryMax", j.location, j.description,
-                              CASE 
-                                WHEN array_length(j."requiredSkills", 1) = 0 THEN 50
-                                ELSE round((
-                                    SELECT count(*) FROM unnest(j."requiredSkills") s 
-                                    WHERE s = ANY(%s)
-                                )::numeric / array_length(j."requiredSkills", 1) * 100)
-                              END as match_percentage
-                       FROM "Job" j
-                       WHERE j.status = 'ACTIVE'
-                       ORDER BY match_percentage DESC, j."createdAt" DESC
-                       LIMIT 15""",
-                    (user_skills,),
-                    fetch_all=True
-                )
-            else:
-                jobs = execute_query(
-                    """SELECT id, title, company, "companyLogo", "jobType",
-                              "salaryMin", "salaryMax", location, description,
-                              0 as match_percentage
-                       FROM "Job"
-                       WHERE status = 'ACTIVE'
-                       ORDER BY "createdAt" DESC LIMIT 15""",
-                    fetch_all=True
-                )
+            if jobs:
+                for job in jobs:
+                    if match_profile:
+                        try:
+                            title_score = title_position_match(job.get('job_title', ''), match_profile['positions'] or "")
+                            skill_score = calculate_skills_match(job.get('job_description') or job.get('job_title', ''), match_profile['skills'] or "")
+                            location_score = semantic_location_match(job.get('vacancy_city', ''), match_profile['location'] or "")
+                            
+                            final_score = round((0.4 * title_score + 0.4 * skill_score + 0.2 * location_score), 3)
+                            job['match_percentage'] = str(int(round(final_score * 100, 0)))
+                        except Exception as e:
+                            print(f"[RECO] Match calc error: {e}")
+                            job['match_percentage'] = '0'
+                    else:
+                        job['match_percentage'] = '0'
+                    
+                    # Cleanup
+                    if 'job_description' in job:
+                        del job['job_description']
+                
+                # Re-sort by match percentage
+                jobs.sort(key=lambda x: int(x.get('match_percentage', 0)), reverse=True)
             
             return {"recommendations": jobs or []}, HTTPStatus.OK
         except Exception as e:
@@ -253,30 +318,38 @@ class Analytics(Resource):
             user_skills = profile.get('skills') if profile else []
             
             if user_skills:
-                # Get match percentage for the 50 most recent ACTIVE jobs
+                # Get match percentage for the 30 most recent ACTIVE jobs (limited for performance)
                 recent_jobs = execute_query(
-                    '''SELECT "requiredSkills" FROM "Job" 
+                    '''SELECT title, description, "requiredSkills", location FROM "Job" 
                        WHERE status = 'ACTIVE' 
-                       ORDER BY "createdAt" DESC LIMIT 50''',
+                       ORDER BY "createdAt" DESC LIMIT 30''',
                     fetch_all=True
                 )
                 
-                user_skills_set = set(s.lower() for s in user_skills)
+                skills_list = profile.get('skills') or []
+                skills_str = ", ".join(skills_list) if isinstance(skills_list, list) else str(skills_list)
+                m_profile = {
+                    "positions": profile.get('jobType') or "",
+                    "skills": skills_str,
+                    "location": profile.get('location') or ""
+                }
+                
                 for job in recent_jobs:
-                    req_skills = job.get('requiredSkills') or []
-                    if not req_skills:
+                    try:
+                        title_score = title_position_match(job.get('title', ''), m_profile['positions'])
+                        skill_score = calculate_skills_match(job.get('description') or job.get('title', ''), m_profile['skills'])
+                        location_score = semantic_location_match(job.get('location', ''), m_profile['location'])
+                        
+                        percentage = (0.4 * title_score + 0.4 * skill_score + 0.2 * location_score) * 100
+                        
+                        if percentage >= 90:
+                            match_distribution[0]["count"] += 1
+                        elif percentage >= 80:
+                            match_distribution[1]["count"] += 1
+                        elif percentage >= 70:
+                            match_distribution[2]["count"] += 1
+                    except Exception:
                         continue
-                    
-                    req_skills_set = set(s.lower() for s in req_skills)
-                    matches = len(user_skills_set.intersection(req_skills_set))
-                    percentage = (matches / len(req_skills_set)) * 100
-                    
-                    if percentage >= 90:
-                        match_distribution[0]["count"] += 1
-                    elif percentage >= 80:
-                        match_distribution[1]["count"] += 1
-                    elif percentage >= 70:
-                        match_distribution[2]["count"] += 1
         except Exception as e:
             print(f"[ANALYTICS] Match Score error: {e}")
 

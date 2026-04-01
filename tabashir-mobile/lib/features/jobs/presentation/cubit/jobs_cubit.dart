@@ -9,6 +9,8 @@ import 'package:tabashir/core/services/isar_service.dart';
 import 'package:tabashir/features/jobs/domain/models/job_ui_model.dart';
 import 'package:tabashir/features/jobs/domain/repositories/jobs_repository.dart';
 import 'package:tabashir/features/profile/presentation/cubit/profile_cubit.dart';
+import 'package:tabashir/core/services/job_match_service.dart';
+import 'package:tabashir/core/di/injection.dart';
 
 part 'jobs_state.dart';
 part 'jobs_cubit.freezed.dart';
@@ -35,6 +37,7 @@ class JobsCubit extends Cubit<JobsState> {
   final SavedJobsRepository _savedJobsRepository;
   final AppliedJobsStorage _appliedJobsStorage;
   final ProfileCubit _profileCubit;
+  final JobMatchService _jobMatchService = getIt<JobMatchService>();
   StreamSubscription<Set<String>>? _savedJobsSubscription;
   Set<String> _appliedJobIds = {};
   bool _isInitialized = false;
@@ -50,7 +53,7 @@ class JobsCubit extends Cubit<JobsState> {
 
   /// Initialize the cubit state
   /// Only loads jobs if not already initialized
-  void initializeState({String? initialCity}) {
+  void initializeState({String? initialCity, String? email}) {
     if (_isInitialized) {
       if (initialCity != null && state is JobsStateLoaded) {
         final loadedState = state as JobsStateLoaded;
@@ -64,7 +67,7 @@ class JobsCubit extends Cubit<JobsState> {
             maxSalary: 100000,
           ),
         );
-        loadJobs(page: 0);
+        loadJobs(page: 0, email: email);
       }
       print('[JOBS_CUBIT] Already initialized, skipping duplicate load');
       return;
@@ -80,7 +83,7 @@ class JobsCubit extends Cubit<JobsState> {
       );
     }
 
-    loadJobs();
+    loadJobs(email: email);
   }
 
   // Filter options
@@ -117,9 +120,10 @@ class JobsCubit extends Cubit<JobsState> {
   Future<void> loadJobs({
     int page = 0,
     int limit = 20,
+    String? email,
   }) async {
     try {
-      print('[JOBS_CUBIT] loadJobs() called - Page: $page, Limit: $limit');
+      print('[JOBS_CUBIT] loadJobs() called - Page: $page, Limit: $limit, Email: ${email ?? "from profile"}');
       print('[JOBS_CUBIT] Current state: $state');
 
       // Get current filters from state
@@ -152,8 +156,13 @@ class JobsCubit extends Cubit<JobsState> {
         sort = loadedState.selectedSort;
       }
 
-      // Get user email from profile cubit to exclude applied jobs
-      final userEmail = _profileCubit.state.profile?.email;
+      // Use provided email or get from profile cubit
+      final userEmail = email ?? _profileCubit.state.profile?.email;
+      if (userEmail != null && userEmail.isNotEmpty) {
+        print('[JOBS_CUBIT] Using email for matching: $userEmail');
+      } else {
+        print('[JOBS_CUBIT] ⚠️ No email available - jobs will load without match percentages');
+      }
 
       // Get jobs from repository with pagination, search, and filters
       final jobs = await _repository.getJobs(
@@ -319,7 +328,7 @@ class JobsCubit extends Cubit<JobsState> {
       location: job.location ?? 'Not specified',
       salary: _formatSalaryDisplay(job.salary),
       salaryValue: _extractSalaryValue(job.salary),
-      matchPercentage: '90% Match', // TODO: Calculate from backend
+      matchPercentage: _jobMatchService.formatMatchPercentage(job.matchPercentage),
       tags: tags,
       skillsMatch: job.academicQualification ?? 'Qualifications pending',
       isSaved:

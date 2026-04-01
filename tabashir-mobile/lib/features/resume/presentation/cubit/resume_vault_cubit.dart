@@ -293,7 +293,7 @@ class ResumeVaultCubit extends Cubit<ResumeVaultState> {
       // Trigger AI Dashboard Refresh
       try {
         print('🔵 [RESUME_VAULT_CUBIT] Triggering HomeCubit refresh...');
-        getIt<HomeCubit>().loadHomeData(forceRefresh: true);
+        getIt<HomeCubit>().refreshHomeData(userProfile: null);
       } catch (e) {
         print(
           '🔵 [RESUME_VAULT_CUBIT] Failed to trigger HomeCubit refresh: $e',

@@ -1,4 +1,5 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:tabashir/core/network/models/applied_jobs_response.dart';
 
 part 'home_repository.freezed.dart';
 part 'home_repository.g.dart';
@@ -155,4 +156,7 @@ abstract class HomeRepository {
     int page = 1,
     int limit = 10,
   });
+
+  /// Get user's applied jobs
+  Future<List<AppliedJob>> getAppliedJobs({required String email});
 }

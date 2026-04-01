@@ -1,10 +1,12 @@
 import 'dart:convert';
 
 import 'package:injectable/injectable.dart';
+import 'package:tabashir/core/network/models/applied_jobs_response.dart';
 import 'package:tabashir/core/services/isar_service.dart';
 import 'package:tabashir/features/home/domain/repositories/home_repository.dart';
 import 'package:tabashir/core/network/services/job/tabashir_api_service.dart';
 import 'package:tabashir/core/network/models/email_model.dart';
+import 'package:tabashir/core/services/job_match_service.dart';
 
 /// Implementation of [HomeRepository]
 /// Handles home dashboard operations using [IsarService] for local storage
@@ -340,13 +342,22 @@ class HomeRepositoryImpl implements HomeRepository {
     try {
       final response = await _tabashirApiService.getJobMatches(email, limit, 1);
       final jobs = response.data.matchedJobs;
+      final jobMatchService = JobMatchService();
       return jobs.map((job) {
+        final matchPctRaw = job.matchPercentage;
+        int matchPct;
+        if (matchPctRaw == null || matchPctRaw.isEmpty) {
+          matchPct = 0;
+        } else {
+          final cleaned = matchPctRaw.replaceAll(RegExp(r'[^0-9]'), '');
+          matchPct = cleaned.isEmpty ? 0 : int.parse(cleaned);
+        }
         return JobRecommendation(
           id: job.jobId?.toString() ?? '',
           title: job.jobTitle ?? 'Unknown Title',
           company: job.companyName ?? 'Unknown Company',
           location: job.location ?? '',
-          matchPercentage: 90, // Placeholder, normally from match algorithm
+          matchPercentage: matchPct,
         );
       }).toList();
     } catch (e) {
@@ -388,6 +399,17 @@ class HomeRepositoryImpl implements HomeRepository {
       return jobs.map((j) => j.toJson()).toList();
     } catch (e) {
       print('Error getting latest jobs: $e');
+      return [];
+    }
+  }
+
+  @override
+  Future<List<AppliedJob>> getAppliedJobs({required String email}) async {
+    try {
+      final response = await _tabashirApiService.getAppliedJobs(email);
+      return response.data.jobs;
+    } catch (e) {
+      print('Error getting applied jobs: $e');
       return [];
     }
   }

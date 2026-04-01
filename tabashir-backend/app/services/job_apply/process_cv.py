@@ -1,6 +1,7 @@
 import json
 import os
 import re
+import uuid
 from datetime import datetime, date
 
 import psycopg2
@@ -9,6 +10,7 @@ from PyPDF2 import PdfReader
 
 from app import Config
 from app.services.cv_processor import get_openai_client
+from app.database.db import execute_query
 from pathlib import Path
 import shutil
 from datetime import datetime
@@ -281,6 +283,18 @@ def process_ai_job_input_not_active(email, resume_path, nationality, gender, loc
             cursor.execute(query, tuple(values))
             conn.commit()
             mark_timestamp_as_processed(conn, timestamp)
+            
+            # Sync to main PostgreSQL CandidateProfile for mobile app access
+            print(f"[PROCESS_AI_JOB] Syncing to CandidateProfile...")
+            sync_client_to_candidate_profile(
+                email=email,
+                cv_data=cv_data,
+                nationality=nationality,
+                gender=gender,
+                preferred_positions=preferred_positions,
+                location_preferred=location_preferred
+            )
+            
             return data['email']
 
         columns = ', '.join(data.keys())
@@ -290,6 +304,18 @@ def process_ai_job_input_not_active(email, resume_path, nationality, gender, loc
         conn.commit()
 
         mark_timestamp_as_processed(conn, timestamp)
+        
+        # Sync to main PostgreSQL CandidateProfile for mobile app access
+        print(f"[PROCESS_AI_JOB] Syncing to CandidateProfile...")
+        sync_client_to_candidate_profile(
+            email=email,
+            cv_data=cv_data,
+            nationality=nationality,
+            gender=gender,
+            preferred_positions=preferred_positions,
+            location_preferred=location_preferred
+        )
+        
         return data['email']
    except Exception as e:
         print(f"Error processing CV: {e}")
@@ -675,3 +701,146 @@ def get_client_data(email):
     finally:
         if conn:
             conn.close()
+
+
+def sync_client_to_candidate_profile(email, cv_data, nationality, gender, preferred_positions, location_preferred):
+    """
+    Sync client data from AI DB to main PostgreSQL CandidateProfile table.
+    This ensures mobile app can access profile data through standard APIs.
+    
+    Args:
+        email: User's email address
+        cv_data: Parsed CV data dictionary from AI
+        nationality: User's nationality
+        gender: User's gender
+        preferred_positions: List of preferred job positions
+        job_location_based: Preferred job locations
+    
+    Returns:
+        bool: True if sync successful, False otherwise
+    """
+    try:
+        print(f"[SYNC_CLIENT] Starting sync to CandidateProfile for email: {email}")
+        
+        # 1. Find user by email
+        user = execute_query(
+            'SELECT id FROM users WHERE email = %s',
+            (email,),
+            fetch_one=True
+        )
+        
+        if not user:
+            print(f"[SYNC_CLIENT] User not found for email: {email}")
+            return False
+        
+        user_id = user['id']
+        print(f"[SYNC_CLIENT] Found user with ID: {user_id}")
+        
+        # 2. Get or create Candidate record
+        candidate = execute_query(
+            'SELECT id FROM "Candidate" WHERE "userId" = %s',
+            (user_id,),
+            fetch_one=True
+        )
+        
+        if not candidate:
+            candidate_id = str(uuid.uuid4())
+            print(f"[SYNC_CLIENT] Creating new Candidate record: {candidate_id}")
+            execute_query(
+                'INSERT INTO "Candidate" (id, "userId", "createdAt", "updatedAt") VALUES (%s, %s, NOW(), NOW())',
+                (candidate_id, user_id),
+                commit=True
+            )
+        else:
+            candidate_id = candidate['id']
+            print(f"[SYNC_CLIENT] Using existing Candidate: {candidate_id}")
+        
+        # 3. Prepare profile data
+        # Parse skills from comma-separated string to array
+        skills_raw = cv_data.get('Skills', '')
+        if isinstance(skills_raw, str):
+            skills_list = [s.strip() for s in skills_raw.split(',') if s.strip()]
+        elif isinstance(skills_raw, list):
+            skills_list = skills_raw
+        else:
+            skills_list = []
+        
+        # Get location (handle both string and list)
+        location = location_preferred if location_preferred else cv_data.get('Location', '')
+        if isinstance(location, list):
+            location = ', '.join(location)
+        
+        # Get positions (handle both string and list)
+        positions = preferred_positions if preferred_positions else cv_data.get('positions', '')
+        if isinstance(positions, list):
+            positions = ', '.join(positions)
+        
+        # Get phone number
+        phone = cv_data.get('Phone Number', '')
+        
+        # Get degree
+        degree = cv_data.get('Degree', '')
+        
+        print(f"[SYNC_CLIENT] Profile data - Positions: {positions}, Skills: {len(skills_list)} items, Location: {location}")
+        
+        # 4. Check if CandidateProfile exists
+        profile = execute_query(
+            'SELECT id FROM "CandidateProfile" WHERE "candidateId" = %s',
+            (candidate_id,),
+            fetch_one=True
+        )
+        
+        if profile:
+            # Update existing profile
+            print(f"[SYNC_CLIENT] Updating existing CandidateProfile: {profile['id']}")
+            execute_query('''
+                UPDATE "CandidateProfile" SET
+                    "jobType" = %s,
+                    skills = %s,
+                    location = %s,
+                    phone = %s,
+                    nationality = %s,
+                    gender = %s,
+                    degree = %s,
+                    "updatedAt" = NOW()
+                WHERE "candidateId" = %s
+            ''', (
+                positions,
+                skills_list,
+                location,
+                phone,
+                nationality,
+                gender,
+                degree,
+                candidate_id
+            ), commit=True)
+        else:
+            # Create new profile
+            profile_id = str(uuid.uuid4())
+            print(f"[SYNC_CLIENT] Creating new CandidateProfile: {profile_id}")
+            execute_query('''
+                INSERT INTO "CandidateProfile" (
+                    id, "candidateId", "jobType", skills, location, phone,
+                    nationality, gender, degree, "onboardingCompleted",
+                    "createdAt", "updatedAt"
+                ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, true, NOW(), NOW())
+            ''', (
+                profile_id,
+                candidate_id,
+                positions,
+                skills_list,
+                location,
+                phone,
+                nationality,
+                gender,
+                degree
+            ), commit=True)
+        
+        print(f"[SYNC_CLIENT] ✅ Sync completed successfully for {email}")
+        return True
+        
+    except Exception as e:
+        print(f"[SYNC_CLIENT] ❌ Error during sync: {e}")
+        import traceback
+        traceback.print_exc()
+        return False

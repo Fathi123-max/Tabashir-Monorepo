@@ -518,8 +518,11 @@ class ProfileCubit extends Cubit<ProfileState> {
 
       await _repository.updateProfile(profileUpdate: profileUpdate);
 
-      // Trigger home dashboard refresh
-      getIt<HomeCubit>().loadHomeData(forceRefresh: true);
+      // Trigger home data refresh
+      final email = state.profile?.email;
+      if (email != null) {
+        getIt<HomeCubit>().refreshHomeData(userProfile: null);
+      }
 
       // Reload profile data from server to get updated information (both Web and AI)
       await loadProfileData(force: true);

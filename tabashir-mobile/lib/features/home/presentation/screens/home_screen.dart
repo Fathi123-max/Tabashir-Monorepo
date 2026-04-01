@@ -9,8 +9,6 @@ import 'package:tabashir/features/home/presentation/cubit/cubit.dart';
 import 'package:tabashir/features/home/presentation/cubit/app_initialization_cubit.dart';
 import 'package:tabashir/features/home/data/models/app_initialization_state.dart';
 import 'package:tabashir/features/home/presentation/widgets/widgets.dart';
-import 'package:tabashir/features/home/presentation/widgets/home_explore_cities_grid_widget.dart';
-import 'package:tabashir/features/home/presentation/widgets/home_latest_jobs_feed_widget.dart';
 import 'package:tabashir/features/jobs/presentation/cubit/jobs_cubit.dart';
 import 'package:tabashir/shared/widgets/cv_required_blur.dart';
 import 'package:tabashir/features/resume/presentation/cubit/resume_vault_cubit.dart';
@@ -168,77 +166,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                     ),
                                   ),
                                 ),
-                                SizedBox(height: AppTheme.spacingMd.h),
-                                Padding(
-                                  padding: EdgeInsets.symmetric(
-                                    horizontal: AppTheme.spacingMd.w,
-                                  ),
-                                  child: const HomeStatsCardsRowWidget(),
-                                ),
                                 SizedBox(height: AppTheme.spacingLg.h),
-                                Padding(
-                                  padding: EdgeInsets.symmetric(
-                                    horizontal: AppTheme.spacingMd.w,
-                                  ),
-                                  child: Text(
-                                    'Recommended for you'.tr(),
-                                    style: theme.textTheme.headlineMedium
-                                        ?.copyWith(
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                  ),
-                                ),
-                                SizedBox(height: AppTheme.spacingMd.h),
-                                Padding(
-                                  padding: EdgeInsets.symmetric(
-                                    horizontal: AppTheme.spacingMd.w,
-                                  ),
-                                  child:
-                                      const HomeJobCardsHorizontalListWidget(),
-                                ),
-                                SizedBox(height: AppTheme.spacingMd.h),
-                                Padding(
-                                  padding: EdgeInsets.symmetric(
-                                    horizontal: AppTheme.spacingMd.w,
-                                  ),
-                                  child: Text(
-                                    'Explore By City'.tr(),
-                                    style: theme.textTheme.headlineMedium
-                                        ?.copyWith(
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                  ),
-                                ),
-                                SizedBox(height: AppTheme.spacingMd.h),
-                                Padding(
-                                  padding: EdgeInsets.symmetric(
-                                    horizontal: AppTheme.spacingMd.w,
-                                  ),
-                                  child: HomeExploreCitiesGridWidget(
-                                    cityJobCounts: state.cityJobCounts,
-                                  ),
-                                ),
-                                SizedBox(height: AppTheme.spacingLg.h),
-                                Padding(
-                                  padding: EdgeInsets.symmetric(
-                                    horizontal: AppTheme.spacingMd.w,
-                                  ),
-                                  child: Text(
-                                    'Latest Opportunities'.tr(),
-                                    style: theme.textTheme.headlineMedium
-                                        ?.copyWith(
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                  ),
-                                ),
-                                SizedBox(height: AppTheme.spacingMd.h),
-                                Padding(
-                                  padding: EdgeInsets.symmetric(
-                                    horizontal: AppTheme.spacingMd.w,
-                                  ),
-                                  child: const HomeLatestJobsFeedWidget(),
-                                ),
-                                SizedBox(height: AppTheme.spacingMd.h),
                                 Padding(
                                   padding: EdgeInsets.symmetric(
                                     horizontal: AppTheme.spacingMd.w,
@@ -258,6 +186,16 @@ class _HomeScreenState extends State<HomeScreen> {
                                   ),
                                   child: const HomeQuickActionsGridWidget(),
                                 ),
+                                SizedBox(height: AppTheme.spacingLg.h),
+                                // Stats Cards (AI Matches + Applied Jobs Count)
+                                const HomeStatsCardsRowWidget(),
+                                SizedBox(height: AppTheme.spacingLg.h),
+                                // UAE Cities Job Distribution
+                                const HomeUAECitiesWidget(),
+                                // Matched Jobs Section
+                                const HomeMatchedJobsWidget(),
+                                // My Applications Section
+                                const HomeAppliedJobsWidget(),
                                 SizedBox(height: AppTheme.spacingLg.h),
                               ],
                             ),

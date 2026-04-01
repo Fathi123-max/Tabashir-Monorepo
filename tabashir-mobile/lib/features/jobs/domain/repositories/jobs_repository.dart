@@ -37,6 +37,7 @@ abstract class JobsRepository {
   /// Returns [JobDetailsResponse] for the specified job
   Future<JobDetailsResponse> getJobById({
     required String jobId,
+    String? email,
   });
 
   /// Get user's applied jobs

@@ -1,5 +1,3 @@
-import 'dart:convert';
-import 'package:dio/dio.dart';
 import 'package:injectable/injectable.dart';
 import 'package:tabashir/core/network/_clients/auth_dio_client.dart';
 import 'package:tabashir/core/network/models/home_dashboard_response.dart';
@@ -28,8 +26,9 @@ class HomeApiService {
   /// Fetch home dashboard data including featured jobs and user statistics
   Future<HomeDashboardResponse> getHomeDashboardData({
     int featuredJobsLimit = 3,
+    String? email,
   }) async {
-    print('[HOME_API_SERVICE] Fetching home dashboard data');
+    print('[HOME_API_SERVICE] Fetching home dashboard data for email: $email');
 
     try {
       // Fetch data from the new dashboard API endpoint
@@ -72,6 +71,7 @@ class HomeApiService {
         final jobsResponse = await _tabashirApiService.getJobs(
           page: 0,
           limit: featuredJobsLimit,
+          email: email,
         );
         final allJobs = jobsResponse.data.jobs ?? <JobDetailsResponse>[];
         finalFeaturedJobs = allJobs.take(featuredJobsLimit).toList();
@@ -108,57 +108,6 @@ class HomeApiService {
     }
   }
 
-  /// Get trending data for the home screen
-  Future<Map<String, dynamic>> getTrendingData() async {
-    print('[HOME_API_SERVICE] Fetching trending data');
-
-    try {
-      final response = await _authDioClient.dio.get(
-        '$_homeBaseUrl/trending',
-      );
-
-      print('[HOME_API_SERVICE] Fetched trending data: ${response.data}');
-      return response.data as Map<String, dynamic>;
-    } catch (e) {
-      print('[HOME_API_SERVICE] Error fetching trending data: $e');
-      rethrow;
-    }
-  }
-
-  /// Get market insights data
-  Future<Map<String, dynamic>> getMarketInsights() async {
-    print('[HOME_API_SERVICE] Fetching market insights');
-
-    try {
-      final response = await _authDioClient.dio.get(
-        '$_homeBaseUrl/market-insights',
-      );
-
-      print('[HOME_API_SERVICE] Fetched market insights: ${response.data}');
-      return response.data as Map<String, dynamic>;
-    } catch (e) {
-      print('[HOME_API_SERVICE] Error fetching market insights: $e');
-      rethrow;
-    }
-  }
-
-  /// Get analytics data for charts
-  Future<Map<String, dynamic>> getAnalytics() async {
-    print('[HOME_API_SERVICE] Fetching analytics data');
-
-    try {
-      final response = await _authDioClient.dio.get(
-        '$_homeBaseUrl/analytics',
-      );
-
-      print('[HOME_API_SERVICE] Fetched analytics: ${response.data}');
-      return response.data as Map<String, dynamic>;
-    } catch (e) {
-      print('[HOME_API_SERVICE] Error fetching analytics: $e');
-      rethrow;
-    }
-  }
-
   /// Get enhanced job recommendations
   Future<Map<String, dynamic>> getEnhancedRecommendations() async {
     print('[HOME_API_SERVICE] Fetching enhanced recommendations');
@@ -172,23 +121,6 @@ class HomeApiService {
       return response.data as Map<String, dynamic>;
     } catch (e) {
       print('[HOME_API_SERVICE] Error fetching recommendations: $e');
-      rethrow;
-    }
-  }
-
-  /// Get comprehensive dashboard data
-  Future<Map<String, dynamic>> getDashboardData() async {
-    print('[HOME_API_SERVICE] Fetching dashboard data');
-
-    try {
-      final response = await _authDioClient.dio.get(
-        '$_homeBaseUrl/dashboard',
-      );
-
-      print('[HOME_API_SERVICE] Fetched dashboard: ${response.data}');
-      return response.data as Map<String, dynamic>;
-    } catch (e) {
-      print('[HOME_API_SERVICE] Error fetching dashboard: $e');
       rethrow;
     }
   }

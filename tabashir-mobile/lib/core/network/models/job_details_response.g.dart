@@ -8,7 +8,7 @@ part of 'job_details_response.dart';
 
 _JobDetailsResponse _$JobDetailsResponseFromJson(Map<String, dynamic> json) =>
     _JobDetailsResponse(
-      jobId: (json['id'] as num?)?.toInt(),
+      jobId: _dynamicToString(json['id']),
       jobTitle: json['job_title'] as String?,
       companyName: json['entity'] as String?,
       jobDescription: json['job_description'] as String?,
@@ -28,7 +28,7 @@ _JobDetailsResponse _$JobDetailsResponseFromJson(Map<String, dynamic> json) =>
       nationality: json['nationality'] as String?,
       gender: json['gender'] as String?,
       isSaved: json['is_saved'] as bool?,
-      matchPercentage: json['match_percentage'] as String?,
+      matchPercentage: _dynamicToString(json['match_percentage']),
     );
 
 Map<String, dynamic> _$JobDetailsResponseToJson(_JobDetailsResponse instance) =>

@@ -78,9 +78,36 @@ class _JobsViewState extends State<JobsView> {
 
   Future<void> _initializeData() async {
     await _profileCubit.loadProfileData();
+
+    // Ensure profile has email before loading jobs (fixes race condition)
+    var profile = _profileCubit.state.profile;
+    if (profile == null || profile.email == null || profile.email.isEmpty) {
+      print('[JOBS_SCREEN] Profile email not available, forcing reload...');
+      await _profileCubit.loadProfileData(force: true);
+      profile = _profileCubit.state.profile;
+    }
+
+    // Wait for email to be available (with timeout - max 5 seconds)
+    // This ensures match percentages are calculated correctly on app restart
+    int waitAttempts = 0;
+    while ((profile == null || profile.email == null || profile.email.isEmpty) && waitAttempts < 10) {
+      print('[JOBS_SCREEN] Waiting for profile email... attempt ${waitAttempts + 1}/10');
+      await Future.delayed(const Duration(milliseconds: 500));
+      profile = _profileCubit.state.profile;
+      waitAttempts++;
+    }
+
+    final email = profile?.email;
+    if (email == null || email.isEmpty) {
+      print('[JOBS_SCREEN] ⚠️ Profile email still not available after waiting. Jobs will load without matching.');
+    } else {
+      print('[JOBS_SCREEN] ✅ Profile email available: $email');
+    }
+
     await _loadAppliedJobs();
     if (mounted) {
-      context.read<JobsCubit>().initializeState();
+      // Pass email directly to ensure it's used for matching
+      context.read<JobsCubit>().initializeState(email: email);
     }
   }
 

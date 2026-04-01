@@ -53,7 +53,13 @@ class JobDetailsCubit extends Cubit<JobDetailsState> {
     emit(const JobDetailsState.loading());
 
     try {
-      final jobDetails = await service.getJobDetails(jobId);
+      final profileCubit = _profileCubit ?? getIt<ProfileCubit>();
+      final userEmail = profileCubit.state.profile?.email;
+
+      final jobDetails = await service.getJobDetails(
+        jobId,
+        userEmail: userEmail,
+      );
       final appliedIds = await _appliedJobsStorage.getAppliedJobIds();
       final isSaved = await _savedJobsRepository.isJobSaved(jobId);
 

@@ -214,6 +214,7 @@ class AiJobApplyCubit extends Cubit<AiJobApplyState> {
       }
 
       final locations = state.selectedLocations.map((l) => l.name).toList();
+      final email = getIt<ProfileCubit>().state.profile?.email ?? '';
 
       // 4. Call API
       final response = await _repository.applyToJobs(
@@ -228,8 +229,10 @@ class AiJobApplyCubit extends Cubit<AiJobApplyState> {
             'MALE', // Default or handle null
       );
 
-      // Trigger home dashboard refresh
-      getIt<HomeCubit>().loadHomeData(forceRefresh: true);
+      // Trigger home data refresh
+      if (email.isNotEmpty) {
+        getIt<HomeCubit>().refreshHomeData(userProfile: null);
+      }
 
       emit(
         state.copyWith(
@@ -294,6 +297,7 @@ class AiJobApplyCubit extends Cubit<AiJobApplyState> {
       }
 
       final locations = state.selectedLocations.map((l) => l.name).toList();
+      final email = getIt<ProfileCubit>().state.profile?.email ?? '';
 
       // 4. Call addClient instead of applyToJobs
       final response = await _repository.addClient(
@@ -306,8 +310,10 @@ class AiJobApplyCubit extends Cubit<AiJobApplyState> {
         gender: state.gender?.name.toUpperCase() ?? 'MALE',
       );
 
-      // Trigger home dashboard refresh
-      getIt<HomeCubit>().loadHomeData(forceRefresh: true);
+      // Trigger home data refresh
+      if (email.isNotEmpty) {
+        getIt<HomeCubit>().refreshHomeData(userProfile: null);
+      }
 
       emit(
         state.copyWith(
@@ -617,6 +623,7 @@ class AiJobApplyCubit extends Cubit<AiJobApplyState> {
       }
 
       // 3. Call API
+      final email = getIt<ProfileCubit>().state.profile?.email ?? '';
       final response = await _repository.applyToSpecificJob(
         jobId: jobId,
         email: email,
@@ -626,8 +633,10 @@ class AiJobApplyCubit extends Cubit<AiJobApplyState> {
         gender: gender,
       );
 
-      // Trigger home dashboard refresh
-      getIt<HomeCubit>().loadHomeData(forceRefresh: true);
+      // Trigger home data refresh
+      if (email.isNotEmpty) {
+        getIt<HomeCubit>().refreshHomeData(userProfile: null);
+      }
 
       emit(
         state.copyWith(

@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:tabashir/core/di/injection.dart';
+import 'package:tabashir/core/services/job_match_service.dart';
 import 'package:tabashir/features/home/presentation/cubit/home_cubit.dart';
 import 'package:tabashir/features/home/presentation/cubit/home_state.dart';
 import 'package:tabashir/features/home/presentation/widgets/home_job_card_widget.dart';
@@ -22,6 +23,7 @@ class _HomeJobCardsHorizontalListWidgetState
     extends State<HomeJobCardsHorizontalListWidget> {
   late final ProfileCubit _profileCubit;
   late final JobsRepository _jobsRepository;
+  final JobMatchService _jobMatchService = getIt<JobMatchService>();
 
   // Loading states
   Set<String> _appliedJobs = <String>{};
@@ -107,7 +109,9 @@ class _HomeJobCardsHorizontalListWidgetState
                     company: job.company,
                     employmentType: 'Full-time', // Add to model if needed
                     level: 'Not specified',
-                    matchPercentage: '${job.matchPercentage}%',
+                    matchPercentage: _jobMatchService.formatMatchPercentage(
+                      job.matchPercentage,
+                    ),
                     isPrimary: isPrimary,
                     jobId: job.id,
                     onApplyTap: () async {

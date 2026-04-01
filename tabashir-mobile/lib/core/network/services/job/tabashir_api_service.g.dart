@@ -475,7 +475,7 @@ class _TabashirApiService implements TabashirApiService {
       Options(method: 'GET', headers: _headers, extra: _extra)
           .compose(
             _dio.options,
-            '/jobs/match',
+            '/jobs/matched',
             queryParameters: queryParameters,
             data: _data,
           )
@@ -527,9 +527,10 @@ class _TabashirApiService implements TabashirApiService {
   Future<HttpResponse<JobApiResponse>> getJobById(
     String jobId,
     String? lang,
+    String? email,
   ) async {
     final _extra = <String, dynamic>{};
-    final queryParameters = <String, dynamic>{r'lang': lang};
+    final queryParameters = <String, dynamic>{r'lang': lang, r'email': email};
     queryParameters.removeWhere((k, v) => v == null);
     final _headers = <String, dynamic>{};
     const Map<String, dynamic>? _data = null;

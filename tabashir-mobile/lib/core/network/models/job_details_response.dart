@@ -8,7 +8,7 @@ part 'job_details_response.g.dart';
 sealed class JobDetailsResponse with _$JobDetailsResponse {
   const factory JobDetailsResponse({
     /// Job ID
-    @JsonKey(name: 'id') int? jobId,
+    @JsonKey(name: 'id', fromJson: _dynamicToString) String? jobId,
 
     /// Job title
     @JsonKey(name: 'job_title') String? jobTitle,
@@ -68,9 +68,12 @@ sealed class JobDetailsResponse with _$JobDetailsResponse {
     @JsonKey(name: 'is_saved') bool? isSaved,
 
     /// Match percentage for the job
-    @JsonKey(name: 'match_percentage') String? matchPercentage,
+    @JsonKey(name: 'match_percentage', fromJson: _dynamicToString)
+    String? matchPercentage,
   }) = _JobDetailsResponse;
 
   factory JobDetailsResponse.fromJson(Map<String, dynamic> json) =>
       _$JobDetailsResponseFromJson(json);
 }
+
+String? _dynamicToString(dynamic value) => value?.toString();

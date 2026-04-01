@@ -121,10 +121,11 @@ class JobsRepositoryImpl implements JobsRepository {
   @override
   Future<JobDetailsResponse> getJobById({
     required String jobId,
+    String? email,
   }) async {
     try {
-      print('[JOBS_REPO] getJobById called with jobId: $jobId');
-      final response = await _tabashirApiService.getJobById(jobId, null);
+      print('[JOBS_REPO] getJobById called with jobId: $jobId, email: $email');
+      final response = await _tabashirApiService.getJobById(jobId, null, email);
 
       print('[JOBS_REPO] API response status: ${response.response.statusCode}');
       print('[JOBS_REPO] API response data: ${response.data}');

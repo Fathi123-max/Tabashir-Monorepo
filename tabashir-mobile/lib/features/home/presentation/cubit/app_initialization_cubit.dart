@@ -2,28 +2,20 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:injectable/injectable.dart';
 import 'package:tabashir/core/di/injection.dart';
 import 'package:tabashir/core/network/models/user/user_profile_response.dart';
-import 'package:tabashir/core/network/models/home_dashboard_response.dart';
-import 'package:tabashir/core/network/models/resume_response/resume_item.dart';
 import 'package:tabashir/core/session/cubit/session_cubit.dart';
 import 'package:tabashir/features/home/data/models/app_initialization_state.dart';
 import 'package:tabashir/features/profile/domain/repositories/profile_repository.dart';
 import 'package:tabashir/features/profile/presentation/cubit/profile_cubit.dart';
 import 'package:tabashir/features/home/presentation/cubit/home_cubit.dart';
-import 'package:tabashir/features/home/services/home_api_service.dart';
 import 'package:tabashir/features/resume/presentation/cubit/resume_vault_cubit.dart';
-import 'package:tabashir/features/resume/domain/repositories/resume_vault_repository.dart';
 
 @lazySingleton
 class AppInitializationCubit extends Cubit<AppInitializationState> {
   AppInitializationCubit(
     this._profileRepository,
-    this._homeApiService,
-    this._resumeRepository,
   ) : super(const AppInitializationState());
 
   final ProfileRepository _profileRepository;
-  final HomeApiService _homeApiService;
-  final ResumeVaultRepository _resumeRepository;
 
   /// Initialize the entire app by loading all required data
   /// Call this once after login
@@ -40,23 +32,13 @@ class AppInitializationCubit extends Cubit<AppInitializationState> {
 
     try {
       // 1. Load user profile
-      print('[APP_INIT] 1/4 Loading user profile...');
+      print('[APP_INIT] 1/2 Loading user profile...');
       final userProfile = await _profileRepository.getUserProfile();
       print('[APP_INIT] ✅ User profile loaded');
 
-      // 2. Load resumes
-      print('[APP_INIT] 2/4 Loading resumes...');
-      final resumes = await _resumeRepository.getUserResumes();
-      print('[APP_INIT] ✅ Loaded ${resumes.length} resumes');
-
-      // 3. Load home dashboard data
-      print('[APP_INIT] 3/4 Loading home dashboard...');
-      final homeDashboard = await _homeApiService.getHomeDashboardData();
-      print('[APP_INIT] ✅ Home dashboard loaded');
-
-      // 4. Initialize other cubits with shared data
-      print('[APP_INIT] 4/4 Initializing cubits with shared data...');
-      await _initializeCubits(userProfile, resumes, homeDashboard);
+      // 2. Initialize other cubits with shared data
+      print('[APP_INIT] 2/2 Initializing cubits with shared data...');
+      await _initializeCubits(userProfile);
       print('[APP_INIT] ✅ Cubits initialized');
 
       // Emit success state with all data
@@ -66,8 +48,6 @@ class AppInitializationCubit extends Cubit<AppInitializationState> {
             isLoading: false,
             isInitialized: true,
             userProfile: userProfile,
-            resumes: resumes,
-            homeDashboard: homeDashboard,
           ),
         );
       }
@@ -113,26 +93,21 @@ class AppInitializationCubit extends Cubit<AppInitializationState> {
   /// Initialize other cubits with shared data to prevent duplicate API calls
   Future<void> _initializeCubits(
     UserProfileResponse userProfile,
-    List<ResumeItem> resumes,
-    HomeDashboardResponse? homeDashboard,
   ) async {
     try {
       // Initialize ProfileCubit with user profile data
       final profileCubit = getIt<ProfileCubit>();
       await profileCubit.initializeWithProfileData(userProfile);
 
-      // Initialize ResumeVaultCubit with resumes data
+      // Initialize ResumeVaultCubit
       final resumeCubit = getIt<ResumeVaultCubit>();
-      await resumeCubit.initializeWithResumes(resumes);
+      await resumeCubit.loadResumes();
 
-      // Initialize HomeCubit with pre-loaded data
-      if (homeDashboard != null) {
-        final homeCubit = getIt<HomeCubit>();
-        homeCubit.initializeWithData(
-          userProfile: userProfile,
-          dashboardData: homeDashboard,
-        );
-      }
+      // Initialize HomeCubit
+      final homeCubit = getIt<HomeCubit>();
+      homeCubit.initializeWithData(
+        userProfile: userProfile,
+      );
 
       print('[APP_INIT] ✅ All cubits initialized with shared data');
     } catch (e) {

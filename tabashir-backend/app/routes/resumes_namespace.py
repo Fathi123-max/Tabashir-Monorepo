@@ -1728,6 +1728,7 @@ class Jobs(Resource):
                     COALESCE(working_hours_ar, working_hours) as working_hours,
                     COALESCE(working_days_ar, working_days) as working_days,
                     application_email, job_date, phone, source, apply_url,
+                    COALESCE(company_name_ar, company_name) as entity,
                     COALESCE(company_name_ar, company_name) as company_name,
                     website_url, job_type, translation_status
                 """
@@ -1745,6 +1746,7 @@ class Jobs(Resource):
                     working_days,
                     application_email, job_date, phone, source, apply_url,
                     company_name,
+                    entity,
                     website_url, job_type, translation_status
                 """
 
@@ -1792,50 +1794,77 @@ class Jobs(Resource):
                     # If anything fails, proceed with existing data
                     pass
 
-            # Convert datetime objects to strings for JSON serialization (after potential updates)
+            # Normalize IDs and convert datetime objects to strings
             for job in jobs:
+                if 'id' in job:
+                    job['id'] = str(job['id'])
                 for key, value in job.items():
                     if hasattr(value, 'isoformat'):
                         job[key] = value.isoformat()
                         
-            # --- SAVED JOBS LOGIC ---
+            # --- SAVED JOBS & MATCHING LOGIC ---
             saved_job_ids = set()
+            match_profile = None
             if email:
                 try:
                     user_row = execute_query('SELECT id FROM users WHERE email = %s', (email,), fetch_one=True)
                     if user_row:
                         user_id = user_row['id'] if isinstance(user_row, dict) else user_row[0]
+                        
+                        # 1. Fetch Saved Jobs
                         saved_entries = execute_query('SELECT "jobId" FROM "SavedJobPost" WHERE "userId" = %s', (user_id,), fetch_all=True)
                         if saved_entries:
                             saved_job_ids = {str(sj['jobId'] if isinstance(sj, dict) else sj[0]) for sj in saved_entries}
+                            
+                        # 2. Fetch Profile for Matching
+                        profile = execute_query(
+                            '''SELECT cp."jobType", cp.skills, cp.location 
+                               FROM "Candidate" c
+                               JOIN "CandidateProfile" cp ON cp."candidateId" = c.id
+                               WHERE c."userId" = %s''',
+                            (user_id,), fetch_one=True
+                        )
+                        if profile:
+                            skills_list = profile.get('skills') or []
+                            skills_str = ", ".join(skills_list) if isinstance(skills_list, list) else str(skills_list)
+                            match_profile = {
+                                "positions": profile.get('jobType') or "",
+                                "skills": skills_str,
+                                "location": profile.get('location') or ""
+                            }
                 except Exception as e:
-                    print(f"[JOBS_NS] Error fetching saved jobs for is_saved: {e}")
+                    print(f"[JOBS_NS] Error fetching user context for jobs list: {e}")
 
             for job in jobs:
                 job['is_saved'] = str(job['id']) in saved_job_ids
 
-            # --- MATCH SCORE LOGIC ---
-            match_profile = None
-            if email:
-                cursor.execute("SELECT positions, skills, location FROM clients WHERE email = %s", (email,))
-                profile_row = cursor.fetchone()
-                if profile_row:
-                    match_profile = {
-                        "positions": profile_row[0] or "",
-                        "skills": profile_row[1] or "",
-                        "location": profile_row[2] or ""
-                    }
-            # Import match functions locally to avoid circular import
-            from app.services.job_apply.ai_matching import title_position_match, calculate_skills_match, semantic_location_match
-            for job in jobs:
+                # AI Matching Calculation
                 if match_profile:
-                    title_score = title_position_match(job.get('job_title', ''), match_profile['positions'])
-                    skill_score = calculate_skills_match(job.get('job_description', ''), match_profile['skills'])
-                    location_score = semantic_location_match(job.get('vacancy_city', ''), match_profile['location'])
-                    final_score = round((0.4 * title_score + 0.4 * skill_score + 0.2 * location_score), 3)
-                    job['match_score'] = round(final_score * 100, 2)  # percentage
+                    try:
+                        title_score = title_position_match(job.get('job_title', ''), match_profile['positions'])
+                        # Use job_description for skills matching (don't delete it yet!)
+                        job_desc = job.get('job_description') or ''
+                        print(f"[JOBS_NS] Job {job.get('id')}: title='{job.get('job_title')}', desc_len={len(job_desc)}, city='{job.get('vacancy_city')}'")
+                        print(f"[JOBS_NS]   Profile: positions='{match_profile['positions']}', skills='{match_profile['skills']}', location='{match_profile['location']}'")
+                        
+                        skill_score = calculate_skills_match(job_desc if job_desc else job.get('job_title', ''), match_profile['skills'])
+                        location_score = semantic_location_match(job.get('vacancy_city', ''), match_profile['location'])
+
+                        final_score = round((0.4 * title_score + 0.4 * skill_score + 0.2 * location_score), 3)
+                        job['match_percentage'] = str(int(round(final_score * 100, 0)))
+                        print(f"[JOBS_NS]   Scores: T={title_score:.3f}, S={skill_score:.3f}, L={location_score:.3f} => {job['match_percentage']}%")
+                    except Exception as e:
+                        print(f"[JOBS_NS] Match calc error for job {job.get('id')}: {e}")
+                        job['match_percentage'] = None  # Return null instead of '0' when matching fails
                 else:
-                    job['match_score'] = None
+                    # Don't include match_percentage field when no profile is available
+                    # This allows frontend to use default "50% Match" or show "N/A"
+                    job['match_percentage'] = None
+
+                # Clean up description to keep response slim
+                # Frontend only needs description in details view
+                if 'job_description' in job:
+                    del job['job_description']
 
             return {
                 "success": True,
@@ -2084,10 +2113,45 @@ class JobById(Resource):
                     "message": f"No job found with id {job_id}"
                 }, HTTPStatus.NOT_FOUND
 
-            # Convert datetime objects to strings for JSON serialization
-            for key, value in job.items():
-                if hasattr(value, 'isoformat'):  # datetime objects
-                    job[key] = value.isoformat()
+            # --- MATCH SCORE LOGIC ---
+            email = request.args.get('email')
+            if email:
+                try:
+                    # Fetch profile from main DB instead of AI DB
+                    profile_row = execute_query("""
+                        SELECT cp."jobType", cp.skills, cp.location 
+                        FROM "CandidateProfile" cp
+                        JOIN "Candidate" c ON cp."candidateId" = c.id
+                        JOIN users u ON c."userId" = u.id
+                        WHERE u.email = %s
+                    """, (email,), fetch_one=True)
+
+                    if profile_row:
+                        if isinstance(profile_row, dict):
+                            skills = profile_row.get('skills')
+                            skills_str = ", ".join(skills) if isinstance(skills, list) else (skills or "")
+                            match_profile = {
+                                "positions": profile_row.get('jobType') or "",
+                                "skills": skills_str,
+                                "location": profile_row.get('location') or ""
+                            }
+                        else:
+                            skills = profile_row[1]
+                            skills_str = ", ".join(skills) if isinstance(skills, list) else (skills or "")
+                            match_profile = {
+                                "positions": profile_row[0] or "",
+                                "skills": skills_str,
+                                "location": profile_row[2] or ""
+                            }
+
+                        from app.services.job_apply.ai_matching import title_position_match, calculate_skills_match, semantic_location_match
+                        title_score = title_position_match(job.get('job_title', ''), match_profile['positions'])
+                        skill_score = calculate_skills_match(job.get('job_description', ''), match_profile['skills'])
+                        location_score = semantic_location_match(job.get('vacancy_city', ''), match_profile['location'])
+                        final_score = round((0.4 * title_score + 0.4 * skill_score + 0.2 * location_score), 3)
+                        job['match_percentage'] = str(int(round(final_score * 100, 0)))
+                except Exception as e:
+                    print(f"[JOBS_NS] Error calculating match for job details from main DB: {e}")
 
             return {
                 "success": True,
@@ -2521,6 +2585,11 @@ class MatchedJobs(Resource):
 
             # Score and rank jobs
             for job in jobs:
+                # Standardize aliases for mobile model compatibility
+                job['entity'] = job.get('company_name', '')
+                job['job_title'] = job.get('job_title', '') or job.get('title', '')
+                job['vacancy_city'] = job.get('vacancy_city', '') or job.get('location', '')
+                
                 title_score = title_position_match(job['job_title'], user_profile['positions'])
                 skill_score = calculate_skills_match(job['job_description'], user_profile['skills'])
                 location_score = semantic_location_match(job['vacancy_city'], user_profile['location'])

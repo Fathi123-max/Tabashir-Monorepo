@@ -134,7 +134,7 @@ abstract class TabashirApiService {
   );
 
   /// Get jobs ranked by semantic match to user's profile (AI-powered matching)
-  @GET('/jobs/match')
+  @GET('/jobs/matched')
   Future<HttpResponse<JobsMatchListResponse>> getJobMatches(
     @Query('email') String email,
     @Query('limit') int? limit,
@@ -152,6 +152,7 @@ abstract class TabashirApiService {
   Future<HttpResponse<JobApiResponse>> getJobById(
     @Path('job_id') String jobId,
     @Query('lang') String? lang,
+    @Query('email') String? email,
   );
 
   /// Get applicants count for a job

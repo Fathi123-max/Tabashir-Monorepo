@@ -16,7 +16,7 @@ T _$identity<T>(T value) => value;
 mixin _$JobDetailsResponse {
 
 /// Job ID
-@JsonKey(name: 'id') int? get jobId;/// Job title
+@JsonKey(name: 'id', fromJson: _dynamicToString) String? get jobId;/// Job title
 @JsonKey(name: 'job_title') String? get jobTitle;/// Company name
 @JsonKey(name: 'entity') String? get companyName;/// Job description
 @JsonKey(name: 'job_description') String? get jobDescription;/// Location (city)
@@ -36,7 +36,7 @@ mixin _$JobDetailsResponse {
 @JsonKey(name: 'nationality') String? get nationality;/// Gender requirement
 @JsonKey(name: 'gender') String? get gender;/// Is job saved
 @JsonKey(name: 'is_saved') bool? get isSaved;/// Match percentage for the job
-@JsonKey(name: 'match_percentage') String? get matchPercentage;
+@JsonKey(name: 'match_percentage', fromJson: _dynamicToString) String? get matchPercentage;
 /// Create a copy of JobDetailsResponse
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -69,7 +69,7 @@ abstract mixin class $JobDetailsResponseCopyWith<$Res>  {
   factory $JobDetailsResponseCopyWith(JobDetailsResponse value, $Res Function(JobDetailsResponse) _then) = _$JobDetailsResponseCopyWithImpl;
 @useResult
 $Res call({
-@JsonKey(name: 'id') int? jobId,@JsonKey(name: 'job_title') String? jobTitle,@JsonKey(name: 'entity') String? companyName,@JsonKey(name: 'job_description') String? jobDescription,@JsonKey(name: 'vacancy_city') String? location,@JsonKey(name: 'salary') String? salary,@JsonKey(name: 'job_type') String? jobType,@JsonKey(name: 'apply_url') String? applyUrl,@JsonKey(name: 'academic_qualification') String? academicQualification,@JsonKey(name: 'experience') String? experience,@JsonKey(name: 'languages') String? languages,@JsonKey(name: 'working_hours') String? workingHours,@JsonKey(name: 'working_days') String? workingDays,@JsonKey(name: 'application_email') String? applicationEmail,@JsonKey(name: 'job_date') String? jobDate,@JsonKey(name: 'phone') String? phone,@JsonKey(name: 'source') String? source,@JsonKey(name: 'nationality') String? nationality,@JsonKey(name: 'gender') String? gender,@JsonKey(name: 'is_saved') bool? isSaved,@JsonKey(name: 'match_percentage') String? matchPercentage
+@JsonKey(name: 'id', fromJson: _dynamicToString) String? jobId,@JsonKey(name: 'job_title') String? jobTitle,@JsonKey(name: 'entity') String? companyName,@JsonKey(name: 'job_description') String? jobDescription,@JsonKey(name: 'vacancy_city') String? location,@JsonKey(name: 'salary') String? salary,@JsonKey(name: 'job_type') String? jobType,@JsonKey(name: 'apply_url') String? applyUrl,@JsonKey(name: 'academic_qualification') String? academicQualification,@JsonKey(name: 'experience') String? experience,@JsonKey(name: 'languages') String? languages,@JsonKey(name: 'working_hours') String? workingHours,@JsonKey(name: 'working_days') String? workingDays,@JsonKey(name: 'application_email') String? applicationEmail,@JsonKey(name: 'job_date') String? jobDate,@JsonKey(name: 'phone') String? phone,@JsonKey(name: 'source') String? source,@JsonKey(name: 'nationality') String? nationality,@JsonKey(name: 'gender') String? gender,@JsonKey(name: 'is_saved') bool? isSaved,@JsonKey(name: 'match_percentage', fromJson: _dynamicToString) String? matchPercentage
 });
 
 
@@ -89,7 +89,7 @@ class _$JobDetailsResponseCopyWithImpl<$Res>
 @pragma('vm:prefer-inline') @override $Res call({Object? jobId = freezed,Object? jobTitle = freezed,Object? companyName = freezed,Object? jobDescription = freezed,Object? location = freezed,Object? salary = freezed,Object? jobType = freezed,Object? applyUrl = freezed,Object? academicQualification = freezed,Object? experience = freezed,Object? languages = freezed,Object? workingHours = freezed,Object? workingDays = freezed,Object? applicationEmail = freezed,Object? jobDate = freezed,Object? phone = freezed,Object? source = freezed,Object? nationality = freezed,Object? gender = freezed,Object? isSaved = freezed,Object? matchPercentage = freezed,}) {
   return _then(_self.copyWith(
 jobId: freezed == jobId ? _self.jobId : jobId // ignore: cast_nullable_to_non_nullable
-as int?,jobTitle: freezed == jobTitle ? _self.jobTitle : jobTitle // ignore: cast_nullable_to_non_nullable
+as String?,jobTitle: freezed == jobTitle ? _self.jobTitle : jobTitle // ignore: cast_nullable_to_non_nullable
 as String?,companyName: freezed == companyName ? _self.companyName : companyName // ignore: cast_nullable_to_non_nullable
 as String?,jobDescription: freezed == jobDescription ? _self.jobDescription : jobDescription // ignore: cast_nullable_to_non_nullable
 as String?,location: freezed == location ? _self.location : location // ignore: cast_nullable_to_non_nullable
@@ -191,7 +191,7 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function(@JsonKey(name: 'id')  int? jobId, @JsonKey(name: 'job_title')  String? jobTitle, @JsonKey(name: 'entity')  String? companyName, @JsonKey(name: 'job_description')  String? jobDescription, @JsonKey(name: 'vacancy_city')  String? location, @JsonKey(name: 'salary')  String? salary, @JsonKey(name: 'job_type')  String? jobType, @JsonKey(name: 'apply_url')  String? applyUrl, @JsonKey(name: 'academic_qualification')  String? academicQualification, @JsonKey(name: 'experience')  String? experience, @JsonKey(name: 'languages')  String? languages, @JsonKey(name: 'working_hours')  String? workingHours, @JsonKey(name: 'working_days')  String? workingDays, @JsonKey(name: 'application_email')  String? applicationEmail, @JsonKey(name: 'job_date')  String? jobDate, @JsonKey(name: 'phone')  String? phone, @JsonKey(name: 'source')  String? source, @JsonKey(name: 'nationality')  String? nationality, @JsonKey(name: 'gender')  String? gender, @JsonKey(name: 'is_saved')  bool? isSaved, @JsonKey(name: 'match_percentage')  String? matchPercentage)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function(@JsonKey(name: 'id', fromJson: _dynamicToString)  String? jobId, @JsonKey(name: 'job_title')  String? jobTitle, @JsonKey(name: 'entity')  String? companyName, @JsonKey(name: 'job_description')  String? jobDescription, @JsonKey(name: 'vacancy_city')  String? location, @JsonKey(name: 'salary')  String? salary, @JsonKey(name: 'job_type')  String? jobType, @JsonKey(name: 'apply_url')  String? applyUrl, @JsonKey(name: 'academic_qualification')  String? academicQualification, @JsonKey(name: 'experience')  String? experience, @JsonKey(name: 'languages')  String? languages, @JsonKey(name: 'working_hours')  String? workingHours, @JsonKey(name: 'working_days')  String? workingDays, @JsonKey(name: 'application_email')  String? applicationEmail, @JsonKey(name: 'job_date')  String? jobDate, @JsonKey(name: 'phone')  String? phone, @JsonKey(name: 'source')  String? source, @JsonKey(name: 'nationality')  String? nationality, @JsonKey(name: 'gender')  String? gender, @JsonKey(name: 'is_saved')  bool? isSaved, @JsonKey(name: 'match_percentage', fromJson: _dynamicToString)  String? matchPercentage)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _JobDetailsResponse() when $default != null:
 return $default(_that.jobId,_that.jobTitle,_that.companyName,_that.jobDescription,_that.location,_that.salary,_that.jobType,_that.applyUrl,_that.academicQualification,_that.experience,_that.languages,_that.workingHours,_that.workingDays,_that.applicationEmail,_that.jobDate,_that.phone,_that.source,_that.nationality,_that.gender,_that.isSaved,_that.matchPercentage);case _:
@@ -212,7 +212,7 @@ return $default(_that.jobId,_that.jobTitle,_that.companyName,_that.jobDescriptio
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function(@JsonKey(name: 'id')  int? jobId, @JsonKey(name: 'job_title')  String? jobTitle, @JsonKey(name: 'entity')  String? companyName, @JsonKey(name: 'job_description')  String? jobDescription, @JsonKey(name: 'vacancy_city')  String? location, @JsonKey(name: 'salary')  String? salary, @JsonKey(name: 'job_type')  String? jobType, @JsonKey(name: 'apply_url')  String? applyUrl, @JsonKey(name: 'academic_qualification')  String? academicQualification, @JsonKey(name: 'experience')  String? experience, @JsonKey(name: 'languages')  String? languages, @JsonKey(name: 'working_hours')  String? workingHours, @JsonKey(name: 'working_days')  String? workingDays, @JsonKey(name: 'application_email')  String? applicationEmail, @JsonKey(name: 'job_date')  String? jobDate, @JsonKey(name: 'phone')  String? phone, @JsonKey(name: 'source')  String? source, @JsonKey(name: 'nationality')  String? nationality, @JsonKey(name: 'gender')  String? gender, @JsonKey(name: 'is_saved')  bool? isSaved, @JsonKey(name: 'match_percentage')  String? matchPercentage)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function(@JsonKey(name: 'id', fromJson: _dynamicToString)  String? jobId, @JsonKey(name: 'job_title')  String? jobTitle, @JsonKey(name: 'entity')  String? companyName, @JsonKey(name: 'job_description')  String? jobDescription, @JsonKey(name: 'vacancy_city')  String? location, @JsonKey(name: 'salary')  String? salary, @JsonKey(name: 'job_type')  String? jobType, @JsonKey(name: 'apply_url')  String? applyUrl, @JsonKey(name: 'academic_qualification')  String? academicQualification, @JsonKey(name: 'experience')  String? experience, @JsonKey(name: 'languages')  String? languages, @JsonKey(name: 'working_hours')  String? workingHours, @JsonKey(name: 'working_days')  String? workingDays, @JsonKey(name: 'application_email')  String? applicationEmail, @JsonKey(name: 'job_date')  String? jobDate, @JsonKey(name: 'phone')  String? phone, @JsonKey(name: 'source')  String? source, @JsonKey(name: 'nationality')  String? nationality, @JsonKey(name: 'gender')  String? gender, @JsonKey(name: 'is_saved')  bool? isSaved, @JsonKey(name: 'match_percentage', fromJson: _dynamicToString)  String? matchPercentage)  $default,) {final _that = this;
 switch (_that) {
 case _JobDetailsResponse():
 return $default(_that.jobId,_that.jobTitle,_that.companyName,_that.jobDescription,_that.location,_that.salary,_that.jobType,_that.applyUrl,_that.academicQualification,_that.experience,_that.languages,_that.workingHours,_that.workingDays,_that.applicationEmail,_that.jobDate,_that.phone,_that.source,_that.nationality,_that.gender,_that.isSaved,_that.matchPercentage);}
@@ -229,7 +229,7 @@ return $default(_that.jobId,_that.jobTitle,_that.companyName,_that.jobDescriptio
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function(@JsonKey(name: 'id')  int? jobId, @JsonKey(name: 'job_title')  String? jobTitle, @JsonKey(name: 'entity')  String? companyName, @JsonKey(name: 'job_description')  String? jobDescription, @JsonKey(name: 'vacancy_city')  String? location, @JsonKey(name: 'salary')  String? salary, @JsonKey(name: 'job_type')  String? jobType, @JsonKey(name: 'apply_url')  String? applyUrl, @JsonKey(name: 'academic_qualification')  String? academicQualification, @JsonKey(name: 'experience')  String? experience, @JsonKey(name: 'languages')  String? languages, @JsonKey(name: 'working_hours')  String? workingHours, @JsonKey(name: 'working_days')  String? workingDays, @JsonKey(name: 'application_email')  String? applicationEmail, @JsonKey(name: 'job_date')  String? jobDate, @JsonKey(name: 'phone')  String? phone, @JsonKey(name: 'source')  String? source, @JsonKey(name: 'nationality')  String? nationality, @JsonKey(name: 'gender')  String? gender, @JsonKey(name: 'is_saved')  bool? isSaved, @JsonKey(name: 'match_percentage')  String? matchPercentage)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function(@JsonKey(name: 'id', fromJson: _dynamicToString)  String? jobId, @JsonKey(name: 'job_title')  String? jobTitle, @JsonKey(name: 'entity')  String? companyName, @JsonKey(name: 'job_description')  String? jobDescription, @JsonKey(name: 'vacancy_city')  String? location, @JsonKey(name: 'salary')  String? salary, @JsonKey(name: 'job_type')  String? jobType, @JsonKey(name: 'apply_url')  String? applyUrl, @JsonKey(name: 'academic_qualification')  String? academicQualification, @JsonKey(name: 'experience')  String? experience, @JsonKey(name: 'languages')  String? languages, @JsonKey(name: 'working_hours')  String? workingHours, @JsonKey(name: 'working_days')  String? workingDays, @JsonKey(name: 'application_email')  String? applicationEmail, @JsonKey(name: 'job_date')  String? jobDate, @JsonKey(name: 'phone')  String? phone, @JsonKey(name: 'source')  String? source, @JsonKey(name: 'nationality')  String? nationality, @JsonKey(name: 'gender')  String? gender, @JsonKey(name: 'is_saved')  bool? isSaved, @JsonKey(name: 'match_percentage', fromJson: _dynamicToString)  String? matchPercentage)?  $default,) {final _that = this;
 switch (_that) {
 case _JobDetailsResponse() when $default != null:
 return $default(_that.jobId,_that.jobTitle,_that.companyName,_that.jobDescription,_that.location,_that.salary,_that.jobType,_that.applyUrl,_that.academicQualification,_that.experience,_that.languages,_that.workingHours,_that.workingDays,_that.applicationEmail,_that.jobDate,_that.phone,_that.source,_that.nationality,_that.gender,_that.isSaved,_that.matchPercentage);case _:
@@ -244,11 +244,11 @@ return $default(_that.jobId,_that.jobTitle,_that.companyName,_that.jobDescriptio
 @JsonSerializable()
 
 class _JobDetailsResponse implements JobDetailsResponse {
-  const _JobDetailsResponse({@JsonKey(name: 'id') this.jobId, @JsonKey(name: 'job_title') this.jobTitle, @JsonKey(name: 'entity') this.companyName, @JsonKey(name: 'job_description') this.jobDescription, @JsonKey(name: 'vacancy_city') this.location, @JsonKey(name: 'salary') this.salary, @JsonKey(name: 'job_type') this.jobType, @JsonKey(name: 'apply_url') this.applyUrl, @JsonKey(name: 'academic_qualification') this.academicQualification, @JsonKey(name: 'experience') this.experience, @JsonKey(name: 'languages') this.languages, @JsonKey(name: 'working_hours') this.workingHours, @JsonKey(name: 'working_days') this.workingDays, @JsonKey(name: 'application_email') this.applicationEmail, @JsonKey(name: 'job_date') this.jobDate, @JsonKey(name: 'phone') this.phone, @JsonKey(name: 'source') this.source, @JsonKey(name: 'nationality') this.nationality, @JsonKey(name: 'gender') this.gender, @JsonKey(name: 'is_saved') this.isSaved, @JsonKey(name: 'match_percentage') this.matchPercentage});
+  const _JobDetailsResponse({@JsonKey(name: 'id', fromJson: _dynamicToString) this.jobId, @JsonKey(name: 'job_title') this.jobTitle, @JsonKey(name: 'entity') this.companyName, @JsonKey(name: 'job_description') this.jobDescription, @JsonKey(name: 'vacancy_city') this.location, @JsonKey(name: 'salary') this.salary, @JsonKey(name: 'job_type') this.jobType, @JsonKey(name: 'apply_url') this.applyUrl, @JsonKey(name: 'academic_qualification') this.academicQualification, @JsonKey(name: 'experience') this.experience, @JsonKey(name: 'languages') this.languages, @JsonKey(name: 'working_hours') this.workingHours, @JsonKey(name: 'working_days') this.workingDays, @JsonKey(name: 'application_email') this.applicationEmail, @JsonKey(name: 'job_date') this.jobDate, @JsonKey(name: 'phone') this.phone, @JsonKey(name: 'source') this.source, @JsonKey(name: 'nationality') this.nationality, @JsonKey(name: 'gender') this.gender, @JsonKey(name: 'is_saved') this.isSaved, @JsonKey(name: 'match_percentage', fromJson: _dynamicToString) this.matchPercentage});
   factory _JobDetailsResponse.fromJson(Map<String, dynamic> json) => _$JobDetailsResponseFromJson(json);
 
 /// Job ID
-@override@JsonKey(name: 'id') final  int? jobId;
+@override@JsonKey(name: 'id', fromJson: _dynamicToString) final  String? jobId;
 /// Job title
 @override@JsonKey(name: 'job_title') final  String? jobTitle;
 /// Company name
@@ -288,7 +288,7 @@ class _JobDetailsResponse implements JobDetailsResponse {
 /// Is job saved
 @override@JsonKey(name: 'is_saved') final  bool? isSaved;
 /// Match percentage for the job
-@override@JsonKey(name: 'match_percentage') final  String? matchPercentage;
+@override@JsonKey(name: 'match_percentage', fromJson: _dynamicToString) final  String? matchPercentage;
 
 /// Create a copy of JobDetailsResponse
 /// with the given fields replaced by the non-null parameter values.
@@ -323,7 +323,7 @@ abstract mixin class _$JobDetailsResponseCopyWith<$Res> implements $JobDetailsRe
   factory _$JobDetailsResponseCopyWith(_JobDetailsResponse value, $Res Function(_JobDetailsResponse) _then) = __$JobDetailsResponseCopyWithImpl;
 @override @useResult
 $Res call({
-@JsonKey(name: 'id') int? jobId,@JsonKey(name: 'job_title') String? jobTitle,@JsonKey(name: 'entity') String? companyName,@JsonKey(name: 'job_description') String? jobDescription,@JsonKey(name: 'vacancy_city') String? location,@JsonKey(name: 'salary') String? salary,@JsonKey(name: 'job_type') String? jobType,@JsonKey(name: 'apply_url') String? applyUrl,@JsonKey(name: 'academic_qualification') String? academicQualification,@JsonKey(name: 'experience') String? experience,@JsonKey(name: 'languages') String? languages,@JsonKey(name: 'working_hours') String? workingHours,@JsonKey(name: 'working_days') String? workingDays,@JsonKey(name: 'application_email') String? applicationEmail,@JsonKey(name: 'job_date') String? jobDate,@JsonKey(name: 'phone') String? phone,@JsonKey(name: 'source') String? source,@JsonKey(name: 'nationality') String? nationality,@JsonKey(name: 'gender') String? gender,@JsonKey(name: 'is_saved') bool? isSaved,@JsonKey(name: 'match_percentage') String? matchPercentage
+@JsonKey(name: 'id', fromJson: _dynamicToString) String? jobId,@JsonKey(name: 'job_title') String? jobTitle,@JsonKey(name: 'entity') String? companyName,@JsonKey(name: 'job_description') String? jobDescription,@JsonKey(name: 'vacancy_city') String? location,@JsonKey(name: 'salary') String? salary,@JsonKey(name: 'job_type') String? jobType,@JsonKey(name: 'apply_url') String? applyUrl,@JsonKey(name: 'academic_qualification') String? academicQualification,@JsonKey(name: 'experience') String? experience,@JsonKey(name: 'languages') String? languages,@JsonKey(name: 'working_hours') String? workingHours,@JsonKey(name: 'working_days') String? workingDays,@JsonKey(name: 'application_email') String? applicationEmail,@JsonKey(name: 'job_date') String? jobDate,@JsonKey(name: 'phone') String? phone,@JsonKey(name: 'source') String? source,@JsonKey(name: 'nationality') String? nationality,@JsonKey(name: 'gender') String? gender,@JsonKey(name: 'is_saved') bool? isSaved,@JsonKey(name: 'match_percentage', fromJson: _dynamicToString) String? matchPercentage
 });
 
 
@@ -343,7 +343,7 @@ class __$JobDetailsResponseCopyWithImpl<$Res>
 @override @pragma('vm:prefer-inline') $Res call({Object? jobId = freezed,Object? jobTitle = freezed,Object? companyName = freezed,Object? jobDescription = freezed,Object? location = freezed,Object? salary = freezed,Object? jobType = freezed,Object? applyUrl = freezed,Object? academicQualification = freezed,Object? experience = freezed,Object? languages = freezed,Object? workingHours = freezed,Object? workingDays = freezed,Object? applicationEmail = freezed,Object? jobDate = freezed,Object? phone = freezed,Object? source = freezed,Object? nationality = freezed,Object? gender = freezed,Object? isSaved = freezed,Object? matchPercentage = freezed,}) {
   return _then(_JobDetailsResponse(
 jobId: freezed == jobId ? _self.jobId : jobId // ignore: cast_nullable_to_non_nullable
-as int?,jobTitle: freezed == jobTitle ? _self.jobTitle : jobTitle // ignore: cast_nullable_to_non_nullable
+as String?,jobTitle: freezed == jobTitle ? _self.jobTitle : jobTitle // ignore: cast_nullable_to_non_nullable
 as String?,companyName: freezed == companyName ? _self.companyName : companyName // ignore: cast_nullable_to_non_nullable
 as String?,jobDescription: freezed == jobDescription ? _self.jobDescription : jobDescription // ignore: cast_nullable_to_non_nullable
 as String?,location: freezed == location ? _self.location : location // ignore: cast_nullable_to_non_nullable
