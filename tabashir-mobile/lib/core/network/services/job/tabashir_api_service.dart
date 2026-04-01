@@ -35,11 +35,13 @@ abstract class TabashirApiService {
   @GET('/client')
   Future<HttpResponse<AiClientResponse>> getClient();
 
-  /// GET endpoint to fetch job application rankings for a given email
+  /// GET endpoint to fetch job application rankings for a given email with pagination
   @GET('/applied-jobs')
   Future<HttpResponse<AppliedJobsResponse>> getAppliedJobs(
-    @Query('email') String email,
-  );
+    @Query('email') String email, {
+    @Query('page') int page = 1,
+    @Query('limit') int limit = 20,
+  });
 
   /// Get number of jobs applied by email
   @POST('/applied-jobs-count')

@@ -45,6 +45,7 @@ class HomeCubit extends Cubit<HomeState> {
     emit(state.copyWith(isLoading: true, error: false));
 
     try {
+      // Load initial data (non-paginated)
       final results =
           await Future.wait([
             _homeRepository.getClientProfile(),
@@ -52,7 +53,6 @@ class HomeCubit extends Cubit<HomeState> {
             _homeRepository.getMatchedJobs(email: email, limit: 10),
             _homeRepository.getJobsCountByCity(),
             _homeRepository.getLatestJobs(limit: 10),
-            _homeRepository.getAppliedJobs(email: email),
           ]).catchError((Object error) {
             print('[HOME_CUBIT] Error loading AI enhanced data: $error');
             // Return typed defaults if fetching fails
@@ -62,7 +62,6 @@ class HomeCubit extends Cubit<HomeState> {
               <JobRecommendation>[],
               <CityJobCount>[],
               <Map<String, dynamic>>[],
-              <AppliedJob>[],
             ];
           });
 
@@ -71,7 +70,6 @@ class HomeCubit extends Cubit<HomeState> {
       final matchedJobs = results[2] as List<JobRecommendation>? ?? [];
       final cityCounts = results[3] as List<CityJobCount>? ?? [];
       final latestJobs = results[4] as List<Map<String, dynamic>>? ?? [];
-      final appliedJobs = results[5] as List<AppliedJob>? ?? [];
 
       print('[HOME_CUBIT] === API Results Summary ===');
       print('[HOME_CUBIT] Client Profile: ${clientProfile.isEmpty ? "empty" : "loaded"}');
@@ -87,7 +85,6 @@ class HomeCubit extends Cubit<HomeState> {
       }
       print('[HOME_CUBIT] City Counts: ${cityCounts.length} cities');
       print('[HOME_CUBIT] Latest Jobs: ${latestJobs.length} jobs');
-      print('[HOME_CUBIT] Applied Jobs List: ${appliedJobs.length} applications');
 
       // Process latest jobs using backend match percentages
       final processedLatestJobs = latestJobs.map((job) {
@@ -109,6 +106,19 @@ class HomeCubit extends Cubit<HomeState> {
         }
       }).toList();
 
+      // Load applied jobs separately with pagination
+      List<AppliedJob> appliedJobs = [];
+      try {
+        appliedJobs = await _homeRepository.getAppliedJobs(
+          email: email,
+          page: 1,
+          limit: 20,
+        );
+        print('[HOME_CUBIT] Applied Jobs List: ${appliedJobs.length} applications');
+      } catch (e) {
+        print('[HOME_CUBIT] Error loading applied jobs: $e');
+      }
+
       if (isClosed) return;
       emit(
         state.copyWith(
@@ -116,12 +126,18 @@ class HomeCubit extends Cubit<HomeState> {
           clientProfile: clientProfile.isEmpty ? null : clientProfile,
           totalApplications: appliedJobsCount,
           matchedJobsList: matchedJobs,
-          allMatchedJobsList: matchedJobs, // Also set for "All" screen (limited to 10)
+          allMatchedJobsList: matchedJobs, // Initialize with first page
+          matchedJobsPage: 1,
+          matchedJobsTotal: matchedJobs.length,
+          matchedJobsHasMore: matchedJobs.length == 10, // Assume has more if we got 10
           cityJobCounts: cityCounts,
           latestJobsList: processedLatestJobs.isNotEmpty
               ? processedLatestJobs
               : latestJobs,
           appliedJobsList: appliedJobs,
+          appliedJobsPage: 1,
+          appliedJobsTotal: appliedJobs.length,
+          appliedJobsHasMore: appliedJobs.length == 20, // Assume has more if we got 20
         ),
       );
 
@@ -167,6 +183,162 @@ class HomeCubit extends Cubit<HomeState> {
     } catch (e) {
       print('[HOME_CUBIT] Error loading all matched jobs: $e');
       updateError('Failed to load all matched jobs: $e');
+    }
+  }
+
+  /// Load applied jobs with pagination
+  Future<void> loadAppliedJobs({
+    required String email,
+    int page = 1,
+    int limit = 20,
+  }) async {
+    print('[HOME_CUBIT] Loading applied jobs - Page: $page, Limit: $limit');
+    if (isClosed) return;
+
+    if (page == 1) {
+      emit(state.copyWith(isLoading: true, isLoadingMoreApplied: false));
+    } else {
+      emit(state.copyWith(isLoadingMoreApplied: true));
+    }
+
+    try {
+      final appliedJobs = await _homeRepository.getAppliedJobs(
+        email: email,
+        page: page,
+        limit: limit,
+      );
+
+      print('[HOME_CUBIT] Loaded ${appliedJobs.length} applied jobs');
+
+      // Calculate if there are more jobs to load
+      final hasMore = appliedJobs.length == limit;
+      final totalCount = state.appliedJobsTotal;
+
+      if (isClosed) return;
+
+      if (page == 1) {
+        // First page - replace list
+        emit(
+          state.copyWith(
+            isLoading: false,
+            appliedJobsList: appliedJobs,
+            appliedJobsPage: page,
+            appliedJobsTotal: totalCount,
+            appliedJobsLimit: limit,
+            appliedJobsHasMore: hasMore,
+            isLoadingMoreApplied: false,
+          ),
+        );
+      } else {
+        // Subsequent page - append to list
+        final updatedList = [...state.appliedJobsList, ...appliedJobs];
+        emit(
+          state.copyWith(
+            appliedJobsList: updatedList,
+            appliedJobsPage: page,
+            appliedJobsTotal: totalCount,
+            appliedJobsHasMore: hasMore,
+            isLoadingMoreApplied: false,
+          ),
+        );
+      }
+
+      print('[HOME_CUBIT] Successfully loaded applied jobs - Page: $page, HasMore: $hasMore');
+    } catch (e) {
+      print('[HOME_CUBIT] Error loading applied jobs: $e');
+      if (page == 1) {
+        emit(state.copyWith(isLoading: false, isLoadingMoreApplied: false));
+      } else {
+        emit(state.copyWith(isLoadingMoreApplied: false));
+      }
+      updateError('Failed to load applied jobs: $e');
+    }
+  }
+
+  /// Load more applied jobs for pagination (appends to existing list)
+  Future<void> loadMoreAppliedJobs() async {
+    if (state is! HomeState) return;
+
+    final currentState = state;
+    final currentPage = currentState.appliedJobsPage;
+    final hasMore = currentState.appliedJobsHasMore;
+    final isLoadingMore = currentState.isLoadingMoreApplied;
+
+    // Don't load more if already loading or no more data
+    if (isLoadingMore || !hasMore) {
+      print(
+        '[HOME_CUBIT] loadMoreAppliedJobs() skipped - LoadingMore: $isLoadingMore, HasMore: $hasMore',
+      );
+      return;
+    }
+
+    print(
+      '[HOME_CUBIT] loadMoreAppliedJobs() called - Current page: $currentPage',
+    );
+
+    // Load next page
+    await loadAppliedJobs(
+      email: currentState.user?.email ?? '',
+      page: currentPage + 1,
+      limit: currentState.appliedJobsLimit,
+    );
+  }
+
+  /// Load more matched jobs for pagination (appends to existing list)
+  Future<void> loadMoreMatchedJobs() async {
+    if (state is! HomeState) return;
+
+    final currentState = state;
+    final currentPage = currentState.matchedJobsPage;
+    final hasMore = currentState.matchedJobsHasMore;
+    final isLoadingMore = currentState.isLoadingMoreMatched;
+
+    // Don't load more if already loading or no more data
+    if (isLoadingMore || !hasMore) {
+      print(
+        '[HOME_CUBIT] loadMoreMatchedJobs() skipped - LoadingMore: $isLoadingMore, HasMore: $hasMore',
+      );
+      return;
+    }
+
+    print(
+      '[HOME_CUBIT] loadMoreMatchedJobs() called - Current page: $currentPage',
+    );
+
+    // Set loading state
+    emit(state.copyWith(isLoadingMoreMatched: true));
+
+    try {
+      // Load next page
+      final nextPage = currentPage + 1;
+      final newMatchedJobs = await _homeRepository.getMatchedJobs(
+        email: currentState.user?.email ?? '',
+        limit: currentState.matchedJobsLimit,
+      );
+
+      print('[HOME_CUBIT] Loaded ${newMatchedJobs.length} more matched jobs');
+
+      if (isClosed) return;
+
+      // Append to list
+      final updatedList = [...state.matchedJobsList, ...newMatchedJobs];
+      final hasMoreData = newMatchedJobs.length == currentState.matchedJobsLimit;
+
+      emit(
+        state.copyWith(
+          matchedJobsList: updatedList,
+          allMatchedJobsList: updatedList,
+          matchedJobsPage: nextPage,
+          matchedJobsHasMore: hasMoreData,
+          isLoadingMoreMatched: false,
+        ),
+      );
+
+      print('[HOME_CUBIT] Successfully loaded more matched jobs - Page: $nextPage, HasMore: $hasMoreData');
+    } catch (e) {
+      print('[HOME_CUBIT] Error loading more matched jobs: $e');
+      emit(state.copyWith(isLoadingMoreMatched: false));
+      updateError('Failed to load more matched jobs: $e');
     }
   }
 

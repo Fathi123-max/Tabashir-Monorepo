@@ -161,6 +161,10 @@ abstract class HomeRepository {
     int limit = 10,
   });
 
-  /// Get user's applied jobs
-  Future<List<AppliedJob>> getAppliedJobs({required String email});
+  /// Get user's applied jobs with pagination
+  Future<List<AppliedJob>> getAppliedJobs({
+    required String email,
+    int page = 1,
+    int limit = 20,
+  });
 }

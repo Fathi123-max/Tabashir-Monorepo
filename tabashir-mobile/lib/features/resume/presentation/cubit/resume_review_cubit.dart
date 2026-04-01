@@ -57,7 +57,7 @@ class ResumeReviewCubit extends Cubit<ResumeReviewState> {
     if (isClosed) return;
     final newData = Map<String, dynamic>.from(state.data);
     final experiences = List<Map<String, dynamic>>.from(
-      newData['experience'] ?? [],
+      newData['experience'] as List<Map<String, dynamic>>? ?? [],
     );
     experiences.add(experience);
     newData['experience'] = experiences;
@@ -75,7 +75,7 @@ class ResumeReviewCubit extends Cubit<ResumeReviewState> {
     if (isClosed) return;
     final newData = Map<String, dynamic>.from(state.data);
     final experiences = List<Map<String, dynamic>>.from(
-      newData['experience'] ?? [],
+      newData['experience'] as List<Map<String, dynamic>>? ?? [],
     );
     if (index >= 0 && index < experiences.length) {
       experiences.removeAt(index);

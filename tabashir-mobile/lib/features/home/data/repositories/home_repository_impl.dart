@@ -6,7 +6,6 @@ import 'package:tabashir/core/services/isar_service.dart';
 import 'package:tabashir/features/home/domain/repositories/home_repository.dart';
 import 'package:tabashir/core/network/services/job/tabashir_api_service.dart';
 import 'package:tabashir/core/network/models/email_model.dart';
-import 'package:tabashir/core/services/job_match_service.dart';
 
 /// Implementation of [HomeRepository]
 /// Handles home dashboard operations using [IsarService] for local storage
@@ -342,25 +341,29 @@ class HomeRepositoryImpl implements HomeRepository {
     try {
       print('[HOME_REPO] Fetching matched jobs for email: $email');
       print('[HOME_REPO] API params: email=$email, limit=$limit, page=1');
-      
+
       final response = await _tabashirApiService.getJobMatches(email, limit, 1);
       final jobs = response.data.matchedJobs;
-      
+
       print('[HOME_REPO] API response received');
       print('[HOME_REPO] Matched jobs count: ${jobs.length}');
-      
+
       if (jobs.isEmpty) {
         print('[HOME_REPO] WARNING: No matched jobs returned from API');
-        print('[HOME_REPO] This means the backend rankings table has no entries for this user');
+        print(
+          '[HOME_REPO] This means the backend rankings table has no entries for this user',
+        );
         print('[HOME_REPO] User needs to upload resume for AI matching');
       } else {
         print('[HOME_REPO] Jobs returned:');
         for (var i = 0; i < jobs.length; i++) {
           final job = jobs[i];
-          print('[HOME_REPO]   [$i] JobID: ${job.jobId}, Title: ${job.jobTitle}, Match: ${job.matchPercentage}');
+          print(
+            '[HOME_REPO]   [$i] JobID: ${job.jobId}, Title: ${job.jobTitle}, Match: ${job.matchPercentage}',
+          );
         }
       }
-      
+
       final result = jobs.map((job) {
         final matchPctRaw = job.matchPercentage;
         int matchPct;
@@ -372,7 +375,7 @@ class HomeRepositoryImpl implements HomeRepository {
         }
         // Use jobId from either 'id' or 'job_id' field
         final jobId = job.jobId ?? job.rankingsJobId ?? '';
-        
+
         // Build tags from job_type and languages
         final tags = <String>[];
         if (job.jobType != null && job.jobType!.isNotEmpty) {
@@ -383,7 +386,7 @@ class HomeRepositoryImpl implements HomeRepository {
           final langList = job.languages!.split(',').take(2).toList();
           tags.addAll(langList.map((l) => l.trim()));
         }
-        
+
         // Use salary from API or null (widget will handle display)
         final salary = job.salary;
 
@@ -399,7 +402,7 @@ class HomeRepositoryImpl implements HomeRepository {
           experience: job.experience,
         );
       }).toList();
-      
+
       print('[HOME_REPO] Processed ${result.length} JobRecommendation objects');
       return result;
     } catch (e, stackTrace) {
@@ -447,9 +450,24 @@ class HomeRepositoryImpl implements HomeRepository {
   }
 
   @override
-  Future<List<AppliedJob>> getAppliedJobs({required String email}) async {
+  Future<List<AppliedJob>> getAppliedJobs({
+    required String email,
+    int page = 1,
+    int limit = 20,
+  }) async {
     try {
-      final response = await _tabashirApiService.getAppliedJobs(email);
+      print('[HOME_REPO] Fetching applied jobs for email: $email');
+      print('[HOME_REPO] Pagination params - Page: $page, Limit: $limit');
+
+      final response = await _tabashirApiService.getAppliedJobs(
+        email,
+        page: page,
+        limit: limit,
+      );
+
+      print(
+        '[HOME_REPO] Applied jobs response: ${response.data.jobs.length} jobs',
+      );
       return response.data.jobs;
     } catch (e) {
       print('Error getting applied jobs: $e');

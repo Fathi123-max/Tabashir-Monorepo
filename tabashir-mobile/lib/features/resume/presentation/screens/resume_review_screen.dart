@@ -464,12 +464,12 @@ class _ExperienceSection extends StatelessWidget {
         else
           ...experience.asMap().entries.map((entry) {
             final index = entry.key;
-            final exp = entry.value;
+            final exp = entry.value as Map<String, dynamic>;
             return _ReviewItemTile(
-              title: exp['position'] ?? 'Unknown Position',
-              subtitle: exp['company'] ?? 'Unknown Company',
+              title: exp['position'] as String? ?? 'Unknown Position',
+              subtitle: exp['company'] as String? ?? 'Unknown Company',
               date:
-                  '${exp['startDate'] ?? ''} - ${exp['endDate'] ?? 'Present'}',
+                  '${exp['startDate'] as String? ?? ''} - ${exp['endDate'] as String? ?? 'Present'}',
               onEdit: () {
                 _showEditExperienceSheet(context, exp, index);
               },
@@ -539,11 +539,11 @@ class _EducationSection extends StatelessWidget {
         else
           ...education.asMap().entries.map((entry) {
             final index = entry.key;
-            final edu = entry.value;
+            final edu = entry.value as Map<String, dynamic>;
             return _ReviewItemTile(
-              title: edu['degree'] ?? 'Unknown Degree',
-              subtitle: edu['institution'] ?? 'Unknown Institution',
-              date: '${edu['startDate'] ?? ''} - ${edu['endDate'] ?? ''}',
+              title: edu['degree'] as String? ?? 'Unknown Degree',
+              subtitle: edu['institution'] as String? ?? 'Unknown Institution',
+              date: '${edu['startDate'] as String? ?? ''} - ${edu['endDate'] as String? ?? ''}',
               onEdit: () {
                 _showEditEducationSheet(context, edu, index);
               },

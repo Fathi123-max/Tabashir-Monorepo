@@ -49,7 +49,7 @@ class _HomeLatestJobsFeedWidgetState extends State<HomeLatestJobsFeedWidget> {
           itemBuilder: (context, index) {
             final job = latestJobs[index];
             final jobId =
-                job['id']?.toString() ?? job['job_id']?.toString() ?? '';
+                (job['id']?.toString() ?? job['job_id']?.toString() ?? '') as String;
 
             return HomeJobCardWidget(
               title:
@@ -65,14 +65,15 @@ class _HomeLatestJobsFeedWidgetState extends State<HomeLatestJobsFeedWidget> {
                   (job['level'] ?? 'Not specified') as String? ??
                   'Not specified',
               // Use the processed matchPercentage from HomeCubit (already formatted)
-              matchPercentage: job['matchPercentage'] ?? '50% Match',
+              matchPercentage: (job['matchPercentage'] as String?) ?? '50% Match',
               isPrimary: false,
               jobId: jobId,
               onApplyTap: () {
-                if (jobId.isNotEmpty) {
+                final jobIdStr = jobId;
+                if (jobIdStr.isNotEmpty) {
                   context.pushNamed(
                     'job-detail-screen',
-                    pathParameters: {'jobId': jobId},
+                    pathParameters: {'jobId': jobIdStr},
                   );
                 }
               },

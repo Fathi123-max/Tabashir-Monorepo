@@ -9,7 +9,7 @@ import 'package:tabashir/core/theme/app_theme.dart';
 import 'package:tabashir/features/home/presentation/cubit/home_cubit.dart';
 import 'package:tabashir/features/home/presentation/cubit/home_state.dart';
 
-/// Screen displaying all job applications submitted by the user
+/// Screen displaying all job applications submitted by the user with infinite scroll
 class ApplicationsListScreen extends StatefulWidget {
   const ApplicationsListScreen({super.key});
 
@@ -18,16 +18,44 @@ class ApplicationsListScreen extends StatefulWidget {
 }
 
 class _ApplicationsListScreenState extends State<ApplicationsListScreen> {
+  late final ScrollController _scrollController;
+
+  @override
+  void initState() {
+    super.initState();
+    _scrollController = ScrollController();
+    _scrollController.addListener(_onScroll);
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  /// Handle scroll events for infinite scrolling
+  void _onScroll() {
+    if (_scrollController.position.pixels >=
+        _scrollController.position.maxScrollExtent * 0.8) {
+      // When user scrolls to 80% of max scroll, load more jobs
+      context.read<HomeCubit>().loadMoreAppliedJobs();
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return BlocProvider.value(
       value: getIt<HomeCubit>(),
-      child: _ApplicationsListContent(),
+      child: _ApplicationsListContent(scrollController: _scrollController),
     );
   }
 }
 
 class _ApplicationsListContent extends StatelessWidget {
+  const _ApplicationsListContent({required this.scrollController});
+
+  final ScrollController scrollController;
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -41,13 +69,17 @@ class _ApplicationsListContent extends StatelessWidget {
       body: BlocBuilder<HomeCubit, HomeState>(
         builder: (context, state) {
           final appliedJobs = state.appliedJobsList;
-          final totalCount = state.totalApplications;
+          final totalCount = state.appliedJobsTotal;
+          final isLoadingMore = state.isLoadingMoreApplied;
+          final hasMore = state.appliedJobsHasMore;
 
           print('[APPLICATIONS_SCREEN] Building screen');
           print('[APPLICATIONS_SCREEN] Total applications: $totalCount');
           print('[APPLICATIONS_SCREEN] Applied jobs count: ${appliedJobs.length}');
+          print('[APPLICATIONS_SCREEN] Is loading more: $isLoadingMore');
+          print('[APPLICATIONS_SCREEN] Has more: $hasMore');
 
-          if (appliedJobs.isEmpty) {
+          if (appliedJobs.isEmpty && !isLoadingMore) {
             return _buildEmptyState(theme, context);
           }
 
@@ -56,14 +88,28 @@ class _ApplicationsListContent extends StatelessWidget {
               final cubit = context.read<HomeCubit>();
               final email = cubit.state.user?.email ?? '';
               if (email.isNotEmpty) {
-                await cubit.refreshHomeData();
+                await cubit.loadAppliedJobs(email: email, page: 1, limit: 20);
               }
             },
-            child: ListView.separated(
+            child: ListView.builder(
+              controller: scrollController,
               padding: EdgeInsets.all(AppTheme.spacingMd.w),
-              itemCount: appliedJobs.length,
-              separatorBuilder: (context, index) => SizedBox(height: AppTheme.spacingSm.h),
+              itemCount: appliedJobs.length + (isLoadingMore && hasMore ? 1 : 0),
               itemBuilder: (context, index) {
+                // Show loading indicator at the end
+                if (index == appliedJobs.length) {
+                  return Padding(
+                    padding: EdgeInsets.symmetric(vertical: AppTheme.spacingMd.h),
+                    child: Center(
+                      child: SizedBox(
+                        width: 24.w,
+                        height: 24.h,
+                        child: CircularProgressIndicator(strokeWidth: 2),
+                      ),
+                    ),
+                  );
+                }
+
                 final job = appliedJobs[index];
                 return _AppliedJobCard(job: job);
               },
@@ -155,6 +201,7 @@ class _AppliedJobCard extends StatelessWidget {
       },
       child: Container(
         padding: EdgeInsets.all(AppTheme.spacingMd.w),
+        margin: EdgeInsets.only(bottom: AppTheme.spacingSm.h),
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(AppTheme.radiusMedium.r),

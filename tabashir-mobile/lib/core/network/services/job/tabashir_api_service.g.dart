@@ -50,9 +50,17 @@ class _TabashirApiService implements TabashirApiService {
   }
 
   @override
-  Future<HttpResponse<AppliedJobsResponse>> getAppliedJobs(String email) async {
+  Future<HttpResponse<AppliedJobsResponse>> getAppliedJobs(
+    String email, {
+    int page = 1,
+    int limit = 20,
+  }) async {
     final _extra = <String, dynamic>{};
-    final queryParameters = <String, dynamic>{r'email': email};
+    final queryParameters = <String, dynamic>{
+      r'email': email,
+      r'page': page,
+      r'limit': limit,
+    };
     final _headers = <String, dynamic>{};
     const Map<String, dynamic>? _data = null;
     final _options = _setStreamType<HttpResponse<AppliedJobsResponse>>(

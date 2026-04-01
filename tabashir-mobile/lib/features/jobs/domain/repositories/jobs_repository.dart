@@ -40,10 +40,12 @@ abstract class JobsRepository {
     String? email,
   });
 
-  /// Get user's applied jobs
+  /// Get user's applied jobs with pagination
   /// Returns [AppliedJobsResponse] with user's job applications
   Future<AppliedJobsResponse> getAppliedJobs({
     required String email,
+    int page = 1,
+    int limit = 20,
   });
 
   /// Apply to a specific job

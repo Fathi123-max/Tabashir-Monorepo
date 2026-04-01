@@ -17,9 +17,15 @@ class JobApplicationsRepositoryImpl implements JobApplicationsRepository {
   @override
   Future<AppliedJobsResponse> getAppliedJobs({
     required String email,
+    int page = 1,
+    int limit = 20,
   }) async {
     try {
-      final response = await _tabashirApiService.getAppliedJobs(email);
+      final response = await _tabashirApiService.getAppliedJobs(
+        email,
+        page: page,
+        limit: limit,
+      );
 
       if (response.response.statusCode == 200 ||
           response.response.statusCode == 201) {

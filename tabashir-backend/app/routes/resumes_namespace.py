@@ -1493,16 +1493,23 @@ class ApplyToSpecificJob(Resource):
 
 applied_jobs = reqparse.RequestParser()
 applied_jobs.add_argument('email', type=str, location='args', required=True, help='User Email')
+applied_jobs.add_argument('page', type=int, location='args', default=1, help='Page number (default 1)')
+applied_jobs.add_argument('limit', type=int, location='args', default=20, help='Number of jobs per page (default 20)')
 
 @resumes_ns.route('/applied-jobs')
 class AppliedJobs(Resource):
     @resumes_ns.expect(applied_jobs)
+    @resumes_ns.doc(params={
+        'email': 'User email to filter applied jobs',
+        'page': 'Page number (default 1)',
+        'limit': 'Number of jobs per page (default 20)',
+    })
     @resumes_ns.response(HTTPStatus.OK.value, 'Successfully fetched jobs.')
     @resumes_ns.response(HTTPStatus.BAD_REQUEST.value, 'Invalid input')
     @resumes_ns.response(HTTPStatus.INTERNAL_SERVER_ERROR.value, 'Internal server error during processing')
     def get(self):
         """
-        GET endpoint to fetch job application rankings for a given email.
+        GET endpoint to fetch job application rankings for a given email with pagination.
         """
 
         conn = get_ai_db_connection()
@@ -1510,26 +1517,48 @@ class AppliedJobs(Resource):
         try:
             args = applied_jobs.parse_args()
             email = args['email']
+            page = args['page']
+            limit = args['limit']
+            offset = (page - 1) * limit
 
-            query = """
-                    SELECT
-                        r.job_title, r.job_id, r.status, r.location, r.date, jd.experience, jd.entity AS company
-                    FROM rankings r
-                    LEFT JOIN jobs jd ON r.job_id::bigint = jd.id
-                    WHERE r.email = %s AND r.status='applied'
-                    """
-            cursor.execute(query, (email,))
-            rows = cursor.fetchall()
-            if not rows:
+            # First, get total count for pagination
+            count_query = """
+                SELECT COUNT(*) as total
+                FROM rankings r
+                WHERE r.email = %s AND r.status='applied'
+            """
+            cursor.execute(count_query, (email,))
+            total_count = cursor.fetchone()[0]
+
+            # If no results, return early
+            if total_count == 0:
                 return {
                     "success": True,
                     "message": f"No applied jobs found for {email}",
                     "email": email,
-                    "jobs": []
+                    "jobs": [],
+                    "pagination": {
+                        "total_count": 0,
+                        "page": page,
+                        "limit": limit,
+                        "total_pages": 0
+                    }
                 }, HTTPStatus.OK
 
-            jobs = []
+            # Fetch paginated applied jobs
+            query = """
+                SELECT
+                    r.job_title, r.job_id, r.status, r.location, r.date, jd.experience, jd.entity AS company
+                FROM rankings r
+                LEFT JOIN jobs jd ON r.job_id::bigint = jd.id
+                WHERE r.email = %s AND r.status='applied'
+                ORDER BY r.date DESC
+                LIMIT %s OFFSET %s
+            """
+            cursor.execute(query, (email, limit, offset))
+            rows = cursor.fetchall()
 
+            jobs = []
             for row in rows:
                 job_title, job_id, status, location, apply_date, experience, company = row
 
@@ -1543,11 +1572,20 @@ class AppliedJobs(Resource):
                     "company": str(company).strip().title() if company else ""
                 })
 
+            from math import ceil
+            total_pages = ceil(total_count / limit)
+
             return {
                 "success": True,
                 "email": email,
                 "message": f"Successfully fetched {len(jobs)} applied jobs",
-                "jobs": jobs
+                "jobs": jobs,
+                "pagination": {
+                    "total_count": total_count,
+                    "page": page,
+                    "limit": limit,
+                    "total_pages": total_pages
+                }
             }, HTTPStatus.OK
 
         except Exception as e:

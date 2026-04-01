@@ -9,7 +9,7 @@ import 'package:tabashir/features/home/presentation/cubit/home_cubit.dart';
 import 'package:tabashir/features/home/presentation/cubit/home_state.dart';
 import 'package:tabashir/features/jobs/presentation/widgets/job_card.dart';
 
-/// Screen displaying all AI-matched jobs for the user
+/// Screen displaying all AI-matched jobs for the user with infinite scroll
 class AllMatchedJobsScreen extends StatefulWidget {
   const AllMatchedJobsScreen({super.key});
 
@@ -18,29 +18,53 @@ class AllMatchedJobsScreen extends StatefulWidget {
 }
 
 class _AllMatchedJobsScreenState extends State<AllMatchedJobsScreen> {
+  late final ScrollController _scrollController;
+
   @override
   void initState() {
     super.initState();
-    // Refresh matched jobs with full list (no limit)
+    _scrollController = ScrollController();
+    _scrollController.addListener(_onScroll);
+    
+    // Load initial matched jobs on screen init
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final cubit = context.read<HomeCubit>();
       final email = cubit.state.user?.email ?? '';
-      if (email.isNotEmpty) {
+      if (email.isNotEmpty && cubit.state.matchedJobsList.isEmpty) {
         cubit.loadAllMatchedJobs(email: email);
       }
     });
   }
 
   @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  /// Handle scroll events for infinite scrolling
+  void _onScroll() {
+    if (_scrollController.position.pixels >=
+        _scrollController.position.maxScrollExtent * 0.8) {
+      // When user scrolls to 80% of max scroll, load more jobs
+      context.read<HomeCubit>().loadMoreMatchedJobs();
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     return BlocProvider.value(
       value: getIt<HomeCubit>(),
-      child: _AllMatchedJobsContent(),
+      child: _AllMatchedJobsContent(scrollController: _scrollController),
     );
   }
 }
 
 class _AllMatchedJobsContent extends StatelessWidget {
+  const _AllMatchedJobsContent({required this.scrollController});
+
+  final ScrollController scrollController;
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -55,10 +79,14 @@ class _AllMatchedJobsContent extends StatelessWidget {
         builder: (context, state) {
           final allMatchedJobs = state.allMatchedJobsList;
           final isLoading = state.isLoading;
+          final isLoadingMore = state.isLoadingMoreMatched;
+          final hasMore = state.matchedJobsHasMore;
 
           print('[ALL_MATCHED_SCREEN] Building screen');
           print('[ALL_MATCHED_SCREEN] All matched jobs count: ${allMatchedJobs.length}');
           print('[ALL_MATCHED_SCREEN] Is loading: $isLoading');
+          print('[ALL_MATCHED_SCREEN] Is loading more: $isLoadingMore');
+          print('[ALL_MATCHED_SCREEN] Has more: $hasMore');
 
           if (isLoading && allMatchedJobs.isEmpty) {
             return const Center(
@@ -78,11 +106,25 @@ class _AllMatchedJobsContent extends StatelessWidget {
                 await cubit.loadAllMatchedJobs(email: email);
               }
             },
-            child: ListView.separated(
+            child: ListView.builder(
+              controller: scrollController,
               padding: EdgeInsets.all(AppTheme.spacingMd.w),
-              itemCount: allMatchedJobs.length,
-              separatorBuilder: (context, index) => SizedBox(height: AppTheme.spacingMd.h),
+              itemCount: allMatchedJobs.length + (isLoadingMore && hasMore ? 1 : 0),
               itemBuilder: (context, index) {
+                // Show loading indicator at the end
+                if (index == allMatchedJobs.length) {
+                  return Padding(
+                    padding: EdgeInsets.symmetric(vertical: AppTheme.spacingMd.h),
+                    child: Center(
+                      child: SizedBox(
+                        width: 24.w,
+                        height: 24.h,
+                        child: CircularProgressIndicator(strokeWidth: 2),
+                      ),
+                    ),
+                  );
+                }
+
                 final job = allMatchedJobs[index];
 
                 // Build tags from jobType and languages
