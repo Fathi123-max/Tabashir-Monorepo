@@ -13,6 +13,7 @@ sealed class PaymentIntentRequest with _$PaymentIntentRequest {
     String? userId,
     String? serviceId,
     String? resumeId,
+    String? serviceTitle,
   }) = _PaymentIntentRequest;
 
   factory PaymentIntentRequest.fromJson(Map<String, dynamic> json) =>

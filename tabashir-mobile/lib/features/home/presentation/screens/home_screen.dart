@@ -167,19 +167,10 @@ class _HomeScreenState extends State<HomeScreen> {
                                   ),
                                 ),
                                 SizedBox(height: AppTheme.spacingLg.h),
-                                Padding(
-                                  padding: EdgeInsets.symmetric(
-                                    horizontal: AppTheme.spacingMd.w,
-                                  ),
-                                  child: Text(
-                                    'Quick Actions'.tr(),
-                                    style: theme.textTheme.headlineMedium
-                                        ?.copyWith(
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                  ),
-                                ),
+                                // Stats Cards (AI Matches + Applied Jobs Count)
+                                const HomeStatsCardsRowWidget(),
                                 SizedBox(height: AppTheme.spacingMd.h),
+                                // Quick Actions (no title, reduced visual weight)
                                 Padding(
                                   padding: EdgeInsets.symmetric(
                                     horizontal: AppTheme.spacingMd.w,
@@ -187,13 +178,11 @@ class _HomeScreenState extends State<HomeScreen> {
                                   child: const HomeQuickActionsGridWidget(),
                                 ),
                                 SizedBox(height: AppTheme.spacingLg.h),
-                                // Stats Cards (AI Matches + Applied Jobs Count)
-                                const HomeStatsCardsRowWidget(),
-                                SizedBox(height: AppTheme.spacingLg.h),
+                                // Matched Jobs Section (AI Recommendations) - moved up
+                                const HomeMatchedJobsWidget(),
                                 // UAE Cities Job Distribution
                                 const HomeUAECitiesWidget(),
-                                // Matched Jobs Section
-                                const HomeMatchedJobsWidget(),
+                                SizedBox(height: AppTheme.spacingLg.h),
                                 // My Applications Section
                                 const HomeAppliedJobsWidget(),
                                 SizedBox(height: AppTheme.spacingLg.h),

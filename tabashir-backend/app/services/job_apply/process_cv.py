@@ -234,7 +234,7 @@ def process_ai_job_input_not_active(email, resume_path, nationality, gender, loc
             'job_location_based': ', '.join(job_location_based) if isinstance(job_location_based, list) else job_location_based,
             'gender': gender,
             'nationality': nationality,
-            'jobs_to_apply_number': 0,
+            'jobs_to_apply_number': 10,  # Set to 10 to enable ranking (query requires > 0)
             'positions': ', '.join(positions.split(', ')) if isinstance(positions, str) else positions
         }
 
@@ -276,6 +276,8 @@ def process_ai_job_input_not_active(email, resume_path, nationality, gender, loc
             # Client already exists, update their record instead of just returning
             print(f"Email {data['email']} already exists in AI DB. Updating...")
             update_data = {k: v for k, v in data.items() if k != 'email'}
+            # Ensure jobs_to_apply_number is set to enable ranking
+            update_data['jobs_to_apply_number'] = 10
             set_clause = ", ".join([f"{k} = %s" for k in update_data.keys()])
             query = f"UPDATE clients SET {set_clause} WHERE email = %s"
             values = list(update_data.values())

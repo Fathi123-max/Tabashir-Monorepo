@@ -37,6 +37,7 @@ sealed class HomeState with _$HomeState {
     @Default([]) List<CityJobCount> cityJobCounts,
     @Default([]) List<Map<String, dynamic>> latestJobsList,
     @Default([]) List<JobRecommendation> matchedJobsList,
+    @Default([]) List<JobRecommendation> allMatchedJobsList,
     @Default([]) List<AppliedJob> appliedJobsList,
   }) = _HomeState;
 }

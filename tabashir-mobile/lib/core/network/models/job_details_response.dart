@@ -10,6 +10,9 @@ sealed class JobDetailsResponse with _$JobDetailsResponse {
     /// Job ID
     @JsonKey(name: 'id', fromJson: _dynamicToString) String? jobId,
 
+    /// Job ID from rankings table (alternative field name)
+    @JsonKey(name: 'job_id', fromJson: _dynamicToString) String? rankingsJobId,
+
     /// Job title
     @JsonKey(name: 'job_title') String? jobTitle,
 

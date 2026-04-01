@@ -484,7 +484,7 @@ class _JobsViewState extends State<JobsView> {
                   child: TextField(
                     controller: _searchController,
                     decoration: InputDecoration(
-                      hintText: 'Job title, skill, or company…'.tr(),
+                      hintText: 'Job title'.tr(),
                       border: InputBorder.none,
                       enabledBorder: InputBorder.none,
                       focusedBorder: InputBorder.none,

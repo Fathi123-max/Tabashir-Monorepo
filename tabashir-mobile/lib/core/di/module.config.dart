@@ -399,6 +399,7 @@ extension GetItInjectableX on _i174.GetIt {
       () => _i782.PaymentCubit(
         gh<_i315.PaymentRepository>(),
         gh<_i333.StripeService>(),
+        gh<_i36.ProfileCubit>(),
       ),
     );
     gh.factory<_i618.AiResumeCubit>(

@@ -58,6 +58,10 @@ sealed class JobRecommendation with _$JobRecommendation {
     required String company,
     required String location,
     @Default(0) int matchPercentage,
+    String? salary,
+    String? jobType,
+    String? languages,
+    String? experience,
   }) = _JobRecommendation;
 
   factory JobRecommendation.fromJson(Map<String, dynamic> json) =>

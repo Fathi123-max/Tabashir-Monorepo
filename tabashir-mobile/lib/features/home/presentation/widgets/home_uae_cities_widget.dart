@@ -38,18 +38,12 @@ class HomeUAECitiesWidget extends StatelessWidget {
     return BlocBuilder<HomeCubit, HomeState>(
       builder: (context, state) {
         final allCityCounts = state.cityJobCounts;
-        print('[HOME_UAE_CITIES] Total cities from API: ${allCityCounts.length}');
-        print('[HOME_UAE_CITIES] City data: $allCityCounts');
         final uaeCityCounts = _filterUAECities(allCityCounts);
-        print('[HOME_UAE_CITIES] UAE cities after filter: ${uaeCityCounts.length}');
-        print('[HOME_UAE_CITIES] UAE cities: ${uaeCityCounts.map((c) => '${c.city}:${c.count}').toList()}');
 
         // Don't show section if no UAE cities data
         if (uaeCityCounts.isEmpty) {
-          print('[HOME_UAE_CITIES] No UAE cities to display');
           return const SizedBox.shrink();
         }
-        print('[HOME_UAE_CITIES] Building UAE cities widget');
 
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,

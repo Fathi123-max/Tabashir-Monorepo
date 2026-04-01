@@ -73,6 +73,22 @@ class HomeCubit extends Cubit<HomeState> {
       final latestJobs = results[4] as List<Map<String, dynamic>>? ?? [];
       final appliedJobs = results[5] as List<AppliedJob>? ?? [];
 
+      print('[HOME_CUBIT] === API Results Summary ===');
+      print('[HOME_CUBIT] Client Profile: ${clientProfile.isEmpty ? "empty" : "loaded"}');
+      print('[HOME_CUBIT] Applied Jobs Count: $appliedJobsCount');
+      print('[HOME_CUBIT] Matched Jobs: ${matchedJobs.length} jobs');
+      if (matchedJobs.isNotEmpty) {
+        for (var i = 0; i < matchedJobs.length; i++) {
+          final job = matchedJobs[i];
+          print('[HOME_CUBIT]   [$i] ${job.title} at ${job.company} - ${job.matchPercentage}% match');
+        }
+      } else {
+        print('[HOME_CUBIT]   ⚠️ No matched jobs - user needs to upload resume');
+      }
+      print('[HOME_CUBIT] City Counts: ${cityCounts.length} cities');
+      print('[HOME_CUBIT] Latest Jobs: ${latestJobs.length} jobs');
+      print('[HOME_CUBIT] Applied Jobs List: ${appliedJobs.length} applications');
+
       // Process latest jobs using backend match percentages
       final processedLatestJobs = latestJobs.map((job) {
         try {
@@ -100,6 +116,7 @@ class HomeCubit extends Cubit<HomeState> {
           clientProfile: clientProfile.isEmpty ? null : clientProfile,
           totalApplications: appliedJobsCount,
           matchedJobsList: matchedJobs,
+          allMatchedJobsList: matchedJobs, // Also set for "All" screen (limited to 10)
           cityJobCounts: cityCounts,
           latestJobsList: processedLatestJobs.isNotEmpty
               ? processedLatestJobs
@@ -112,6 +129,44 @@ class HomeCubit extends Cubit<HomeState> {
     } catch (e) {
       print('[HOME_CUBIT] Error loading AI enhanced home data: $e');
       updateError('Failed to load AI enhanced home data: $e');
+    }
+  }
+
+  /// Load all matched jobs (no limit) for the "All Matched Jobs" screen
+  Future<void> loadAllMatchedJobs({
+    required String email,
+  }) async {
+    print('[HOME_CUBIT] Loading all matched jobs (no limit)...');
+    if (isClosed) return;
+    emit(state.copyWith(isLoading: true, error: false));
+
+    try {
+      // Load with a high limit to get all matches
+      final allMatchedJobs = await _homeRepository.getMatchedJobs(
+        email: email,
+        limit: 100,
+      );
+
+      print('[HOME_CUBIT] Loaded ${allMatchedJobs.length} all matched jobs');
+      if (allMatchedJobs.isNotEmpty) {
+        for (var i = 0; i < allMatchedJobs.length; i++) {
+          final job = allMatchedJobs[i];
+          print('[HOME_CUBIT]   [$i] ${job.title} at ${job.company} - ${job.matchPercentage}% match');
+        }
+      }
+
+      if (isClosed) return;
+      emit(
+        state.copyWith(
+          isLoading: false,
+          allMatchedJobsList: allMatchedJobs,
+        ),
+      );
+
+      print('[HOME_CUBIT] Successfully loaded all matched jobs');
+    } catch (e) {
+      print('[HOME_CUBIT] Error loading all matched jobs: $e');
+      updateError('Failed to load all matched jobs: $e');
     }
   }
 

@@ -9,6 +9,7 @@ part of 'job_details_response.dart';
 _JobDetailsResponse _$JobDetailsResponseFromJson(Map<String, dynamic> json) =>
     _JobDetailsResponse(
       jobId: _dynamicToString(json['id']),
+      rankingsJobId: _dynamicToString(json['job_id']),
       jobTitle: json['job_title'] as String?,
       companyName: json['entity'] as String?,
       jobDescription: json['job_description'] as String?,
@@ -34,6 +35,7 @@ _JobDetailsResponse _$JobDetailsResponseFromJson(Map<String, dynamic> json) =>
 Map<String, dynamic> _$JobDetailsResponseToJson(_JobDetailsResponse instance) =>
     <String, dynamic>{
       'id': instance.jobId,
+      'job_id': instance.rankingsJobId,
       'job_title': instance.jobTitle,
       'entity': instance.companyName,
       'job_description': instance.jobDescription,

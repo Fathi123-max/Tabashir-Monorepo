@@ -1007,26 +1007,63 @@ class AddClient(Resource):
         """
         temp_input_path = None
         try:
+            print("\n" + "="*60)
+            print("[ADD_CLIENT] === POST /api/v1/resumes/add_client CALLED ===")
+            print("="*60)
+            
             email, file, nationality, gender, preferred_positions, location_preference = self._validate_and_extract_request(request)
+            
+            print(f"[ADD_CLIENT] ✅ Request validated successfully")
+            print(f"[ADD_CLIENT] Email: {email}")
+            print(f"[ADD_CLIENT] Nationality: {nationality}")
+            print(f"[ADD_CLIENT] Gender: {gender}")
+            print(f"[ADD_CLIENT] Positions: {preferred_positions}")
+            print(f"[ADD_CLIENT] Locations: {location_preference}")
+            print(f"[ADD_CLIENT] File: {file.filename} ({len(file.read())} bytes)")
+            file.stream.seek(0)  # Reset file pointer
+            
             preferred_positions_str = ", ".join(p.strip() for p in preferred_positions if p.strip())
             location_preference_str = ", ".join(l.strip() for l in location_preference if l.strip())
+            
+            print(f"[ADD_CLIENT] Positions (joined): {preferred_positions_str}")
+            print(f"[ADD_CLIENT] Locations (joined): {location_preference_str}")
+            
             filename = secure_filename(file.filename)
             base_name = os.path.splitext(filename)[0]
             temp_input_path = Config.TEMP_FOLDER / filename
             file.save(temp_input_path)
+            
+            print(f"[ADD_CLIENT] ✅ File saved to: {temp_input_path}")
+            print(f"[ADD_CLIENT] 🔄 Calling process_ai_job_input_not_active()...")
 
             email = process_ai_job_input_not_active(
                 email=email, resume_path=temp_input_path, nationality=nationality, gender=gender,  location_preferred=location_preference_str, preferred_positions=preferred_positions_str
             )
+            
             if not email:
+                print(f"[ADD_CLIENT] ❌ process_ai_job_input_not_active() returned None")
                 raise ValueError("Failed to process resume. Please ensure the file is a valid PDF or DOCX and contains your contact information.")
+            
+            print(f"[ADD_CLIENT] ✅ process_ai_job_input_not_active() completed. Email: {email}")
+            print(f"[ADD_CLIENT] 🔄 Calling run_ranking_main()...")
 
             ranking_result = run_ranking_main(client_email=email)
+            
+            print(f"[ADD_CLIENT] 📊 Ranking result: {ranking_result}")
+            
             if not ranking_result:
+                print(f"[ADD_CLIENT] ❌ run_ranking_main() returned None or empty")
                 raise ValueError("Failed to rank jobs")
 
+            print(f"[ADD_CLIENT] ✅ Ranking completed successfully")
+            print(f"[ADD_CLIENT] 🔄 Calling apply_jobs()...")
+            
             apply_result = apply_jobs(email=email, file_path=temp_input_path) # we can also use client IDs
+            
+            print(f"[ADD_CLIENT] 📋 Apply result: {apply_result}")
+            
             if not apply_result:
+                print(f"[ADD_CLIENT] ❌ apply_jobs() returned None or empty")
                 raise ValueError("Failed to apply for jobs")
 
             summary = {
@@ -1035,6 +1072,9 @@ class AddClient(Resource):
                 "apply_result": apply_result
             }
 
+            print(f"[ADD_CLIENT] ✅✅✅ ADD_CLIENT COMPLETED SUCCESSFULLY")
+            print(f"[ADD_CLIENT] Summary: {summary}")
+            print("="*60 + "\n")
 
             return jsonify({
                 "success": True,
@@ -1043,12 +1083,17 @@ class AddClient(Resource):
             })
 
         except ValueError as ve:
+            print(f"[ADD_CLIENT] ❌ ValueError: {ve}")
+            traceback.print_exc()
             return self._error_response("Invalid input", str(ve), HTTPStatus.BAD_REQUEST.value)
         except Exception as e:
+            print(f"[ADD_CLIENT] ❌ Exception: {e}")
+            traceback.print_exc()
             return self._error_response("Job matching failed", str(e), HTTPStatus.INTERNAL_SERVER_ERROR.value)
         finally:
             if temp_input_path and os.path.exists(temp_input_path):
                 os.remove(temp_input_path)
+                print(f"[ADD_CLIENT] 🗑️ Temp file deleted: {temp_input_path}")
 
     def _validate_and_extract_request(self, req):
         """Validate and extract request parameters"""
@@ -2712,17 +2757,26 @@ class MatchedJobsPerClient(Resource):
                     }
                 }, 200
 
-            # Fetch paginated matched jobs
+            # Fetch paginated matched jobs with full job details by joining with jobs table
             cursor.execute("""
                 SELECT
-                    job_title,
-                    job_application_email,
-                    job_description,
-                    status,
-                    score
-                FROM rankings
-                WHERE LOWER(email) = LOWER(%s)
-                ORDER BY score DESC
+                    j.id,
+                    j.job_title,
+                    j.entity as company_name,
+                    j.job_description,
+                    j.salary,
+                    j.vacancy_city as location,
+                    j.job_type,
+                    j.languages,
+                    j.experience,
+                    j.application_email,
+                    j.job_date,
+                    r.status,
+                    r.score as match_percentage
+                FROM rankings r
+                INNER JOIN jobs j ON r.job_id = j.id::text
+                WHERE LOWER(r.email) = LOWER(%s)
+                ORDER BY r.score DESC
                 LIMIT %s OFFSET %s
             """, (email, limit, offset))
 

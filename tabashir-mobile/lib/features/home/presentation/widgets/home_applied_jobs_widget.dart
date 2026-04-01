@@ -251,13 +251,15 @@ class _AppliedJobCard extends StatelessWidget {
                   color: AppTheme.zinc400,
                 ),
                 SizedBox(width: 4.w),
-                Text(
-                  job.location,
-                  style: theme.textTheme.bodySmall?.copyWith(
-                    color: AppTheme.zinc500,
+                Expanded(
+                  child: Text(
+                    job.location ?? 'Remote',
+                    style: theme.textTheme.bodySmall?.copyWith(
+                      color: AppTheme.zinc500,
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                   ),
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
                 ),
                 SizedBox(width: AppTheme.spacingMd.w),
                 Icon(
@@ -266,10 +268,14 @@ class _AppliedJobCard extends StatelessWidget {
                   color: AppTheme.zinc400,
                 ),
                 SizedBox(width: 4.w),
-                Text(
-                  _formatDate(job.applied),
-                  style: theme.textTheme.bodySmall?.copyWith(
-                    color: AppTheme.zinc500,
+                Flexible(
+                  child: Text(
+                    _formatDate(job.applied),
+                    style: theme.textTheme.bodySmall?.copyWith(
+                      color: AppTheme.zinc500,
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                   ),
                 ),
               ],

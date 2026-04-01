@@ -5,7 +5,10 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import 'package:tabashir/core/di/injection.dart';
 import 'package:tabashir/core/theme/app_theme.dart';
+import 'package:tabashir/core/network/models/payment/payment_intent_request.dart';
+import 'package:tabashir/features/payments/presentation/cubit/payment_cubit.dart';
 
 import '../cubit/services_cubit.dart';
 import '../widgets/info_banner.dart';
@@ -44,12 +47,38 @@ class ServicesScreen extends StatelessWidget {
     }
   }
 
+  void _onJobApplyServicePressed(
+    BuildContext context,
+    String serviceId,
+    double amount,
+    String serviceTitle,
+  ) async {
+    final paymentCubit = context.read<PaymentCubit>();
+
+    // Create payment intent
+    final request = PaymentIntentRequest(
+      amount: amount,
+      currency: 'AED',
+      serviceId: serviceId,
+      serviceTitle: serviceTitle,
+    );
+
+    await paymentCubit.createPaymentIntent(request: request);
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
 
-    return BlocProvider(
-      create: (context) => ServicesCubit()..initialize(),
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(
+          create: (context) => ServicesCubit()..initialize(),
+        ),
+        BlocProvider.value(
+          value: getIt<PaymentCubit>(),
+        ),
+      ],
       child: BlocBuilder<ServicesCubit, ServicesState>(
         builder: (context, state) => Scaffold(
           backgroundColor: theme.scaffoldBackgroundColor,
@@ -60,8 +89,7 @@ class ServicesScreen extends StatelessWidget {
                 Expanded(
                   child: ListView(
                     padding: EdgeInsets.only(
-                      bottom:
-                          kBottomNavigationBarHeight + AppTheme.spacingLg.h,
+                      bottom: kBottomNavigationBarHeight + AppTheme.spacingLg.h,
                     ),
                     children: [
                       // Header
@@ -108,16 +136,42 @@ class ServicesScreen extends StatelessWidget {
                           children: [
                             ServiceCard(
                               icon: Icons.flash_on,
-                              title: 'AI Job Apply Service'.tr(),
+                              title: 'AI Job Apply Service - Basic'.tr(),
                               description:
                                   'Let our AI find and apply to the best jobs for '
                                       .tr() +
                                   'you automatically.'.tr(),
-                              price: 'AED 49'.tr(),
+                              price: 'AED 200'.tr(),
                               buttonText: 'Auto Apply'.tr(),
                               isEnabled: true,
                               onPressed: () {
-                                context.pushNamed('subscriptions-screen');
+                                _onJobApplyServicePressed(
+                                  context,
+                                  'ai-job-apply',
+                                  200,
+                                  'AI Job Apply Service - Basic',
+                                );
+                              },
+                            ),
+                            SizedBox(height: AppTheme.spacingMd.h),
+
+                            ServiceCard(
+                              icon: Icons.work,
+                              title: 'AI Job Apply Service - Premium'.tr(),
+                              description:
+                                  'Premium plan with priority applications and '
+                                      .tr() +
+                                  'advanced AI matching.'.tr(),
+                              price: 'AED 200'.tr(),
+                              buttonText: 'Auto Apply'.tr(),
+                              isEnabled: true,
+                              onPressed: () {
+                                _onJobApplyServicePressed(
+                                  context,
+                                  'ai-job-apply',
+                                  200,
+                                  'AI Job Apply Service - Premium',
+                                );
                               },
                             ),
                             SizedBox(height: AppTheme.spacingMd.h),

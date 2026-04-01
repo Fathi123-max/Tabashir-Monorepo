@@ -852,7 +852,7 @@ as String,
 /// @nodoc
 mixin _$JobRecommendation {
 
- String get id; String get title; String get company; String get location; int get matchPercentage;
+ String get id; String get title; String get company; String get location; int get matchPercentage; String? get salary; String? get jobType; String? get languages; String? get experience;
 /// Create a copy of JobRecommendation
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -865,16 +865,16 @@ $JobRecommendationCopyWith<JobRecommendation> get copyWith => _$JobRecommendatio
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is JobRecommendation&&(identical(other.id, id) || other.id == id)&&(identical(other.title, title) || other.title == title)&&(identical(other.company, company) || other.company == company)&&(identical(other.location, location) || other.location == location)&&(identical(other.matchPercentage, matchPercentage) || other.matchPercentage == matchPercentage));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is JobRecommendation&&(identical(other.id, id) || other.id == id)&&(identical(other.title, title) || other.title == title)&&(identical(other.company, company) || other.company == company)&&(identical(other.location, location) || other.location == location)&&(identical(other.matchPercentage, matchPercentage) || other.matchPercentage == matchPercentage)&&(identical(other.salary, salary) || other.salary == salary)&&(identical(other.jobType, jobType) || other.jobType == jobType)&&(identical(other.languages, languages) || other.languages == languages)&&(identical(other.experience, experience) || other.experience == experience));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,title,company,location,matchPercentage);
+int get hashCode => Object.hash(runtimeType,id,title,company,location,matchPercentage,salary,jobType,languages,experience);
 
 @override
 String toString() {
-  return 'JobRecommendation(id: $id, title: $title, company: $company, location: $location, matchPercentage: $matchPercentage)';
+  return 'JobRecommendation(id: $id, title: $title, company: $company, location: $location, matchPercentage: $matchPercentage, salary: $salary, jobType: $jobType, languages: $languages, experience: $experience)';
 }
 
 
@@ -885,7 +885,7 @@ abstract mixin class $JobRecommendationCopyWith<$Res>  {
   factory $JobRecommendationCopyWith(JobRecommendation value, $Res Function(JobRecommendation) _then) = _$JobRecommendationCopyWithImpl;
 @useResult
 $Res call({
- String id, String title, String company, String location, int matchPercentage
+ String id, String title, String company, String location, int matchPercentage, String? salary, String? jobType, String? languages, String? experience
 });
 
 
@@ -902,14 +902,18 @@ class _$JobRecommendationCopyWithImpl<$Res>
 
 /// Create a copy of JobRecommendation
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? title = null,Object? company = null,Object? location = null,Object? matchPercentage = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? title = null,Object? company = null,Object? location = null,Object? matchPercentage = null,Object? salary = freezed,Object? jobType = freezed,Object? languages = freezed,Object? experience = freezed,}) {
   return _then(_self.copyWith(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,title: null == title ? _self.title : title // ignore: cast_nullable_to_non_nullable
 as String,company: null == company ? _self.company : company // ignore: cast_nullable_to_non_nullable
 as String,location: null == location ? _self.location : location // ignore: cast_nullable_to_non_nullable
 as String,matchPercentage: null == matchPercentage ? _self.matchPercentage : matchPercentage // ignore: cast_nullable_to_non_nullable
-as int,
+as int,salary: freezed == salary ? _self.salary : salary // ignore: cast_nullable_to_non_nullable
+as String?,jobType: freezed == jobType ? _self.jobType : jobType // ignore: cast_nullable_to_non_nullable
+as String?,languages: freezed == languages ? _self.languages : languages // ignore: cast_nullable_to_non_nullable
+as String?,experience: freezed == experience ? _self.experience : experience // ignore: cast_nullable_to_non_nullable
+as String?,
   ));
 }
 
@@ -991,10 +995,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String title,  String company,  String location,  int matchPercentage)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String title,  String company,  String location,  int matchPercentage,  String? salary,  String? jobType,  String? languages,  String? experience)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _JobRecommendation() when $default != null:
-return $default(_that.id,_that.title,_that.company,_that.location,_that.matchPercentage);case _:
+return $default(_that.id,_that.title,_that.company,_that.location,_that.matchPercentage,_that.salary,_that.jobType,_that.languages,_that.experience);case _:
   return orElse();
 
 }
@@ -1012,10 +1016,10 @@ return $default(_that.id,_that.title,_that.company,_that.location,_that.matchPer
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String title,  String company,  String location,  int matchPercentage)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String title,  String company,  String location,  int matchPercentage,  String? salary,  String? jobType,  String? languages,  String? experience)  $default,) {final _that = this;
 switch (_that) {
 case _JobRecommendation():
-return $default(_that.id,_that.title,_that.company,_that.location,_that.matchPercentage);}
+return $default(_that.id,_that.title,_that.company,_that.location,_that.matchPercentage,_that.salary,_that.jobType,_that.languages,_that.experience);}
 }
 /// A variant of `when` that fallback to returning `null`
 ///
@@ -1029,10 +1033,10 @@ return $default(_that.id,_that.title,_that.company,_that.location,_that.matchPer
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String title,  String company,  String location,  int matchPercentage)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String title,  String company,  String location,  int matchPercentage,  String? salary,  String? jobType,  String? languages,  String? experience)?  $default,) {final _that = this;
 switch (_that) {
 case _JobRecommendation() when $default != null:
-return $default(_that.id,_that.title,_that.company,_that.location,_that.matchPercentage);case _:
+return $default(_that.id,_that.title,_that.company,_that.location,_that.matchPercentage,_that.salary,_that.jobType,_that.languages,_that.experience);case _:
   return null;
 
 }
@@ -1044,7 +1048,7 @@ return $default(_that.id,_that.title,_that.company,_that.location,_that.matchPer
 @JsonSerializable()
 
 class _JobRecommendation implements JobRecommendation {
-  const _JobRecommendation({required this.id, required this.title, required this.company, required this.location, this.matchPercentage = 0});
+  const _JobRecommendation({required this.id, required this.title, required this.company, required this.location, this.matchPercentage = 0, this.salary, this.jobType, this.languages, this.experience});
   factory _JobRecommendation.fromJson(Map<String, dynamic> json) => _$JobRecommendationFromJson(json);
 
 @override final  String id;
@@ -1052,6 +1056,10 @@ class _JobRecommendation implements JobRecommendation {
 @override final  String company;
 @override final  String location;
 @override@JsonKey() final  int matchPercentage;
+@override final  String? salary;
+@override final  String? jobType;
+@override final  String? languages;
+@override final  String? experience;
 
 /// Create a copy of JobRecommendation
 /// with the given fields replaced by the non-null parameter values.
@@ -1066,16 +1074,16 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _JobRecommendation&&(identical(other.id, id) || other.id == id)&&(identical(other.title, title) || other.title == title)&&(identical(other.company, company) || other.company == company)&&(identical(other.location, location) || other.location == location)&&(identical(other.matchPercentage, matchPercentage) || other.matchPercentage == matchPercentage));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _JobRecommendation&&(identical(other.id, id) || other.id == id)&&(identical(other.title, title) || other.title == title)&&(identical(other.company, company) || other.company == company)&&(identical(other.location, location) || other.location == location)&&(identical(other.matchPercentage, matchPercentage) || other.matchPercentage == matchPercentage)&&(identical(other.salary, salary) || other.salary == salary)&&(identical(other.jobType, jobType) || other.jobType == jobType)&&(identical(other.languages, languages) || other.languages == languages)&&(identical(other.experience, experience) || other.experience == experience));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,title,company,location,matchPercentage);
+int get hashCode => Object.hash(runtimeType,id,title,company,location,matchPercentage,salary,jobType,languages,experience);
 
 @override
 String toString() {
-  return 'JobRecommendation(id: $id, title: $title, company: $company, location: $location, matchPercentage: $matchPercentage)';
+  return 'JobRecommendation(id: $id, title: $title, company: $company, location: $location, matchPercentage: $matchPercentage, salary: $salary, jobType: $jobType, languages: $languages, experience: $experience)';
 }
 
 
@@ -1086,7 +1094,7 @@ abstract mixin class _$JobRecommendationCopyWith<$Res> implements $JobRecommenda
   factory _$JobRecommendationCopyWith(_JobRecommendation value, $Res Function(_JobRecommendation) _then) = __$JobRecommendationCopyWithImpl;
 @override @useResult
 $Res call({
- String id, String title, String company, String location, int matchPercentage
+ String id, String title, String company, String location, int matchPercentage, String? salary, String? jobType, String? languages, String? experience
 });
 
 
@@ -1103,14 +1111,18 @@ class __$JobRecommendationCopyWithImpl<$Res>
 
 /// Create a copy of JobRecommendation
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? title = null,Object? company = null,Object? location = null,Object? matchPercentage = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? title = null,Object? company = null,Object? location = null,Object? matchPercentage = null,Object? salary = freezed,Object? jobType = freezed,Object? languages = freezed,Object? experience = freezed,}) {
   return _then(_JobRecommendation(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,title: null == title ? _self.title : title // ignore: cast_nullable_to_non_nullable
 as String,company: null == company ? _self.company : company // ignore: cast_nullable_to_non_nullable
 as String,location: null == location ? _self.location : location // ignore: cast_nullable_to_non_nullable
 as String,matchPercentage: null == matchPercentage ? _self.matchPercentage : matchPercentage // ignore: cast_nullable_to_non_nullable
-as int,
+as int,salary: freezed == salary ? _self.salary : salary // ignore: cast_nullable_to_non_nullable
+as String?,jobType: freezed == jobType ? _self.jobType : jobType // ignore: cast_nullable_to_non_nullable
+as String?,languages: freezed == languages ? _self.languages : languages // ignore: cast_nullable_to_non_nullable
+as String?,experience: freezed == experience ? _self.experience : experience // ignore: cast_nullable_to_non_nullable
+as String?,
   ));
 }
 

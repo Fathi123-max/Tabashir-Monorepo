@@ -340,10 +340,28 @@ class HomeRepositoryImpl implements HomeRepository {
     int limit = 10,
   }) async {
     try {
+      print('[HOME_REPO] Fetching matched jobs for email: $email');
+      print('[HOME_REPO] API params: email=$email, limit=$limit, page=1');
+      
       final response = await _tabashirApiService.getJobMatches(email, limit, 1);
       final jobs = response.data.matchedJobs;
-      final jobMatchService = JobMatchService();
-      return jobs.map((job) {
+      
+      print('[HOME_REPO] API response received');
+      print('[HOME_REPO] Matched jobs count: ${jobs.length}');
+      
+      if (jobs.isEmpty) {
+        print('[HOME_REPO] WARNING: No matched jobs returned from API');
+        print('[HOME_REPO] This means the backend rankings table has no entries for this user');
+        print('[HOME_REPO] User needs to upload resume for AI matching');
+      } else {
+        print('[HOME_REPO] Jobs returned:');
+        for (var i = 0; i < jobs.length; i++) {
+          final job = jobs[i];
+          print('[HOME_REPO]   [$i] JobID: ${job.jobId}, Title: ${job.jobTitle}, Match: ${job.matchPercentage}');
+        }
+      }
+      
+      final result = jobs.map((job) {
         final matchPctRaw = job.matchPercentage;
         int matchPct;
         if (matchPctRaw == null || matchPctRaw.isEmpty) {
@@ -352,16 +370,41 @@ class HomeRepositoryImpl implements HomeRepository {
           final cleaned = matchPctRaw.replaceAll(RegExp(r'[^0-9]'), '');
           matchPct = cleaned.isEmpty ? 0 : int.parse(cleaned);
         }
+        // Use jobId from either 'id' or 'job_id' field
+        final jobId = job.jobId ?? job.rankingsJobId ?? '';
+        
+        // Build tags from job_type and languages
+        final tags = <String>[];
+        if (job.jobType != null && job.jobType!.isNotEmpty) {
+          tags.add(job.jobType!);
+        }
+        if (job.languages != null && job.languages!.isNotEmpty) {
+          // Split languages by comma and take first 2
+          final langList = job.languages!.split(',').take(2).toList();
+          tags.addAll(langList.map((l) => l.trim()));
+        }
+        
+        // Use salary from API or null (widget will handle display)
+        final salary = job.salary;
+
         return JobRecommendation(
-          id: job.jobId?.toString() ?? '',
+          id: jobId,
           title: job.jobTitle ?? 'Unknown Title',
           company: job.companyName ?? 'Unknown Company',
-          location: job.location ?? '',
+          location: job.location ?? 'Remote',
           matchPercentage: matchPct,
+          salary: salary,
+          jobType: job.jobType,
+          languages: job.languages,
+          experience: job.experience,
         );
       }).toList();
-    } catch (e) {
-      print('Error getting matched jobs: $e');
+      
+      print('[HOME_REPO] Processed ${result.length} JobRecommendation objects');
+      return result;
+    } catch (e, stackTrace) {
+      print('[HOME_REPO] ERROR getting matched jobs: $e');
+      print('[HOME_REPO] Stack trace: $stackTrace');
       return [];
     }
   }

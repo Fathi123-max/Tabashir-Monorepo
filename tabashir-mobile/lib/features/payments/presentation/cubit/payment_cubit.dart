@@ -12,6 +12,7 @@ import 'package:tabashir/core/network/models/payment/payment_intent_request.dart
 import 'package:tabashir/core/network/models/payment/payment_intent_response.dart';
 import 'package:tabashir/core/services/stripe_service.dart';
 import 'package:tabashir/features/payments/domain/repositories/payment_repository.dart';
+import 'package:tabashir/features/profile/presentation/cubit/profile_cubit.dart';
 
 part 'payment_state.dart';
 part 'payment_cubit.freezed.dart';
@@ -22,10 +23,24 @@ class PaymentCubit extends Cubit<PaymentState> {
   PaymentCubit(
     this._repository,
     this._stripeService,
+    this._profileCubit,
   ) : super(const PaymentState());
 
   final PaymentRepository _repository;
   final StripeService _stripeService;
+  final ProfileCubit _profileCubit;
+
+  /// Get the current user ID from profile cubit
+  /// Throws an exception if user ID is not available
+  String get _currentUserId {
+    final userId = _profileCubit.currentUserId;
+    if (userId == null || userId.isEmpty) {
+      throw Exception(
+        'User ID not available. Please ensure you are logged in.',
+      );
+    }
+    return userId;
+  }
 
   /// Create payment intent
   Future<void> createPaymentIntent({
@@ -39,7 +54,12 @@ class PaymentCubit extends Cubit<PaymentState> {
     );
 
     try {
-      final response = await _repository.createPaymentIntent(request: request);
+      // Add userId to the request
+      final requestWithUser = request.copyWith(userId: _currentUserId);
+
+      final response = await _repository.createPaymentIntent(
+        request: requestWithUser,
+      );
 
       final paymentData = response.data;
       if (paymentData != null) {
@@ -63,6 +83,51 @@ class PaymentCubit extends Cubit<PaymentState> {
             paymentSheetInitialized: true,
           ),
         );
+
+        // 3. Present the payment sheet automatically after a short delay
+        await Future.delayed(const Duration(milliseconds: 300));
+
+        try {
+          final paymentResult = await _stripeService.processPayment();
+
+          // 4. Handle payment result
+          if (paymentResult.success) {
+            emit(
+              state.copyWith(
+                status: PaymentStatus.success,
+                paymentSuccessful: true,
+                paymentSheetInitialized: false,
+              ),
+            );
+          } else if (paymentResult.canceled) {
+            emit(
+              state.copyWith(
+                status: PaymentStatus.canceled,
+                paymentSuccessful: false,
+                paymentSheetInitialized: false,
+                errorMessage: 'Payment was canceled',
+              ),
+            );
+          } else {
+            emit(
+              state.copyWith(
+                status: PaymentStatus.failed,
+                paymentSuccessful: false,
+                paymentSheetInitialized: false,
+                errorMessage: paymentResult.message,
+              ),
+            );
+          }
+        } catch (e) {
+          emit(
+            state.copyWith(
+              status: PaymentStatus.failed,
+              paymentSuccessful: false,
+              paymentSheetInitialized: false,
+              errorMessage: 'Payment processing failed: $e',
+            ),
+          );
+        }
       } else {
         throw Exception('Payment data is null');
       }

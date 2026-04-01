@@ -88,6 +88,10 @@ _JobRecommendation _$JobRecommendationFromJson(Map<String, dynamic> json) =>
       company: json['company'] as String,
       location: json['location'] as String,
       matchPercentage: (json['matchPercentage'] as num?)?.toInt() ?? 0,
+      salary: json['salary'] as String?,
+      jobType: json['jobType'] as String?,
+      languages: json['languages'] as String?,
+      experience: json['experience'] as String?,
     );
 
 Map<String, dynamic> _$JobRecommendationToJson(_JobRecommendation instance) =>
@@ -97,6 +101,10 @@ Map<String, dynamic> _$JobRecommendationToJson(_JobRecommendation instance) =>
       'company': instance.company,
       'location': instance.location,
       'matchPercentage': instance.matchPercentage,
+      'salary': instance.salary,
+      'jobType': instance.jobType,
+      'languages': instance.languages,
+      'experience': instance.experience,
     };
 
 _CityJobCount _$CityJobCountFromJson(Map<String, dynamic> json) =>

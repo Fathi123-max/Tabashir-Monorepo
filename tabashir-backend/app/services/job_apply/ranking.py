@@ -1,4 +1,5 @@
 import multiprocessing
+import traceback
 
 import time
 from datetime import datetime, timedelta
@@ -266,23 +267,32 @@ def process_job_chunk(chunk_data):
 
 
 def main(client_email):
+    print("\n" + "="*60)
+    print(f"[RANKING] === run_ranking_main() STARTED ===")
+    print(f"[RANKING] Client Email: {client_email}")
+    print("="*60)
+    
     # Connect to PostgreSQL database
     start_time = time.time()
 
     if client_email is None:
+        print(f"[RANKING] ❌ Email is None")
         raise ValueError("Email must be provided")
 
+    print(f"[RANKING] 🔄 Connecting to database...")
     conn = psycopg2.connect(
         dbname=Config.AI_POSTGRES_DB, user=Config.AI_POSTGRES_USER, password=Config.AI_POSTGRES_PASSWORD,
         host=Config.AI_POSTGRES_HOST, port=Config.AI_POSTGRES_PORT,
     )
     conn.autocommit = False
     cursor = conn.cursor()
+    print(f"[RANKING] ✅ Database connected")
 
     # Only load necessary columns to reduce memory usage
-    print("Loading data from database...")
-    
+    print("[RANKING] Loading data from database...")
+
     # Ensure tables exist
+    print("[RANKING] Ensuring tables exist...")
     cursor.execute("""
         CREATE TABLE IF NOT EXISTS jobs (
             id SERIAL PRIMARY KEY,
@@ -348,6 +358,7 @@ def main(client_email):
         );
     """)
     conn.commit()
+    print("[RANKING] ✅ Tables verified")
 
     # Check if Nationality column exists in jobs
     cursor.execute("SELECT column_name FROM information_schema.columns WHERE table_name = 'jobs'")
@@ -397,9 +408,23 @@ def main(client_email):
         WHERE jobs_to_apply_number > 0  AND email = '{client_email}'
     """
 
+    print(f"[RANKING] 📋 Fetching client data for: {client_email}")
     clients_df = pd.read_sql_query(query, conn)
+    print(f"[RANKING] 📊 Clients loaded: {len(clients_df)} rows")
+    
+    if len(clients_df) == 0:
+        print(f"[RANKING] ❌ No client found with email: {client_email}")
+        print(f"[RANKING] ❌ Check if client exists in clients table with jobs_to_apply_number > 0")
+    else:
+        print(f"[RANKING] ✅ Client found:")
+        for idx, row in clients_df.iterrows():
+            print(f"[RANKING]   Name: {row.get('name', 'N/A')}")
+            print(f"[RANKING]   Positions: {row.get('positions', 'N/A')}")
+            print(f"[RANKING]   Skills: {row.get('skills', 'N/A')[:100]}..." if row.get('skills') else "[RANKING]   Skills: N/A")
+            print(f"[RANKING]   Location: {row.get('location', 'N/A')}")
+            print(f"[RANKING]   jobs_to_apply_number: {row.get('jobs_to_apply_number', 'N/A')}")
 
-    print(f"Loaded {len(jobs_df)} jobs and {len(clients_df)} clients")
+    print(f"[RANKING] 📊 Loaded {len(jobs_df)} jobs and {len(clients_df)} clients")
 
     # Preprocess data - minimal processing
     print("Preprocessing data...")
@@ -458,7 +483,15 @@ def main(client_email):
     all_jobs_data = (jobs_df, clients_df, existing_matches)
     all_matches = process_job_chunk(all_jobs_data)
 
-    print(f"Synchronous processing completed. Found {len(all_matches)} matches in {time.time() - start_time:.1f}s")
+    print(f"[RANKING] ✅ Synchronous processing completed. Found {len(all_matches)} matches in {time.time() - start_time:.1f}s")
+    
+    if len(all_matches) == 0:
+        print(f"[RANKING] ⚠️ WARNING: No matches found!")
+        print(f"[RANKING] ⚠️ Possible reasons:")
+        print(f"[RANKING]   1. Client has jobs_to_apply_number = 0")
+        print(f"[RANKING]   2. No jobs match client's positions/locations")
+        print(f"[RANKING]   3. All matches already exist in rankings table")
+        print(f"[RANKING]   4. Client data is incomplete (missing positions, skills, etc.)")
 
     # Create indexes for faster lookups
     cursor.execute("CREATE INDEX IF NOT EXISTS idx_rankings_email_job ON rankings(email, job_id)")
@@ -475,6 +508,9 @@ def main(client_email):
     # Insert matches in batches
     batch_size = 1000
     batch_values = []
+
+    print(f"[RANKING] 🔄 Starting batch insertion...")
+    print(f"[RANKING] Total matches to insert: {len(all_matches)}")
 
     # Reset the sequence for the rankings table
     cursor.execute("""
@@ -500,7 +536,7 @@ def main(client_email):
         existing_match_records = set()
         for row in cursor.fetchall():
             existing_match_records.add((row[0], row[1], row[2]))
-        print(f"Loaded {len(existing_match_records)} existing match records for duplicate checking")
+        print(f"[RANKING] 📊 Loaded {len(existing_match_records)} existing match records for duplicate checking")
 
         for match in all_matches:
             job_id = match['job_id']
@@ -524,7 +560,7 @@ def main(client_email):
 
             # Check if this match is blocked
             if (client_email.lower(), job_title.lower()) in blocked_pairs:
-                print(f"Skipping blocked pair: {client_email} - {job_title}")
+                print(f"[RANKING] ⚠️ Skipping blocked pair: {client_email} - {job_title}")
                 continue
 
             # Check if this match already exists in the database or current batch
@@ -589,9 +625,10 @@ def main(client_email):
                     inserted += len(batch_values)
                     # Commit each batch immediately
                     conn.commit()
-                    print(f"Inserted {inserted} rankings so far...")
+                    print(f"[RANKING] 📊 Inserted {inserted} rankings so far...")
                 except Exception as e:
-                    print(f"Error inserting batch: {e}")
+                    print(f"[RANKING] ❌ Error inserting batch: {e}")
+                    traceback.print_exc()
                     # Continue with next batch rather than aborting completely
                     conn.rollback()
                 batch_values = []
@@ -602,46 +639,49 @@ def main(client_email):
                 execute_values(cursor, insert_query, batch_values)
                 inserted += len(batch_values)
                 conn.commit()
-                print(f"Successfully inserted final batch of {len(batch_values)} rankings")
+                print(f"[RANKING] ✅ Successfully inserted final batch of {len(batch_values)} rankings")
             except Exception as e:
                 conn.rollback()
-                print(f"Error inserting final batch: {e}")
+                print(f"[RANKING] ❌ Error inserting final batch: {e}")
+                traceback.print_exc()
 
         # Log success
-        print(f"Successfully inserted {inserted} total rankings")
+        print(f"[RANKING] ✅✅✅ Successfully inserted {inserted} total rankings")
 
     except Exception as e:
         conn.rollback()
-        print(f"Error in insertion process: {e}")
+        print(f"[RANKING] ❌ Error in insertion process: {e}")
+        traceback.print_exc()
 
     # Verify insertion - check if records were actually inserted
     try:
         cursor.execute("SELECT COUNT(*) FROM rankings WHERE date = %s", (current_date,))
         verification_count = cursor.fetchone()[0]
-        print(f"Verification: Found {verification_count} records in database with today's date")
+        print(f"[RANKING] 🔍 Verification: Found {verification_count} records in database with today's date")
 
         if verification_count == 0 and inserted > 0:
-            print("No records found in database despite reported insertions!")
+            print("[RANKING] ❌ WARNING: No records found in database despite reported insertions!")
         elif verification_count > 0:
-            print(f"Successfully verified {verification_count} rankings in database")
+            print(f"[RANKING] ✅ Verification successful: {verification_count} records confirmed")
     except Exception as e:
-        print(f"Failed to verify record insertion: {e}")
+        print(f"[RANKING] ❌ Verification failed: {e}")
+        traceback.print_exc()
 
     # Performance summary
     elapsed_time = time.time() - start_time
-    print(f"==================== PERFORMANCE SUMMARY ====================")
-    print(f"Total execution time: {elapsed_time:.2f} seconds")
-    print(f"Processed {len(jobs_df)} jobs and {len(clients_df)} clients")
-    print(f"Generated {len(all_matches)} matches, inserted {inserted}")
-    print(f"Average time per job: {elapsed_time / max(1, len(jobs_df)):.4f} seconds")
-    print(f"=============================================================")
+    print(f"\n[RANKING] ==================== PERFORMANCE SUMMARY ====================")
+    print(f"[RANKING] Total execution time: {elapsed_time:.2f} seconds")
+    print(f"[RANKING] Processed {len(jobs_df)} jobs and {len(clients_df)} clients")
+    print(f"[RANKING] Generated {len(all_matches)} matches, inserted {inserted}")
+    print(f"[RANKING] Average time per job: {elapsed_time / max(1, len(jobs_df)):.4f} seconds")
+    print(f"[RANKING] =============================================================\n")
 
     # Close connection
     cursor.close()
     conn.close()
 
     # Continue with job application process
-    print("Continuing to job application process...")
+    print("[RANKING] ✅ run_ranking_main() COMPLETED")
     return {
         'execution_time_seconds': round(elapsed_time, 2),
         'jobs_processed': len(jobs_df),
