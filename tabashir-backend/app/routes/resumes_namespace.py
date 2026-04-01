@@ -16,7 +16,7 @@ from pathlib import Path
 import psycopg2
 
 from app.config import Config
-from app.database.db import execute_query, get_ai_db_connection
+from app.database.db import execute_query, execute_ai_query, get_ai_db_connection
 from app.routes.middleware import jwt_required
 from app.utils.file_utils import allowed_file
 from app.models.cv_models import (
@@ -1538,8 +1538,14 @@ class Jobs(Resource):
         cursor = conn.cursor()
         try:
             args = request.args
+            
+            # DEBUG: Log all received parameters
+            print(f"\n{'='*60}")
+            print(f"[JOBS_NS] 🔍 RECEIVED REQUEST at {datetime.now().strftime('%H:%M:%S')}")
+            print(f"[JOBS_NS] Full args: {dict(args)}")
+            print(f"[JOBS_NS] Email param: '{args.get('email', 'NOT PROVIDED')}'")
+            print(f"{'='*60}\n")
 
-            # Filters
             # Filters
             email = args.get('email', '').strip()
             search = args.get('search', '').strip()
@@ -1807,23 +1813,47 @@ class Jobs(Resource):
             match_profile = None
             if email:
                 try:
+                    print(f"[JOBS_NS] ========== MATCHING DEBUG START ==========")
+                    print(f"[JOBS_NS] Email: {email}")
+                    
                     user_row = execute_query('SELECT id FROM users WHERE email = %s', (email,), fetch_one=True)
                     if user_row:
                         user_id = user_row['id'] if isinstance(user_row, dict) else user_row[0]
-                        
+                        print(f"[JOBS_NS] User ID: {user_id}")
+
                         # 1. Fetch Saved Jobs
                         saved_entries = execute_query('SELECT "jobId" FROM "SavedJobPost" WHERE "userId" = %s', (user_id,), fetch_all=True)
                         if saved_entries:
                             saved_job_ids = {str(sj['jobId'] if isinstance(sj, dict) else sj[0]) for sj in saved_entries}
-                            
+                            print(f"[JOBS_NS] Saved jobs count: {len(saved_job_ids)}")
+
                         # 2. Fetch Profile for Matching
                         profile = execute_query(
-                            '''SELECT cp."jobType", cp.skills, cp.location 
+                            '''SELECT cp."jobType", cp.skills, cp.location
                                FROM "Candidate" c
                                JOIN "CandidateProfile" cp ON cp."candidateId" = c.id
                                WHERE c."userId" = %s''',
                             (user_id,), fetch_one=True
                         )
+                        
+                        print(f"[JOBS_NS] CandidateProfile query result: {profile}")
+                        
+                        # Fallback: If CandidateProfile is empty, try AI DB clients table
+                        if not profile or (not profile.get('skills') and not profile.get('jobType')):
+                            print(f"[JOBS_NS] CandidateProfile empty for user {user_id}, trying AI DB clients table...")
+                            client_profile = execute_ai_query(
+                                'SELECT positions, skills, location FROM clients WHERE email = %s',
+                                (email,), fetch_one=True
+                            )
+                            print(f"[JOBS_NS] AI DB clients query result: {client_profile}")
+                            if client_profile:
+                                print(f"[JOBS_NS] ✅ Found profile in AI DB clients table")
+                                profile = {
+                                    "jobType": client_profile.get('positions') or "",
+                                    "skills": client_profile.get('skills') or "",
+                                    "location": client_profile.get('location') or ""
+                                }
+                        
                         if profile:
                             skills_list = profile.get('skills') or []
                             skills_str = ", ".join(skills_list) if isinstance(skills_list, list) else str(skills_list)
@@ -1832,8 +1862,22 @@ class Jobs(Resource):
                                 "skills": skills_str,
                                 "location": profile.get('location') or ""
                             }
+                            print(f"[JOBS_NS] Match profile loaded:")
+                            print(f"[JOBS_NS]   - positions: '{match_profile['positions']}'")
+                            print(f"[JOBS_NS]   - skills_count: {len(skills_list) if isinstance(skills_list, list) else 0}")
+                            print(f"[JOBS_NS]   - skills: '{skills_str[:100]}...'")
+                            print(f"[JOBS_NS]   - location: '{match_profile['location']}'")
+                        else:
+                            print(f"[JOBS_NS] ⚠️ NO PROFILE FOUND for user {user_id} in either database")
+                            print(f"[JOBS_NS] This means the user hasn't uploaded a CV or synced their profile yet")
+                    else:
+                        print(f"[JOBS_NS] ⚠️ User not found for email: {email}")
+                    
+                    print(f"[JOBS_NS] ========== MATCHING DEBUG END ==========")
                 except Exception as e:
-                    print(f"[JOBS_NS] Error fetching user context for jobs list: {e}")
+                    print(f"[JOBS_NS] ❌ Error fetching user context for jobs list: {e}")
+                    import traceback
+                    traceback.print_exc()
 
             for job in jobs:
                 job['is_saved'] = str(job['id']) in saved_job_ids

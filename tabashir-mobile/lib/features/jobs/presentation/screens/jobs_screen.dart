@@ -77,14 +77,18 @@ class _JobsViewState extends State<JobsView> {
   }
 
   Future<void> _initializeData() async {
+    print('[JOBS_SCREEN] _initializeData() started');
     await _profileCubit.loadProfileData();
 
     // Ensure profile has email before loading jobs (fixes race condition)
     var profile = _profileCubit.state.profile;
+    print('[JOBS_SCREEN] Profile after first load: ${profile?.email ?? "null"}');
+    
     if (profile == null || profile.email == null || profile.email.isEmpty) {
       print('[JOBS_SCREEN] Profile email not available, forcing reload...');
       await _profileCubit.loadProfileData(force: true);
       profile = _profileCubit.state.profile;
+      print('[JOBS_SCREEN] Profile after force reload: ${profile?.email ?? "null"}');
     }
 
     // Wait for email to be available (with timeout - max 5 seconds)
@@ -94,6 +98,7 @@ class _JobsViewState extends State<JobsView> {
       print('[JOBS_SCREEN] Waiting for profile email... attempt ${waitAttempts + 1}/10');
       await Future.delayed(const Duration(milliseconds: 500));
       profile = _profileCubit.state.profile;
+      print('[JOBS_SCREEN] Profile check: ${profile?.email ?? "null"}');
       waitAttempts++;
     }
 
@@ -102,12 +107,17 @@ class _JobsViewState extends State<JobsView> {
       print('[JOBS_SCREEN] ⚠️ Profile email still not available after waiting. Jobs will load without matching.');
     } else {
       print('[JOBS_SCREEN] ✅ Profile email available: $email');
+      print('[JOBS_SCREEN] Will pass email to JobsCubit for matching');
     }
 
     await _loadAppliedJobs();
     if (mounted) {
       // Pass email directly to ensure it's used for matching
-      context.read<JobsCubit>().initializeState(email: email);
+      // Force reload to ensure jobs are loaded with email for matching
+      print('[JOBS_SCREEN] Calling initializeState with email: $email (force reload)');
+      context.read<JobsCubit>().initializeState(email: email, forceReload: true);
+    } else {
+      print('[JOBS_SCREEN] ⚠️ Widget not mounted, skipping initializeState');
     }
   }
 

@@ -53,8 +53,8 @@ class JobsCubit extends Cubit<JobsState> {
 
   /// Initialize the cubit state
   /// Only loads jobs if not already initialized
-  void initializeState({String? initialCity, String? email}) {
-    if (_isInitialized) {
+  void initializeState({String? initialCity, String? email, bool forceReload = false}) {
+    if (_isInitialized && !forceReload) {
       if (initialCity != null && state is JobsStateLoaded) {
         final loadedState = state as JobsStateLoaded;
         emit(
@@ -159,9 +159,10 @@ class JobsCubit extends Cubit<JobsState> {
       // Use provided email or get from profile cubit
       final userEmail = email ?? _profileCubit.state.profile?.email;
       if (userEmail != null && userEmail.isNotEmpty) {
-        print('[JOBS_CUBIT] Using email for matching: $userEmail');
+        print('[JOBS_CUBIT] ✅ Using email for matching: $userEmail');
       } else {
         print('[JOBS_CUBIT] ⚠️ No email available - jobs will load without match percentages');
+        print('[JOBS_CUBIT] Profile state: ${_profileCubit.state.profile?.email ?? "null"}');
       }
 
       // Get jobs from repository with pagination, search, and filters
