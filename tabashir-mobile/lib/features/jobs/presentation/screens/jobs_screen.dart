@@ -361,7 +361,12 @@ class _JobsViewState extends State<JobsView> {
 
   // Header
   Widget _buildHeader(BuildContext context, ThemeData theme) => Container(
-    padding: EdgeInsets.all(AppTheme.spacingMd.w),
+    padding: EdgeInsets.fromLTRB(
+      AppTheme.spacingMd.w,
+      AppTheme.spacingMd.h,
+      AppTheme.spacingMd.w,
+      AppTheme.spacingSm.h,
+    ),
     decoration: BoxDecoration(
       color: theme.scaffoldBackgroundColor.withOpacity(0.8),
     ),
@@ -377,7 +382,8 @@ class _JobsViewState extends State<JobsView> {
         Container(
           width: 40.w,
           height: 40.w,
-          decoration: const BoxDecoration(
+          decoration: BoxDecoration(
+            color: theme.colorScheme.surfaceContainerHighest.withOpacity(0.3),
             shape: BoxShape.circle,
           ),
           child: IconButton(
@@ -385,8 +391,8 @@ class _JobsViewState extends State<JobsView> {
               await context.push(RouteNames.savedJobs);
             },
             icon: Icon(
-              Icons.bookmark,
-              size: 24.sp,
+              Icons.bookmark_outlined,
+              size: 20.sp,
               color: theme.iconTheme.color,
             ),
             padding: EdgeInsets.zero,
@@ -414,6 +420,7 @@ class _JobsViewState extends State<JobsView> {
       color: AppTheme.primaryColor,
       child: ListView.builder(
         physics: const AlwaysScrollableScrollPhysics(),
+        padding: EdgeInsets.symmetric(horizontal: AppTheme.spacingMd.w),
         itemCount: jobs.length + (isLoadingMore ? 1 : 0),
         itemBuilder: (context, index) {
           if (index == jobs.length) {
@@ -438,7 +445,7 @@ class _JobsViewState extends State<JobsView> {
                 isApplied: job.isApplied || _appliedJobs.contains(jobId),
                 isLoading: _applyingJobs.contains(jobId),
               ),
-              SizedBox(height: AppTheme.spacingMd.h),
+              SizedBox(height: AppTheme.spacingSm.h),
             ],
           );
         },
@@ -455,7 +462,8 @@ class _JobsViewState extends State<JobsView> {
   }) => Padding(
     padding: EdgeInsets.symmetric(
       horizontal: AppTheme.spacingMd.w,
-    ).copyWith(top: AppTheme.spacingSm.h, bottom: AppTheme.spacingSm.h),
+      vertical: AppTheme.spacingSm.h,
+    ),
     child: Row(
       children: [
         Expanded(
@@ -469,13 +477,14 @@ class _JobsViewState extends State<JobsView> {
               children: [
                 // Search Icon
                 Padding(
-                  padding: EdgeInsets.symmetric(
-                    horizontal: AppTheme.spacingMd.w,
+                  padding: EdgeInsets.only(
+                    left: AppTheme.spacingMd.w,
+                    right: AppTheme.spacingSm.w,
                   ),
                   child: Icon(
-                    Icons.search,
+                    Icons.search_rounded,
                     color: theme.colorScheme.onSurfaceVariant,
-                    size: 24.sp,
+                    size: 20.sp,
                   ),
                 ),
 
@@ -513,12 +522,13 @@ class _JobsViewState extends State<JobsView> {
           decoration: BoxDecoration(
             color: hasActiveFilters
                 ? AppTheme.primaryColor.withOpacity(0.15)
-                : Colors.transparent,
+                : theme.colorScheme.surfaceContainerHighest.withOpacity(0.3),
             borderRadius: BorderRadius.circular(AppTheme.radiusDefault.r),
             border: Border.all(
               color: hasActiveFilters
                   ? AppTheme.primaryColor
                   : Colors.transparent,
+              width: 1.5,
             ),
           ),
           child: Stack(
@@ -536,34 +546,38 @@ class _JobsViewState extends State<JobsView> {
                   );
                 },
                 icon: Icon(
-                  Icons.tune,
+                  Icons.tune_rounded,
                   color: hasActiveFilters
                       ? AppTheme.primaryColor
-                      : theme.iconTheme.color,
-                  size: 24.sp,
+                      : theme.colorScheme.onSurfaceVariant,
+                  size: 22.sp,
                 ),
                 padding: EdgeInsets.zero,
               ),
               if (hasActiveFilters)
                 Positioned(
-                  top: 6.w,
-                  right: 6.w,
+                  top: 4.h,
+                  right: 4.w,
                   child: Container(
-                    padding: EdgeInsets.all(2.w),
+                    padding: EdgeInsets.symmetric(
+                      horizontal: AppTheme.spacingXs.w,
+                      vertical: AppTheme.spacingXs.h,
+                    ),
                     decoration: BoxDecoration(
                       color: AppTheme.primaryColor,
                       shape: BoxShape.circle,
+                      border: Border.all(color: Colors.white, width: 1.5),
                     ),
                     constraints: BoxConstraints(
-                      minWidth: 16.w,
-                      minHeight: 16.w,
+                      minWidth: 18.w,
+                      minHeight: 18.w,
                     ),
                     child: Center(
                       child: Text(
                         activeFilterCount > 99 ? '99+' : '$activeFilterCount',
                         style: TextStyle(
                           color: Colors.white,
-                          fontSize: 9.sp,
+                          fontSize: 10.sp,
                           fontWeight: FontWeight.bold,
                         ),
                         textAlign: TextAlign.center,

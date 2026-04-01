@@ -28,127 +28,140 @@ class ServiceCard extends StatelessWidget {
     return Opacity(
       opacity: isEnabled ? 1.0 : 0.7,
       child: Container(
-        padding: EdgeInsets.all(AppTheme.spacingMd.w),
+        padding: EdgeInsets.all(AppTheme.spacingLg.w),
         decoration: BoxDecoration(
           color: theme.cardTheme.color,
-          borderRadius: BorderRadius.circular(AppTheme.radiusMedium.r),
+          borderRadius: BorderRadius.circular(AppTheme.radiusLarge.r),
           border: Border.all(
-            color: theme.dividerTheme.color ?? AppTheme.borderLight,
+            color: theme.colorScheme.outline.withOpacity(0.1),
+            width: 1,
           ),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.04),
-              blurRadius: 12,
-              offset: const Offset(0, 2),
+              color: Colors.black.withOpacity(0.06),
+              blurRadius: 16,
+              offset: const Offset(0, 4),
             ),
           ],
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Icon in a circular container
+            // Icon in a rounded container
             Container(
-              width: 64.w,
-              height: 64.w,
+              width: 56.w,
+              height: 56.w,
               decoration: BoxDecoration(
                 gradient: LinearGradient(
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
                   colors: [
-                    AppTheme.primaryColor.withOpacity(0.1),
-                    AppTheme.primaryColor.withOpacity(0.05),
+                    AppTheme.primaryColor.withOpacity(0.15),
+                    AppTheme.primaryColor.withOpacity(0.08),
                   ],
                 ),
                 borderRadius: BorderRadius.circular(AppTheme.radiusMedium.r),
               ),
               child: Icon(
                 icon,
-                size: 32.sp,
+                size: 28.sp,
                 color: AppTheme.primaryColor,
               ),
             ),
-            SizedBox(height: AppTheme.spacingMd.h),
+            SizedBox(height: AppTheme.spacingLg.h),
 
             // Content
             Text(
               title,
               style: theme.textTheme.titleLarge?.copyWith(
                 fontWeight: FontWeight.bold,
-                fontSize: 18.sp,
+                fontSize: 17.sp,
+                height: 1.3,
               ),
             ),
-            SizedBox(height: AppTheme.spacingXs.h),
+            SizedBox(height: AppTheme.spacingSm.h),
             Text(
               description,
               style: theme.textTheme.bodyMedium?.copyWith(
                 color: theme.colorScheme.onSurfaceVariant,
                 height: 1.5,
+                fontSize: 14.sp,
               ),
             ),
-            SizedBox(height: AppTheme.spacingMd.h),
+            SizedBox(height: AppTheme.spacingLg.h),
 
-            // Price
-            Text(
-              price,
-              style: theme.textTheme.titleMedium?.copyWith(
-                fontWeight: FontWeight.w700,
-                color: AppTheme.primaryColor,
-              ),
-            ),
-            SizedBox(height: AppTheme.spacingMd.h),
-
-            // Action Button
-            SizedBox(
-              width: double.infinity,
-              height: 48.h,
-              child: isEnabled
-                  ? ElevatedButton(
-                      onPressed: onPressed,
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: AppTheme.primaryColor,
-                        foregroundColor: Colors.white,
-                        elevation: 2,
-                        shadowColor: Colors.black.withOpacity(0.2),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(
-                            AppTheme.radiusDefault.r,
+            // Price and Button Row
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        price,
+                        style: theme.textTheme.titleMedium?.copyWith(
+                          fontWeight: FontWeight.bold,
+                          color: AppTheme.primaryColor,
+                          fontSize: 16.sp,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                SizedBox(
+                  width: 140.w,
+                  child: isEnabled
+                      ? ElevatedButton(
+                          onPressed: onPressed,
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: AppTheme.primaryColor,
+                            foregroundColor: Colors.white,
+                            elevation: 0,
+                            shadowColor: AppTheme.primaryColor.withOpacity(0.3),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(
+                                AppTheme.radiusMedium.r,
+                              ),
+                            ),
+                            padding: EdgeInsets.symmetric(
+                              horizontal: AppTheme.spacingMd.w,
+                              vertical: AppTheme.spacingSm.h,
+                            ),
+                          ),
+                          child: Text(
+                            buttonText,
+                            style: TextStyle(
+                              fontSize: 14.sp,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        )
+                      : OutlinedButton(
+                          onPressed: null,
+                          style: OutlinedButton.styleFrom(
+                            side: BorderSide(
+                              color: theme.colorScheme.outline.withOpacity(0.5),
+                              width: 1.5,
+                            ),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(
+                                AppTheme.radiusMedium.r,
+                              ),
+                            ),
+                            disabledForegroundColor:
+                                theme.colorScheme.onSurfaceVariant,
+                          ),
+                          child: Text(
+                            buttonText,
+                            style: TextStyle(
+                              fontSize: 14.sp,
+                              fontWeight: FontWeight.w600,
+                            ),
                           ),
                         ),
-                        padding: EdgeInsets.symmetric(
-                          vertical: AppTheme.spacingSm.h,
-                        ),
-                      ),
-                      child: Text(
-                        buttonText,
-                        style: TextStyle(
-                          fontSize: 16.sp,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                    )
-                  : OutlinedButton(
-                      onPressed: null,
-                      style: OutlinedButton.styleFrom(
-                        side: BorderSide(
-                          color: theme.colorScheme.outline.withOpacity(0.5),
-                          width: 2,
-                        ),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(
-                            AppTheme.radiusDefault.r,
-                          ),
-                        ),
-                        disabledForegroundColor:
-                            theme.colorScheme.onSurfaceVariant,
-                      ),
-                      child: Text(
-                        buttonText,
-                        style: TextStyle(
-                          fontSize: 16.sp,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                    ),
+                ),
+              ],
             ),
           ],
         ),

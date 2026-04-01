@@ -18,17 +18,18 @@ class JobDetailsHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Container(
-    height: 64.h,
-    padding: EdgeInsets.symmetric(horizontal: 16.w),
+    padding: EdgeInsets.symmetric(
+      horizontal: AppTheme.spacingMd.w,
+      vertical: AppTheme.spacingSm.h,
+    ),
     decoration: BoxDecoration(
       color: Theme.of(context).scaffoldBackgroundColor,
-      boxShadow: [
-        BoxShadow(
-          color: Theme.of(context).dividerColor.withOpacity(0.05),
-          blurRadius: 10,
-          offset: const Offset(0, 2),
+      border: Border(
+        bottom: BorderSide(
+          color: Theme.of(context).dividerColor.withOpacity(0.1),
+          width: 1,
         ),
-      ],
+      ),
     ),
     child: Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -36,16 +37,16 @@ class JobDetailsHeader extends StatelessWidget {
         Container(
           height: 40.w,
           width: 40.w,
-          decoration: const BoxDecoration(
-            color: Colors.transparent,
+          decoration: BoxDecoration(
+            color: Theme.of(context).colorScheme.surfaceContainerHighest.withOpacity(0.3),
             shape: BoxShape.circle,
           ),
           child: IconButton(
-            icon: const Icon(Icons.arrow_back),
+            icon: Icon(Icons.arrow_back_rounded, size: 20.sp),
             onPressed: onBack,
             tooltip: 'Back'.tr(),
-            color: Theme.of(context).hintColor,
-            iconSize: 24.w,
+            color: Theme.of(context).colorScheme.onSurface,
+            padding: EdgeInsets.zero,
           ),
         ),
         Row(
@@ -53,32 +54,32 @@ class JobDetailsHeader extends StatelessWidget {
             Container(
               height: 40.w,
               width: 40.w,
-              decoration: const BoxDecoration(
-                color: Colors.transparent,
+              decoration: BoxDecoration(
+                color: Theme.of(context).colorScheme.surfaceContainerHighest.withOpacity(0.3),
                 shape: BoxShape.circle,
               ),
               child: IconButton(
-                icon: const Icon(Icons.share),
+                icon: Icon(Icons.share_rounded, size: 20.sp),
                 onPressed: onShare,
                 tooltip: 'Share'.tr(),
-                color: Theme.of(context).hintColor,
-                iconSize: 24.w,
+                color: Theme.of(context).colorScheme.onSurface,
+                padding: EdgeInsets.zero,
               ),
             ),
-            SizedBox(width: 8.w),
+            SizedBox(width: AppTheme.spacingSm.w),
             Container(
               height: 40.w,
               width: 40.w,
-              decoration: const BoxDecoration(
-                color: Colors.transparent,
+              decoration: BoxDecoration(
+                color: Theme.of(context).colorScheme.surfaceContainerHighest.withOpacity(0.3),
                 shape: BoxShape.circle,
               ),
               child: IconButton(
-                icon: const Icon(Icons.star_border),
+                icon: Icon(Icons.star_border_rounded, size: 20.sp),
                 onPressed: onSave,
                 tooltip: 'Save'.tr(),
-                color: Theme.of(context).hintColor,
-                iconSize: 24.w,
+                color: Theme.of(context).colorScheme.onSurface,
+                padding: EdgeInsets.zero,
               ),
             ),
           ],
@@ -105,62 +106,103 @@ class JobTitleSection extends StatelessWidget {
   final String salary;
 
   @override
-  Widget build(BuildContext context) => Column(
-    crossAxisAlignment: CrossAxisAlignment.start,
-    children: [
-      Text(
-        title,
-        style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-          fontSize: 30.sp,
+  Widget build(BuildContext context) => Padding(
+    padding: EdgeInsets.all(AppTheme.spacingLg.w),
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          title,
+          style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+            fontSize: 26.sp,
+            fontWeight: FontWeight.bold,
+          ),
         ),
-      ),
-      SizedBox(height: 4.h),
-      Text(
-        company,
-        style: Theme.of(context).textTheme.titleLarge?.copyWith(
-          color: AppTheme.primaryColor,
-          fontWeight: FontWeight.w500,
+        SizedBox(height: AppTheme.spacingXs.h),
+        Text(
+          company,
+          style: Theme.of(context).textTheme.titleLarge?.copyWith(
+            color: AppTheme.primaryColor,
+            fontWeight: FontWeight.w600,
+          ),
         ),
-      ),
-      SizedBox(height: 4.h),
-      Text(
-        location,
-        style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-          color: Theme.of(context).hintColor,
-        ),
-      ),
-      SizedBox(height: 16.h),
-      Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Container(
-            padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
-            decoration: BoxDecoration(
-              color: AppTheme.successColor.withOpacity(0.1),
-              borderRadius: BorderRadius.circular(20.r),
+        SizedBox(height: AppTheme.spacingXs.h),
+        Row(
+          children: [
+            Icon(
+              Icons.location_on_rounded,
+              size: 16.sp,
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
             ),
-            child: Text(
-              matchPercentage,
-              style: TextStyle(
-                fontSize: 14.sp,
-                fontWeight: FontWeight.w500,
-                color: AppTheme.successColor,
+            SizedBox(width: 4.w),
+            Text(
+              location,
+              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
               ),
             ),
-          ),
-          SizedBox(width: 16.w),
-          Expanded(
-            child: Text(
-              salary,
-              style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                color: Theme.of(context).hintColor,
-                fontWeight: FontWeight.w500,
+          ],
+        ),
+        SizedBox(height: AppTheme.spacingMd.h),
+        Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Container(
+              padding: EdgeInsets.symmetric(
+                horizontal: AppTheme.spacingMd.w,
+                vertical: AppTheme.spacingXs.h,
+              ),
+              decoration: BoxDecoration(
+                color: AppTheme.successColor.withOpacity(0.1),
+                borderRadius: BorderRadius.circular(AppTheme.radiusFull.r),
+                border: Border.all(
+                  color: AppTheme.successColor.withOpacity(0.2),
+                  width: 1,
+                ),
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(
+                    Icons.star_rounded,
+                    size: 16.sp,
+                    color: AppTheme.successColor,
+                  ),
+                  SizedBox(width: 4.w),
+                  Text(
+                    matchPercentage,
+                    style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                      fontWeight: FontWeight.bold,
+                      color: AppTheme.successColor,
+                    ),
+                  ),
+                ],
               ),
             ),
-          ),
-        ],
-      ),
-    ],
+            SizedBox(width: AppTheme.spacingMd.w),
+            Expanded(
+              child: Row(
+                children: [
+                  Icon(
+                    Icons.attach_money_rounded,
+                    size: 18.sp,
+                    color: Theme.of(context).colorScheme.onSurfaceVariant,
+                  ),
+                  SizedBox(width: 4.w),
+                  Text(
+                    salary,
+                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                      color: Theme.of(context).colorScheme.onSurfaceVariant,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ],
+    ),
   );
 }
 
@@ -174,32 +216,45 @@ class JobMatchAlert extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Container(
-    padding: EdgeInsets.all(16.w),
+    margin: EdgeInsets.symmetric(horizontal: AppTheme.spacingLg.w),
+    padding: EdgeInsets.all(AppTheme.spacingMd.w),
     decoration: BoxDecoration(
-      color: AppTheme.primaryColor.withOpacity(0.05),
-      borderRadius: BorderRadius.circular(12.r),
+      color: AppTheme.primaryColor.withOpacity(0.08),
+      borderRadius: BorderRadius.circular(AppTheme.radiusMedium.r),
+      border: Border.all(
+        color: AppTheme.primaryColor.withOpacity(0.15),
+        width: 1,
+      ),
     ),
     child: Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Icon(
-          Icons.auto_awesome,
-          color: AppTheme.primaryColor,
-          size: 24.w,
+        Container(
+          padding: EdgeInsets.all(AppTheme.spacingXs.w),
+          decoration: BoxDecoration(
+            color: AppTheme.primaryColor.withOpacity(0.15),
+            borderRadius: BorderRadius.circular(AppTheme.radiusSmall.r),
+          ),
+          child: Icon(
+            Icons.auto_awesome_rounded,
+            color: AppTheme.primaryColor,
+            size: 20.sp,
+          ),
         ),
-        SizedBox(width: 12.w),
+        SizedBox(width: AppTheme.spacingMd.w),
         Expanded(
           child: RichText(
             text: TextSpan(
-              style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                color: Theme.of(context).textTheme.bodyLarge?.color,
+              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                color: Theme.of(context).colorScheme.onSurface,
+                height: 1.5,
               ),
               children: [
                 TextSpan(
                   text: "You're a strong fit! ".tr(),
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
-                    color: Theme.of(context).textTheme.bodyLarge?.color,
+                    color: Theme.of(context).colorScheme.onSurface,
                   ),
                 ),
                 TextSpan(
@@ -225,28 +280,34 @@ class CompanyDetailsWidget extends StatelessWidget {
   final VoidCallback onViewProfile;
 
   @override
-  Widget build(BuildContext context) => Container(
-    decoration: BoxDecoration(
-      color: Theme.of(context).cardColor,
-      borderRadius: BorderRadius.circular(12.r),
-      boxShadow: [
-        BoxShadow(
-          color: Theme.of(context).dividerColor.withOpacity(0.05),
-          blurRadius: 10,
-          offset: const Offset(0, 4),
+  Widget build(BuildContext context) => GestureDetector(
+    onTap: onViewProfile,
+    child: Container(
+      margin: EdgeInsets.symmetric(horizontal: AppTheme.spacingLg.w),
+      padding: EdgeInsets.all(AppTheme.spacingMd.w),
+      decoration: BoxDecoration(
+        color: Theme.of(context).cardColor,
+        borderRadius: BorderRadius.circular(AppTheme.radiusMedium.r),
+        border: Border.all(
+          color: Theme.of(context).colorScheme.outline.withOpacity(0.1),
+          width: 1,
         ),
-      ],
-    ),
-    child: Padding(
-      padding: EdgeInsets.all(16.w),
+        boxShadow: [
+          BoxShadow(
+            color: Theme.of(context).shadowColor.withOpacity(0.08),
+            blurRadius: 12,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
       child: Row(
         children: [
           Container(
-            height: 48.w,
-            width: 48.w,
+            height: 56.w,
+            width: 56.w,
             decoration: BoxDecoration(
-              color: Theme.of(context).dividerColor.withOpacity(0.1),
-              borderRadius: BorderRadius.circular(12.r),
+              color: Theme.of(context).colorScheme.primaryContainer,
+              borderRadius: BorderRadius.circular(AppTheme.radiusMedium.r),
             ),
             child: Center(
               child: Text(
@@ -254,22 +315,38 @@ class CompanyDetailsWidget extends StatelessWidget {
                 style: TextStyle(
                   fontSize: 20.sp,
                   fontWeight: FontWeight.bold,
-                  color: Theme.of(context).hintColor,
+                  color: Theme.of(context).colorScheme.onPrimaryContainer,
                 ),
               ),
             ),
           ),
-          SizedBox(width: 16.w),
+          SizedBox(width: AppTheme.spacingMd.w),
           Expanded(
-            child: Text(
-              companyName,
-              style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                fontWeight: FontWeight.bold,
-                color: Theme.of(
-                  context,
-                ).textTheme.titleLarge?.color,
-              ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  companyName,
+                  style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                    fontWeight: FontWeight.bold,
+                    color: Theme.of(context).colorScheme.onSurface,
+                  ),
+                ),
+                SizedBox(height: AppTheme.spacingXs.h),
+                Text(
+                  'View company profile',
+                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                    color: Theme.of(context).colorScheme.primary,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              ],
             ),
+          ),
+          Icon(
+            Icons.chevron_right_rounded,
+            color: Theme.of(context).colorScheme.onSurfaceVariant,
+            size: 24.sp,
           ),
         ],
       ),
@@ -286,31 +363,42 @@ class JobTagsWidget extends StatelessWidget {
   final List<String> tags;
 
   @override
-  Widget build(BuildContext context) => SizedBox(
-    height: 32.h,
-    child: ListView.separated(
-      scrollDirection: Axis.horizontal,
-      itemCount: tags.length,
-      separatorBuilder: (context, index) => SizedBox(width: 8.w),
-      itemBuilder: (context, index) {
-        final tag = tags[index];
-        return Container(
-          padding: EdgeInsets.symmetric(horizontal: 12.w),
-          decoration: BoxDecoration(
-            color: Theme.of(context).dividerColor.withOpacity(0.1),
-            borderRadius: BorderRadius.circular(20.r),
-          ),
-          child: Center(
-            child: Text(
-              tag,
-              style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                fontWeight: FontWeight.w500,
-                color: Theme.of(context).textTheme.bodyLarge?.color,
+  Widget build(BuildContext context) => Padding(
+    padding: EdgeInsets.symmetric(horizontal: AppTheme.spacingLg.w),
+    child: SizedBox(
+      height: 40.h,
+      child: ListView.separated(
+        scrollDirection: Axis.horizontal,
+        itemCount: tags.length,
+        separatorBuilder: (context, index) => SizedBox(width: AppTheme.spacingSm.w),
+        itemBuilder: (context, index) {
+          final tag = tags[index];
+          return Container(
+            padding: EdgeInsets.symmetric(
+              horizontal: AppTheme.spacingMd.w,
+              vertical: AppTheme.spacingXs.h,
+            ),
+            decoration: BoxDecoration(
+              color: Theme.of(context).colorScheme.surfaceContainerHighest.withOpacity(0.5),
+              borderRadius: BorderRadius.circular(AppTheme.radiusFull.r),
+              border: Border.all(
+                color: Theme.of(context).colorScheme.outline.withOpacity(0.1),
+                width: 1,
               ),
             ),
-          ),
-        );
-      },
+            child: Center(
+              child: Text(
+                tag,
+                style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                  fontWeight: FontWeight.w600,
+                  fontSize: 12.sp,
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                ),
+              ),
+            ),
+          );
+        },
+      ),
     ),
   );
 }
@@ -389,7 +477,7 @@ class BulletPointWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Padding(
-    padding: EdgeInsets.only(bottom: 8.h),
+    padding: EdgeInsets.only(bottom: AppTheme.spacingSm.h),
     child: Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -397,16 +485,16 @@ class BulletPointWidget extends StatelessWidget {
           '•',
           style: TextStyle(
             fontSize: 16.sp,
-            color: Theme.of(context).hintColor,
+            color: Theme.of(context).colorScheme.primary,
             fontWeight: FontWeight.bold,
           ),
         ),
-        SizedBox(width: 8.w),
+        SizedBox(width: AppTheme.spacingSm.w),
         Expanded(
           child: Text(
             text,
-            style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-              color: Theme.of(context).textTheme.bodyLarge?.color,
+            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+              color: Theme.of(context).colorScheme.onSurface,
               height: 1.5,
             ),
           ),
@@ -426,7 +514,7 @@ class BulletPointWithBadgeWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Padding(
-    padding: EdgeInsets.only(bottom: 8.h),
+    padding: EdgeInsets.only(bottom: AppTheme.spacingSm.h),
     child: Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -434,35 +522,39 @@ class BulletPointWithBadgeWidget extends StatelessWidget {
           '•',
           style: TextStyle(
             fontSize: 16.sp,
-            color: Theme.of(context).hintColor,
+            color: Theme.of(context).colorScheme.primary,
             fontWeight: FontWeight.bold,
           ),
         ),
-        SizedBox(width: 8.w),
+        SizedBox(width: AppTheme.spacingSm.w),
         Expanded(
           child: Stack(
             children: [
               Text(
                 text,
-                style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                  color: Theme.of(context).textTheme.bodyLarge?.color,
+                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                  color: Theme.of(context).colorScheme.onSurface,
                   height: 1.5,
                 ),
               ),
               Positioned(
-                right: -20.w,
-                top: -5.h,
+                right: 0,
+                top: 0,
                 child: Container(
-                  height: 24.w,
-                  width: 24.w,
+                  height: 28.w,
+                  width: 28.w,
                   decoration: BoxDecoration(
-                    color: AppTheme.warningColor.withOpacity(0.1),
-                    shape: BoxShape.circle,
+                    color: AppTheme.warningColor.withOpacity(0.15),
+                    borderRadius: BorderRadius.circular(AppTheme.radiusFull.r),
+                    border: Border.all(
+                      color: AppTheme.warningColor.withOpacity(0.3),
+                      width: 1,
+                    ),
                   ),
                   child: Icon(
-                    Icons.auto_awesome,
+                    Icons.auto_awesome_rounded,
                     color: AppTheme.warningColor,
-                    size: 16.w,
+                    size: 16.sp,
                   ),
                 ),
               ),
@@ -649,14 +741,25 @@ class JobDetailsFooter extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Container(
-    padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
+    padding: EdgeInsets.fromLTRB(
+      AppTheme.spacingLg.w,
+      AppTheme.spacingMd.h,
+      AppTheme.spacingLg.w,
+      AppTheme.spacingLg.h,
+    ),
     decoration: BoxDecoration(
       color: Theme.of(context).scaffoldBackgroundColor,
+      border: Border(
+        top: BorderSide(
+          color: Theme.of(context).dividerColor.withOpacity(0.1),
+          width: 1,
+        ),
+      ),
       boxShadow: [
         BoxShadow(
-          color: Theme.of(context).dividerColor.withOpacity(0.05),
-          blurRadius: 10,
-          offset: const Offset(0, -2),
+          color: Theme.of(context).shadowColor.withOpacity(0.1),
+          blurRadius: 20,
+          offset: const Offset(0, -4),
         ),
       ],
     ),
@@ -671,20 +774,20 @@ class JobDetailsFooter extends StatelessWidget {
             child: GestureDetector(
               onTap: (showLoading || isApplied) ? null : onApply,
               child: Container(
-                height: 48.h,
+                height: 52.h,
                 decoration: BoxDecoration(
                   gradient: (showLoading || isApplied)
                       ? LinearGradient(
                           colors: [Colors.grey.shade400, Colors.grey.shade500],
                         )
                       : AppTheme.primaryGradient,
-                  borderRadius: BorderRadius.circular(12.r),
+                  borderRadius: BorderRadius.circular(AppTheme.radiusMedium.r),
                   boxShadow: [
                     BoxShadow(
                       color: (showLoading || isApplied)
                           ? Colors.transparent
-                          : AppTheme.primaryColor.withOpacity(0.2),
-                      blurRadius: 10,
+                          : AppTheme.primaryColor.withOpacity(0.3),
+                      blurRadius: 12,
                       offset: const Offset(0, 4),
                     ),
                   ],
@@ -714,18 +817,31 @@ class JobDetailsFooter extends StatelessWidget {
             ),
           ),
         ),
-        SizedBox(width: 16.w),
+        SizedBox(width: AppTheme.spacingMd.w),
         Semantics(
           button: true,
           label: 'Save this job for later'.tr(),
           child: GestureDetector(
             onTap: onSaveForLater,
-            child: Text(
-              isSaved ? 'Saved'.tr() : 'Save for Later'.tr(),
-              style: TextStyle(
-                fontSize: 16.sp,
-                fontWeight: FontWeight.w500,
-                color: isSaved ? AppTheme.primaryColor : AppTheme.primaryColor,
+            child: Container(
+              height: 52.h,
+              padding: EdgeInsets.symmetric(
+                horizontal: AppTheme.spacingMd.w,
+              ),
+              decoration: BoxDecoration(
+                color: Theme.of(context).colorScheme.surfaceContainerHighest.withOpacity(0.3),
+                borderRadius: BorderRadius.circular(AppTheme.radiusMedium.r),
+                border: Border.all(
+                  color: Theme.of(context).colorScheme.outline.withOpacity(0.2),
+                  width: 1,
+                ),
+              ),
+              child: Center(
+                child: Icon(
+                  isSaved ? Icons.bookmark_rounded : Icons.bookmark_border_rounded,
+                  color: isSaved ? AppTheme.primaryColor : Theme.of(context).colorScheme.onSurface,
+                  size: 24.sp,
+                ),
               ),
             ),
           ),

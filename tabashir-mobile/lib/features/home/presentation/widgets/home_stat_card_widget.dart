@@ -16,37 +16,58 @@ class HomeStatCardWidget extends StatelessWidget {
     final theme = Theme.of(context);
 
     return Container(
-      constraints: BoxConstraints(minWidth: 150.w),
-      padding: EdgeInsets.all(AppTheme.spacingMd.w),
+      constraints: BoxConstraints(minWidth: 160.w),
+      padding: EdgeInsets.all(AppTheme.spacingLg.w),
       decoration: BoxDecoration(
         color: theme.cardTheme.color,
         borderRadius: BorderRadius.circular(AppTheme.radiusMedium.r),
         border: Border.all(
-          color: theme.dividerTheme.color ?? AppTheme.borderLight,
+          color: theme.colorScheme.outline.withOpacity(0.1),
+          width: 1,
         ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.03),
-            blurRadius: 8,
-            offset: const Offset(0, 1),
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 12,
+            offset: const Offset(0, 4),
           ),
         ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          Row(
+            children: [
+              Container(
+                padding: EdgeInsets.all(AppTheme.spacingXs.w),
+                decoration: BoxDecoration(
+                  color: AppTheme.primaryColor.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(AppTheme.radiusSmall.r),
+                ),
+                child: Icon(
+                  Icons.work_outline_rounded,
+                  size: 20.sp,
+                  color: AppTheme.primaryColor,
+                ),
+              ),
+            ],
+          ),
+          SizedBox(height: AppTheme.spacingMd.h),
           Text(
             value,
             style: theme.textTheme.displayMedium?.copyWith(
               fontWeight: FontWeight.bold,
-              fontSize: 30.sp,
+              fontSize: 32.sp,
+              color: theme.colorScheme.onSurface,
             ),
           ),
           SizedBox(height: AppTheme.spacingXs.h),
           Text(
             label,
-            style: theme.textTheme.bodySmall?.copyWith(
+            style: theme.textTheme.bodyMedium?.copyWith(
               fontWeight: FontWeight.w500,
+              fontSize: 13.sp,
+              color: theme.colorScheme.onSurfaceVariant,
             ),
           ),
         ],

@@ -47,15 +47,19 @@ class JobCard extends StatelessWidget {
         }
       },
       child: Container(
-        padding: EdgeInsets.all(AppTheme.spacingMd.w),
+        padding: EdgeInsets.all(AppTheme.spacingLg.w),
         decoration: BoxDecoration(
           color: theme.cardTheme.color,
           borderRadius: BorderRadius.circular(AppTheme.radiusDefault.r),
+          border: Border.all(
+            color: theme.colorScheme.outline.withOpacity(0.1),
+            width: 1,
+          ),
           boxShadow: [
             BoxShadow(
-              color: theme.shadowColor.withOpacity(0.05),
-              blurRadius: 10,
-              offset: const Offset(0, 2),
+              color: theme.shadowColor.withOpacity(0.08),
+              blurRadius: 12,
+              offset: const Offset(0, 4),
             ),
           ],
         ),
@@ -72,7 +76,7 @@ class JobCard extends StatelessWidget {
                     children: [
                       Text(
                         title,
-                        style: theme.textTheme.titleMedium?.copyWith(
+                        style: theme.textTheme.titleLarge?.copyWith(
                           fontWeight: FontWeight.bold,
                           color: theme.colorScheme.onSurface,
                         ),
@@ -98,24 +102,24 @@ class JobCard extends StatelessWidget {
                     color: AppTheme.successColor.withOpacity(0.1),
                     borderRadius: BorderRadius.circular(AppTheme.radiusFull.r),
                     border: Border.all(
-                      color: AppTheme.successColor.withOpacity(0.3),
+                      color: AppTheme.successColor.withOpacity(0.2),
+                      width: 1,
                     ),
                   ),
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       Icon(
-                        Icons.star,
-                        size: 12.sp,
+                        Icons.star_rounded,
+                        size: 14.sp,
                         color: AppTheme.successColor,
                       ),
-                      SizedBox(width: 2.w),
+                      SizedBox(width: 4.w),
                       Text(
                         matchPercentage,
-                        style: theme.textTheme.bodySmall?.copyWith(
+                        style: theme.textTheme.labelSmall?.copyWith(
                           color: AppTheme.successColor,
-                          fontWeight: FontWeight.w600,
-                          fontSize: 10.sp,
+                          fontWeight: FontWeight.bold,
                         ),
                       ),
                     ],
@@ -126,46 +130,65 @@ class JobCard extends StatelessWidget {
             SizedBox(height: AppTheme.spacingSm.h),
 
             // Salary
-            Text(
-              salary,
-              style: theme.textTheme.bodyMedium?.copyWith(
-                color: theme.colorScheme.onSurfaceVariant,
-              ),
+            Row(
+              children: [
+                Icon(
+                  Icons.attach_money_rounded,
+                  size: 16.sp,
+                  color: theme.colorScheme.onSurfaceVariant.withOpacity(0.7),
+                ),
+                SizedBox(width: 4.w),
+                Text(
+                  salary,
+                  style: theme.textTheme.bodyMedium?.copyWith(
+                    color: theme.colorScheme.onSurfaceVariant,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              ],
             ),
-            SizedBox(height: AppTheme.spacingSm.h),
+            SizedBox(height: AppTheme.spacingMd.h),
 
             // Tags
-            // Tags - now horizontally arranged with scroll
             if (tags.isNotEmpty)
-              SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
-                child: Row(
-                  children: [
-                    for (int i = 0; i < tags.length; i++) ...[
-                      TagChip(label: tags[i]),
-                      if (i < tags.length - 1)
-                        SizedBox(width: AppTheme.spacingSm.w),
-                    ],
-                  ],
-                ),
+              Wrap(
+                spacing: AppTheme.spacingSm.w,
+                runSpacing: AppTheme.spacingSm.h,
+                children: [
+                  for (final tag in tags) TagChip(label: tag),
+                ],
               ),
-            SizedBox(height: AppTheme.spacingSm.h),
+            SizedBox(height: AppTheme.spacingMd.h),
 
             // Skills Match
-            Text(
-              skillsMatch,
-              style: theme.textTheme.bodySmall?.copyWith(
-                color: theme.colorScheme.onSurfaceVariant,
-              ),
+            Row(
+              children: [
+                Icon(
+                  Icons.psychology_rounded,
+                  size: 16.sp,
+                  color: theme.colorScheme.primary.withOpacity(0.7),
+                ),
+                SizedBox(width: 4.w),
+                Expanded(
+                  child: Text(
+                    skillsMatch,
+                    style: theme.textTheme.bodySmall?.copyWith(
+                      color: theme.colorScheme.onSurfaceVariant,
+                    ),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+              ],
             ),
-            SizedBox(height: AppTheme.spacingSm.h),
+            SizedBox(height: AppTheme.spacingLg.h),
 
             // Actions
             Row(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
                 SizedBox(
-                  height: 40.h,
+                  height: 44.h,
                   child: ElevatedButton(
                     onPressed: () {
                       if (jobId != null) {
@@ -178,18 +201,16 @@ class JobCard extends StatelessWidget {
                     style: ElevatedButton.styleFrom(
                       backgroundColor: theme.colorScheme.primary,
                       foregroundColor: theme.colorScheme.onPrimary,
-                      elevation: 2,
-                      shadowColor: theme.colorScheme.primary.withOpacity(0.3),
+                      elevation: 0,
+                      shadowColor: AppTheme.primaryColor.withOpacity(0.3),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(
-                          AppTheme.radiusDefault.r,
-                        ),
-                        side: BorderSide(
-                          color: theme.colorScheme.primary,
+                          AppTheme.radiusMedium.r,
                         ),
                       ),
                       padding: EdgeInsets.symmetric(
-                        horizontal: AppTheme.spacingMd.w,
+                        horizontal: AppTheme.spacingLg.w,
+                        vertical: AppTheme.spacingSm.h,
                       ),
                     ),
                     child: Text(

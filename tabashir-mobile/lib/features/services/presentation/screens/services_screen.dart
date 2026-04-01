@@ -89,16 +89,16 @@ class ServicesScreen extends StatelessWidget {
                 Expanded(
                   child: ListView(
                     padding: EdgeInsets.only(
-                      bottom: kBottomNavigationBarHeight + AppTheme.spacingLg.h,
+                      bottom: kBottomNavigationBarHeight + AppTheme.spacingXl.h,
                     ),
                     children: [
                       // Header
                       Padding(
                         padding: EdgeInsets.fromLTRB(
-                          AppTheme.spacingMd.w,
-                          AppTheme.spacingLg.h,
-                          AppTheme.spacingMd.w,
-                          AppTheme.spacingXs.h,
+                          AppTheme.spacingLg.w,
+                          AppTheme.spacingXl.h,
+                          AppTheme.spacingLg.w,
+                          AppTheme.spacingMd.h,
                         ),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -106,8 +106,9 @@ class ServicesScreen extends StatelessWidget {
                             Text(
                               'AI Career Services'.tr(),
                               style: theme.textTheme.displayMedium?.copyWith(
-                                fontSize: 30.sp,
+                                fontSize: 32.sp,
                                 fontWeight: FontWeight.bold,
+                                letterSpacing: 0.5,
                               ),
                             ),
                             SizedBox(height: AppTheme.spacingXs.h),
@@ -115,6 +116,7 @@ class ServicesScreen extends StatelessWidget {
                               'Boost your job search with smart tools.'.tr(),
                               style: theme.textTheme.bodyMedium?.copyWith(
                                 color: theme.colorScheme.onSurfaceVariant,
+                                fontSize: 15.sp,
                               ),
                             ),
                           ],
@@ -122,20 +124,21 @@ class ServicesScreen extends StatelessWidget {
                       ),
 
                       // Info Banner
-                      Padding(
-                        padding: EdgeInsets.all(AppTheme.spacingMd.w),
-                        child: const InfoBanner(),
-                      ),
+                      // Hidden: Users who optimize their resume get 3x more interviews
+                      // Padding(
+                      //   padding: EdgeInsets.symmetric(
+                      //     horizontal: AppTheme.spacingLg.w,
+                      //   ),
+                      //   child: const InfoBanner(),
+                      // ),
 
                       // Service Cards
                       Padding(
-                        padding: EdgeInsets.symmetric(
-                          horizontal: AppTheme.spacingMd.w,
-                        ),
+                        padding: EdgeInsets.all(AppTheme.spacingLg.w),
                         child: Column(
                           children: [
                             ServiceCard(
-                              icon: Icons.flash_on,
+                              icon: Icons.flash_on_rounded,
                               title: 'AI Job Apply Service - Basic'.tr(),
                               description:
                                   'Let our AI find and apply to the best jobs for '
@@ -156,7 +159,7 @@ class ServicesScreen extends StatelessWidget {
                             SizedBox(height: AppTheme.spacingMd.h),
 
                             ServiceCard(
-                              icon: Icons.work,
+                              icon: Icons.workspace_premium_rounded,
                               title: 'AI Job Apply Service - Premium'.tr(),
                               description:
                                   'Premium plan with priority applications and '
@@ -177,7 +180,7 @@ class ServicesScreen extends StatelessWidget {
                             SizedBox(height: AppTheme.spacingMd.h),
 
                             ServiceCard(
-                              icon: Icons.description_outlined,
+                              icon: Icons.description_rounded,
                               title: 'AI Resume Optimization'.tr(),
                               description:
                                   'Get your resume scored and optimized by AI to '
@@ -193,7 +196,7 @@ class ServicesScreen extends StatelessWidget {
                             SizedBox(height: AppTheme.spacingMd.h),
 
                             ServiceCard(
-                              icon: Icons.link,
+                              icon: Icons.link_rounded,
                               title: 'AI LinkedIn Enhancement'.tr(),
                               description:
                                   'Optimize your LinkedIn profile to attract more '
@@ -213,8 +216,7 @@ class ServicesScreen extends StatelessWidget {
                       // Trust Indicators
                       Padding(
                         padding: EdgeInsets.symmetric(
-                          horizontal: AppTheme.spacingMd.w,
-                          vertical: AppTheme.spacingLg.h,
+                          horizontal: AppTheme.spacingLg.w,
                         ),
                         child: const TrustIndicators(),
                       ),

@@ -14,12 +14,12 @@ class HomeQuickActionsGridWidget extends StatelessWidget {
     crossAxisCount: 2,
     shrinkWrap: true,
     physics: const NeverScrollableScrollPhysics(),
-    mainAxisSpacing: AppTheme.spacingLg.h,
-    crossAxisSpacing: AppTheme.spacingLg.w,
+    mainAxisSpacing: AppTheme.spacingMd.h,
+    crossAxisSpacing: AppTheme.spacingMd.w,
     children: [
       // Saved Jobs
       HomeQuickActionCardWidget(
-        icon: Icons.bookmark_outline,
+        icon: Icons.bookmark_outline_rounded,
         label: 'Saved Jobs'.tr(),
         onTap: () {
           print('[QUICK_ACTIONS] Navigate to Saved Jobs');
@@ -28,7 +28,7 @@ class HomeQuickActionsGridWidget extends StatelessWidget {
       ),
       // AI Services
       HomeQuickActionCardWidget(
-        icon: Icons.auto_awesome_outlined,
+        icon: Icons.auto_awesome_rounded,
         label: 'AI Services'.tr(),
         onTap: () {
           print('[QUICK_ACTIONS] Navigate to Services');

@@ -50,50 +50,47 @@ class HomeUAECitiesWidget extends StatelessWidget {
           children: [
             Padding(
               padding: EdgeInsets.symmetric(
-                horizontal: AppTheme.spacingMd.w,
+                horizontal: AppTheme.spacingLg.w,
               ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
                     'Jobs by City (UAE)',
                     style: theme.textTheme.headlineMedium?.copyWith(
                       fontWeight: FontWeight.bold,
+                      fontSize: 20.sp,
                     ),
                   ),
-                  TextButton(
-                    onPressed: () {
-                      context.push('/jobs');
-                    },
-                    child: Text(
-                      'Browse All',
-                      style: theme.textTheme.bodyMedium?.copyWith(
-                        color: AppTheme.primaryColor,
-                        fontWeight: FontWeight.w600,
-                      ),
+                  SizedBox(height: AppTheme.spacingXs.h),
+                  Text(
+                    'Explore opportunities across Emirates',
+                    style: theme.textTheme.bodySmall?.copyWith(
+                      color: theme.colorScheme.onSurfaceVariant,
+                      fontSize: 13.sp,
                     ),
                   ),
                 ],
               ),
             ),
-            SizedBox(height: AppTheme.spacingSm.h),
+            SizedBox(height: AppTheme.spacingMd.h),
             // Horizontal scrollable chips
             SizedBox(
-              height: 48.h,
+              height: 44.h,
               child: ListView.builder(
                 scrollDirection: Axis.horizontal,
-                padding: EdgeInsets.symmetric(horizontal: AppTheme.spacingMd.w),
+                padding: EdgeInsets.symmetric(horizontal: AppTheme.spacingLg.w),
                 itemCount: uaeCityCounts.length,
                 itemBuilder: (context, index) {
                   final cityData = uaeCityCounts[index];
                   return Padding(
-                    padding: EdgeInsets.only(right: AppTheme.spacingSm.w),
+                    padding: EdgeInsets.only(right: AppTheme.spacingMd.w),
                     child: _CityChip(cityData: cityData),
                   );
                 },
               ),
             ),
-            SizedBox(height: AppTheme.spacingMd.h),
+            SizedBox(height: AppTheme.spacingXl.h),
           ],
         );
       },
@@ -116,11 +113,11 @@ class _CityChip extends StatelessWidget {
       },
       child: Container(
         padding: EdgeInsets.symmetric(
-          horizontal: AppTheme.spacingLg.w,
+          horizontal: AppTheme.spacingMd.w,
           vertical: AppTheme.spacingSm.h,
         ),
         decoration: BoxDecoration(
-          color: AppTheme.primaryColor.withOpacity(0.05),
+          color: AppTheme.primaryColor.withOpacity(0.08),
           borderRadius: BorderRadius.circular(AppTheme.radiusFull.r),
           border: Border.all(
             color: AppTheme.primaryColor.withOpacity(0.2),
@@ -132,7 +129,7 @@ class _CityChip extends StatelessWidget {
           children: [
             Icon(
               Icons.location_city_rounded,
-              size: 16.sp,
+              size: 18.sp,
               color: AppTheme.primaryColor,
             ),
             SizedBox(width: AppTheme.spacingSm.w),
@@ -141,7 +138,7 @@ class _CityChip extends StatelessWidget {
               style: TextStyle(
                 fontWeight: FontWeight.w600,
                 color: AppTheme.primaryColor,
-                fontSize: 13.sp,
+                fontSize: 14.sp,
               ),
             ),
             SizedBox(width: AppTheme.spacingSm.w),
@@ -155,7 +152,7 @@ class _CityChip extends StatelessWidget {
                 '${cityData.count}',
                 style: TextStyle(
                   color: Colors.white,
-                  fontSize: 11.sp,
+                  fontSize: 12.sp,
                   fontWeight: FontWeight.bold,
                 ),
               ),

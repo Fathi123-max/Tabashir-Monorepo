@@ -20,38 +20,37 @@ class InfoItem extends StatelessWidget {
     final theme = Theme.of(context);
 
     return Container(
-      padding: EdgeInsets.symmetric(
-        horizontal: AppTheme.spacingMd.w,
-        vertical: AppTheme.spacingMd.h,
-      ),
+      padding: EdgeInsets.all(AppTheme.spacingMd.w),
       decoration: BoxDecoration(
         color: theme.cardTheme.color,
-        borderRadius: BorderRadius.circular(AppTheme.radiusDefault.r),
+        borderRadius: BorderRadius.circular(AppTheme.radiusMedium.r),
         border: Border.all(
-          color: theme.dividerColor.withOpacity(0.05),
+          color: theme.colorScheme.outline.withOpacity(0.1),
+          width: 1,
         ),
       ),
       child: Row(
         children: [
           Container(
-            padding: EdgeInsets.all(8.w),
+            padding: EdgeInsets.all(AppTheme.spacingSm.w),
             decoration: BoxDecoration(
-              color: theme.colorScheme.primary.withOpacity(0.05),
-              borderRadius: BorderRadius.circular(8.r),
+              color: theme.colorScheme.primaryContainer.withOpacity(0.5),
+              borderRadius: BorderRadius.circular(AppTheme.radiusMedium.r),
             ),
             child: Icon(
               icon,
               size: 20.sp,
-              color: theme.colorScheme.primary,
+              color: theme.colorScheme.onPrimaryContainer,
             ),
           ),
           SizedBox(width: AppTheme.spacingMd.w),
           Expanded(
             child: Text(
               text,
-              style: theme.textTheme.bodyLarge?.copyWith(
+              style: theme.textTheme.bodyMedium?.copyWith(
                 fontWeight: FontWeight.w500,
-                letterSpacing: -0.2,
+                fontSize: 14.sp,
+                color: theme.colorScheme.onSurface,
               ),
             ),
           ),

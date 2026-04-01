@@ -21,34 +21,44 @@ class HomeQuickActionCardWidget extends StatelessWidget {
       onTap: onTap,
       borderRadius: BorderRadius.circular(AppTheme.radiusMedium.r),
       child: Container(
+        padding: EdgeInsets.all(AppTheme.spacingLg.w),
         decoration: BoxDecoration(
           color: theme.cardTheme.color,
           borderRadius: BorderRadius.circular(AppTheme.radiusMedium.r),
           border: Border.all(
-            color: theme.dividerTheme.color ?? AppTheme.borderLight,
+            color: theme.colorScheme.outline.withOpacity(0.1),
+            width: 1,
           ),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.03),
-              blurRadius: 8,
-              offset: const Offset(0, 1),
+              color: Colors.black.withOpacity(0.05),
+              blurRadius: 12,
+              offset: const Offset(0, 4),
             ),
           ],
         ),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(
-              icon,
-              size: 40.sp,
-              color: AppTheme.primaryColor,
+            Container(
+              padding: EdgeInsets.all(AppTheme.spacingMd.w),
+              decoration: BoxDecoration(
+                color: AppTheme.primaryColor.withOpacity(0.08),
+                borderRadius: BorderRadius.circular(AppTheme.radiusMedium.r),
+              ),
+              child: Icon(
+                icon,
+                size: 32.sp,
+                color: AppTheme.primaryColor,
+              ),
             ),
-            SizedBox(height: AppTheme.spacingSm.h),
+            SizedBox(height: AppTheme.spacingMd.h),
             Text(
               label,
-              style: theme.textTheme.bodySmall?.copyWith(
+              style: theme.textTheme.titleSmall?.copyWith(
                 fontWeight: FontWeight.w600,
-                fontSize: 13.sp,
+                fontSize: 14.sp,
+                color: theme.colorScheme.onSurface,
               ),
               textAlign: TextAlign.center,
             ),

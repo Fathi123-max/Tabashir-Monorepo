@@ -33,16 +33,30 @@ class HomeMatchedJobsWidget extends StatelessWidget {
           children: [
             Padding(
               padding: EdgeInsets.symmetric(
-                horizontal: AppTheme.spacingMd.w,
+                horizontal: AppTheme.spacingLg.w,
               ),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text(
-                    'Matched For You',
-                    style: theme.textTheme.headlineMedium?.copyWith(
-                      fontWeight: FontWeight.bold,
-                    ),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Matched For You',
+                        style: theme.textTheme.headlineMedium?.copyWith(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 20.sp,
+                        ),
+                      ),
+                      SizedBox(height: AppTheme.spacingXs.h),
+                      Text(
+                        'AI-powered job recommendations',
+                        style: theme.textTheme.bodySmall?.copyWith(
+                          color: theme.colorScheme.onSurfaceVariant,
+                          fontSize: 13.sp,
+                        ),
+                      ),
+                    ],
                   ),
                   if (matchedJobs.isNotEmpty)
                     TextButton(
@@ -60,13 +74,14 @@ class HomeMatchedJobsWidget extends StatelessWidget {
                         style: theme.textTheme.bodyMedium?.copyWith(
                           color: AppTheme.primaryColor,
                           fontWeight: FontWeight.w600,
+                          fontSize: 14.sp,
                         ),
                       ),
                     ),
                 ],
               ),
             ),
-            SizedBox(height: AppTheme.spacingSm.h),
+            SizedBox(height: AppTheme.spacingMd.h),
             // Show empty state or job list
             if (matchedJobs.isEmpty)
               _buildEmptyState(theme)
@@ -74,12 +89,12 @@ class HomeMatchedJobsWidget extends StatelessWidget {
               ListView.separated(
                 shrinkWrap: true,
                 physics: const NeverScrollableScrollPhysics(),
-                padding: EdgeInsets.symmetric(horizontal: AppTheme.spacingMd.w),
+                padding: EdgeInsets.symmetric(horizontal: AppTheme.spacingLg.w),
                 itemCount: matchedJobs.length.clamp(0, 10),
                 separatorBuilder: (context, index) => SizedBox(height: AppTheme.spacingMd.h),
                 itemBuilder: (context, index) {
                   final job = matchedJobs[index];
-                  
+
                   // Build tags from jobType and languages
                   final tags = <String>[];
                   if (job.jobType != null && job.jobType!.isNotEmpty) {
@@ -95,15 +110,15 @@ class HomeMatchedJobsWidget extends StatelessWidget {
                   } else if (job.title.contains('Junior') || job.title.contains('Junior')) {
                     tags.add('Junior');
                   }
-                  
+
                   // Build skills match text
                   final skillsMatch = job.experience != null && job.experience!.isNotEmpty
                       ? '${job.experience} experience'
                       : 'AI Matched';
-                  
+
                   // Format salary
                   final salary = job.salary ?? 'AED ${_generateSalaryRange()}';
-                  
+
                   return GestureDetector(
                     onTap: () {
                       if (job.id != null && job.id!.isNotEmpty) {
@@ -128,7 +143,7 @@ class HomeMatchedJobsWidget extends StatelessWidget {
                   );
                 },
               ),
-            SizedBox(height: AppTheme.spacingLg.h),
+            SizedBox(height: AppTheme.spacingXl.h),
           ],
         );
       },
@@ -138,11 +153,11 @@ class HomeMatchedJobsWidget extends StatelessWidget {
   Widget _buildEmptyState(ThemeData theme) {
     return Container(
       width: double.infinity,
-      padding: EdgeInsets.all(AppTheme.spacingLg.w),
-      margin: EdgeInsets.symmetric(horizontal: AppTheme.spacingMd.w),
+      padding: EdgeInsets.all(AppTheme.spacingXl.w),
+      margin: EdgeInsets.symmetric(horizontal: AppTheme.spacingLg.w),
       decoration: BoxDecoration(
         color: AppTheme.zinc50,
-        borderRadius: BorderRadius.circular(AppTheme.radiusMedium.r),
+        borderRadius: BorderRadius.circular(AppTheme.radiusLarge.r),
         border: Border.all(
           color: AppTheme.zinc200!,
           width: 1,
@@ -150,36 +165,64 @@ class HomeMatchedJobsWidget extends StatelessWidget {
       ),
       child: Column(
         children: [
-          Icon(
-            Icons.search_off_rounded,
-            size: 48.sp,
-            color: AppTheme.zinc400,
+          Container(
+            padding: EdgeInsets.all(AppTheme.spacingMd.w),
+            decoration: BoxDecoration(
+              color: AppTheme.primaryColor.withOpacity(0.1),
+              shape: BoxShape.circle,
+            ),
+            child: Icon(
+              Icons.search_off_rounded,
+              size: 48.sp,
+              color: AppTheme.primaryColor,
+            ),
           ),
-          SizedBox(height: AppTheme.spacingMd.h),
+          SizedBox(height: AppTheme.spacingLg.h),
           Text(
             'No Matched Jobs Yet',
-            style: theme.textTheme.titleMedium?.copyWith(
+            style: theme.textTheme.titleLarge?.copyWith(
               fontWeight: FontWeight.bold,
               color: AppTheme.zinc700,
+              fontSize: 18.sp,
             ),
             textAlign: TextAlign.center,
           ),
           SizedBox(height: AppTheme.spacingSm.h),
           Text(
             'We\'re finding the best jobs for you based on your profile',
-            style: theme.textTheme.bodySmall?.copyWith(
+            style: theme.textTheme.bodyMedium?.copyWith(
               color: AppTheme.zinc500,
+              fontSize: 14.sp,
             ),
             textAlign: TextAlign.center,
           ),
           SizedBox(height: AppTheme.spacingMd.h),
-          Text(
-            'Tip: Complete your profile and upload your resume to get better matches',
-            style: theme.textTheme.bodySmall?.copyWith(
-              color: AppTheme.primaryColor,
-              fontStyle: FontStyle.italic,
+          Container(
+            padding: EdgeInsets.all(AppTheme.spacingMd.w),
+            decoration: BoxDecoration(
+              color: AppTheme.primaryColor.withOpacity(0.05),
+              borderRadius: BorderRadius.circular(AppTheme.radiusMedium.r),
             ),
-            textAlign: TextAlign.center,
+            child: Row(
+              children: [
+                Icon(
+                  Icons.lightbulb_outline_rounded,
+                  size: 20.sp,
+                  color: AppTheme.primaryColor,
+                ),
+                SizedBox(width: AppTheme.spacingSm.w),
+                Expanded(
+                  child: Text(
+                    'Tip: Complete your profile and upload your resume to get better matches',
+                    style: theme.textTheme.bodySmall?.copyWith(
+                      color: AppTheme.primaryColor,
+                      fontSize: 13.sp,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
         ],
       ),

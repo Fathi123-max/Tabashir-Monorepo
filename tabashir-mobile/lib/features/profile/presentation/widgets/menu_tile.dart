@@ -23,49 +23,63 @@ class MenuTile extends StatelessWidget {
 
     return InkWell(
       onTap: onTap,
-      borderRadius: BorderRadius.circular(AppTheme.radiusDefault.r),
+      borderRadius: BorderRadius.circular(AppTheme.radiusMedium.r),
       child: Container(
         padding: EdgeInsets.all(AppTheme.spacingMd.w),
         decoration: BoxDecoration(
           color: theme.cardTheme.color,
-          borderRadius: BorderRadius.circular(AppTheme.radiusDefault.r),
+          borderRadius: BorderRadius.circular(AppTheme.radiusMedium.r),
+          border: Border.all(
+            color: theme.colorScheme.outline.withOpacity(0.1),
+            width: 1,
+          ),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.03),
+              color: Colors.black.withOpacity(0.04),
               blurRadius: 8,
-              offset: const Offset(0, 1),
+              offset: const Offset(0, 2),
             ),
           ],
         ),
         child: Row(
           children: [
-            Icon(
-              icon,
-              size: 24.sp,
-              color: showLogoutColor
-                  ? AppTheme.errorColor
-                  : theme.colorScheme.primary,
+            Container(
+              padding: EdgeInsets.all(AppTheme.spacingSm.w),
+              decoration: BoxDecoration(
+                color: showLogoutColor
+                    ? AppTheme.errorColor.withOpacity(0.1)
+                    : theme.colorScheme.primaryContainer.withOpacity(0.5),
+                borderRadius: BorderRadius.circular(AppTheme.radiusMedium.r),
+              ),
+              child: Icon(
+                icon,
+                size: 20.sp,
+                color: showLogoutColor
+                    ? AppTheme.errorColor
+                    : theme.colorScheme.onPrimaryContainer,
+              ),
             ),
             SizedBox(width: AppTheme.spacingMd.w),
             Expanded(
               child: Text(
                 text,
-                style: theme.textTheme.bodyLarge?.copyWith(
+                style: theme.textTheme.titleSmall?.copyWith(
                   color: showLogoutColor
                       ? AppTheme.errorColor
-                      : theme.textTheme.bodyLarge?.color,
+                      : theme.colorScheme.onSurface,
+                  fontWeight: FontWeight.w600,
+                  fontSize: 15.sp,
                 ),
               ),
             ),
-            if (trailing != null) ...[
+            if (trailing != null && trailing is! SizedBox) ...[
               SizedBox(width: AppTheme.spacingSm.w),
               trailing!,
-              SizedBox(width: AppTheme.spacingSm.w),
             ] else ...[
               Icon(
-                Icons.chevron_right,
+                Icons.chevron_right_rounded,
                 color: theme.colorScheme.onSurfaceVariant,
-                size: 24.sp,
+                size: 20.sp,
               ),
             ],
           ],

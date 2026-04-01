@@ -12,19 +12,24 @@ class TagChip extends StatelessWidget {
 
     return Container(
       padding: EdgeInsets.symmetric(
-        horizontal: AppTheme.spacingSm.w,
+        horizontal: AppTheme.spacingMd.w,
         vertical: AppTheme.spacingXs.h,
       ),
       decoration: BoxDecoration(
-        color: theme.inputDecorationTheme.fillColor,
+        color: theme.colorScheme.surfaceContainerHighest.withOpacity(0.5),
         borderRadius: BorderRadius.circular(AppTheme.radiusFull.r),
+        border: Border.all(
+          color: theme.colorScheme.outline.withOpacity(0.1),
+          width: 1,
+        ),
       ),
       child: Center(
         child: Text(
           label,
-          style: theme.textTheme.bodySmall?.copyWith(
-            fontWeight: FontWeight.w500,
+          style: theme.textTheme.labelSmall?.copyWith(
+            fontWeight: FontWeight.w600,
             fontSize: 12.sp,
+            color: theme.colorScheme.onSurfaceVariant,
           ),
         ),
       ),

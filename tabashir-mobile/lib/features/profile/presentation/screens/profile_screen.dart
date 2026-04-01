@@ -120,7 +120,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             body: SafeArea(
               child: SingleChildScrollView(
                 child: Padding(
-                  padding: EdgeInsets.all(AppTheme.spacingMd.w),
+                  padding: EdgeInsets.all(AppTheme.spacingLg.w),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -128,12 +128,26 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Text(
-                            'My Profile'.tr(),
-                            style: theme.textTheme.displayMedium?.copyWith(
-                              fontWeight: FontWeight.w900,
-                              letterSpacing: -1,
-                            ),
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                'My Profile'.tr(),
+                                style: theme.textTheme.displayMedium?.copyWith(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 32.sp,
+                                  letterSpacing: 0.5,
+                                ),
+                              ),
+                              SizedBox(height: AppTheme.spacingXs.h),
+                              Text(
+                                'Manage your personal information',
+                                style: theme.textTheme.bodyMedium?.copyWith(
+                                  color: theme.colorScheme.onSurfaceVariant,
+                                  fontSize: 14.sp,
+                                ),
+                              ),
+                            ],
                           ),
                           IconButton(
                             onPressed: () {
@@ -143,23 +157,23 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               );
                             },
                             icon: Container(
-                              padding: EdgeInsets.all(8.w),
+                              padding: EdgeInsets.all(AppTheme.spacingSm.w),
                               decoration: BoxDecoration(
-                                color: theme.colorScheme.primary.withOpacity(
-                                  0.1,
+                                color: theme.colorScheme.primaryContainer,
+                                borderRadius: BorderRadius.circular(
+                                  AppTheme.radiusMedium.r,
                                 ),
-                                borderRadius: BorderRadius.circular(12.r),
                               ),
                               child: Icon(
-                                Icons.edit_outlined,
-                                color: theme.colorScheme.primary,
+                                Icons.edit_rounded,
+                                color: theme.colorScheme.onPrimaryContainer,
                                 size: 20.sp,
                               ),
                             ),
                           ),
                         ],
                       ),
-                      SizedBox(height: AppTheme.spacingLg.h),
+                      SizedBox(height: AppTheme.spacingXl.h),
 
                       // Profile Card
                       if (state.profile != null) ...[
@@ -179,7 +193,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         ),
                       ],
 
-                      SizedBox(height: AppTheme.spacingLg.h),
+                      SizedBox(height: AppTheme.spacingXl.h),
 
                       // Personal Information Section
                       if (state.profile != null) ...[
@@ -203,7 +217,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               ? 'Not specified'.tr()
                               : state.profile!.gender,
                         ),
-                        SizedBox(height: AppTheme.spacingLg.h),
+                        SizedBox(height: AppTheme.spacingXl.h),
 
                         // Target Details Section
                         _sectionHeader('Target Details'.tr(), theme),
@@ -221,7 +235,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               ? 'Target roles not specified'.tr()
                               : state.profile!.jobTitle,
                         ),
-                        SizedBox(height: AppTheme.spacingLg.h),
+                        SizedBox(height: AppTheme.spacingXl.h),
 
                         // Resume Section
                         _sectionHeader('Resume / CV'.tr(), theme),
@@ -229,11 +243,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         state.profile!.cvFilename != null &&
                                 state.profile!.cvFilename!.isNotEmpty
                             ? InfoItem(
-                                icon: Icons.description_outlined,
+                                icon: Icons.description_rounded,
                                 text: state.profile!.cvFilename!,
                                 trailing: Icon(
-                                  Icons.check_circle_outline,
-                                  color: theme.colorScheme.primary,
+                                  Icons.check_circle_rounded,
+                                  color: AppTheme.successColor,
                                   size: 20.sp,
                                 ),
                               )
@@ -241,12 +255,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 icon: Icons.description_outlined,
                                 text: 'No resume uploaded'.tr(),
                                 trailing: Icon(
-                                  Icons.error_outline,
-                                  color: Colors.orange,
+                                  Icons.error_outline_rounded,
+                                  color: AppTheme.warningColor,
                                   size: 20.sp,
                                 ),
                               ),
-                        SizedBox(height: AppTheme.spacingLg.h),
+                        SizedBox(height: AppTheme.spacingXl.h),
 
                         // Account Section
                         _sectionHeader('Account'.tr(), theme),
@@ -367,13 +381,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   Widget _sectionHeader(String title, ThemeData theme) => Padding(
-    padding: EdgeInsets.only(left: 4.w, bottom: 4.h),
+    padding: EdgeInsets.only(
+      left: AppTheme.spacingXs.w,
+      bottom: AppTheme.spacingSm.h,
+    ),
     child: Text(
       title,
-      style: theme.textTheme.titleSmall?.copyWith(
+      style: theme.textTheme.titleMedium?.copyWith(
         fontWeight: FontWeight.bold,
-        color: theme.colorScheme.onSurface.withOpacity(0.5),
-        letterSpacing: 1.2,
+        color: theme.colorScheme.onSurface,
+        fontSize: 16.sp,
       ),
     ),
   );

@@ -20,17 +20,16 @@ class ComingSoonCard extends StatelessWidget {
             theme.cardTheme.color ?? Colors.white,
           ],
         ),
-        borderRadius: BorderRadius.circular(AppTheme.radiusMedium.r),
+        borderRadius: BorderRadius.circular(AppTheme.radiusLarge.r),
         border: Border.all(
-          color: AppTheme.primaryColor.withOpacity(0.1),
+          color: AppTheme.primaryColor.withOpacity(0.15),
           width: 1.5,
         ),
         boxShadow: [
           BoxShadow(
             color: AppTheme.primaryColor.withOpacity(0.08),
-            blurRadius: 20,
-            offset: const Offset(0, 8),
-            spreadRadius: 2,
+            blurRadius: 16,
+            offset: const Offset(0, 4),
           ),
         ],
       ),
@@ -38,29 +37,24 @@ class ComingSoonCard extends StatelessWidget {
         children: [
           // Icon with gradient background
           Container(
-            width: 120.w,
-            height: 120.w,
+            width: 100.w,
+            height: 100.w,
             decoration: BoxDecoration(
               gradient: LinearGradient(
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
                 colors: [
-                  AppTheme.primaryColor.withOpacity(0.1),
-                  AppTheme.primaryColor.withOpacity(0.05),
+                  AppTheme.primaryColor.withOpacity(0.15),
+                  AppTheme.primaryColor.withOpacity(0.08),
                 ],
               ),
               borderRadius: BorderRadius.circular(AppTheme.radiusLarge.r),
             ),
             child: Center(
-              child: Stack(
-                clipBehavior: Clip.none,
-                children: [
-                  Icon(
-                    Icons.psychology_outlined,
-                    size: 64.sp,
-                    color: AppTheme.primaryColor,
-                  ),
-                ],
+              child: Icon(
+                Icons.psychology_rounded,
+                size: 56.sp,
+                color: AppTheme.primaryColor,
               ),
             ),
           ),
@@ -75,13 +69,14 @@ class ComingSoonCard extends StatelessWidget {
               color: AppTheme.primaryColor,
             ),
           ),
-          SizedBox(height: AppTheme.spacingMd.h),
+          SizedBox(height: AppTheme.spacingSm.h),
 
           // Description
           Text(
             'Get ready for the ultimate interview practice experience',
             style: theme.textTheme.bodyMedium?.copyWith(
               color: theme.colorScheme.onSurfaceVariant,
+              fontSize: 14.sp,
             ),
             textAlign: TextAlign.center,
           ),
@@ -91,25 +86,29 @@ class ComingSoonCard extends StatelessWidget {
           Container(
             padding: EdgeInsets.all(AppTheme.spacingMd.w),
             decoration: BoxDecoration(
-              color: AppTheme.primaryColor.withOpacity(0.03),
-              borderRadius: BorderRadius.circular(AppTheme.radiusDefault.r),
+              color: AppTheme.primaryColor.withOpacity(0.05),
+              borderRadius: BorderRadius.circular(AppTheme.radiusMedium.r),
+              border: Border.all(
+                color: AppTheme.primaryColor.withOpacity(0.1),
+                width: 1,
+              ),
             ),
             child: const Column(
               children: [
                 FeatureItem(
-                  icon: Icons.record_voice_over,
+                  icon: Icons.record_voice_over_rounded,
                   text: 'AI-powered mock interviews',
                 ),
                 FeatureItem(
-                  icon: Icons.analytics_outlined,
+                  icon: Icons.analytics_rounded,
                   text: 'Real-time feedback on answers',
                 ),
                 FeatureItem(
-                  icon: Icons.tips_and_updates,
+                  icon: Icons.lightbulb_rounded,
                   text: 'Personalized improvement tips',
                 ),
                 FeatureItem(
-                  icon: Icons.folder_shared,
+                  icon: Icons.folder_shared_rounded,
                   text: 'Role-specific question banks',
                 ),
               ],
@@ -139,15 +138,15 @@ class FeatureItem extends StatelessWidget {
       child: Row(
         children: [
           Container(
-            width: 40.w,
-            height: 40.w,
+            width: 36.w,
+            height: 36.w,
             decoration: BoxDecoration(
               color: AppTheme.primaryColor.withOpacity(0.1),
-              borderRadius: BorderRadius.circular(AppTheme.radiusDefault.r),
+              borderRadius: BorderRadius.circular(AppTheme.radiusMedium.r),
             ),
             child: Icon(
               icon,
-              size: 20.sp,
+              size: 18.sp,
               color: AppTheme.primaryColor,
             ),
           ),
@@ -155,9 +154,10 @@ class FeatureItem extends StatelessWidget {
           Expanded(
             child: Text(
               text,
-              style: theme.textTheme.bodyLarge?.copyWith(
+              style: theme.textTheme.bodyMedium?.copyWith(
                 color: theme.colorScheme.onSurface,
                 fontWeight: FontWeight.w500,
+                fontSize: 14.sp,
               ),
             ),
           ),

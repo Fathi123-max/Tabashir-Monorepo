@@ -28,16 +28,20 @@ class ProfileCard extends StatelessWidget {
     return Container(
       decoration: BoxDecoration(
         color: theme.cardTheme.color,
-        borderRadius: BorderRadius.circular(AppTheme.radiusMedium.r),
+        borderRadius: BorderRadius.circular(AppTheme.radiusLarge.r),
+        border: Border.all(
+          color: theme.colorScheme.outline.withOpacity(0.1),
+          width: 1,
+        ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
-            blurRadius: 10,
-            offset: const Offset(0, 2),
+            color: Colors.black.withOpacity(0.06),
+            blurRadius: 16,
+            offset: const Offset(0, 4),
           ),
         ],
       ),
-      padding: EdgeInsets.all(AppTheme.spacingMd.w),
+      padding: EdgeInsets.all(AppTheme.spacingLg.w),
       child: Column(
         children: [
           Row(
@@ -46,39 +50,42 @@ class ProfileCard extends StatelessWidget {
               Stack(
                 children: [
                   Container(
-                    width: 80.w,
-                    height: 80.w,
+                    width: 72.w,
+                    height: 72.w,
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
-                      color: theme.colorScheme.surfaceContainerHighest,
+                      color: theme.colorScheme.primaryContainer,
+                      border: Border.all(
+                        color: theme.colorScheme.primary.withOpacity(0.2),
+                        width: 2,
+                      ),
                     ),
                     child: ClipOval(
                       child: profileImage != null && profileImage!.isNotEmpty
                           ? Image.network(
                               profileImage!,
                               fit: BoxFit.cover,
-                              width: 80
-                                  .w, // set explicit size to avoid layout issues
-                              height: 80.w,
-                              // Show placeholder while loading
+                              width: 72.w,
+                              height: 72.w,
                               loadingBuilder:
                                   (context, child, loadingProgress) {
                                     if (loadingProgress == null) return child;
-                                    return const Icon(
+                                    return Icon(
                                       Icons.person,
-                                      size: 40,
+                                      size: 36.sp,
+                                      color: theme.colorScheme.onPrimaryContainer,
                                     );
                                   },
-                              // Fallback if the network image fails
-                              errorBuilder: (context, error, stackTrace) =>
-                                  const Icon(
-                                    Icons.person,
-                                    size: 40,
-                                  ),
+                              errorBuilder: (context, error, stackTrace) => Icon(
+                                Icons.person,
+                                size: 36.sp,
+                                color: theme.colorScheme.onPrimaryContainer,
+                              ),
                             )
-                          : const Icon(
+                          : Icon(
                               Icons.person,
-                              size: 40,
+                              size: 36.sp,
+                              color: theme.colorScheme.onPrimaryContainer,
                             ),
                     ),
                   ),
@@ -88,8 +95,8 @@ class ProfileCard extends StatelessWidget {
                     child: GestureDetector(
                       onTap: onEditPressed,
                       child: Container(
-                        width: 24.w,
-                        height: 24.w,
+                        width: 28.w,
+                        height: 28.w,
                         decoration: BoxDecoration(
                           color: AppTheme.primaryColor,
                           shape: BoxShape.circle,
@@ -99,7 +106,7 @@ class ProfileCard extends StatelessWidget {
                           ),
                         ),
                         child: Icon(
-                          Icons.edit,
+                          Icons.edit_rounded,
                           size: 14.sp,
                           color: Colors.white,
                         ),
@@ -108,7 +115,7 @@ class ProfileCard extends StatelessWidget {
                   ),
                 ],
               ),
-              SizedBox(width: AppTheme.spacingMd.w),
+              SizedBox(width: AppTheme.spacingLg.w),
 
               // Profile Info
               Expanded(
@@ -119,43 +126,60 @@ class ProfileCard extends StatelessWidget {
                       name,
                       style: theme.textTheme.titleLarge?.copyWith(
                         fontWeight: FontWeight.bold,
+                        fontSize: 18.sp,
                       ),
                     ),
-                    SizedBox(height: 4.h),
+                    SizedBox(height: AppTheme.spacingXs.h),
                     Text(
                       jobTitle,
                       style: theme.textTheme.bodyMedium?.copyWith(
                         color: theme.colorScheme.onSurfaceVariant,
+                        fontSize: 14.sp,
                       ),
                     ),
-                    SizedBox(height: 2.h),
-                    Text(
-                      location,
-                      style: theme.textTheme.bodyMedium?.copyWith(
-                        color: theme.colorScheme.onSurfaceVariant,
-                      ),
+                    SizedBox(height: AppTheme.spacingXs.h),
+                    Row(
+                      children: [
+                        Icon(
+                          Icons.location_on_outlined,
+                          size: 14.sp,
+                          color: theme.colorScheme.onSurfaceVariant,
+                        ),
+                        SizedBox(width: 4.w),
+                        Flexible(
+                          child: Text(
+                            location,
+                            style: theme.textTheme.bodySmall?.copyWith(
+                              color: theme.colorScheme.onSurfaceVariant,
+                              fontSize: 13.sp,
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                     if (userType != null && userType!.isNotEmpty) ...[
-                      SizedBox(height: 8.h),
+                      SizedBox(height: AppTheme.spacingSm.h),
                       Container(
                         padding: EdgeInsets.symmetric(
-                          horizontal: 12.w,
-                          vertical: 4.h,
+                          horizontal: AppTheme.spacingSm.w,
+                          vertical: AppTheme.spacingXs.h,
                         ),
                         decoration: BoxDecoration(
                           color: _getUserTypeColor(userType!).withOpacity(0.1),
                           borderRadius: BorderRadius.circular(
-                            AppTheme.radiusSmall.r,
+                            AppTheme.radiusFull.r,
                           ),
                           border: Border.all(
-                            color: _getUserTypeColor(userType!),
+                            color: _getUserTypeColor(userType!).withOpacity(0.3),
+                            width: 1,
                           ),
                         ),
                         child: Text(
                           userType!,
-                          style: theme.textTheme.bodySmall?.copyWith(
+                          style: theme.textTheme.labelSmall?.copyWith(
                             color: _getUserTypeColor(userType!),
                             fontWeight: FontWeight.w600,
+                            fontSize: 12.sp,
                           ),
                         ),
                       ),
@@ -165,16 +189,17 @@ class ProfileCard extends StatelessWidget {
               ),
             ],
           ),
-          SizedBox(height: AppTheme.spacingMd.h),
+          SizedBox(height: AppTheme.spacingLg.h),
 
           // Profile Strength Banner
           Container(
             padding: EdgeInsets.all(AppTheme.spacingMd.w),
             decoration: BoxDecoration(
               color: AppTheme.primaryColor.withOpacity(0.05),
-              borderRadius: BorderRadius.circular(AppTheme.radiusDefault.r),
+              borderRadius: BorderRadius.circular(AppTheme.radiusMedium.r),
               border: Border.all(
-                color: AppTheme.primaryColor.withOpacity(0.1),
+                color: AppTheme.primaryColor.withOpacity(0.15),
+                width: 1,
               ),
             ),
             child: Column(
@@ -183,33 +208,32 @@ class ProfileCard extends StatelessWidget {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Expanded(
-                      child: Row(
-                        children: [
-                          Text(
-                            '✨',
-                            style: TextStyle(fontSize: 16.sp),
-                          ),
-                          SizedBox(width: AppTheme.spacingSm.w),
-                          Flexible(
-                            child: Text(
-                              'Profile Strength: $profileStrength%',
-                              style: theme.textTheme.bodyMedium?.copyWith(
-                                color: AppTheme.primaryColor,
-                                fontWeight: FontWeight.w600,
-                              ),
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                          ),
-                        ],
+                    Text(
+                      'Profile Strength',
+                      style: theme.textTheme.titleSmall?.copyWith(
+                        color: AppTheme.primaryColor,
+                        fontWeight: FontWeight.w600,
+                        fontSize: 14.sp,
                       ),
                     ),
-                    SizedBox(width: AppTheme.spacingSm.w),
-                    Text(
-                      _getStrengthLevel(profileStrength),
-                      style: theme.textTheme.bodySmall?.copyWith(
-                        color: AppTheme.primaryColor,
-                        fontWeight: FontWeight.bold,
+                    Container(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: AppTheme.spacingSm.w,
+                        vertical: AppTheme.spacingXs.h,
+                      ),
+                      decoration: BoxDecoration(
+                        color: AppTheme.primaryColor.withOpacity(0.1),
+                        borderRadius: BorderRadius.circular(
+                          AppTheme.radiusFull.r,
+                        ),
+                      ),
+                      child: Text(
+                        _getStrengthLevel(profileStrength),
+                        style: theme.textTheme.labelSmall?.copyWith(
+                          color: AppTheme.primaryColor,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 12.sp,
+                        ),
                       ),
                     ),
                   ],
@@ -219,19 +243,19 @@ class ProfileCard extends StatelessWidget {
                 Stack(
                   children: [
                     Container(
-                      height: 8.h,
+                      height: 6.h,
                       width: double.infinity,
                       decoration: BoxDecoration(
                         color: AppTheme.primaryColor.withOpacity(0.1),
                         borderRadius: BorderRadius.circular(
-                          AppTheme.radiusFull,
+                          AppTheme.radiusFull.r,
                         ),
                       ),
                     ),
                     FractionallySizedBox(
                       widthFactor: profileStrength / 100,
                       child: Container(
-                        height: 8.h,
+                        height: 6.h,
                         decoration: BoxDecoration(
                           gradient: LinearGradient(
                             colors: [
@@ -240,19 +264,20 @@ class ProfileCard extends StatelessWidget {
                             ],
                           ),
                           borderRadius: BorderRadius.circular(
-                            AppTheme.radiusFull,
+                            AppTheme.radiusFull.r,
                           ),
-                          boxShadow: [
-                            BoxShadow(
-                              color: AppTheme.primaryColor.withOpacity(0.2),
-                              blurRadius: 4,
-                              offset: const Offset(0, 2),
-                            ),
-                          ],
                         ),
                       ),
                     ),
                   ],
+                ),
+                SizedBox(height: AppTheme.spacingXs.h),
+                Text(
+                  '$profileStrength% complete',
+                  style: theme.textTheme.bodySmall?.copyWith(
+                    color: theme.colorScheme.onSurfaceVariant,
+                    fontSize: 12.sp,
+                  ),
                 ),
               ],
             ),

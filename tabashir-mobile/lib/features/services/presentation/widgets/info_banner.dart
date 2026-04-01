@@ -12,26 +12,47 @@ class InfoBanner extends StatelessWidget {
     final theme = Theme.of(context);
 
     return Container(
-      padding: EdgeInsets.all(AppTheme.spacingMd.w),
+      padding: EdgeInsets.all(AppTheme.spacingLg.w),
       decoration: BoxDecoration(
         gradient: AppTheme.primaryGradient,
-        borderRadius: BorderRadius.circular(AppTheme.radiusMedium.r),
+        borderRadius: BorderRadius.circular(AppTheme.radiusLarge.r),
+        boxShadow: [
+          BoxShadow(
+            color: AppTheme.primaryColor.withOpacity(0.25),
+            blurRadius: 16,
+            offset: const Offset(0, 6),
+          ),
+        ],
       ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            '✨',
-            style: TextStyle(fontSize: 24.sp),
+          Container(
+            padding: EdgeInsets.all(AppTheme.spacingSm.w),
+            decoration: BoxDecoration(
+              color: Colors.white.withOpacity(0.2),
+              borderRadius: BorderRadius.circular(AppTheme.radiusMedium.r),
+            ),
+            child: Text(
+              '✨',
+              style: TextStyle(fontSize: 20.sp),
+            ),
           ),
           SizedBox(width: AppTheme.spacingMd.w),
           Expanded(
-            child: Text(
-              'Users who optimize their resume get 3x more interviews.'.tr(),
-              style: theme.textTheme.bodyLarge?.copyWith(
-                fontWeight: FontWeight.w500,
-                color: Colors.white,
-              ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Users who optimize their resume get 3x more interviews.'.tr(),
+                  style: theme.textTheme.titleSmall?.copyWith(
+                    fontWeight: FontWeight.w600,
+                    color: Colors.white,
+                    fontSize: 15.sp,
+                    height: 1.4,
+                  ),
+                ),
+              ],
             ),
           ),
         ],

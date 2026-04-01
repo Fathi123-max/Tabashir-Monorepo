@@ -37,10 +37,10 @@ class HomeHeaderWidget extends StatelessWidget {
         children: [
           Padding(
             padding: EdgeInsets.fromLTRB(
-              AppTheme.spacingMd.w,
+              AppTheme.spacingLg.w,
+              AppTheme.spacingLg.h,
+              AppTheme.spacingLg.w,
               AppTheme.spacingMd.h,
-              AppTheme.spacingMd.w,
-              AppTheme.spacingSm.h,
             ),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -54,7 +54,16 @@ class HomeHeaderWidget extends StatelessWidget {
                         'hi_greeting'.tr(args: [userName]),
                         style: theme.textTheme.displayMedium?.copyWith(
                           fontWeight: FontWeight.bold,
-                          fontSize: 30.sp,
+                          fontSize: 32.sp,
+                          letterSpacing: 0.5,
+                        ),
+                      ),
+                      SizedBox(height: AppTheme.spacingXs.h),
+                      Text(
+                        'Welcome back! Ready to find your dream job?',
+                        style: theme.textTheme.bodyMedium?.copyWith(
+                          color: theme.colorScheme.onSurfaceVariant,
+                          fontSize: 14.sp,
                         ),
                       ),
                     ],
@@ -68,10 +77,11 @@ class HomeHeaderWidget extends StatelessWidget {
                     Stack(
                       children: [
                         Container(
-                          width: 48.w,
-                          height: 48.w,
-                          decoration: const BoxDecoration(
-                            color: Colors.transparent,
+                          width: 44.w,
+                          height: 44.w,
+                          decoration: BoxDecoration(
+                            color: theme.colorScheme.surfaceContainerHighest.withOpacity(0.3),
+                            borderRadius: BorderRadius.circular(AppTheme.radiusMedium.r),
                           ),
                           child: IconButton(
                             onPressed: () {
@@ -79,14 +89,15 @@ class HomeHeaderWidget extends StatelessWidget {
                             },
                             icon: Icon(
                               Icons.notifications_outlined,
-                              size: 24.sp,
-                              color: theme.iconTheme.color,
+                              size: 22.sp,
+                              color: theme.colorScheme.onSurface,
                             ),
+                            padding: EdgeInsets.zero,
                           ),
                         ),
                         Positioned(
-                          right: 12.w,
-                          top: 12.h,
+                          right: 10.w,
+                          top: 8.h,
                           child: Container(
                             width: 10.w,
                             height: 10.w,
@@ -110,11 +121,14 @@ class HomeHeaderWidget extends StatelessWidget {
                         context.pushNamed('profile-screen');
                       },
                       child: Container(
-                        width: 40.w,
-                        height: 40.w,
+                        width: 44.w,
+                        height: 44.w,
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
-                          color: theme.colorScheme.surfaceContainerHighest,
+                          border: Border.all(
+                            color: theme.colorScheme.primary.withOpacity(0.2),
+                            width: 2,
+                          ),
                         ),
                         child: ClipOval(
                           child: CachedNetworkImage(
@@ -149,12 +163,13 @@ class HomeHeaderWidget extends StatelessWidget {
           // Subtitle
           Padding(
             padding: EdgeInsets.symmetric(
-              horizontal: AppTheme.spacingMd.w,
-            ).copyWith(bottom: AppTheme.spacingXs.h),
+              horizontal: AppTheme.spacingLg.w,
+            ).copyWith(bottom: AppTheme.spacingMd.h),
             child: Text(
               'Here are the best opportunities for you today'.tr(),
               style: theme.textTheme.bodyMedium?.copyWith(
                 color: theme.colorScheme.onSurfaceVariant,
+                fontSize: 14.sp,
               ),
             ),
           ),

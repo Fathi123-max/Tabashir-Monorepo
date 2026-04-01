@@ -26,34 +26,30 @@ class HomeAppliedJobsWidget extends StatelessWidget {
           children: [
             Padding(
               padding: EdgeInsets.symmetric(
-                horizontal: AppTheme.spacingMd.w,
+                horizontal: AppTheme.spacingLg.w,
               ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
                     'My Applications',
                     style: theme.textTheme.headlineMedium?.copyWith(
                       fontWeight: FontWeight.bold,
+                      fontSize: 20.sp,
                     ),
                   ),
-                  if (appliedJobs.isNotEmpty)
-                    TextButton(
-                      onPressed: () {
-                        context.push('/applications');
-                      },
-                      child: Text(
-                        'See All ($totalCount)',
-                        style: theme.textTheme.bodyMedium?.copyWith(
-                          color: AppTheme.primaryColor,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
+                  SizedBox(height: AppTheme.spacingXs.h),
+                  Text(
+                    'Track your job applications status',
+                    style: theme.textTheme.bodySmall?.copyWith(
+                      color: theme.colorScheme.onSurfaceVariant,
+                      fontSize: 13.sp,
                     ),
+                  ),
                 ],
               ),
             ),
-            SizedBox(height: AppTheme.spacingSm.h),
+            SizedBox(height: AppTheme.spacingMd.h),
             // Show empty state or applications list
             if (appliedJobs.isEmpty)
               _buildEmptyState(context, theme)
@@ -62,7 +58,7 @@ class HomeAppliedJobsWidget extends StatelessWidget {
                 shrinkWrap: true,
                 physics: const NeverScrollableScrollPhysics(),
                 padding: EdgeInsets.symmetric(
-                  horizontal: AppTheme.spacingMd.w,
+                  horizontal: AppTheme.spacingLg.w,
                 ),
                 itemCount: appliedJobs.length.clamp(0, 5), // Show max 5
                 separatorBuilder: (context, index) =>
@@ -72,7 +68,7 @@ class HomeAppliedJobsWidget extends StatelessWidget {
                   return _AppliedJobCard(job: job);
                 },
               ),
-            SizedBox(height: AppTheme.spacingMd.h),
+            SizedBox(height: AppTheme.spacingXl.h),
           ],
         );
       },
@@ -82,11 +78,11 @@ class HomeAppliedJobsWidget extends StatelessWidget {
   Widget _buildEmptyState(BuildContext context, ThemeData theme) {
     return Container(
       width: double.infinity,
-      margin: EdgeInsets.symmetric(horizontal: AppTheme.spacingMd.w),
-      padding: EdgeInsets.all(AppTheme.spacingLg.w),
+      margin: EdgeInsets.symmetric(horizontal: AppTheme.spacingLg.w),
+      padding: EdgeInsets.all(AppTheme.spacingXl.w),
       decoration: BoxDecoration(
         color: AppTheme.zinc50,
-        borderRadius: BorderRadius.circular(AppTheme.radiusMedium.r),
+        borderRadius: BorderRadius.circular(AppTheme.radiusLarge.r),
         border: Border.all(
           color: AppTheme.zinc200!,
           width: 1,
@@ -94,29 +90,38 @@ class HomeAppliedJobsWidget extends StatelessWidget {
       ),
       child: Column(
         children: [
-          Icon(
-            Icons.folder_open_rounded,
-            size: 48.sp,
-            color: AppTheme.zinc400,
+          Container(
+            padding: EdgeInsets.all(AppTheme.spacingMd.w),
+            decoration: BoxDecoration(
+              color: AppTheme.primaryColor.withOpacity(0.1),
+              shape: BoxShape.circle,
+            ),
+            child: Icon(
+              Icons.folder_open_rounded,
+              size: 48.sp,
+              color: AppTheme.primaryColor,
+            ),
           ),
-          SizedBox(height: AppTheme.spacingMd.h),
+          SizedBox(height: AppTheme.spacingLg.h),
           Text(
             'No Applications Yet',
-            style: theme.textTheme.titleMedium?.copyWith(
+            style: theme.textTheme.titleLarge?.copyWith(
               fontWeight: FontWeight.bold,
               color: AppTheme.zinc700,
+              fontSize: 18.sp,
             ),
             textAlign: TextAlign.center,
           ),
           SizedBox(height: AppTheme.spacingSm.h),
           Text(
             'Start applying to jobs to track your applications here',
-            style: theme.textTheme.bodySmall?.copyWith(
+            style: theme.textTheme.bodyMedium?.copyWith(
               color: AppTheme.zinc500,
+              fontSize: 14.sp,
             ),
             textAlign: TextAlign.center,
           ),
-          SizedBox(height: AppTheme.spacingMd.h),
+          SizedBox(height: AppTheme.spacingLg.h),
           ElevatedButton(
             onPressed: () {
               context.push('/jobs');
@@ -124,6 +129,7 @@ class HomeAppliedJobsWidget extends StatelessWidget {
             style: ElevatedButton.styleFrom(
               backgroundColor: AppTheme.primaryColor,
               foregroundColor: Colors.white,
+              elevation: 0,
               padding: EdgeInsets.symmetric(
                 horizontal: AppTheme.spacingLg.w,
                 vertical: AppTheme.spacingMd.h,
@@ -136,6 +142,7 @@ class HomeAppliedJobsWidget extends StatelessWidget {
               'Browse Jobs',
               style: theme.textTheme.labelLarge?.copyWith(
                 fontWeight: FontWeight.w600,
+                fontSize: 14.sp,
               ),
             ),
           ),
@@ -166,7 +173,7 @@ class _AppliedJobCard extends StatelessWidget {
         );
       },
       child: Container(
-        padding: EdgeInsets.all(AppTheme.spacingMd.w),
+        padding: EdgeInsets.all(AppTheme.spacingLg.w),
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(AppTheme.radiusMedium.r),
@@ -177,7 +184,7 @@ class _AppliedJobCard extends StatelessWidget {
           boxShadow: [
             BoxShadow(
               color: Colors.black.withOpacity(0.05),
-              blurRadius: 4,
+              blurRadius: 8,
               offset: const Offset(0, 2),
             ),
           ],
@@ -192,9 +199,10 @@ class _AppliedJobCard extends StatelessWidget {
                 Expanded(
                   child: Text(
                     job.jobTitle,
-                    style: theme.textTheme.titleSmall?.copyWith(
+                    style: theme.textTheme.titleMedium?.copyWith(
                       fontWeight: FontWeight.bold,
                       color: AppTheme.zinc900,
+                      fontSize: 16.sp,
                     ),
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
@@ -208,13 +216,17 @@ class _AppliedJobCard extends StatelessWidget {
                   decoration: BoxDecoration(
                     color: statusColor.withOpacity(0.1),
                     borderRadius: BorderRadius.circular(AppTheme.radiusSmall.r),
+                    border: Border.all(
+                      color: statusColor.withOpacity(0.2),
+                      width: 1,
+                    ),
                   ),
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       Icon(
                         statusIcon,
-                        size: 12.sp,
+                        size: 14.sp,
                         color: statusColor,
                       ),
                       SizedBox(width: 4.w),
@@ -230,13 +242,14 @@ class _AppliedJobCard extends StatelessWidget {
                 ),
               ],
             ),
-            SizedBox(height: AppTheme.spacingXs.h),
+            SizedBox(height: AppTheme.spacingSm.h),
             // Company name
             Text(
               job.company,
-              style: theme.textTheme.bodySmall?.copyWith(
+              style: theme.textTheme.bodyMedium?.copyWith(
                 color: AppTheme.zinc600,
                 fontWeight: FontWeight.w500,
+                fontSize: 14.sp,
               ),
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
@@ -247,7 +260,7 @@ class _AppliedJobCard extends StatelessWidget {
               children: [
                 Icon(
                   Icons.location_on_outlined,
-                  size: 14.sp,
+                  size: 16.sp,
                   color: AppTheme.zinc400,
                 ),
                 SizedBox(width: 4.w),
@@ -256,6 +269,7 @@ class _AppliedJobCard extends StatelessWidget {
                     job.location ?? 'Remote',
                     style: theme.textTheme.bodySmall?.copyWith(
                       color: AppTheme.zinc500,
+                      fontSize: 13.sp,
                     ),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
@@ -264,7 +278,7 @@ class _AppliedJobCard extends StatelessWidget {
                 SizedBox(width: AppTheme.spacingMd.w),
                 Icon(
                   Icons.calendar_today_rounded,
-                  size: 14.sp,
+                  size: 16.sp,
                   color: AppTheme.zinc400,
                 ),
                 SizedBox(width: 4.w),
@@ -273,6 +287,7 @@ class _AppliedJobCard extends StatelessWidget {
                     _formatDate(job.applied),
                     style: theme.textTheme.bodySmall?.copyWith(
                       color: AppTheme.zinc500,
+                      fontSize: 13.sp,
                     ),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
