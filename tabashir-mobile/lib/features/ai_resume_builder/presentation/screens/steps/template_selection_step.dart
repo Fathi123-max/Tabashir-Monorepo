@@ -12,78 +12,75 @@ class TemplateSelectionStep extends StatelessWidget {
   Widget build(
     BuildContext context,
   ) => BlocBuilder<AiResumeBuilderCubit, AiResumeBuilderState>(
-    builder: (context, state) {
-      return SingleChildScrollView(
-        padding: EdgeInsets.all(AppTheme.spacingMd.w),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              'Select Template'.tr(),
-              style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                fontWeight: FontWeight.bold,
+    builder: (context, state) => SingleChildScrollView(
+      padding: EdgeInsets.all(AppTheme.spacingMd.w),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'Select Template'.tr(),
+            style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          SizedBox(height: AppTheme.spacingXs.h),
+          Text(
+            'Choose the design for your professional resume.'.tr(),
+            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+              color: AppTheme.textMutedLight,
+            ),
+          ),
+          SizedBox(height: AppTheme.spacingXl.h),
+          _buildTemplateCard(
+            context,
+            id: 'regular',
+            title: 'Regular (English)'.tr(),
+            description: 'A clean, modern professional template.'.tr(),
+            isSelected: state.selectedTemplateId == 'regular',
+            icon: Icons.description_outlined,
+          ),
+          SizedBox(height: AppTheme.spacingMd.h),
+          _buildTemplateCard(
+            context,
+            id: 'arabic',
+            title: 'Arabic (Professional)'.tr(),
+            description: 'Tailored for Arabic speakers with RTL support.'.tr(),
+            isSelected: state.selectedTemplateId == 'arabic',
+            icon: Icons.language_outlined,
+          ),
+          SizedBox(height: AppTheme.spacingXl.h),
+          Container(
+            padding: EdgeInsets.all(AppTheme.spacingMd.w),
+            decoration: BoxDecoration(
+              color: AppTheme.primaryColor.withOpacity(0.05),
+              borderRadius: BorderRadius.circular(AppTheme.radiusDefault.r),
+              border: Border.all(
+                color: AppTheme.primaryColor.withOpacity(0.2),
               ),
             ),
-            SizedBox(height: AppTheme.spacingXs.h),
-            Text(
-              'Choose the design for your professional resume.'.tr(),
-              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                color: AppTheme.textMutedLight,
-              ),
-            ),
-            SizedBox(height: AppTheme.spacingXl.h),
-            _buildTemplateCard(
-              context,
-              id: 'regular',
-              title: 'Regular (English)'.tr(),
-              description: 'A clean, modern professional template.'.tr(),
-              isSelected: state.selectedTemplateId == 'regular',
-              icon: Icons.description_outlined,
-            ),
-            SizedBox(height: AppTheme.spacingMd.h),
-            _buildTemplateCard(
-              context,
-              id: 'arabic',
-              title: 'Arabic (Professional)'.tr(),
-              description: 'Tailored for Arabic speakers with RTL support.'
-                  .tr(),
-              isSelected: state.selectedTemplateId == 'arabic',
-              icon: Icons.language_outlined,
-            ),
-            SizedBox(height: AppTheme.spacingXl.h),
-            Container(
-              padding: EdgeInsets.all(AppTheme.spacingMd.w),
-              decoration: BoxDecoration(
-                color: AppTheme.primaryColor.withOpacity(0.05),
-                borderRadius: BorderRadius.circular(AppTheme.radiusDefault.r),
-                border: Border.all(
-                  color: AppTheme.primaryColor.withOpacity(0.2),
+            child: Row(
+              children: [
+                Icon(
+                  Icons.info_outline,
+                  color: AppTheme.primaryColor,
+                  size: 20.sp,
                 ),
-              ),
-              child: Row(
-                children: [
-                  Icon(
-                    Icons.info_outline,
-                    color: AppTheme.primaryColor,
-                    size: 20.sp,
-                  ),
-                  SizedBox(width: AppTheme.spacingSm.w),
-                  Expanded(
-                    child: Text(
-                      'You can always change your template later in the resume vault.'
-                          .tr(),
-                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        color: AppTheme.primaryColor,
-                      ),
+                SizedBox(width: AppTheme.spacingSm.w),
+                Expanded(
+                  child: Text(
+                    'You can always change your template later in the resume vault.'
+                        .tr(),
+                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                      color: AppTheme.primaryColor,
                     ),
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
-          ],
-        ),
-      );
-    },
+          ),
+        ],
+      ),
+    ),
   );
 
   Widget _buildTemplateCard(

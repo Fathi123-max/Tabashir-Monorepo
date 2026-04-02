@@ -80,10 +80,9 @@ class LineChartWidget extends StatelessWidget {
           minY: 0,
           maxY: _getMaxY() * 1.2,
           lineTouchData: LineTouchData(
-            touchCallback:
-                (FlTouchEvent event, LineTouchResponse? touchResponse) {
-                  // Handle touch events if needed
-                },
+            touchCallback: (event, touchResponse) {
+              // Handle touch events if needed
+            },
             touchTooltipData: LineTouchTooltipData(
               tooltipBgColor: Colors.blueAccent,
               getTooltipItems: (touchedSpots) => touchedSpots

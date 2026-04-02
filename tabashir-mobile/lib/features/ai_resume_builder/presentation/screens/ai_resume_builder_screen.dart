@@ -167,7 +167,7 @@ class AiResumeBuilderView extends StatelessWidget {
               ],
             ),
             if (state.isGenerating)
-              Container(
+              ColoredBox(
                 color: Colors.black.withOpacity(0.5),
                 child: Center(
                   child: Card(
@@ -298,7 +298,7 @@ class AiResumeBuilderView extends StatelessWidget {
               // Trigger Payment Flow
               context.read<PaymentCubit>().createPaymentIntent(
                 request: const PaymentIntentRequest(
-                  amount: 40.0,
+                  amount: 40,
                   serviceId: 'ai-resume-optimization',
                   currency: 'aed',
                 ),

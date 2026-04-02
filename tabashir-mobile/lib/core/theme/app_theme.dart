@@ -786,6 +786,18 @@ class AppTheme {
     colors: [const Color(0xFF10B981), accentColor],
   );
 
+  static LinearGradient successGradient = LinearGradient(
+    begin: Alignment.topLeft,
+    end: Alignment.bottomRight,
+    colors: [const Color(0xFF059669), successColor],
+  );
+
+  static LinearGradient warningGradient = LinearGradient(
+    begin: Alignment.topLeft,
+    end: Alignment.bottomRight,
+    colors: [const Color(0xFFD97706), warningColor],
+  );
+
   // Custom text styles
   static TextStyle headingStyle = TextStyle(
     fontSize: 28.sp,

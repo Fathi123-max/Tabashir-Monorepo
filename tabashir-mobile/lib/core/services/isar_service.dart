@@ -114,7 +114,7 @@ class SavedJobsRepository {
           print('[SAVED_JOBS_REPO] API returned ${rawSavedJobs.length} items');
 
           // Python backend returns objects, extract IDs
-          final List<String> savedJobIds = [];
+          final savedJobIds = <String>[];
           for (final item in rawSavedJobs) {
             if (item is String) {
               savedJobIds.add(item);

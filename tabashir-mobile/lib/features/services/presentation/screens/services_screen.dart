@@ -47,7 +47,7 @@ class ServicesScreen extends StatelessWidget {
     }
   }
 
-  void _onJobApplyServicePressed(
+  Future<void> _onJobApplyServicePressed(
     BuildContext context,
     String serviceId,
     double amount,
@@ -95,10 +95,10 @@ class ServicesScreen extends StatelessWidget {
                       // Hero Header with gradient background
                       Container(
                         margin: EdgeInsets.fromLTRB(
-                          AppTheme.spacingLg.w,
-                          AppTheme.spacingXl.h,
-                          AppTheme.spacingLg.w,
+                          AppTheme.spacingMd.w,
                           AppTheme.spacingLg.h,
+                          AppTheme.spacingMd.w,
+                          AppTheme.spacingMd.h,
                         ),
                         padding: EdgeInsets.all(AppTheme.spacingLg.w),
                         decoration: BoxDecoration(
@@ -111,7 +111,9 @@ class ServicesScreen extends StatelessWidget {
                               theme.scaffoldBackgroundColor,
                             ],
                           ),
-                          borderRadius: BorderRadius.circular(AppTheme.radiusLarge.r),
+                          borderRadius: BorderRadius.circular(
+                            AppTheme.radiusLarge.r,
+                          ),
                         ),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -122,10 +124,13 @@ class ServicesScreen extends StatelessWidget {
                                   padding: EdgeInsets.all(AppTheme.spacingSm.w),
                                   decoration: BoxDecoration(
                                     gradient: AppTheme.primaryGradient,
-                                    borderRadius: BorderRadius.circular(AppTheme.radiusMedium.r),
+                                    borderRadius: BorderRadius.circular(
+                                      AppTheme.radiusMedium.r,
+                                    ),
                                     boxShadow: [
                                       BoxShadow(
-                                        color: AppTheme.primaryColor.withOpacity(0.3),
+                                        color: AppTheme.primaryColor
+                                            .withOpacity(0.3),
                                         blurRadius: 12,
                                         offset: const Offset(0, 4),
                                       ),
@@ -140,23 +145,28 @@ class ServicesScreen extends StatelessWidget {
                                 SizedBox(width: AppTheme.spacingMd.w),
                                 Expanded(
                                   child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     children: [
                                       Text(
-                                        'AI Career Services',
-                                        style: theme.textTheme.displayMedium?.copyWith(
-                                          fontSize: 28.sp,
-                                          fontWeight: FontWeight.bold,
-                                          letterSpacing: 0.5,
-                                        ),
+                                        'AI Services',
+                                        style: theme.textTheme.displayMedium
+                                            ?.copyWith(
+                                              fontSize: 28.sp,
+                                              fontWeight: FontWeight.bold,
+                                              letterSpacing: 0.5,
+                                            ),
                                       ),
                                       SizedBox(height: AppTheme.spacingXs.h),
                                       Text(
                                         'Boost your job search with smart tools.',
-                                        style: theme.textTheme.bodyMedium?.copyWith(
-                                          color: theme.colorScheme.onSurfaceVariant,
-                                          fontSize: 14.sp,
-                                        ),
+                                        style: theme.textTheme.bodyMedium
+                                            ?.copyWith(
+                                              color: theme
+                                                  .colorScheme
+                                                  .onSurfaceVariant,
+                                              fontSize: 14.sp,
+                                            ),
                                       ),
                                     ],
                                   ),
@@ -169,22 +179,27 @@ class ServicesScreen extends StatelessWidget {
 
                       // Service Cards
                       Padding(
-                        padding: EdgeInsets.symmetric(horizontal: AppTheme.spacingLg.w),
+                        padding: EdgeInsets.symmetric(
+                          horizontal: AppTheme.spacingMd.w,
+                        ),
                         child: Column(
                           children: [
                             // Featured Badge
                             Container(
-                              margin: EdgeInsets.only(bottom: AppTheme.spacingMd.h),
+                              margin: EdgeInsets.only(
+                                bottom: AppTheme.spacingMd.h,
+                              ),
                               padding: EdgeInsets.symmetric(
                                 horizontal: AppTheme.spacingMd.w,
                                 vertical: AppTheme.spacingSm.h,
                               ),
                               decoration: BoxDecoration(
                                 color: AppTheme.primaryColor.withOpacity(0.1),
-                                borderRadius: BorderRadius.circular(AppTheme.radiusFull.r),
+                                borderRadius: BorderRadius.circular(
+                                  AppTheme.radiusFull.r,
+                                ),
                                 border: Border.all(
                                   color: AppTheme.primaryColor.withOpacity(0.2),
-                                  width: 1,
                                 ),
                               ),
                               child: Row(
@@ -207,7 +222,7 @@ class ServicesScreen extends StatelessWidget {
                                 ],
                               ),
                             ),
-                            
+
                             ServiceCard(
                               icon: Icons.workspace_premium_rounded,
                               title: 'AI Job Apply Service - Premium',
@@ -222,13 +237,13 @@ class ServicesScreen extends StatelessWidget {
                               onPressed: () {
                                 _onJobApplyServicePressed(
                                   context,
-                                  'ai-job-apply',
+                                  'ai-job-apply-premium',
                                   200,
                                   'AI Job Apply Service - Premium',
                                 );
                               },
                             ),
-                            SizedBox(height: AppTheme.spacingLg.h),
+                            SizedBox(height: AppTheme.spacingMd.h),
 
                             ServiceCard(
                               icon: Icons.flash_on_rounded,
@@ -237,19 +252,19 @@ class ServicesScreen extends StatelessWidget {
                                   'Let our AI find and apply to the best jobs for '
                                       .tr() +
                                   'you automatically.'.tr(),
-                              price: 'AED 200',
+                              price: 'AED 100',
                               buttonText: 'Auto Apply'.tr(),
                               isEnabled: true,
                               onPressed: () {
                                 _onJobApplyServicePressed(
                                   context,
-                                  'ai-job-apply',
-                                  200,
+                                  'ai-job-apply-basic',
+                                  100,
                                   'AI Job Apply Service - Basic',
                                 );
                               },
                             ),
-                            SizedBox(height: AppTheme.spacingLg.h),
+                            SizedBox(height: AppTheme.spacingMd.h),
 
                             ServiceCard(
                               icon: Icons.description_rounded,
@@ -266,7 +281,7 @@ class ServicesScreen extends StatelessWidget {
                                 context.pushNamed('ai-resume-screen');
                               },
                             ),
-                            SizedBox(height: AppTheme.spacingLg.h),
+                            SizedBox(height: AppTheme.spacingMd.h),
 
                             ServiceCard(
                               icon: Icons.link_rounded,
@@ -288,7 +303,7 @@ class ServicesScreen extends StatelessWidget {
 
                       // Trust Indicators
                       Padding(
-                        padding: EdgeInsets.all(AppTheme.spacingLg.w),
+                        padding: EdgeInsets.all(AppTheme.spacingMd.w),
                         child: const TrustIndicators(),
                       ),
                     ],

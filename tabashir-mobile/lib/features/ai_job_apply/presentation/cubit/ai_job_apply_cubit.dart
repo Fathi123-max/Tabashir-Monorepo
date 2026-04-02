@@ -231,7 +231,7 @@ class AiJobApplyCubit extends Cubit<AiJobApplyState> {
 
       // Trigger home data refresh
       if (email.isNotEmpty) {
-        getIt<HomeCubit>().refreshHomeData(userProfile: null);
+        getIt<HomeCubit>().refreshHomeData();
       }
 
       emit(
@@ -312,7 +312,7 @@ class AiJobApplyCubit extends Cubit<AiJobApplyState> {
 
       // Trigger home data refresh
       if (email.isNotEmpty) {
-        getIt<HomeCubit>().refreshHomeData(userProfile: null);
+        getIt<HomeCubit>().refreshHomeData();
       }
 
       emit(
@@ -635,7 +635,7 @@ class AiJobApplyCubit extends Cubit<AiJobApplyState> {
 
       // Trigger home data refresh
       if (email.isNotEmpty) {
-        getIt<HomeCubit>().refreshHomeData(userProfile: null);
+        getIt<HomeCubit>().refreshHomeData();
       }
 
       emit(

@@ -65,14 +65,14 @@ sealed class ApplyJobsResponse with _$ApplyJobsResponse {
 @freezed
 sealed class ApplySummary with _$ApplySummary {
   const factory ApplySummary({
-    /// Apply result
-    @JsonKey(name: 'apply_result') ApplyResult? applyResult,
-
     /// Client email
     required String email,
 
     /// Ranking result
     @JsonKey(name: 'ranking_result') required RankingResult rankingResult,
+
+    /// Apply result
+    @JsonKey(name: 'apply_result') ApplyResult? applyResult,
   }) = _ApplySummary;
 
   factory ApplySummary.fromJson(Map<String, dynamic> json) =>

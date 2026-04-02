@@ -37,7 +37,6 @@ sealed class ResumeInfo with _$ResumeInfo {
       _$ResumeInfoFromJson(json);
 }
 
-
 /// Core user data
 @freezed
 sealed class UserData with _$UserData {
@@ -116,7 +115,6 @@ sealed class CandidateProfileData with _$CandidateProfileData {
   factory CandidateProfileData.fromJson(Map<String, dynamic> json) =>
       _$CandidateProfileDataFromJson(json);
 }
-
 
 /// Owner profile data
 @freezed

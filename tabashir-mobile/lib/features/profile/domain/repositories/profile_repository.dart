@@ -24,11 +24,11 @@ abstract class ProfileRepository {
   /// Update client with specific details and trigger AI job matching
   Future<void> updateClient({
     required String email,
-    String? cvPath,
     required String nationality,
     required String gender,
     required List<String> locations,
     required List<String> positions,
+    String? cvPath,
   });
 
   /// Update candidate personal information

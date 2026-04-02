@@ -237,11 +237,11 @@ class ProfileRepositoryImpl implements ProfileRepository {
   @override
   Future<void> updateClient({
     required String email,
-    String? cvPath,
     required String nationality,
     required String gender,
     required List<String> locations,
     required List<String> positions,
+    String? cvPath,
   }) async {
     print('\n\n########## [PROFILE_REPO] UPDATE CLIENT CALLED ##########');
     try {

@@ -6,14 +6,13 @@ import 'resume_review_state.dart';
 
 @injectable
 class ResumeReviewCubit extends Cubit<ResumeReviewState> {
-  final ProfileCubit profileCubit;
-  final ResumeVaultCubit resumeVaultCubit;
-
   ResumeReviewCubit({
     required this.profileCubit,
     required this.resumeVaultCubit,
     @factoryParam Map<String, dynamic>? initialData,
   }) : super(ResumeReviewState(data: initialData ?? {}));
+  final ProfileCubit profileCubit;
+  final ResumeVaultCubit resumeVaultCubit;
 
   void updatePersonalInfo({
     String? name,
@@ -123,7 +122,7 @@ class ResumeReviewCubit extends Cubit<ResumeReviewState> {
           emit(
             state.copyWith(
               status: ResumeReviewStatus.failure,
-              errorMessage: 'Profile sync failed: ${e.toString()}',
+              errorMessage: 'Profile sync failed: $e',
             ),
           );
         }
@@ -143,7 +142,7 @@ class ResumeReviewCubit extends Cubit<ResumeReviewState> {
           emit(
             state.copyWith(
               status: ResumeReviewStatus.failure,
-              errorMessage: 'Vault sync failed: ${e.toString()}',
+              errorMessage: 'Vault sync failed: $e',
             ),
           );
         }

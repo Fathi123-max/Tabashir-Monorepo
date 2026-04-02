@@ -22,6 +22,7 @@ sealed class ResumeData with _$ResumeData {
   factory ResumeData.fromJson(Map<String, dynamic> json) =>
       _$ResumeDataFromJson(json);
 
+  @override
   Map<String, dynamic> toJson();
 }
 
@@ -43,6 +44,7 @@ sealed class PersonalDetails with _$PersonalDetails {
   factory PersonalDetails.fromJson(Map<String, dynamic> json) =>
       _$PersonalDetailsFromJson(json);
 
+  @override
   Map<String, dynamic> toJson();
 }
 
@@ -57,6 +59,7 @@ sealed class SocialLink with _$SocialLink {
   factory SocialLink.fromJson(Map<String, dynamic> json) =>
       _$SocialLinkFromJson(json);
 
+  @override
   Map<String, dynamic> toJson();
 }
 
@@ -70,6 +73,7 @@ sealed class ProfessionalSummary with _$ProfessionalSummary {
   factory ProfessionalSummary.fromJson(Map<String, dynamic> json) =>
       _$ProfessionalSummaryFromJson(json);
 
+  @override
   Map<String, dynamic> toJson();
 }
 
@@ -90,6 +94,7 @@ sealed class WorkExperience with _$WorkExperience {
   factory WorkExperience.fromJson(Map<String, dynamic> json) =>
       _$WorkExperienceFromJson(json);
 
+  @override
   Map<String, dynamic> toJson();
 }
 
@@ -111,6 +116,7 @@ sealed class Education with _$Education {
   factory Education.fromJson(Map<String, dynamic> json) =>
       _$EducationFromJson(json);
 
+  @override
   Map<String, dynamic> toJson();
 }
 
@@ -127,6 +133,7 @@ sealed class Project with _$Project {
   factory Project.fromJson(Map<String, dynamic> json) =>
       _$ProjectFromJson(json);
 
+  @override
   Map<String, dynamic> toJson();
 }
 
@@ -141,6 +148,7 @@ sealed class Language with _$Language {
   factory Language.fromJson(Map<String, dynamic> json) =>
       _$LanguageFromJson(json);
 
+  @override
   Map<String, dynamic> toJson();
 }
 
@@ -168,6 +176,7 @@ sealed class Skill with _$Skill {
 
   factory Skill.fromJson(Map<String, dynamic> json) => _$SkillFromJson(json);
 
+  @override
   Map<String, dynamic> toJson();
 }
 

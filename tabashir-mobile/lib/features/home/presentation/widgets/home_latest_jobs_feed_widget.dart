@@ -22,67 +22,63 @@ class _HomeLatestJobsFeedWidgetState extends State<HomeLatestJobsFeedWidget> {
   final JobMatchService _jobMatchService = getIt<JobMatchService>();
 
   @override
-  Widget build(BuildContext context) {
-    return BlocBuilder<HomeCubit, HomeState>(
-      builder: (context, homeState) {
-        final latestJobs = homeState.latestJobsList;
+  Widget build(BuildContext context) => BlocBuilder<HomeCubit, HomeState>(
+    builder: (context, homeState) {
+      final latestJobs = homeState.latestJobsList;
 
-        if (latestJobs.isEmpty) {
-          return Center(
-            child: Padding(
-              padding: EdgeInsets.all(16.w),
-              child: Text(
-                'No new opportunities available'.tr(),
-                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  color: Theme.of(context).colorScheme.onSurfaceVariant,
-                ),
+      if (latestJobs.isEmpty) {
+        return Center(
+          child: Padding(
+            padding: EdgeInsets.all(16.w),
+            child: Text(
+              'No new opportunities available'.tr(),
+              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
               ),
             ),
-          );
-        }
-
-        return ListView.separated(
-          physics: const NeverScrollableScrollPhysics(),
-          shrinkWrap: true,
-          itemCount: latestJobs.length,
-          separatorBuilder: (context, index) => SizedBox(height: 12.h),
-          itemBuilder: (context, index) {
-            final job = latestJobs[index];
-            final jobId =
-                (job['id']?.toString() ?? job['job_id']?.toString() ?? '') as String;
-
-            return HomeJobCardWidget(
-              title:
-                  (job['title'] ?? job['job_title']) as String? ??
-                  'Untitled Position',
-              company:
-                  (job['company'] ?? job['company_name']) as String? ??
-                  'Unknown Company',
-              employmentType:
-                  (job['employmentType'] ?? job['job_type']) as String? ??
-                  'Full-time',
-              level:
-                  (job['level'] ?? 'Not specified') as String? ??
-                  'Not specified',
-              // Use the processed matchPercentage from HomeCubit (already formatted)
-              matchPercentage: (job['matchPercentage'] as String?) ?? '50% Match',
-              isPrimary: false,
-              jobId: jobId,
-              onApplyTap: () {
-                final jobIdStr = jobId;
-                if (jobIdStr.isNotEmpty) {
-                  context.pushNamed(
-                    'job-detail-screen',
-                    pathParameters: {'jobId': jobIdStr},
-                  );
-                }
-              },
-              isApplied: false,
-              isLoading: _applyingJobs.contains(jobId),
-            );
-          },
+          ),
         );
-      },
-    );
-  }
+      }
+
+      return ListView.separated(
+        physics: const NeverScrollableScrollPhysics(),
+        shrinkWrap: true,
+        itemCount: latestJobs.length,
+        separatorBuilder: (context, index) => SizedBox(height: 12.h),
+        itemBuilder: (context, index) {
+          final job = latestJobs[index];
+          final jobId =
+              job['id']?.toString() ?? job['job_id']?.toString() ?? '';
+
+          return HomeJobCardWidget(
+            title:
+                (job['title'] ?? job['job_title']) as String? ??
+                'Untitled Position',
+            company:
+                (job['company'] ?? job['company_name']) as String? ??
+                'Unknown Company',
+            employmentType:
+                (job['employmentType'] ?? job['job_type']) as String? ??
+                'Full-time',
+            level:
+                (job['level'] ?? 'Not specified') as String? ?? 'Not specified',
+            // Use the processed matchPercentage from HomeCubit (already formatted)
+            matchPercentage: (job['matchPercentage'] as String?) ?? '50% Match',
+            isPrimary: false,
+            jobId: jobId,
+            onApplyTap: () {
+              final jobIdStr = jobId;
+              if (jobIdStr.isNotEmpty) {
+                context.pushNamed(
+                  'job-detail-screen',
+                  pathParameters: {'jobId': jobIdStr},
+                );
+              }
+            },
+            isLoading: _applyingJobs.contains(jobId),
+          );
+        },
+      );
+    },
+  );
 }

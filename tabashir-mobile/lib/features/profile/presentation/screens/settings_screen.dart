@@ -224,7 +224,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     Icons.arrow_drop_down,
                     color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
                   ),
-                  onSelected: (Locale locale) {
+                  onSelected: (locale) {
                     context.setLocale(locale);
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
@@ -240,7 +240,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       ),
                     );
                   },
-                  itemBuilder: (BuildContext context) => [
+                  itemBuilder: (context) => [
                     PopupMenuItem<Locale>(
                       value: const Locale('en'),
                       child: Row(

@@ -39,14 +39,14 @@ sealed class HomeState with _$HomeState {
     @Default([]) List<JobRecommendation> matchedJobsList,
     @Default([]) List<JobRecommendation> allMatchedJobsList,
     @Default([]) List<AppliedJob> appliedJobsList,
-    
+
     // Pagination for Matched Jobs
     @Default(1) int matchedJobsPage,
     @Default(0) int matchedJobsTotal,
     @Default(20) int matchedJobsLimit,
     @Default(true) bool matchedJobsHasMore,
     @Default(false) bool isLoadingMoreMatched,
-    
+
     // Pagination for Applied Jobs
     @Default(1) int appliedJobsPage,
     @Default(0) int appliedJobsTotal,

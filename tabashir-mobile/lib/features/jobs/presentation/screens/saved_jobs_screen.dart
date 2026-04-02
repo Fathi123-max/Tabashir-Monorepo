@@ -188,7 +188,7 @@ class SavedJobsView extends StatelessWidget {
     VoidCallback? onSalaryIconTap,
   }) {
     final cardStyle = JobCardStyle.values.firstWhere(
-      (JobCardStyle e) => e.name == style,
+      (e) => e.name == style,
       orElse: () => JobCardStyle.standard,
     );
 

@@ -37,14 +37,14 @@ class ServiceCard extends StatelessWidget {
           color: theme.cardTheme.color,
           borderRadius: BorderRadius.circular(AppTheme.radiusLarge.r),
           border: Border.all(
-            color: isFeatured 
+            color: isFeatured
                 ? AppTheme.primaryColor.withOpacity(0.3)
                 : theme.colorScheme.outline.withOpacity(0.1),
             width: isFeatured ? 2 : 1,
           ),
           boxShadow: [
             BoxShadow(
-              color: isFeatured 
+              color: isFeatured
                   ? AppTheme.primaryColor.withOpacity(0.15)
                   : Colors.black.withOpacity(0.06),
               blurRadius: isFeatured ? 20 : 16,
@@ -77,7 +77,9 @@ class ServiceCard extends StatelessWidget {
                               AppTheme.primaryColor.withOpacity(0.08),
                             ],
                     ),
-                    borderRadius: BorderRadius.circular(AppTheme.radiusMedium.r),
+                    borderRadius: BorderRadius.circular(
+                      AppTheme.radiusMedium.r,
+                    ),
                   ),
                   child: Icon(
                     icon,
@@ -107,10 +109,11 @@ class ServiceCard extends StatelessWidget {
                           ),
                           decoration: BoxDecoration(
                             color: AppTheme.successColor.withOpacity(0.1),
-                            borderRadius: BorderRadius.circular(AppTheme.radiusFull.r),
+                            borderRadius: BorderRadius.circular(
+                              AppTheme.radiusFull.r,
+                            ),
                             border: Border.all(
                               color: AppTheme.successColor.withOpacity(0.2),
-                              width: 1,
                             ),
                           ),
                           child: Text(
@@ -143,7 +146,6 @@ class ServiceCard extends StatelessWidget {
 
             // Price and Button Row
             Row(
-              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 Expanded(
                   child: Column(
@@ -166,8 +168,8 @@ class ServiceCard extends StatelessWidget {
                       ? ElevatedButton(
                           onPressed: onPressed,
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: isFeatured 
-                                ? AppTheme.primaryColor 
+                            backgroundColor: isFeatured
+                                ? AppTheme.primaryColor
                                 : AppTheme.primaryColor,
                             foregroundColor: Colors.white,
                             elevation: 0,

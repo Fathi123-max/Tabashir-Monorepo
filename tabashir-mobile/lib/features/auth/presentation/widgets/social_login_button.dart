@@ -39,87 +39,83 @@ class SocialLoginButton extends StatelessWidget {
     );
   }
 
-  Widget _buildGoogleButton(BuildContext context, ThemeData theme) {
-    return SizedBox(
-      height: 48.h,
-      child: OutlinedButton(
-        onPressed: onPressed,
-        style: OutlinedButton.styleFrom(
-          backgroundColor: Colors.white,
-          foregroundColor: const Color(0xFF374151),
-          side: BorderSide(
-            color: theme.dividerTheme.color ?? AppTheme.borderLight,
-          ),
-          elevation: 0,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(AppTheme.radiusDefault.r),
-          ),
-          padding: EdgeInsets.symmetric(horizontal: AppTheme.spacingMd.w),
+  Widget _buildGoogleButton(BuildContext context, ThemeData theme) => SizedBox(
+    height: 48.h,
+    child: OutlinedButton(
+      onPressed: onPressed,
+      style: OutlinedButton.styleFrom(
+        backgroundColor: Colors.white,
+        foregroundColor: const Color(0xFF374151),
+        side: BorderSide(
+          color: theme.dividerTheme.color ?? AppTheme.borderLight,
         ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            SvgPicture.asset(
-              'assets/images/google.svg',
-              width: 24.w,
-              height: 24.w,
-            ),
-            SizedBox(width: AppTheme.spacingSm.w),
-            Text(
-              text,
-              style: TextStyle(
-                fontSize: 16.sp,
-                fontWeight: FontWeight.w500,
-                color: const Color(0xFF374151),
-              ),
-            ),
-          ],
+        elevation: 0,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(AppTheme.radiusDefault.r),
         ),
+        padding: EdgeInsets.symmetric(horizontal: AppTheme.spacingMd.w),
       ),
-    );
-  }
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          SvgPicture.asset(
+            'assets/images/google.svg',
+            width: 24.w,
+            height: 24.w,
+          ),
+          SizedBox(width: AppTheme.spacingSm.w),
+          Text(
+            text,
+            style: TextStyle(
+              fontSize: 16.sp,
+              fontWeight: FontWeight.w500,
+              color: const Color(0xFF374151),
+            ),
+          ),
+        ],
+      ),
+    ),
+  );
 
-  Widget _buildAppleButton(BuildContext context, ThemeData theme) {
-    return SizedBox(
-      height: 48.h,
-      child: OutlinedButton(
-        onPressed: onPressed,
-        style: OutlinedButton.styleFrom(
-          backgroundColor: Colors.white,
-          foregroundColor: const Color(0xFF374151),
-          side: BorderSide(
-            color: theme.dividerTheme.color ?? AppTheme.borderLight,
-          ),
-          elevation: 0,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(AppTheme.radiusDefault.r),
-          ),
-          padding: EdgeInsets.symmetric(horizontal: AppTheme.spacingMd.w),
+  Widget _buildAppleButton(BuildContext context, ThemeData theme) => SizedBox(
+    height: 48.h,
+    child: OutlinedButton(
+      onPressed: onPressed,
+      style: OutlinedButton.styleFrom(
+        backgroundColor: Colors.white,
+        foregroundColor: const Color(0xFF374151),
+        side: BorderSide(
+          color: theme.dividerTheme.color ?? AppTheme.borderLight,
         ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            SvgPicture.asset(
-              'assets/images/apple.svg',
-              width: 24.w,
-              height: 24.w,
-              colorFilter: const ColorFilter.mode(
-                Colors.black,
-                BlendMode.srcIn,
-              ),
-            ),
-            SizedBox(width: AppTheme.spacingSm.w),
-            Text(
-              text,
-              style: TextStyle(
-                fontSize: 16.sp,
-                fontWeight: FontWeight.w500,
-                color: const Color(0xFF374151),
-              ),
-            ),
-          ],
+        elevation: 0,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(AppTheme.radiusDefault.r),
         ),
+        padding: EdgeInsets.symmetric(horizontal: AppTheme.spacingMd.w),
       ),
-    );
-  }
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          SvgPicture.asset(
+            'assets/images/apple.svg',
+            width: 24.w,
+            height: 24.w,
+            colorFilter: const ColorFilter.mode(
+              Colors.black,
+              BlendMode.srcIn,
+            ),
+          ),
+          SizedBox(width: AppTheme.spacingSm.w),
+          Text(
+            text,
+            style: TextStyle(
+              fontSize: 16.sp,
+              fontWeight: FontWeight.w500,
+              color: const Color(0xFF374151),
+            ),
+          ),
+        ],
+      ),
+    ),
+  );
 }

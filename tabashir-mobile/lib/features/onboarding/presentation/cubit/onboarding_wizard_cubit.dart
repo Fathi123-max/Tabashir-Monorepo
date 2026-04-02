@@ -9,15 +9,14 @@ import 'onboarding_wizard_state.dart';
 
 @injectable
 class OnboardingWizardCubit extends Cubit<OnboardingWizardState> {
-  final AiJobApplyRepository _repository;
-  final ProfileCubit _profileCubit;
-  final AuthCubit _authCubit;
-
   OnboardingWizardCubit(
     this._repository,
     this._profileCubit,
     this._authCubit,
   ) : super(const OnboardingWizardState());
+  final AiJobApplyRepository _repository;
+  final ProfileCubit _profileCubit;
+  final AuthCubit _authCubit;
 
   static const List<String> uaeCities = [
     'Dubai',
@@ -65,7 +64,7 @@ class OnboardingWizardCubit extends Cubit<OnboardingWizardState> {
           emit(
             state.copyWith(
               isLoading: false,
-              errorMessage: 'Failed to suggest job titles: ${e.toString()}',
+              errorMessage: 'Failed to suggest job titles: $e',
               currentStep: 2, // Still move to roles step
             ),
           );

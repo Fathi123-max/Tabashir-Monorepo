@@ -53,7 +53,11 @@ class JobsCubit extends Cubit<JobsState> {
 
   /// Initialize the cubit state
   /// Only loads jobs if not already initialized
-  void initializeState({String? initialCity, String? email, bool forceReload = false}) {
+  void initializeState({
+    String? initialCity,
+    String? email,
+    bool forceReload = false,
+  }) {
     if (_isInitialized && !forceReload) {
       if (initialCity != null && state is JobsStateLoaded) {
         final loadedState = state as JobsStateLoaded;
@@ -67,7 +71,7 @@ class JobsCubit extends Cubit<JobsState> {
             maxSalary: 100000,
           ),
         );
-        loadJobs(page: 0, email: email);
+        loadJobs(email: email);
       }
       print('[JOBS_CUBIT] Already initialized, skipping duplicate load');
       return;
@@ -123,7 +127,9 @@ class JobsCubit extends Cubit<JobsState> {
     String? email,
   }) async {
     try {
-      print('[JOBS_CUBIT] loadJobs() called - Page: $page, Limit: $limit, Email: ${email ?? "from profile"}');
+      print(
+        '[JOBS_CUBIT] loadJobs() called - Page: $page, Limit: $limit, Email: ${email ?? "from profile"}',
+      );
       print('[JOBS_CUBIT] Current state: $state');
 
       // Get current filters from state
@@ -161,8 +167,12 @@ class JobsCubit extends Cubit<JobsState> {
       if (userEmail != null && userEmail.isNotEmpty) {
         print('[JOBS_CUBIT] ✅ Using email for matching: $userEmail');
       } else {
-        print('[JOBS_CUBIT] ⚠️ No email available - jobs will load without match percentages');
-        print('[JOBS_CUBIT] Profile state: ${_profileCubit.state.profile?.email ?? "null"}');
+        print(
+          '[JOBS_CUBIT] ⚠️ No email available - jobs will load without match percentages',
+        );
+        print(
+          '[JOBS_CUBIT] Profile state: ${_profileCubit.state.profile?.email ?? "null"}',
+        );
       }
 
       // Get jobs from repository with pagination, search, and filters
@@ -329,7 +339,9 @@ class JobsCubit extends Cubit<JobsState> {
       location: job.location ?? 'Not specified',
       salary: _formatSalaryDisplay(job.salary),
       salaryValue: _extractSalaryValue(job.salary),
-      matchPercentage: _jobMatchService.formatMatchPercentage(job.matchPercentage),
+      matchPercentage: _jobMatchService.formatMatchPercentage(
+        job.matchPercentage,
+      ),
       tags: tags,
       skillsMatch: job.academicQualification ?? 'Qualifications pending',
       isSaved:
@@ -351,7 +363,7 @@ class JobsCubit extends Cubit<JobsState> {
     if (salary == null || salary.isEmpty || salary == 'Not specified') {
       return 'Salary not specified';
     }
-    return salary.replaceAll('\$', 'AED ');
+    return salary.replaceAll(r'$', 'AED ');
   }
 
   /// Format job date to relative time (e.g., "2 days ago")
@@ -478,7 +490,7 @@ class JobsCubit extends Cubit<JobsState> {
     print('[JOBS_CUBIT] updateSalaryRange() called: $min - $max');
     if (state is JobsStateLoaded) {
       emit((state as JobsStateLoaded).copyWith(minSalary: min, maxSalary: max));
-      loadJobs(page: 0);
+      loadJobs();
     }
   }
 
@@ -496,7 +508,7 @@ class JobsCubit extends Cubit<JobsState> {
           maxSalary: 100000,
         ),
       );
-      loadJobs(page: 0);
+      loadJobs();
     }
   }
 

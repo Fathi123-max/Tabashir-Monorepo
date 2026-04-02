@@ -90,7 +90,6 @@ class ComingSoonCard extends StatelessWidget {
               borderRadius: BorderRadius.circular(AppTheme.radiusMedium.r),
               border: Border.all(
                 color: AppTheme.primaryColor.withOpacity(0.1),
-                width: 1,
               ),
             ),
             child: const Column(

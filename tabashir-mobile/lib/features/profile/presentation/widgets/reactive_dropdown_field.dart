@@ -13,7 +13,7 @@ class ReactiveDropdownField<T> extends ReactiveFormField<T, T> {
     this.validationMessages,
   }) : super(
          validationMessages: validationMessages,
-         builder: (ReactiveFormFieldState<T, T> field) => InputDecorator(
+         builder: (field) => InputDecorator(
            decoration: _buildDecoration(field, labelText, hintText),
            child: DropdownButtonHideUnderline(
              child: DropdownButton<T>(

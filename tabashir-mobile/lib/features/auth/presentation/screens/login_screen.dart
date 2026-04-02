@@ -1,28 +1,27 @@
+import 'dart:async';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
+import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 import 'package:tabashir/core/di/injection.dart';
-import 'package:tabashir/core/services/auth_session_service.dart';
 import 'package:tabashir/core/services/google_signin_service.dart';
 import 'package:tabashir/core/services/apple_signin_service.dart';
 
 import '../../../../core/router/route_names.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../cubit/auth_cubit.dart';
-import '../widgets/ai_assistant_widget.dart';
-import '../widgets/forgot_password_link_widget.dart';
-import '../widgets/login_email_field_widget.dart';
 import '../widgets/login_header_widget.dart';
+import '../widgets/login_email_field_widget.dart';
 import '../widgets/login_password_field_widget.dart';
 import '../widgets/login_signin_button_widget.dart';
 import '../widgets/signup_divider_widget.dart';
 import '../widgets/signup_link_widget.dart';
 import '../widgets/social_login_button.dart';
+import '../widgets/ai_assistant_widget.dart';
 
 /// Login screen for Tabashir application
-/// Path: lib/features/auth/presentation/screens/login_screen.dart
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
 
@@ -37,8 +36,6 @@ class _LoginScreenState extends State<LoginScreen> {
   void initState() {
     super.initState();
     _authCubit = getIt<AuthCubit>();
-
-    // Pre-fill with test credentials for testing purposes
     _emailController.text = 'profiletest@tabashir.com';
     _passwordController.text = 'password123';
   }
@@ -57,7 +54,6 @@ class _LoginScreenState extends State<LoginScreen> {
     final email = _emailController.text.trim();
     final password = _passwordController.text;
 
-    // Validate input
     if (email.isEmpty || password.isEmpty) {
       _showMessage('Please fill in all fields'.tr());
       return;
@@ -70,12 +66,8 @@ class _LoginScreenState extends State<LoginScreen> {
 
     try {
       await _authCubit.login(email: email, password: password);
-
-      // Check the state after login
       final state = _authCubit.state;
-      if (state.status == AuthStatus.loginSuccess) {
-        // Token is already set in AuthCubit, the router's refreshListenable will redirect to main app.
-      } else if (state.status == AuthStatus.error) {
+      if (state.status == AuthStatus.error) {
         _showMessage(
           state.errorMessage.isNotEmpty
               ? state.errorMessage
@@ -87,134 +79,200 @@ class _LoginScreenState extends State<LoginScreen> {
     }
   }
 
-  void _showMessage(String message) {
+  void _showMessage(String message, {bool isError = true}) {
+    if (!mounted) return;
+
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(message),
-        backgroundColor: AppTheme.errorColor,
+        backgroundColor: isError ? AppTheme.errorColor : AppTheme.primaryColor,
         duration: const Duration(seconds: 3),
+        behavior: SnackBarBehavior.floating,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(AppTheme.radiusMedium.r),
+        ),
+        margin: EdgeInsets.all(AppTheme.spacingMd.w),
       ),
     );
+  }
+
+  /// Handles errors from social sign-in providers
+  /// Distinguishes between user cancellation and actual errors
+  void _handleSocialSignInError(Object error, String provider) {
+    // Don't show error message for user cancellations
+    if (_isUserCancellation(error, provider)) {
+      // Silently ignore - user chose to cancel
+      return;
+    }
+
+    // Show user-friendly error message for actual errors
+    final message = _getFriendlyErrorMessage(error, provider);
+    _showMessage(message);
+  }
+
+  /// Check if the error is due to user cancelling the auth dialog
+  bool _isUserCancellation(Object error, String provider) {
+    // Apple Sign-In cancellation
+    if (error is AuthorizationErrorCode) {
+      return true;
+    }
+
+    // Google Sign-In cancellation (PlatformException with specific code)
+    final errorString = error.toString().toLowerCase();
+    if (errorString.contains('sign_in_canceled') ||
+        errorString.contains('cancelled') ||
+        errorString.contains('canceled') ||
+        errorString.contains('12501')) {
+      // Google Sign-In cancel code
+      return true;
+    }
+
+    return false;
+  }
+
+  /// Get a user-friendly error message
+  String _getFriendlyErrorMessage(Object error, String provider) {
+    final errorString = error.toString();
+
+    // Network errors
+    if (errorString.contains('socket') ||
+        errorString.contains('network') ||
+        errorString.contains('connection')) {
+      return 'Unable to connect. Please check your internet connection.'.tr();
+    }
+
+    // Account errors
+    if (errorString.contains('no account')) {
+      return 'No $provider account found. Please try another sign-in method.'
+          .tr();
+    }
+
+    // Permission errors
+    if (errorString.contains('permission') ||
+        errorString.contains('access denied')) {
+      return '$provider permission denied. Please enable permissions in settings.'
+          .tr();
+    }
+
+    // Generic error with provider name
+    return 'Unable to sign in with $provider. Please try again.'.tr();
   }
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final colorScheme = theme.colorScheme;
 
     return BlocProvider.value(
       value: _authCubit,
       child: Scaffold(
-        backgroundColor: colorScheme.surface,
-        body: SafeArea(
-          child: Center(
-            child: SingleChildScrollView(
-              padding: EdgeInsets.symmetric(
-                horizontal: AppTheme.spacingMd.w,
-                vertical: AppTheme.spacingXl.h,
-              ),
-              child: ConstrainedBox(
-                constraints: BoxConstraints(maxWidth: 448.w),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    // Header Section
-                    const LoginHeaderWidget(),
-                    SizedBox(height: AppTheme.spacingLg.h),
+        body: Container(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [
+                AppTheme.primaryColor.withOpacity(0.08),
+                theme.scaffoldBackgroundColor,
+              ],
+            ),
+          ),
+          child: SafeArea(
+            child: LayoutBuilder(
+              builder: (context, constraints) => SingleChildScrollView(
+                padding: EdgeInsets.symmetric(
+                  horizontal: AppTheme.spacingLg.w,
+                  vertical: AppTheme.spacingMd.h,
+                ),
+                child: ConstrainedBox(
+                  constraints: BoxConstraints(maxWidth: 448.w),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      // Compact Header
+                      SizedBox(height: AppTheme.spacingMd.h),
+                      const LoginHeaderWidget(),
+                      SizedBox(height: AppTheme.spacingLg.h),
 
-                    // Social Login Buttons
-                    // TO ACTIVATE: Uncomment the code below and import GoogleSignInService
-                    SocialLoginButton(
-                      platform: SocialPlatform.google,
-                      text: 'Sign in with Google'.tr(),
-                      onPressed: () async {
-                        try {
-                          await getIt<GoogleSignInService>().signIn();
-                          // The router's refreshListenable will automatically redirect
-                        } catch (e) {
-                          _showMessage('Google sign-in failed: $e');
-                        }
-                      },
-                      useAppTheme: false, // Use login-specific styling
-                    ),
-                    SizedBox(height: AppTheme.spacingSm.h),
-                    // Apple Sign-In configured for production
-                    // Uses ae.tabashir bundle ID with custom backend API
-                    SocialLoginButton(
-                      platform: SocialPlatform.apple,
-                      text: 'Sign in with Apple'.tr(),
-                      onPressed: () async {
-                        try {
-                          await AppleSignInService.instance.signIn();
-                          // Backend verification complete, JWT stored in AuthSessionService
-                          // The router's refreshListenable will automatically redirect
-                        } catch (e) {
-                          _showMessage('Apple sign-in failed: $e');
-                        }
-                      },
-                      useAppTheme: false, // Use login-specific styling
-                    ),
-                    SizedBox(height: AppTheme.spacingLg.h),
+                      // Social Login - Compact
+                      SocialLoginButton(
+                        platform: SocialPlatform.google,
+                        text: 'Sign in with Google'.tr(),
+                        onPressed: () async {
+                          try {
+                            await getIt<GoogleSignInService>().signIn();
+                            // Success - router will handle navigation
+                          } catch (e) {
+                            _handleSocialSignInError(e, 'Google');
+                          }
+                        },
+                        useAppTheme: false,
+                      ),
+                      SizedBox(height: AppTheme.spacingSm.h),
+                      SocialLoginButton(
+                        platform: SocialPlatform.apple,
+                        text: 'Sign in with Apple'.tr(),
+                        onPressed: () async {
+                          try {
+                            await AppleSignInService.instance.signIn();
+                            // Success - router will handle navigation
+                          } catch (e) {
+                            _handleSocialSignInError(e, 'Apple');
+                          }
+                        },
+                        useAppTheme: false,
+                      ),
+                      SizedBox(height: AppTheme.spacingMd.h),
 
-                    // Divider with 'or'.tr() text
-                    const SignupDividerWidget(),
-                    SizedBox(height: AppTheme.spacingLg.h),
+                      // Divider
+                      const SignupDividerWidget(),
+                      SizedBox(height: AppTheme.spacingMd.h),
 
-                    // Email Input
-                    LoginEmailFieldWidget(
-                      controller: _emailController,
-                    ),
-                    SizedBox(height: AppTheme.spacingMd.h),
+                      // Form Fields
+                      LoginEmailFieldWidget(
+                        controller: _emailController,
+                      ),
+                      SizedBox(height: AppTheme.spacingSm.h),
+                      LoginPasswordFieldWidget(
+                        controller: _passwordController,
+                        isPasswordVisible: _isPasswordVisible,
+                        onTogglePasswordVisibility: (isVisible) {
+                          setState(() {
+                            _isPasswordVisible = isVisible;
+                          });
+                        },
+                      ),
+                      SizedBox(height: AppTheme.spacingMd.h),
 
-                    // Password Input
-                    LoginPasswordFieldWidget(
-                      controller: _passwordController,
-                      isPasswordVisible: _isPasswordVisible,
-                      onTogglePasswordVisibility: (isVisible) {
-                        setState(() {
-                          _isPasswordVisible = isVisible;
-                        });
-                      },
-                    ),
-                    SizedBox(height: AppTheme.spacingMd.h),
+                      // Sign In Button
+                      BlocBuilder<AuthCubit, AuthState>(
+                        builder: (context, state) {
+                          final isLoading = state.status == AuthStatus.loading;
+                          return LoginSigninButtonWidget(
+                            onPressed: isLoading ? null : _handleSignIn,
+                            isLoading: isLoading,
+                          );
+                        },
+                      ),
+                      SizedBox(height: AppTheme.spacingSm.h),
 
-                    // Forgot Password Link
-                    ForgotPasswordLinkWidget(
-                      onPressed: () {
-                        // Navigate to forgot password
-                      },
-                    ),
-                    SizedBox(height: AppTheme.spacingMd.h),
+                      // AI Assistant - Compact
+                      AIAssistantWidget(
+                        message:
+                            'Your AI assistant is ready to resume your job search.'
+                                .tr(),
+                        useAppTheme: false,
+                      ),
+                      SizedBox(height: AppTheme.spacingMd.h),
 
-                    // Sign In Button
-                    BlocBuilder<AuthCubit, AuthState>(
-                      builder: (context, state) {
-                        final isLoading = state.status == AuthStatus.loading;
-                        return LoginSigninButtonWidget(
-                          onPressed: isLoading ? null : _handleSignIn,
-                          isLoading: isLoading,
-                        );
-                      },
-                    ),
-                    SizedBox(height: AppTheme.spacingMd.h),
-
-                    // AI Assistant Info Banner
-                    AIAssistantWidget(
-                      message:
-                          'Your AI assistant is ready to resume your job search.'
-                              .tr(),
-                      useAppTheme: false, // Use login-specific styling
-                    ),
-                    SizedBox(height: AppTheme.spacingLg.h),
-
-                    // Sign Up Link
-                    SignupLinkWidget(
-                      onTap: () {
-                        context.pushReplacement(RouteNames.register);
-                      },
-                    ),
-                  ],
+                      // Sign Up Link - Always visible at bottom
+                      SignupLinkWidget(
+                        onTap: () {
+                          context.pushReplacement(RouteNames.register);
+                        },
+                      ),
+                      SizedBox(height: AppTheme.spacingMd.h),
+                    ],
+                  ),
                 ),
               ),
             ),

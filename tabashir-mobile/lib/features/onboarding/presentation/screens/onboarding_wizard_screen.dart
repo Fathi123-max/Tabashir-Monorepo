@@ -45,98 +45,88 @@ class _OnboardingWizardScreenState extends State<OnboardingWizardScreen> {
   }
 
   @override
-  Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) => getIt<OnboardingWizardCubit>(),
-      child: BlocListener<OnboardingWizardCubit, OnboardingWizardState>(
-        listenWhen: (previous, current) =>
-            previous.currentStep != current.currentStep,
-        listener: (context, state) {
-          _onStepChanged(state.currentStep);
+  Widget build(BuildContext context) => BlocProvider(
+    create: (context) => getIt<OnboardingWizardCubit>(),
+    child: BlocListener<OnboardingWizardCubit, OnboardingWizardState>(
+      listenWhen: (previous, current) =>
+          previous.currentStep != current.currentStep,
+      listener: (context, state) {
+        _onStepChanged(state.currentStep);
 
-          if (state.submissionResult != null) {
-            // Navigate to results or home
-            context.go('/');
-          }
-        },
-        child: Scaffold(
-          body: Container(
-            decoration: BoxDecoration(
-              gradient: AppTheme.primaryGradient,
-            ),
-            child: SafeArea(
-              child: Column(
-                children: [
-                  _buildHeader(context),
-                  _buildProgressBar(),
-                  Expanded(
-                    child:
-                        BlocBuilder<
-                          OnboardingWizardCubit,
-                          OnboardingWizardState
-                        >(
-                          builder: (context, state) {
-                            return PageView(
-                              controller: _pageController,
-                              physics: const NeverScrollableScrollPhysics(),
-                              children: [
-                                _ResumeUploadStep(),
-                                _TargetRolesStep(),
-                                _LocationStep(),
-                                _PersonalDetailsStep(),
-                                _ProcessingStep(),
-                              ],
-                            );
-                          },
+        if (state.submissionResult != null) {
+          // Navigate to results or home
+          context.go('/');
+        }
+      },
+      child: Scaffold(
+        body: Container(
+          decoration: BoxDecoration(
+            gradient: AppTheme.primaryGradient,
+          ),
+          child: SafeArea(
+            child: Column(
+              children: [
+                _buildHeader(context),
+                _buildProgressBar(),
+                Expanded(
+                  child:
+                      BlocBuilder<OnboardingWizardCubit, OnboardingWizardState>(
+                        builder: (context, state) => PageView(
+                          controller: _pageController,
+                          physics: const NeverScrollableScrollPhysics(),
+                          children: [
+                            _ResumeUploadStep(),
+                            _TargetRolesStep(),
+                            _LocationStep(),
+                            _PersonalDetailsStep(),
+                            _ProcessingStep(),
+                          ],
                         ),
-                  ),
-                  _buildFooter(),
-                ],
-              ),
+                      ),
+                ),
+                _buildFooter(),
+              ],
             ),
           ),
         ),
       ),
-    );
-  }
+    ),
+  );
 
-  Widget _buildHeader(BuildContext context) {
-    return Padding(
-      padding: EdgeInsets.all(20.w),
-      child: Row(
-        children: [
-          BlocBuilder<OnboardingWizardCubit, OnboardingWizardState>(
-            builder: (context, state) {
-              if (state.currentStep > 1 && state.currentStep < 5) {
-                return IconButton(
-                  icon: const Icon(Icons.arrow_back, color: Colors.white),
-                  onPressed: () =>
-                      context.read<OnboardingWizardCubit>().previousStep(),
-                );
-              }
-              return const SizedBox.shrink();
-            },
+  Widget _buildHeader(BuildContext context) => Padding(
+    padding: EdgeInsets.all(20.w),
+    child: Row(
+      children: [
+        BlocBuilder<OnboardingWizardCubit, OnboardingWizardState>(
+          builder: (context, state) {
+            if (state.currentStep > 1 && state.currentStep < 5) {
+              return IconButton(
+                icon: const Icon(Icons.arrow_back, color: Colors.white),
+                onPressed: () =>
+                    context.read<OnboardingWizardCubit>().previousStep(),
+              );
+            }
+            return const SizedBox.shrink();
+          },
+        ),
+        const Spacer(),
+        Text(
+          'Onboarding',
+          style: TextStyle(
+            color: Colors.white,
+            fontSize: 20.sp,
+            fontWeight: FontWeight.bold,
           ),
-          const Spacer(),
-          Text(
-            'Onboarding',
-            style: TextStyle(
-              color: Colors.white,
-              fontSize: 20.sp,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          const Spacer(),
-          const SizedBox(width: 48), // To balance the back button
-        ],
-      ),
-    );
-  }
+        ),
+        const Spacer(),
+        const SizedBox(width: 48), // To balance the back button
+      ],
+    ),
+  );
 
-  Widget _buildProgressBar() {
-    return BlocBuilder<OnboardingWizardCubit, OnboardingWizardState>(
-      builder: (context, state) {
-        return Container(
+  Widget _buildProgressBar() =>
+      BlocBuilder<OnboardingWizardCubit, OnboardingWizardState>(
+        builder: (context, state) => Container(
           height: 4.h,
           margin: EdgeInsets.symmetric(horizontal: 20.w),
           decoration: BoxDecoration(
@@ -160,88 +150,85 @@ class _OnboardingWizardScreenState extends State<OnboardingWizardScreen> {
               ),
             ],
           ),
-        );
-      },
-    );
-  }
+        ),
+      );
 
-  Widget _buildFooter() {
-    return BlocBuilder<OnboardingWizardCubit, OnboardingWizardState>(
-      builder: (context, state) {
-        if (state.currentStep == 5) return const SizedBox.shrink();
+  Widget _buildFooter() =>
+      BlocBuilder<OnboardingWizardCubit, OnboardingWizardState>(
+        builder: (context, state) {
+          if (state.currentStep == 5) return const SizedBox.shrink();
 
-        return Padding(
-          padding: EdgeInsets.all(20.w),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              if (state.currentStep > 1)
-                TextButton(
-                  onPressed: () =>
-                      context.read<OnboardingWizardCubit>().previousStep(),
-                  child: Text(
-                    'Back',
-                    style: TextStyle(
-                      color: Colors.white.withOpacity(0.7),
-                      fontSize: 16.sp,
+          return Padding(
+            padding: EdgeInsets.all(20.w),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                if (state.currentStep > 1)
+                  TextButton(
+                    onPressed: () =>
+                        context.read<OnboardingWizardCubit>().previousStep(),
+                    child: Text(
+                      'Back',
+                      style: TextStyle(
+                        color: Colors.white.withOpacity(0.7),
+                        fontSize: 16.sp,
+                      ),
                     ),
-                  ),
-                )
-              else
-                const SizedBox.shrink(),
+                  )
+                else
+                  const SizedBox.shrink(),
 
-              if (state.currentStep < 4 && state.currentStep > 1)
-                ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: AppTheme.accentColor,
-                    padding: EdgeInsets.symmetric(
-                      horizontal: 32.w,
-                      vertical: 12.h,
+                if (state.currentStep < 4 && state.currentStep > 1)
+                  ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: AppTheme.accentColor,
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 32.w,
+                        vertical: 12.h,
+                      ),
+                    ),
+                    onPressed: () =>
+                        context.read<OnboardingWizardCubit>().nextStep(),
+                    child: Text(
+                      'Next',
+                      style: TextStyle(
+                        fontSize: 16.sp,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  )
+                else if (state.currentStep == 4)
+                  ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: AppTheme.accentColor,
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 32.w,
+                        vertical: 12.h,
+                      ),
+                    ),
+                    onPressed: () => context
+                        .read<OnboardingWizardCubit>()
+                        .submitOnboarding(),
+                    child: Text(
+                      'Finish',
+                      style: TextStyle(
+                        fontSize: 16.sp,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ),
-                  onPressed: () =>
-                      context.read<OnboardingWizardCubit>().nextStep(),
-                  child: Text(
-                    'Next',
-                    style: TextStyle(
-                      fontSize: 16.sp,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                )
-              else if (state.currentStep == 4)
-                ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: AppTheme.accentColor,
-                    padding: EdgeInsets.symmetric(
-                      horizontal: 32.w,
-                      vertical: 12.h,
-                    ),
-                  ),
-                  onPressed: () =>
-                      context.read<OnboardingWizardCubit>().submitOnboarding(),
-                  child: Text(
-                    'Finish',
-                    style: TextStyle(
-                      fontSize: 16.sp,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-            ],
-          ),
-        );
-      },
-    );
-  }
+              ],
+            ),
+          );
+        },
+      );
 }
 
 class _ResumeUploadStep extends StatelessWidget {
   @override
-  Widget build(BuildContext context) {
-    return BlocBuilder<OnboardingWizardCubit, OnboardingWizardState>(
-      builder: (context, state) {
-        return Padding(
+  Widget build(BuildContext context) =>
+      BlocBuilder<OnboardingWizardCubit, OnboardingWizardState>(
+        builder: (context, state) => Padding(
           padding: EdgeInsets.all(24.w),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -302,10 +289,8 @@ class _ResumeUploadStep extends StatelessWidget {
               ],
             ],
           ),
-        );
-      },
-    );
-  }
+        ),
+      );
 }
 
 class _TargetRolesStep extends StatefulWidget {
@@ -331,10 +316,9 @@ class _TargetRolesStepState extends State<_TargetRolesStep> {
   }
 
   @override
-  Widget build(BuildContext context) {
-    return BlocBuilder<OnboardingWizardCubit, OnboardingWizardState>(
-      builder: (context, state) {
-        return Padding(
+  Widget build(BuildContext context) =>
+      BlocBuilder<OnboardingWizardCubit, OnboardingWizardState>(
+        builder: (context, state) => Padding(
           padding: EdgeInsets.all(24.w),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -416,32 +400,31 @@ class _TargetRolesStepState extends State<_TargetRolesStep> {
                   child: Wrap(
                     spacing: 12.w,
                     runSpacing: 12.h,
-                    children: state.suggestedRoles.map((role) {
-                      return RoleChip(
-                        role: TargetRoleModel(id: role, title: role),
-                        isSelected: state.selectedRoles.contains(role),
-                        onTap: () => context
-                            .read<OnboardingWizardCubit>()
-                            .toggleRole(role),
-                      );
-                    }).toList(),
+                    children: state.suggestedRoles
+                        .map(
+                          (role) => RoleChip(
+                            role: TargetRoleModel(id: role, title: role),
+                            isSelected: state.selectedRoles.contains(role),
+                            onTap: () => context
+                                .read<OnboardingWizardCubit>()
+                                .toggleRole(role),
+                          ),
+                        )
+                        .toList(),
                   ),
                 ),
               ),
             ],
           ),
-        );
-      },
-    );
-  }
+        ),
+      );
 }
 
 class _LocationStep extends StatelessWidget {
   @override
-  Widget build(BuildContext context) {
-    return BlocBuilder<OnboardingWizardCubit, OnboardingWizardState>(
-      builder: (context, state) {
-        return Padding(
+  Widget build(BuildContext context) =>
+      BlocBuilder<OnboardingWizardCubit, OnboardingWizardState>(
+        builder: (context, state) => Padding(
           padding: EdgeInsets.all(24.w),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -486,10 +469,8 @@ class _LocationStep extends StatelessWidget {
               ),
             ],
           ),
-        );
-      },
-    );
-  }
+        ),
+      );
 }
 
 class _PersonalDetailsStep extends StatelessWidget {
@@ -502,14 +483,16 @@ class _PersonalDetailsStep extends StatelessWidget {
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
       builder: (context) {
-        String searchQuery = '';
+        var searchQuery = '';
         return StatefulBuilder(
           builder: (context, setState) {
-            final filteredCountries = worldCountries.entries.where((entry) {
-              return entry.value.toLowerCase().contains(
-                searchQuery.toLowerCase(),
-              );
-            }).toList();
+            final filteredCountries = worldCountries.entries
+                .where(
+                  (entry) => entry.value.toLowerCase().contains(
+                    searchQuery.toLowerCase(),
+                  ),
+                )
+                .toList();
 
             return Container(
               height: MediaQuery.of(context).size.height * 0.75,
@@ -585,10 +568,9 @@ class _PersonalDetailsStep extends StatelessWidget {
   }
 
   @override
-  Widget build(BuildContext context) {
-    return BlocBuilder<OnboardingWizardCubit, OnboardingWizardState>(
-      builder: (context, state) {
-        return Padding(
+  Widget build(BuildContext context) =>
+      BlocBuilder<OnboardingWizardCubit, OnboardingWizardState>(
+        builder: (context, state) => Padding(
           padding: EdgeInsets.all(24.w),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -671,18 +653,15 @@ class _PersonalDetailsStep extends StatelessWidget {
               ),
             ],
           ),
-        );
-      },
-    );
-  }
+        ),
+      );
 }
 
 class _ProcessingStep extends StatelessWidget {
   @override
-  Widget build(BuildContext context) {
-    return BlocBuilder<OnboardingWizardCubit, OnboardingWizardState>(
-      builder: (context, state) {
-        return Padding(
+  Widget build(BuildContext context) =>
+      BlocBuilder<OnboardingWizardCubit, OnboardingWizardState>(
+        builder: (context, state) => Padding(
           padding: EdgeInsets.all(24.w),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -778,8 +757,6 @@ class _ProcessingStep extends StatelessWidget {
               ],
             ],
           ),
-        );
-      },
-    );
-  }
+        ),
+      );
 }

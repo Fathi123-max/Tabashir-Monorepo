@@ -31,7 +31,6 @@ class ProfileCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(AppTheme.radiusLarge.r),
         border: Border.all(
           color: theme.colorScheme.outline.withOpacity(0.1),
-          width: 1,
         ),
         boxShadow: [
           BoxShadow(
@@ -73,14 +72,16 @@ class ProfileCard extends StatelessWidget {
                                     return Icon(
                                       Icons.person,
                                       size: 36.sp,
-                                      color: theme.colorScheme.onPrimaryContainer,
+                                      color:
+                                          theme.colorScheme.onPrimaryContainer,
                                     );
                                   },
-                              errorBuilder: (context, error, stackTrace) => Icon(
-                                Icons.person,
-                                size: 36.sp,
-                                color: theme.colorScheme.onPrimaryContainer,
-                              ),
+                              errorBuilder: (context, error, stackTrace) =>
+                                  Icon(
+                                    Icons.person,
+                                    size: 36.sp,
+                                    color: theme.colorScheme.onPrimaryContainer,
+                                  ),
                             )
                           : Icon(
                               Icons.person,
@@ -170,8 +171,9 @@ class ProfileCard extends StatelessWidget {
                             AppTheme.radiusFull.r,
                           ),
                           border: Border.all(
-                            color: _getUserTypeColor(userType!).withOpacity(0.3),
-                            width: 1,
+                            color: _getUserTypeColor(
+                              userType!,
+                            ).withOpacity(0.3),
                           ),
                         ),
                         child: Text(
@@ -199,7 +201,6 @@ class ProfileCard extends StatelessWidget {
               borderRadius: BorderRadius.circular(AppTheme.radiusMedium.r),
               border: Border.all(
                 color: AppTheme.primaryColor.withOpacity(0.15),
-                width: 1,
               ),
             ),
             child: Column(

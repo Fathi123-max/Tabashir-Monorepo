@@ -370,7 +370,7 @@ class HomeRepositoryImpl implements HomeRepository {
         if (matchPctRaw == null || matchPctRaw.isEmpty) {
           matchPct = 0;
         } else {
-          final cleaned = matchPctRaw.replaceAll(RegExp(r'[^0-9]'), '');
+          final cleaned = matchPctRaw.replaceAll(RegExp('[^0-9]'), '');
           matchPct = cleaned.isEmpty ? 0 : int.parse(cleaned);
         }
         // Use jobId from either 'id' or 'job_id' field

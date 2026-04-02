@@ -13,7 +13,8 @@ class JobMatchService {
     if (matchValue is String) {
       if (matchValue.isEmpty) return '50% Match';
       // If it already has % or Match, return as is
-      if (matchValue.contains('%') || matchValue.toLowerCase().contains('match')) {
+      if (matchValue.contains('%') ||
+          matchValue.toLowerCase().contains('match')) {
         return matchValue;
       }
       return '$matchValue% Match';

@@ -9,12 +9,11 @@ import 'package:tabashir/core/theme/app_theme.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class ResumeSuccessScreen extends StatelessWidget {
-  final ResumeItem resume;
-
   const ResumeSuccessScreen({
-    super.key,
     required this.resume,
+    super.key,
   });
+  final ResumeItem resume;
 
   @override
   Widget build(BuildContext context) {
@@ -82,7 +81,6 @@ class ResumeSuccessScreen extends StatelessWidget {
                         resume.originalUrl!.isNotEmpty)
                     ? () => _shareWordFile(context)
                     : null,
-                isPrimary: false,
               ),
               SizedBox(height: 16.h),
               _buildActionButton(
@@ -90,7 +88,6 @@ class ResumeSuccessScreen extends StatelessWidget {
                 icon: Icons.inventory_2_outlined,
                 label: 'Go to Vault'.tr(),
                 onTap: () => context.go(RouteNames.resumeVault),
-                isPrimary: false,
               ),
               SizedBox(height: 32.h),
               TextButton(

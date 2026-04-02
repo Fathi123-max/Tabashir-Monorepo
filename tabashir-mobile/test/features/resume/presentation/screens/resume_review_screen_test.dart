@@ -24,9 +24,7 @@ void main() {
     getIt.registerFactory<ResumeReviewCubit>(() => mockResumeReviewCubit);
   });
 
-  tearDown(() {
-    getIt.reset();
-  });
+  tearDown(getIt.reset);
 
   final testData = {
     'fullName': 'John Doe',
@@ -34,17 +32,15 @@ void main() {
     'skills': ['Flutter', 'Dart'],
   };
 
-  Widget buildTestWidget() {
-    return ScreenUtilInit(
-      designSize: const Size(375, 812),
-      builder: (context, child) => MaterialApp(
-        home: BlocProvider.value(
-          value: mockResumeReviewCubit,
-          child: const ResumeReviewScreen(),
-        ),
+  Widget buildTestWidget() => ScreenUtilInit(
+    designSize: const Size(375, 812),
+    builder: (context, child) => MaterialApp(
+      home: BlocProvider.value(
+        value: mockResumeReviewCubit,
+        child: const ResumeReviewScreen(),
       ),
-    );
-  }
+    ),
+  );
 
   testWidgets('ResumeReviewScreen renders all sections', (tester) async {
     when(mockResumeReviewCubit.state).thenReturn(
@@ -62,7 +58,7 @@ void main() {
     final summaryFinder = find.text('Summary');
     await tester.scrollUntilVisible(
       summaryFinder,
-      100.0,
+      100,
       scrollable: scrollable,
     );
     expect(summaryFinder, findsOneWidget);
@@ -70,7 +66,7 @@ void main() {
     final experienceFinder = find.text('Experience');
     await tester.scrollUntilVisible(
       experienceFinder,
-      100.0,
+      100,
       scrollable: scrollable,
     );
     expect(experienceFinder, findsOneWidget);
@@ -78,7 +74,7 @@ void main() {
     final educationFinder = find.text('Education');
     await tester.scrollUntilVisible(
       educationFinder,
-      100.0,
+      100,
       scrollable: scrollable,
     );
     expect(educationFinder, findsOneWidget);
@@ -86,7 +82,7 @@ void main() {
     final skillsFinder = find.text('Skills');
     await tester.scrollUntilVisible(
       skillsFinder,
-      100.0,
+      100,
       scrollable: scrollable,
     );
     expect(skillsFinder, findsOneWidget);
@@ -96,7 +92,7 @@ void main() {
     tester,
   ) async {
     when(mockResumeReviewCubit.state).thenReturn(
-      const ResumeReviewState(data: {}),
+      const ResumeReviewState(),
     );
 
     await tester.pumpWidget(buildTestWidget());

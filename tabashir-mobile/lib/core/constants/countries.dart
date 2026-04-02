@@ -41,7 +41,7 @@ const Map<String, String> worldCountries = {
   'cg': 'Congo (Brazzaville)',
   'cd': 'Congo (Kinshasa)',
   'cr': 'Costa Rica',
-  'ci': 'Côte d\'Ivoire',
+  'ci': "Côte d'Ivoire",
   'hr': 'Croatia',
   'cu': 'Cuba',
   'cy': 'Cyprus',

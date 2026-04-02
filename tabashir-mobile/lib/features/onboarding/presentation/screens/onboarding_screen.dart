@@ -66,56 +66,71 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                 },
               ),
             ),
+            // Enhanced Page Indicators
+            _buildPageIndicators(),
+            SizedBox(height: AppTheme.spacingLg.h),
+            // Enhanced Get Started Button
             Padding(
-              padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 16.h),
-              child: Column(
-                children: [
-                  _buildPageIndicators(),
-                  SizedBox(height: 20.h),
-                  OnboardingNextButton(
-                    label: _currentPage == pages.length - 1
-                        ? 'Get Started'.tr()
-                        : 'Next'.tr(),
-                    onPressed: () async {
-                      if (_currentPage < pages.length - 1) {
-                        _controller.nextPage(
-                          duration: const Duration(milliseconds: 400),
-                          curve: Curves.easeInOut,
-                        );
-                      } else {
-                        // Mark onboarding as completed
-                        final prefs = await SharedPreferences.getInstance();
-                        await prefs.setBool('has_completed_onboarding', true);
+              padding: EdgeInsets.symmetric(
+                horizontal: AppTheme.spacingLg.w,
+                vertical: AppTheme.spacingMd.h,
+              ),
+              child: OnboardingNextButton(
+                label: _currentPage == pages.length - 1
+                    ? 'Get Started'.tr()
+                    : 'Next'.tr(),
+                onPressed: () async {
+                  if (_currentPage < pages.length - 1) {
+                    _controller.nextPage(
+                      duration: const Duration(milliseconds: 400),
+                      curve: Curves.easeInOut,
+                    );
+                  } else {
+                    // Mark onboarding as completed
+                    final prefs = await SharedPreferences.getInstance();
+                    await prefs.setBool('has_completed_onboarding', true);
 
-                        // Navigate to login screen after onboarding completion
-                        context.go('/login');
-                      }
-                    },
-                  ),
-                ],
+                    // Navigate to login screen after onboarding completion
+                    context.go('/login');
+                  }
+                },
               ),
             ),
+            SizedBox(height: AppTheme.spacingXl.h),
           ],
         ),
       ),
     ),
   );
 
-  Widget _buildPageIndicators() => Row(
-    mainAxisAlignment: MainAxisAlignment.center,
-    children: List.generate(pages.length, (index) {
-      final isActive = index == _currentPage;
-      return AnimatedContainer(
-        duration: const Duration(milliseconds: 300),
-        margin: EdgeInsets.symmetric(horizontal: 4.w),
-        height: 8.h,
-        width: isActive ? 24.w : 8.w,
-        decoration: BoxDecoration(
-          color: isActive ? const Color(0xFF0D57E1) : const Color(0xFF94A3B8),
-          borderRadius: BorderRadius.circular(12.r),
-        ),
-      );
-    }),
+  Widget _buildPageIndicators() => Padding(
+    padding: EdgeInsets.symmetric(vertical: AppTheme.spacingMd.h),
+    child: Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: List.generate(pages.length, (index) {
+        final isActive = index == _currentPage;
+        return AnimatedContainer(
+          duration: const Duration(milliseconds: 300),
+          margin: EdgeInsets.symmetric(horizontal: 6.w),
+          width: isActive ? 32.w : 8.w,
+          height: 8.h,
+          decoration: BoxDecoration(
+            gradient: isActive ? AppTheme.primaryGradient : null,
+            color: isActive ? null : Colors.white.withOpacity(0.3),
+            borderRadius: BorderRadius.circular(12.r),
+            boxShadow: isActive
+                ? [
+                    BoxShadow(
+                      color: AppTheme.primaryColor.withOpacity(0.4),
+                      blurRadius: 8,
+                      offset: const Offset(0, 2),
+                    ),
+                  ]
+                : null,
+          ),
+        );
+      }),
+    ),
   );
 
   IconData _getMaterialIcon(String name) {

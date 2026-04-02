@@ -53,7 +53,6 @@ class JobCard extends StatelessWidget {
           borderRadius: BorderRadius.circular(AppTheme.radiusDefault.r),
           border: Border.all(
             color: theme.colorScheme.outline.withOpacity(0.1),
-            width: 1,
           ),
           boxShadow: [
             BoxShadow(
@@ -103,7 +102,6 @@ class JobCard extends StatelessWidget {
                     borderRadius: BorderRadius.circular(AppTheme.radiusFull.r),
                     border: Border.all(
                       color: AppTheme.successColor.withOpacity(0.2),
-                      width: 1,
                     ),
                   ),
                   child: Row(

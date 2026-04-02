@@ -23,7 +23,9 @@ class HomeMatchedJobsWidget extends StatelessWidget {
         final matchedJobs = state.matchedJobsList;
 
         print('[HOME_MATCHED_WIDGET] Building widget');
-        print('[HOME_MATCHED_WIDGET] Matched jobs count from state: ${matchedJobs.length}');
+        print(
+          '[HOME_MATCHED_WIDGET] Matched jobs count from state: ${matchedJobs.length}',
+        );
         if (matchedJobs.isNotEmpty) {
           print('[HOME_MATCHED_WIDGET] First job: ${matchedJobs.first.title}');
         }
@@ -31,57 +33,6 @@ class HomeMatchedJobsWidget extends StatelessWidget {
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Padding(
-              padding: EdgeInsets.symmetric(
-                horizontal: AppTheme.spacingLg.w,
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'Matched For You',
-                        style: theme.textTheme.headlineMedium?.copyWith(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 20.sp,
-                        ),
-                      ),
-                      SizedBox(height: AppTheme.spacingXs.h),
-                      Text(
-                        'AI-powered job recommendations',
-                        style: theme.textTheme.bodySmall?.copyWith(
-                          color: theme.colorScheme.onSurfaceVariant,
-                          fontSize: 13.sp,
-                        ),
-                      ),
-                    ],
-                  ),
-                  if (matchedJobs.isNotEmpty)
-                    TextButton(
-                      onPressed: () {
-                        // Navigate to all matched jobs screen
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => const AllMatchedJobsScreen(),
-                          ),
-                        );
-                      },
-                      child: Text(
-                        'See All',
-                        style: theme.textTheme.bodyMedium?.copyWith(
-                          color: AppTheme.primaryColor,
-                          fontWeight: FontWeight.w600,
-                          fontSize: 14.sp,
-                        ),
-                      ),
-                    ),
-                ],
-              ),
-            ),
-            SizedBox(height: AppTheme.spacingMd.h),
             // Show empty state or job list
             if (matchedJobs.isEmpty)
               _buildEmptyState(theme)
@@ -91,7 +42,8 @@ class HomeMatchedJobsWidget extends StatelessWidget {
                 physics: const NeverScrollableScrollPhysics(),
                 padding: EdgeInsets.symmetric(horizontal: AppTheme.spacingLg.w),
                 itemCount: matchedJobs.length.clamp(0, 10),
-                separatorBuilder: (context, index) => SizedBox(height: AppTheme.spacingMd.h),
+                separatorBuilder: (context, index) =>
+                    SizedBox(height: AppTheme.spacingMd.h),
                 itemBuilder: (context, index) {
                   final job = matchedJobs[index];
 
@@ -107,12 +59,14 @@ class HomeMatchedJobsWidget extends StatelessWidget {
                   // Add seniority tag based on title
                   if (job.title.contains('Senior')) {
                     tags.add('Senior');
-                  } else if (job.title.contains('Junior') || job.title.contains('Junior')) {
+                  } else if (job.title.contains('Junior') ||
+                      job.title.contains('Junior')) {
                     tags.add('Junior');
                   }
 
                   // Build skills match text
-                  final skillsMatch = job.experience != null && job.experience!.isNotEmpty
+                  final skillsMatch =
+                      job.experience != null && job.experience!.isNotEmpty
                       ? '${job.experience} experience'
                       : 'AI Matched';
 
@@ -121,13 +75,15 @@ class HomeMatchedJobsWidget extends StatelessWidget {
 
                   return GestureDetector(
                     onTap: () {
-                      if (job.id != null && job.id!.isNotEmpty) {
+                      if (job.id.isNotEmpty) {
                         context.pushNamed(
                           'job-detail-screen',
-                          pathParameters: {'jobId': job.id!},
+                          pathParameters: {'jobId': job.id},
                         );
                       } else {
-                        print('[HOME_MATCHED_WIDGET] Job ID is null or empty for job: ${job.title}');
+                        print(
+                          '[HOME_MATCHED_WIDGET] Job ID is null or empty for job: ${job.title}',
+                        );
                       }
                     },
                     child: JobCard(
@@ -150,84 +106,81 @@ class HomeMatchedJobsWidget extends StatelessWidget {
     );
   }
 
-  Widget _buildEmptyState(ThemeData theme) {
-    return Container(
-      width: double.infinity,
-      padding: EdgeInsets.all(AppTheme.spacingXl.w),
-      margin: EdgeInsets.symmetric(horizontal: AppTheme.spacingLg.w),
-      decoration: BoxDecoration(
-        color: AppTheme.zinc50,
-        borderRadius: BorderRadius.circular(AppTheme.radiusLarge.r),
-        border: Border.all(
-          color: AppTheme.zinc200!,
-          width: 1,
-        ),
+  Widget _buildEmptyState(ThemeData theme) => Container(
+    width: double.infinity,
+    padding: EdgeInsets.all(AppTheme.spacingXl.w),
+    margin: EdgeInsets.symmetric(horizontal: AppTheme.spacingLg.w),
+    decoration: BoxDecoration(
+      color: AppTheme.zinc50,
+      borderRadius: BorderRadius.circular(AppTheme.radiusLarge.r),
+      border: Border.all(
+        color: AppTheme.zinc200,
       ),
-      child: Column(
-        children: [
-          Container(
-            padding: EdgeInsets.all(AppTheme.spacingMd.w),
-            decoration: BoxDecoration(
-              color: AppTheme.primaryColor.withOpacity(0.1),
-              shape: BoxShape.circle,
-            ),
-            child: Icon(
-              Icons.search_off_rounded,
-              size: 48.sp,
-              color: AppTheme.primaryColor,
-            ),
+    ),
+    child: Column(
+      children: [
+        Container(
+          padding: EdgeInsets.all(AppTheme.spacingMd.w),
+          decoration: BoxDecoration(
+            color: AppTheme.primaryColor.withOpacity(0.1),
+            shape: BoxShape.circle,
           ),
-          SizedBox(height: AppTheme.spacingLg.h),
-          Text(
-            'No Matched Jobs Yet',
-            style: theme.textTheme.titleLarge?.copyWith(
-              fontWeight: FontWeight.bold,
-              color: AppTheme.zinc700,
-              fontSize: 18.sp,
-            ),
-            textAlign: TextAlign.center,
+          child: Icon(
+            Icons.search_off_rounded,
+            size: 48.sp,
+            color: AppTheme.primaryColor,
           ),
-          SizedBox(height: AppTheme.spacingSm.h),
-          Text(
-            'We\'re finding the best jobs for you based on your profile',
-            style: theme.textTheme.bodyMedium?.copyWith(
-              color: AppTheme.zinc500,
-              fontSize: 14.sp,
-            ),
-            textAlign: TextAlign.center,
+        ),
+        SizedBox(height: AppTheme.spacingLg.h),
+        Text(
+          'No Matched Jobs Yet',
+          style: theme.textTheme.titleLarge?.copyWith(
+            fontWeight: FontWeight.bold,
+            color: AppTheme.zinc700,
+            fontSize: 18.sp,
           ),
-          SizedBox(height: AppTheme.spacingMd.h),
-          Container(
-            padding: EdgeInsets.all(AppTheme.spacingMd.w),
-            decoration: BoxDecoration(
-              color: AppTheme.primaryColor.withOpacity(0.05),
-              borderRadius: BorderRadius.circular(AppTheme.radiusMedium.r),
-            ),
-            child: Row(
-              children: [
-                Icon(
-                  Icons.lightbulb_outline_rounded,
-                  size: 20.sp,
-                  color: AppTheme.primaryColor,
-                ),
-                SizedBox(width: AppTheme.spacingSm.w),
-                Expanded(
-                  child: Text(
-                    'Tip: Complete your profile and upload your resume to get better matches',
-                    style: theme.textTheme.bodySmall?.copyWith(
-                      color: AppTheme.primaryColor,
-                      fontSize: 13.sp,
-                      fontWeight: FontWeight.w500,
-                    ),
+          textAlign: TextAlign.center,
+        ),
+        SizedBox(height: AppTheme.spacingSm.h),
+        Text(
+          "We're finding the best jobs for you based on your profile",
+          style: theme.textTheme.bodyMedium?.copyWith(
+            color: AppTheme.zinc500,
+            fontSize: 14.sp,
+          ),
+          textAlign: TextAlign.center,
+        ),
+        SizedBox(height: AppTheme.spacingMd.h),
+        Container(
+          padding: EdgeInsets.all(AppTheme.spacingMd.w),
+          decoration: BoxDecoration(
+            color: AppTheme.primaryColor.withOpacity(0.05),
+            borderRadius: BorderRadius.circular(AppTheme.radiusMedium.r),
+          ),
+          child: Row(
+            children: [
+              Icon(
+                Icons.lightbulb_outline_rounded,
+                size: 20.sp,
+                color: AppTheme.primaryColor,
+              ),
+              SizedBox(width: AppTheme.spacingSm.w),
+              Expanded(
+                child: Text(
+                  'Tip: Complete your profile and upload your resume to get better matches',
+                  style: theme.textTheme.bodySmall?.copyWith(
+                    color: AppTheme.primaryColor,
+                    fontSize: 13.sp,
+                    fontWeight: FontWeight.w500,
                   ),
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
-        ],
-      ),
-    );
-  }
+        ),
+      ],
+    ),
+  );
 
   int _generateSalaryRange() {
     // Generate a random salary range for display purposes

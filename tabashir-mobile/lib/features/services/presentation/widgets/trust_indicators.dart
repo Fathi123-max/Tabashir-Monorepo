@@ -18,7 +18,6 @@ class TrustIndicators extends StatelessWidget {
         borderRadius: BorderRadius.circular(AppTheme.radiusLarge.r),
         border: Border.all(
           color: theme.colorScheme.outline.withOpacity(0.1),
-          width: 1,
         ),
       ),
       child: Column(

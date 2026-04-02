@@ -3,9 +3,8 @@ import 'package:tabashir/features/notifications/data/models/notification_model.d
 import 'package:tabashir/features/notifications/domain/repositories/notifications_repository.dart';
 
 class NotificationsRepositoryImpl implements NotificationsRepository {
-  final NotificationApiService _apiService;
-
   NotificationsRepositoryImpl(this._apiService);
+  final NotificationApiService _apiService;
 
   @override
   Future<List<NotificationModel>> getNotifications() async {

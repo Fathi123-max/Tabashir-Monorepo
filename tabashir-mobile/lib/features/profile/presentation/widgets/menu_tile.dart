@@ -21,68 +21,73 @@ class MenuTile extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
 
-    return InkWell(
-      onTap: onTap,
-      borderRadius: BorderRadius.circular(AppTheme.radiusMedium.r),
-      child: Container(
-        padding: EdgeInsets.all(AppTheme.spacingMd.w),
-        decoration: BoxDecoration(
-          color: theme.cardTheme.color,
-          borderRadius: BorderRadius.circular(AppTheme.radiusMedium.r),
-          border: Border.all(
-            color: theme.colorScheme.outline.withOpacity(0.1),
-            width: 1,
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: AppTheme.spacingMd.w),
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(AppTheme.radiusMedium.r),
+        child: Container(
+          padding: EdgeInsets.symmetric(
+            horizontal: AppTheme.spacingMd.w,
+            vertical: AppTheme.spacingMd.h,
           ),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.04),
-              blurRadius: 8,
-              offset: const Offset(0, 2),
+          decoration: BoxDecoration(
+            color: theme.cardTheme.color,
+            borderRadius: BorderRadius.circular(AppTheme.radiusMedium.r),
+            border: Border.all(
+              color: theme.colorScheme.outline.withOpacity(0.1),
             ),
-          ],
-        ),
-        child: Row(
-          children: [
-            Container(
-              padding: EdgeInsets.all(AppTheme.spacingSm.w),
-              decoration: BoxDecoration(
-                color: showLogoutColor
-                    ? AppTheme.errorColor.withOpacity(0.1)
-                    : theme.colorScheme.primaryContainer.withOpacity(0.5),
-                borderRadius: BorderRadius.circular(AppTheme.radiusMedium.r),
-              ),
-              child: Icon(
-                icon,
-                size: 20.sp,
-                color: showLogoutColor
-                    ? AppTheme.errorColor
-                    : theme.colorScheme.onPrimaryContainer,
-              ),
-            ),
-            SizedBox(width: AppTheme.spacingMd.w),
-            Expanded(
-              child: Text(
-                text,
-                style: theme.textTheme.titleSmall?.copyWith(
-                  color: showLogoutColor
-                      ? AppTheme.errorColor
-                      : theme.colorScheme.onSurface,
-                  fontWeight: FontWeight.w600,
-                  fontSize: 15.sp,
-                ),
-              ),
-            ),
-            if (trailing != null && trailing is! SizedBox) ...[
-              SizedBox(width: AppTheme.spacingSm.w),
-              trailing!,
-            ] else ...[
-              Icon(
-                Icons.chevron_right_rounded,
-                color: theme.colorScheme.onSurfaceVariant,
-                size: 20.sp,
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.04),
+                blurRadius: 8,
+                offset: const Offset(0, 2),
               ),
             ],
-          ],
+          ),
+          child: Row(
+            children: [
+              Container(
+                padding: EdgeInsets.all(AppTheme.spacingSm.w),
+                decoration: BoxDecoration(
+                  color: showLogoutColor
+                      ? AppTheme.errorColor.withOpacity(0.1)
+                      : theme.colorScheme.primaryContainer.withOpacity(0.5),
+                  borderRadius: BorderRadius.circular(AppTheme.radiusMedium.r),
+                ),
+                child: Icon(
+                  icon,
+                  size: 20.sp,
+                  color: showLogoutColor
+                      ? AppTheme.errorColor
+                      : theme.colorScheme.onPrimaryContainer,
+                ),
+              ),
+              SizedBox(width: AppTheme.spacingMd.w),
+              Expanded(
+                child: Text(
+                  text,
+                  style: theme.textTheme.titleSmall?.copyWith(
+                    color: showLogoutColor
+                        ? AppTheme.errorColor
+                        : theme.colorScheme.onSurface,
+                    fontWeight: FontWeight.w600,
+                    fontSize: 15.sp,
+                  ),
+                ),
+              ),
+              if (trailing != null && trailing is! SizedBox) ...[
+                SizedBox(width: AppTheme.spacingSm.w),
+                trailing!,
+              ] else ...[
+                Icon(
+                  Icons.chevron_right_rounded,
+                  color: theme.colorScheme.onSurfaceVariant,
+                  size: 20.sp,
+                ),
+              ],
+            ],
+          ),
         ),
       ),
     );

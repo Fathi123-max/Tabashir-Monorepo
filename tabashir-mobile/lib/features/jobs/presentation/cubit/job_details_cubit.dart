@@ -27,11 +27,9 @@ class JobDetailsCubit extends Cubit<JobDetailsState> {
        _appliedJobsStorage = appliedJobsStorage ?? getIt<AppliedJobsStorage>(),
        _profileCubit = profileCubit,
        super(const JobDetailsState.initial()) {
-    _savedJobsSubscription = _savedJobsRepository.savedJobsStream.listen((
-      savedIds,
-    ) {
-      _updateSavedStatus(savedIds);
-    });
+    _savedJobsSubscription = _savedJobsRepository.savedJobsStream.listen(
+      _updateSavedStatus,
+    );
   }
 
   final JobDetailsService service;

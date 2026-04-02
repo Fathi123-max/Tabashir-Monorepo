@@ -25,52 +25,8 @@ class HomeAnalyticsWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
 
-    return Column(
+    return const Column(
       crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        /*
-        // Application Status Chart
-        _buildChartCard(
-          context,
-          'Application Status'.tr(),
-          Iconsax.chart,
-          _buildApplicationStatusChart(context),
-        ),
-        SizedBox(height: AppTheme.spacingMd.h),
-        */
-
-        /*
-        // Match Score Distribution
-        _buildChartCard(
-          context,
-          'Match Score Distribution'.tr(),
-          Iconsax.percentage_circle,
-          _buildMatchScoreChart(context),
-        ),
-        SizedBox(height: AppTheme.spacingMd.h),
-        */
-
-        /*
-        // Monthly Applications Trend
-        _buildChartCard(
-          context,
-          'Application Trends'.tr(),
-          Iconsax.graph,
-          _buildMonthlyTrendChart(context),
-        ),
-        SizedBox(height: AppTheme.spacingMd.h),
-        */
-
-        /*
-        // Skills Demand
-        _buildChartCard(
-          context,
-          'Skills Demand'.tr(),
-          Iconsax.code,
-          _buildSkillsDemandChart(context),
-        ),
-        */
-      ],
     );
   }
 

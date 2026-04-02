@@ -58,7 +58,7 @@ class AuthDioClient {
             ];
 
             final isAuthEndpoint = authEndpoints.any(
-              (path) => requestPath.contains(path),
+              requestPath.contains,
             );
 
             // If it's a refresh endpoint itself that failed with 401, it's a fatal session expiry

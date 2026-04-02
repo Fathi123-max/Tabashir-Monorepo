@@ -36,9 +36,7 @@ import '../services/stripe_service.dart';
 import 'module.config.dart';
 
 @InjectableInit(
-  initializerName: 'init', // by default
   preferRelativeImports: true, // by default
-  asExtension: true, // by default
 )
 void configureDependencies() => GetIt.instance.init();
 

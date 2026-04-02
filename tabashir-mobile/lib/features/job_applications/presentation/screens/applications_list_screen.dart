@@ -43,12 +43,10 @@ class _ApplicationsListScreenState extends State<ApplicationsListScreen> {
   }
 
   @override
-  Widget build(BuildContext context) {
-    return BlocProvider.value(
-      value: getIt<HomeCubit>(),
-      child: _ApplicationsListContent(scrollController: _scrollController),
-    );
-  }
+  Widget build(BuildContext context) => BlocProvider.value(
+    value: getIt<HomeCubit>(),
+    child: _ApplicationsListContent(scrollController: _scrollController),
+  );
 }
 
 class _ApplicationsListContent extends StatelessWidget {
@@ -75,7 +73,9 @@ class _ApplicationsListContent extends StatelessWidget {
 
           print('[APPLICATIONS_SCREEN] Building screen');
           print('[APPLICATIONS_SCREEN] Total applications: $totalCount');
-          print('[APPLICATIONS_SCREEN] Applied jobs count: ${appliedJobs.length}');
+          print(
+            '[APPLICATIONS_SCREEN] Applied jobs count: ${appliedJobs.length}',
+          );
           print('[APPLICATIONS_SCREEN] Is loading more: $isLoadingMore');
           print('[APPLICATIONS_SCREEN] Has more: $hasMore');
 
@@ -88,23 +88,26 @@ class _ApplicationsListContent extends StatelessWidget {
               final cubit = context.read<HomeCubit>();
               final email = cubit.state.user?.email ?? '';
               if (email.isNotEmpty) {
-                await cubit.loadAppliedJobs(email: email, page: 1, limit: 20);
+                await cubit.loadAppliedJobs(email: email);
               }
             },
             child: ListView.builder(
               controller: scrollController,
               padding: EdgeInsets.all(AppTheme.spacingMd.w),
-              itemCount: appliedJobs.length + (isLoadingMore && hasMore ? 1 : 0),
+              itemCount:
+                  appliedJobs.length + (isLoadingMore && hasMore ? 1 : 0),
               itemBuilder: (context, index) {
                 // Show loading indicator at the end
                 if (index == appliedJobs.length) {
                   return Padding(
-                    padding: EdgeInsets.symmetric(vertical: AppTheme.spacingMd.h),
+                    padding: EdgeInsets.symmetric(
+                      vertical: AppTheme.spacingMd.h,
+                    ),
                     child: Center(
                       child: SizedBox(
                         width: 24.w,
                         height: 24.h,
-                        child: CircularProgressIndicator(strokeWidth: 2),
+                        child: const CircularProgressIndicator(strokeWidth: 2),
                       ),
                     ),
                   );
@@ -120,63 +123,61 @@ class _ApplicationsListContent extends StatelessWidget {
     );
   }
 
-  Widget _buildEmptyState(ThemeData theme, BuildContext context) {
-    return Center(
-      child: Padding(
-        padding: EdgeInsets.all(AppTheme.spacingLg.w),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(
-              Icons.folder_open_rounded,
-              size: 64.sp,
-              color: AppTheme.zinc400,
+  Widget _buildEmptyState(ThemeData theme, BuildContext context) => Center(
+    child: Padding(
+      padding: EdgeInsets.all(AppTheme.spacingLg.w),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(
+            Icons.folder_open_rounded,
+            size: 64.sp,
+            color: AppTheme.zinc400,
+          ),
+          SizedBox(height: AppTheme.spacingLg.h),
+          Text(
+            'No Applications Yet',
+            style: theme.textTheme.headlineSmall?.copyWith(
+              fontWeight: FontWeight.bold,
+              color: AppTheme.zinc700,
             ),
-            SizedBox(height: AppTheme.spacingLg.h),
-            Text(
-              'No Applications Yet',
-              style: theme.textTheme.headlineSmall?.copyWith(
-                fontWeight: FontWeight.bold,
-                color: AppTheme.zinc700,
-              ),
-              textAlign: TextAlign.center,
+            textAlign: TextAlign.center,
+          ),
+          SizedBox(height: AppTheme.spacingMd.h),
+          Text(
+            'Start applying to jobs to track your applications here',
+            style: theme.textTheme.bodyMedium?.copyWith(
+              color: AppTheme.zinc500,
             ),
-            SizedBox(height: AppTheme.spacingMd.h),
-            Text(
-              'Start applying to jobs to track your applications here',
-              style: theme.textTheme.bodyMedium?.copyWith(
-                color: AppTheme.zinc500,
+            textAlign: TextAlign.center,
+          ),
+          SizedBox(height: AppTheme.spacingLg.h),
+          ElevatedButton(
+            onPressed: () {
+              context.push('/jobs');
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: AppTheme.primaryColor,
+              foregroundColor: Colors.white,
+              padding: EdgeInsets.symmetric(
+                horizontal: AppTheme.spacingLg.w,
+                vertical: AppTheme.spacingMd.h,
               ),
-              textAlign: TextAlign.center,
-            ),
-            SizedBox(height: AppTheme.spacingLg.h),
-            ElevatedButton(
-              onPressed: () {
-                context.push('/jobs');
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: AppTheme.primaryColor,
-                foregroundColor: Colors.white,
-                padding: EdgeInsets.symmetric(
-                  horizontal: AppTheme.spacingLg.w,
-                  vertical: AppTheme.spacingMd.h,
-                ),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(AppTheme.radiusMedium.r),
-                ),
-              ),
-              child: Text(
-                'Browse Jobs',
-                style: theme.textTheme.titleMedium?.copyWith(
-                  fontWeight: FontWeight.w600,
-                ),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(AppTheme.radiusMedium.r),
               ),
             ),
-          ],
-        ),
+            child: Text(
+              'Browse Jobs',
+              style: theme.textTheme.titleMedium?.copyWith(
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ),
+        ],
       ),
-    );
-  }
+    ),
+  );
 }
 
 /// Individual applied job card widget
@@ -206,8 +207,7 @@ class _AppliedJobCard extends StatelessWidget {
           color: Colors.white,
           borderRadius: BorderRadius.circular(AppTheme.radiusMedium.r),
           border: Border.all(
-            color: AppTheme.zinc200!,
-            width: 1,
+            color: AppTheme.zinc200,
           ),
           boxShadow: [
             BoxShadow(
@@ -331,7 +331,7 @@ class _AppliedJobCard extends StatelessWidget {
     } else if (lowerStatus.contains('reject')) {
       return Colors.red;
     } else {
-      return AppTheme.zinc500!;
+      return AppTheme.zinc500;
     }
   }
 

@@ -78,7 +78,8 @@ class StripeService:
         Matching the logic from tabashir-frontend/lib/payment-data.ts
         """
         prices = {
-            "ai-job-apply": 200,
+            "ai-job-apply-basic": 100,
+            "ai-job-apply-premium": 200,
             "linkedin-optimization": 60,
             "ai-linkedin-enhancement": 19,
             "ai-resume-optimization": 29,
@@ -92,7 +93,8 @@ class StripeService:
         Returns a friendly title for the service.
         """
         titles = {
-            "ai-job-apply": "AI Job Apply",
+            "ai-job-apply-basic": "AI Job Apply - Basic",
+            "ai-job-apply-premium": "AI Job Apply - Premium",
             "linkedin-optimization": "LinkedIn Optimization",
             "ai-linkedin-enhancement": "LinkedIn Profile Enhancement",
             "ai-resume-optimization": "ATS CV Optimization",

@@ -112,29 +112,35 @@ class StripeWebhook(Resource):
         return {'status': 'success'}, 200
 
     def _handle_payment_success(self, payment_intent):
-        metadata = payment_intent.get('metadata', {})
-        service_id = metadata.get('serviceId')
-        user_id = metadata.get('userId')
-        resume_id = metadata.get('resumeId')
-        
-        amount = payment_intent['amount_received'] / 100.0
-        currency = payment_intent['currency'].upper()
-        transaction_id = payment_intent['id']
-
-        logger.info(f"Processing successful payment for user {user_id}, service {service_id}")
-
         try:
+            # Stripe PaymentIntent object - use attribute access (Stripe SDK v15+)
+            # metadata is a StripeObject, convert to dict using to_dict()
+            metadata = payment_intent.metadata.to_dict() if payment_intent.metadata else {}
+            service_id = metadata.get('serviceId')
+            user_id = metadata.get('userId')
+            resume_id = metadata.get('resumeId', '')
+
+            # Access properties using attribute notation
+            amount = payment_intent.amount_received / 100.0
+            currency = str(payment_intent.currency).upper()
+            transaction_id = payment_intent.id
+
+            logger.info(f"Processing successful payment - Service: {service_id}, User: {user_id}, Amount: {amount} {currency}")
+
+            if not service_id or not user_id:
+                logger.error(f"Missing service_id or user_id in metadata: {metadata}")
+                return
+
             # 1. Create Payment record (Raw SQL)
-            # We match the database structure from Prisma
             execute_query(
                 """
-                INSERT INTO "Payment" 
-                (id, amount, currency, status, "paymentMethod", "transactionId", "paymentDate", "userId", "createdAt", "updatedAt") 
+                INSERT INTO "Payment"
+                (id, amount, currency, status, "paymentMethod", "transactionId", "paymentDate", "userId", "createdAt", "updatedAt")
                 VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
                 ON CONFLICT ("transactionId") DO UPDATE SET status = 'COMPLETED', "paymentDate" = %s
                 """,
                 (
-                    f"pay_{uuid.uuid4().hex[:12]}", 
+                    f"pay_{uuid.uuid4().hex[:12]}",
                     amount,
                     currency,
                     'COMPLETED',
@@ -148,15 +154,17 @@ class StripeWebhook(Resource):
                 ),
                 commit=True
             )
+            logger.info(f"Payment record created for transaction: {transaction_id}")
 
             # 2. Service-Specific Logic
-            if service_id == 'ai-job-apply':
-                # Increment job count
-                execute_query(
-                    'UPDATE users SET "jobCount" = "jobCount" + 200, "aiJobApplyCount" = "aiJobApplyCount" + 1 WHERE id = %s',
-                    (user_id,),
-                    commit=True
-                )
+            if service_id == 'ai-job-apply-basic':
+                logger.info(f"Processing AI Job Apply Basic for user {user_id}")
+                self._activate_job_apply(user_id, 100)
+                    
+            elif service_id == 'ai-job-apply-premium':
+                logger.info(f"Processing AI Job Apply Premium for user {user_id}")
+                self._activate_job_apply(user_id, 200)
+                    
             elif service_id == 'ai-resume-optimization' and resume_id:
                 # Update AI Resume status and record payment
                 execute_query(
@@ -218,3 +226,61 @@ class StripeWebhook(Resource):
             (status, datetime.now(), transaction_id),
             commit=True
         )
+
+    def _activate_job_apply(self, user_id, jobs_number):
+        """Activate job apply for a user with specified number of jobs"""
+        try:
+            from app.routes.resumes_namespace import get_client_cv_filename, Config as ResumesConfig
+            from app.services.cv_formatting import format_cv_from_path, convert_docx_to_pdf
+            import shutil
+
+            # Get user email
+            user_data = execute_query('SELECT email FROM users WHERE id = %s', (user_id,), fetch_one=True)
+            if not user_data or not user_data.get('email'):
+                logger.warning(f"User {user_id} email not found")
+                return
+
+            email = user_data['email']
+            logger.info(f"Activating job apply for {email} with {jobs_number} jobs")
+
+            # Get CV filename
+            filename = get_client_cv_filename(email)
+            if not filename:
+                logger.warning(f"No CV filename found for {email}")
+                return
+
+            cv_dir = ResumesConfig.CV_STORAGE_PATH
+            original_cv_path = cv_dir / filename
+
+            if not original_cv_path.exists():
+                logger.warning(f"CV file not found at {original_cv_path}")
+                return
+
+            # Format CV
+            formatted_docx = format_cv_from_path(original_cv_path)
+
+            # Convert to PDF
+            pdf_path = convert_docx_to_pdf(formatted_docx)
+
+            final_filename = pdf_path.name
+            final_path = cv_dir / final_filename
+
+            # Replace original CV
+            shutil.move(pdf_path, final_path)
+
+            # Cleanup temp DOCX
+            if formatted_docx.exists():
+                formatted_docx.unlink()
+
+            # Update DB
+            execute_query(
+                'UPDATE users SET "cvFilename" = %s, "jobCount" = "jobCount" + %s, "aiJobApplyCount" = "aiJobApplyCount" + 1 WHERE email = %s',
+                (final_filename, jobs_number, email),
+                commit=True
+            )
+
+            logger.info(f"Successfully activated job apply for {email} with {jobs_number} jobs")
+
+        except Exception as e:
+            logger.error(f"Error in _activate_job_apply: {str(e)}")
+            # Don't rethrow - we don't want to fail the entire webhook if this fails

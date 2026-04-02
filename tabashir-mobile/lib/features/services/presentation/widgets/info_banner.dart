@@ -44,7 +44,8 @@ class InfoBanner extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Users who optimize their resume get 3x more interviews.'.tr(),
+                  'Users who optimize their resume get 3x more interviews.'
+                      .tr(),
                   style: theme.textTheme.titleSmall?.copyWith(
                     fontWeight: FontWeight.w600,
                     color: Colors.white,

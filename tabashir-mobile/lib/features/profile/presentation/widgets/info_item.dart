@@ -19,43 +19,51 @@ class InfoItem extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
 
-    return Container(
-      padding: EdgeInsets.all(AppTheme.spacingMd.w),
-      decoration: BoxDecoration(
-        color: theme.cardTheme.color,
-        borderRadius: BorderRadius.circular(AppTheme.radiusMedium.r),
-        border: Border.all(
-          color: theme.colorScheme.outline.withOpacity(0.1),
-          width: 1,
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: AppTheme.spacingMd.w),
+      child: Container(
+        padding: EdgeInsets.symmetric(
+          horizontal: AppTheme.spacingMd.w,
+          vertical: AppTheme.spacingMd.h,
         ),
-      ),
-      child: Row(
-        children: [
-          Container(
-            padding: EdgeInsets.all(AppTheme.spacingSm.w),
-            decoration: BoxDecoration(
-              color: theme.colorScheme.primaryContainer.withOpacity(0.5),
-              borderRadius: BorderRadius.circular(AppTheme.radiusMedium.r),
-            ),
-            child: Icon(
-              icon,
-              size: 20.sp,
-              color: theme.colorScheme.onPrimaryContainer,
-            ),
+        decoration: BoxDecoration(
+          color: theme.cardTheme.color,
+          borderRadius: BorderRadius.circular(AppTheme.radiusMedium.r),
+          border: Border.all(
+            color: theme.colorScheme.outline.withOpacity(0.1),
           ),
-          SizedBox(width: AppTheme.spacingMd.w),
-          Expanded(
-            child: Text(
-              text,
-              style: theme.textTheme.bodyMedium?.copyWith(
-                fontWeight: FontWeight.w500,
-                fontSize: 14.sp,
-                color: theme.colorScheme.onSurface,
+        ),
+        child: Row(
+          children: [
+            Container(
+              padding: EdgeInsets.all(AppTheme.spacingSm.w),
+              decoration: BoxDecoration(
+                color: theme.colorScheme.primaryContainer.withOpacity(0.5),
+                borderRadius: BorderRadius.circular(AppTheme.radiusMedium.r),
+              ),
+              child: Icon(
+                icon,
+                size: 20.sp,
+                color: theme.colorScheme.onPrimaryContainer,
               ),
             ),
-          ),
-          if (trailing != null) trailing!,
-        ],
+            SizedBox(width: AppTheme.spacingMd.w),
+            Expanded(
+              child: Text(
+                text,
+                style: theme.textTheme.bodyMedium?.copyWith(
+                  fontWeight: FontWeight.w500,
+                  fontSize: 14.sp,
+                  color: theme.colorScheme.onSurface,
+                ),
+              ),
+            ),
+            if (trailing != null) ...[
+              SizedBox(width: AppTheme.spacingSm.w),
+              trailing!,
+            ],
+          ],
+        ),
       ),
     );
   }

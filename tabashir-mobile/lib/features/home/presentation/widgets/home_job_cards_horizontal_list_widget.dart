@@ -58,7 +58,7 @@ class _HomeJobCardsHorizontalListWidgetState
     try {
       final response = await _jobsRepository.getAppliedJobs(email: email);
       final ids = response.jobs
-          .map((job) => job.jobId?.toString() ?? '')
+          .map((job) => job.jobId ?? '')
           .where((id) => id.isNotEmpty)
           .toSet();
       setState(() {
@@ -77,56 +77,56 @@ class _HomeJobCardsHorizontalListWidgetState
 
   @override
   Widget build(BuildContext context) => BlocProvider.value(
-        value: _profileCubit,
-        child: BlocBuilder<HomeCubit, HomeState>(
-          builder: (context, homeState) {
-            // Get matched jobs from home state (fetched from AI API)
-            final matchedJobs = homeState.matchedJobsList;
+    value: _profileCubit,
+    child: BlocBuilder<HomeCubit, HomeState>(
+      builder: (context, homeState) {
+        // Get matched jobs from home state (fetched from AI API)
+        final matchedJobs = homeState.matchedJobsList;
 
-            // Show empty state if no jobs
-            if (matchedJobs.isEmpty) {
-              return Container(
-                padding: EdgeInsets.all(16.w),
-                child: Center(
-                  child: Text(
-                    'No AI matches available yet'.tr(),
-                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                          color: Theme.of(context).colorScheme.onSurfaceVariant,
-                        ),
-                  ),
+        // Show empty state if no jobs
+        if (matchedJobs.isEmpty) {
+          return Container(
+            padding: EdgeInsets.all(16.w),
+            child: Center(
+              child: Text(
+                'No AI matches available yet'.tr(),
+                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
                 ),
-              );
-            }
-
-            return SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              child: Row(
-                children: matchedJobs.map((job) {
-                  const isPrimary = false;
-
-                  return HomeJobCardWidget(
-                    title: job.title,
-                    company: job.company,
-                    employmentType: 'Full-time', // Add to model if needed
-                    level: 'Not specified',
-                    matchPercentage: _jobMatchService.formatMatchPercentage(
-                      job.matchPercentage,
-                    ),
-                    isPrimary: isPrimary,
-                    jobId: job.id,
-                    onApplyTap: () async {
-                      // All cards: Navigate to job details
-                      await context.pushNamed(
-                        'job-detail-screen',
-                        pathParameters: {'jobId': job.id},
-                      );
-                    },
-                    isApplied: _appliedJobs.contains(job.id),
-                  );
-                }).toList(),
               ),
-            );
-          },
-        ),
-      );
+            ),
+          );
+        }
+
+        return SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
+          child: Row(
+            children: matchedJobs.map((job) {
+              const isPrimary = false;
+
+              return HomeJobCardWidget(
+                title: job.title,
+                company: job.company,
+                employmentType: 'Full-time', // Add to model if needed
+                level: 'Not specified',
+                matchPercentage: _jobMatchService.formatMatchPercentage(
+                  job.matchPercentage,
+                ),
+                isPrimary: isPrimary,
+                jobId: job.id,
+                onApplyTap: () async {
+                  // All cards: Navigate to job details
+                  await context.pushNamed(
+                    'job-detail-screen',
+                    pathParameters: {'jobId': job.id},
+                  );
+                },
+                isApplied: _appliedJobs.contains(job.id),
+              );
+            }).toList(),
+          ),
+        );
+      },
+    ),
+  );
 }

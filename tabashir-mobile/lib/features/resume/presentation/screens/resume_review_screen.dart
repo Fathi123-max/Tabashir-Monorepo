@@ -35,57 +35,55 @@ class ResumeReviewScreen extends StatelessWidget {
             );
           }
         },
-        builder: (context, state) {
-          return Stack(
-            children: [
-              CustomScrollView(
-                slivers: [
-                  SliverPadding(
-                    padding: EdgeInsets.all(AppTheme.spacingMd.w),
-                    sliver: SliverList(
-                      delegate: SliverChildListDelegate([
-                        _buildHeroCard(context, state),
-                        SizedBox(height: AppTheme.spacingLg.h),
-                        _PersonalInfoSection(data: state.data),
-                        SizedBox(height: AppTheme.spacingLg.h),
-                        _SummarySection(
-                          summary: state.data['summary'] as String?,
-                        ),
-                        SizedBox(height: AppTheme.spacingLg.h),
-                        _ExperienceSection(
-                          experience:
-                              (state.data['experience'] as List?)
-                                  ?.cast<Map<String, dynamic>>() ??
-                              [],
-                        ),
-                        SizedBox(height: AppTheme.spacingLg.h),
-                        _EducationSection(
-                          education:
-                              (state.data['education'] as List?)
-                                  ?.cast<Map<String, dynamic>>() ??
-                              [],
-                        ),
-                        SizedBox(height: AppTheme.spacingLg.h),
-                        _SkillsSection(
-                          skills:
-                              (state.data['skills'] as List?)?.cast<String>() ??
-                              [],
-                        ),
-                        SizedBox(height: 100.h), // Space for footer
-                      ]),
-                    ),
+        builder: (context, state) => Stack(
+          children: [
+            CustomScrollView(
+              slivers: [
+                SliverPadding(
+                  padding: EdgeInsets.all(AppTheme.spacingMd.w),
+                  sliver: SliverList(
+                    delegate: SliverChildListDelegate([
+                      _buildHeroCard(context, state),
+                      SizedBox(height: AppTheme.spacingLg.h),
+                      _PersonalInfoSection(data: state.data),
+                      SizedBox(height: AppTheme.spacingLg.h),
+                      _SummarySection(
+                        summary: state.data['summary'] as String?,
+                      ),
+                      SizedBox(height: AppTheme.spacingLg.h),
+                      _ExperienceSection(
+                        experience:
+                            (state.data['experience'] as List?)
+                                ?.cast<Map<String, dynamic>>() ??
+                            [],
+                      ),
+                      SizedBox(height: AppTheme.spacingLg.h),
+                      _EducationSection(
+                        education:
+                            (state.data['education'] as List?)
+                                ?.cast<Map<String, dynamic>>() ??
+                            [],
+                      ),
+                      SizedBox(height: AppTheme.spacingLg.h),
+                      _SkillsSection(
+                        skills:
+                            (state.data['skills'] as List?)?.cast<String>() ??
+                            [],
+                      ),
+                      SizedBox(height: 100.h), // Space for footer
+                    ]),
                   ),
-                ],
-              ),
-              _buildFooter(context, state),
-              if (state.status == ResumeReviewStatus.syncing)
-                const ColoredBox(
-                  color: Colors.black26,
-                  child: Center(child: CircularProgressIndicator()),
                 ),
-            ],
-          );
-        },
+              ],
+            ),
+            _buildFooter(context, state),
+            if (state.status == ResumeReviewStatus.syncing)
+              const ColoredBox(
+                color: Colors.black26,
+                child: Center(child: CircularProgressIndicator()),
+              ),
+          ],
+        ),
       ),
     );
   }
@@ -197,8 +195,8 @@ class ResumeReviewScreen extends StatelessWidget {
     BuildContext context,
     String label,
     String? value, {
-    bool isRequired = false,
     required Function(String) onEdit,
+    bool isRequired = false,
   }) {
     final theme = Theme.of(context);
     final isEmpty = value == null || value.isEmpty;
@@ -245,7 +243,7 @@ class ResumeReviewScreen extends StatelessWidget {
                 ),
               ),
               child: Text(
-                isEmpty ? 'Not found' : value!,
+                isEmpty ? 'Not found' : value,
                 style: theme.textTheme.bodyMedium?.copyWith(
                   color: isEmpty
                       ? AppTheme.textMutedLight
@@ -287,10 +285,9 @@ class ResumeReviewScreen extends StatelessWidget {
 }
 
 class _SectionHeader extends StatelessWidget {
+  const _SectionHeader({required this.title, this.onAdd});
   final String title;
   final VoidCallback? onAdd;
-
-  const _SectionHeader({required this.title, this.onAdd});
 
   @override
   Widget build(BuildContext context) {
@@ -316,9 +313,8 @@ class _SectionHeader extends StatelessWidget {
 }
 
 class _PersonalInfoSection extends StatelessWidget {
-  final Map<String, dynamic> data;
-
   const _PersonalInfoSection({required this.data});
+  final Map<String, dynamic> data;
 
   @override
   Widget build(BuildContext context) {
@@ -373,9 +369,8 @@ class _PersonalInfoSection extends StatelessWidget {
 }
 
 class _SummarySection extends StatelessWidget {
-  final String? summary;
-
   const _SummarySection({this.summary});
+  final String? summary;
 
   @override
   Widget build(BuildContext context) {
@@ -395,7 +390,7 @@ class _SummarySection extends StatelessWidget {
                   context,
                   'Summary',
                   summary ?? '',
-                  (val) => cubit.updateSummary(val),
+                  cubit.updateSummary,
                 );
           },
           borderRadius: BorderRadius.circular(AppTheme.radiusSmall.r),
@@ -435,9 +430,8 @@ class _SummarySection extends StatelessWidget {
 }
 
 class _ExperienceSection extends StatelessWidget {
-  final List<Map<String, dynamic>> experience;
-
   const _ExperienceSection({required this.experience});
+  final List<Map<String, dynamic>> experience;
 
   @override
   Widget build(BuildContext context) {
@@ -464,7 +458,7 @@ class _ExperienceSection extends StatelessWidget {
         else
           ...experience.asMap().entries.map((entry) {
             final index = entry.key;
-            final exp = entry.value as Map<String, dynamic>;
+            final exp = entry.value;
             return _ReviewItemTile(
               title: exp['position'] as String? ?? 'Unknown Position',
               subtitle: exp['company'] as String? ?? 'Unknown Company',
@@ -516,9 +510,8 @@ class _ExperienceSection extends StatelessWidget {
 }
 
 class _EducationSection extends StatelessWidget {
-  final List<Map<String, dynamic>> education;
-
   const _EducationSection({required this.education});
+  final List<Map<String, dynamic>> education;
 
   @override
   Widget build(BuildContext context) {
@@ -539,11 +532,12 @@ class _EducationSection extends StatelessWidget {
         else
           ...education.asMap().entries.map((entry) {
             final index = entry.key;
-            final edu = entry.value as Map<String, dynamic>;
+            final edu = entry.value;
             return _ReviewItemTile(
               title: edu['degree'] as String? ?? 'Unknown Degree',
               subtitle: edu['institution'] as String? ?? 'Unknown Institution',
-              date: '${edu['startDate'] as String? ?? ''} - ${edu['endDate'] as String? ?? ''}',
+              date:
+                  '${edu['startDate'] as String? ?? ''} - ${edu['endDate'] as String? ?? ''}',
               onEdit: () {
                 _showEditEducationSheet(context, edu, index);
               },
@@ -581,9 +575,8 @@ class _EducationSection extends StatelessWidget {
 }
 
 class _SkillsSection extends StatelessWidget {
-  final List<String> skills;
-
   const _SkillsSection({required this.skills});
+  final List<String> skills;
 
   @override
   Widget build(BuildContext context) {
@@ -663,12 +656,6 @@ class _SkillsSection extends StatelessWidget {
 }
 
 class _ReviewItemTile extends StatelessWidget {
-  final String title;
-  final String subtitle;
-  final String date;
-  final VoidCallback onEdit;
-  final VoidCallback? onDelete;
-
   const _ReviewItemTile({
     required this.title,
     required this.subtitle,
@@ -676,6 +663,11 @@ class _ReviewItemTile extends StatelessWidget {
     required this.onEdit,
     this.onDelete,
   });
+  final String title;
+  final String subtitle;
+  final String date;
+  final VoidCallback onEdit;
+  final VoidCallback? onDelete;
 
   @override
   Widget build(BuildContext context) {
@@ -713,17 +705,16 @@ class _ReviewItemTile extends StatelessWidget {
 }
 
 class _EditItemSheet extends StatefulWidget {
-  final String title;
-  final Map<String, dynamic> initialData;
-  final List<Map<String, dynamic>> fields;
-  final Function(Map<String, dynamic>) onSave;
-
   const _EditItemSheet({
     required this.title,
     required this.initialData,
     required this.fields,
     required this.onSave,
   });
+  final String title;
+  final Map<String, dynamic> initialData;
+  final List<Map<String, dynamic>> fields;
+  final Function(Map<String, dynamic>) onSave;
 
   @override
   State<_EditItemSheet> createState() => _EditItemSheetState();

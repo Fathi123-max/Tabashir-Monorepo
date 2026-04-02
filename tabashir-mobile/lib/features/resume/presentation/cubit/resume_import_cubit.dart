@@ -209,7 +209,7 @@ class ResumeImportCubit extends Cubit<ResumeImportState> {
       // Trigger dashboard refresh via HomeCubit to show new profile data
       try {
         print('🟡 [RESUME_IMPORT] Triggering HomeCubit refresh...');
-        await getIt<HomeCubit>().refreshHomeData(userProfile: null);
+        await getIt<HomeCubit>().refreshHomeData();
       } catch (e) {
         print('🔴 [RESUME_IMPORT] Failed to trigger HomeCubit refresh: $e');
       }

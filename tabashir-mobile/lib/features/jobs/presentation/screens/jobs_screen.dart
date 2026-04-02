@@ -20,24 +20,21 @@ import 'package:tabashir/shared/widgets/cv_required_blur.dart';
 import 'package:tabashir/features/resume/presentation/cubit/resume_vault_cubit.dart';
 
 class JobsScreen extends StatelessWidget {
-  final String? initialCity;
-
   const JobsScreen({
     super.key,
     this.initialCity,
   });
+  final String? initialCity;
 
   @override
-  Widget build(BuildContext context) {
-    return BlocProvider<JobsCubit>(
-      create: (context) {
-        final cubit = getIt<JobsCubit>();
-        cubit.initializeState(initialCity: initialCity);
-        return cubit;
-      },
-      child: const JobsView(),
-    );
-  }
+  Widget build(BuildContext context) => BlocProvider<JobsCubit>(
+    create: (context) {
+      final cubit = getIt<JobsCubit>();
+      cubit.initializeState(initialCity: initialCity);
+      return cubit;
+    },
+    child: const JobsView(),
+  );
 }
 
 class JobsView extends StatefulWidget {
@@ -82,20 +79,26 @@ class _JobsViewState extends State<JobsView> {
 
     // Ensure profile has email before loading jobs (fixes race condition)
     var profile = _profileCubit.state.profile;
-    print('[JOBS_SCREEN] Profile after first load: ${profile?.email ?? "null"}');
-    
-    if (profile == null || profile.email == null || profile.email.isEmpty) {
+    print(
+      '[JOBS_SCREEN] Profile after first load: ${profile?.email ?? "null"}',
+    );
+
+    if (profile == null || profile.email.isEmpty) {
       print('[JOBS_SCREEN] Profile email not available, forcing reload...');
       await _profileCubit.loadProfileData(force: true);
       profile = _profileCubit.state.profile;
-      print('[JOBS_SCREEN] Profile after force reload: ${profile?.email ?? "null"}');
+      print(
+        '[JOBS_SCREEN] Profile after force reload: ${profile?.email ?? "null"}',
+      );
     }
 
     // Wait for email to be available (with timeout - max 5 seconds)
     // This ensures match percentages are calculated correctly on app restart
-    int waitAttempts = 0;
-    while ((profile == null || profile.email == null || profile.email.isEmpty) && waitAttempts < 10) {
-      print('[JOBS_SCREEN] Waiting for profile email... attempt ${waitAttempts + 1}/10');
+    var waitAttempts = 0;
+    while ((profile == null || profile.email.isEmpty) && waitAttempts < 10) {
+      print(
+        '[JOBS_SCREEN] Waiting for profile email... attempt ${waitAttempts + 1}/10',
+      );
       await Future.delayed(const Duration(milliseconds: 500));
       profile = _profileCubit.state.profile;
       print('[JOBS_SCREEN] Profile check: ${profile?.email ?? "null"}');
@@ -104,7 +107,9 @@ class _JobsViewState extends State<JobsView> {
 
     final email = profile?.email;
     if (email == null || email.isEmpty) {
-      print('[JOBS_SCREEN] ⚠️ Profile email still not available after waiting. Jobs will load without matching.');
+      print(
+        '[JOBS_SCREEN] ⚠️ Profile email still not available after waiting. Jobs will load without matching.',
+      );
     } else {
       print('[JOBS_SCREEN] ✅ Profile email available: $email');
       print('[JOBS_SCREEN] Will pass email to JobsCubit for matching');
@@ -114,8 +119,13 @@ class _JobsViewState extends State<JobsView> {
     if (mounted) {
       // Pass email directly to ensure it's used for matching
       // Force reload to ensure jobs are loaded with email for matching
-      print('[JOBS_SCREEN] Calling initializeState with email: $email (force reload)');
-      context.read<JobsCubit>().initializeState(email: email, forceReload: true);
+      print(
+        '[JOBS_SCREEN] Calling initializeState with email: $email (force reload)',
+      );
+      context.read<JobsCubit>().initializeState(
+        email: email,
+        forceReload: true,
+      );
     } else {
       print('[JOBS_SCREEN] ⚠️ Widget not mounted, skipping initializeState');
     }
@@ -359,32 +369,81 @@ class _JobsViewState extends State<JobsView> {
     );
   }
 
-  // Header
+  // Header with elaborate design
   Widget _buildHeader(BuildContext context, ThemeData theme) => Container(
-    padding: EdgeInsets.fromLTRB(
+    margin: EdgeInsets.fromLTRB(
+      AppTheme.spacingMd.w,
+      AppTheme.spacingLg.h,
       AppTheme.spacingMd.w,
       AppTheme.spacingMd.h,
-      AppTheme.spacingMd.w,
-      AppTheme.spacingSm.h,
     ),
+    padding: EdgeInsets.all(AppTheme.spacingLg.w),
     decoration: BoxDecoration(
-      color: theme.scaffoldBackgroundColor.withOpacity(0.8),
+      gradient: LinearGradient(
+        begin: Alignment.topLeft,
+        end: Alignment.bottomRight,
+        colors: [
+          AppTheme.primaryColor.withOpacity(0.1),
+          AppTheme.primaryColor.withOpacity(0.05),
+          theme.scaffoldBackgroundColor,
+        ],
+      ),
+      borderRadius: BorderRadius.circular(AppTheme.radiusLarge.r),
     ),
     child: Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Text(
-          'Jobs'.tr(),
-          style: theme.textTheme.displayMedium?.copyWith(
-            fontWeight: FontWeight.bold,
+        // Gradient Icon Container
+        Container(
+          padding: EdgeInsets.all(AppTheme.spacingSm.w),
+          decoration: BoxDecoration(
+            gradient: AppTheme.primaryGradient,
+            borderRadius: BorderRadius.circular(AppTheme.radiusMedium.r),
+            boxShadow: [
+              BoxShadow(
+                color: AppTheme.primaryColor.withOpacity(0.3),
+                blurRadius: 12,
+                offset: const Offset(0, 4),
+              ),
+            ],
+          ),
+          child: Icon(
+            Icons.work_outline_rounded,
+            size: 24.sp,
+            color: Colors.white,
           ),
         ),
+        SizedBox(width: AppTheme.spacingMd.w),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'Jobs'.tr(),
+                style: theme.textTheme.displayMedium?.copyWith(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 28.sp,
+                  letterSpacing: 0.5,
+                ),
+              ),
+              SizedBox(height: AppTheme.spacingXs.h),
+              Text(
+                'Discover your dream career opportunities',
+                style: theme.textTheme.bodyMedium?.copyWith(
+                  color: theme.colorScheme.onSurfaceVariant,
+                  fontSize: 14.sp,
+                ),
+              ),
+            ],
+          ),
+        ),
+        SizedBox(width: AppTheme.spacingSm.w),
+        // Saved Jobs Button
         Container(
-          width: 40.w,
-          height: 40.w,
+          width: 44.w,
+          height: 44.w,
           decoration: BoxDecoration(
             color: theme.colorScheme.surfaceContainerHighest.withOpacity(0.3),
-            shape: BoxShape.circle,
+            borderRadius: BorderRadius.circular(AppTheme.radiusMedium.r),
           ),
           child: IconButton(
             onPressed: () async {
@@ -392,8 +451,8 @@ class _JobsViewState extends State<JobsView> {
             },
             icon: Icon(
               Icons.bookmark_outlined,
-              size: 20.sp,
-              color: theme.iconTheme.color,
+              size: 22.sp,
+              color: theme.colorScheme.onSurface,
             ),
             padding: EdgeInsets.zero,
           ),
@@ -403,11 +462,73 @@ class _JobsViewState extends State<JobsView> {
   );
 
   // Empty State
-  Widget _buildEmptyState(BuildContext context) => const Center(
-    child: Text('No jobs found'),
-  );
+  Widget _buildEmptyState(BuildContext context) {
+    final theme = Theme.of(context);
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Container(
+            padding: EdgeInsets.all(AppTheme.spacingLg.w),
+            decoration: BoxDecoration(
+              color: AppTheme.primaryColor.withOpacity(0.1),
+              shape: BoxShape.circle,
+            ),
+            child: Icon(
+              Icons.search_off_rounded,
+              size: 64.sp,
+              color: AppTheme.primaryColor,
+            ),
+          ),
+          SizedBox(height: AppTheme.spacingLg.h),
+          Text(
+            'No Jobs Found',
+            style: theme.textTheme.headlineSmall?.copyWith(
+              fontWeight: FontWeight.bold,
+              fontSize: 22.sp,
+            ),
+          ),
+          SizedBox(height: AppTheme.spacingSm.h),
+          Text(
+            "Try adjusting your search or filters to find what you're looking for",
+            style: theme.textTheme.bodyMedium?.copyWith(
+              color: theme.colorScheme.onSurfaceVariant,
+              fontSize: 14.sp,
+            ),
+            textAlign: TextAlign.center,
+          ),
+          SizedBox(height: AppTheme.spacingLg.h),
+          ElevatedButton(
+            onPressed: () {
+              _searchController.clear();
+              context.read<JobsCubit>().updateSearchQuery('');
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: AppTheme.primaryColor,
+              foregroundColor: Colors.white,
+              elevation: 0,
+              padding: EdgeInsets.symmetric(
+                horizontal: AppTheme.spacingLg.w,
+                vertical: AppTheme.spacingMd.h,
+              ),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(AppTheme.radiusMedium.r),
+              ),
+            ),
+            child: Text(
+              'Clear Filters',
+              style: theme.textTheme.labelLarge?.copyWith(
+                fontWeight: FontWeight.w600,
+                fontSize: 14.sp,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
 
-  // Jobs List
+  // Enhanced Jobs List
   Widget _buildJobsList(
     BuildContext context,
     List<JobUI> jobs,
@@ -430,165 +551,169 @@ class _JobsViewState extends State<JobsView> {
           final job = jobs[index];
           final jobId = job.id;
 
-          return Column(
-            children: [
-              JobCard(
-                title: job.title,
-                company: job.company,
-                location: job.location,
-                salary: job.salary,
-                matchPercentage: job.matchPercentage,
-                tags: job.tags,
-                skillsMatch: job.skillsMatch,
-                jobId: jobId,
-                onApply: () => _applyToJob(jobId),
-                isApplied: job.isApplied || _appliedJobs.contains(jobId),
-                isLoading: _applyingJobs.contains(jobId),
-              ),
-              SizedBox(height: AppTheme.spacingSm.h),
-            ],
+          return Container(
+            margin: EdgeInsets.only(bottom: AppTheme.spacingSm.h),
+            child: JobCard(
+              title: job.title,
+              company: job.company,
+              location: job.location,
+              salary: job.salary,
+              matchPercentage: job.matchPercentage,
+              tags: job.tags,
+              skillsMatch: job.skillsMatch,
+              jobId: jobId,
+              onApply: () => _applyToJob(jobId),
+              isApplied: job.isApplied || _appliedJobs.contains(jobId),
+              isLoading: _applyingJobs.contains(jobId),
+            ),
           );
         },
       ),
     ),
   );
 
-  // Search Bar
+  // Enhanced Search Bar
   Widget _buildSearchBar(
     BuildContext context,
     ThemeData theme, {
     required bool hasActiveFilters,
     required int activeFilterCount,
   }) => Padding(
-    padding: EdgeInsets.symmetric(
-      horizontal: AppTheme.spacingMd.w,
-      vertical: AppTheme.spacingSm.h,
-    ),
-    child: Row(
-      children: [
-        Expanded(
-          child: Container(
-            height: 48.h,
-            decoration: BoxDecoration(
-              color: theme.inputDecorationTheme.fillColor,
-              borderRadius: BorderRadius.circular(AppTheme.radiusDefault.r),
-            ),
-            child: Row(
-              children: [
-                // Search Icon
-                Padding(
-                  padding: EdgeInsets.only(
-                    left: AppTheme.spacingMd.w,
-                    right: AppTheme.spacingSm.w,
-                  ),
-                  child: Icon(
-                    Icons.search_rounded,
-                    color: theme.colorScheme.onSurfaceVariant,
-                    size: 20.sp,
-                  ),
-                ),
-
-                // Input Field
-                Expanded(
-                  child: TextField(
-                    controller: _searchController,
-                    decoration: InputDecoration(
-                      hintText: 'Job title'.tr(),
-                      border: InputBorder.none,
-                      enabledBorder: InputBorder.none,
-                      focusedBorder: InputBorder.none,
-                      contentPadding: EdgeInsets.zero,
-                      hintStyle: theme.inputDecorationTheme.hintStyle,
-                    ),
-                    style: theme.textTheme.bodyLarge,
-                    onChanged: (query) {
-                      context.read<JobsCubit>().updateSearchQuery(query);
-                    },
-                    onSubmitted: (query) {
-                      context.read<JobsCubit>().updateSearchQuery(query);
-                    },
-                  ),
-                ),
-              ],
-            ),
-          ),
+    padding: EdgeInsets.symmetric(horizontal: AppTheme.spacingMd.w),
+    child: Container(
+      height: 56.h,
+      decoration: BoxDecoration(
+        color: theme.cardTheme.color,
+        borderRadius: BorderRadius.circular(AppTheme.radiusLarge.r),
+        border: Border.all(
+          color: theme.colorScheme.outline.withOpacity(0.1),
         ),
-        SizedBox(width: AppTheme.spacingSm.w),
-
-        // Filter Button with Active Filter Indicator
-        Container(
-          width: 48.w,
-          height: 48.h,
-          decoration: BoxDecoration(
-            color: hasActiveFilters
-                ? AppTheme.primaryColor.withOpacity(0.15)
-                : theme.colorScheme.surfaceContainerHighest.withOpacity(0.3),
-            borderRadius: BorderRadius.circular(AppTheme.radiusDefault.r),
-            border: Border.all(
-              color: hasActiveFilters
-                  ? AppTheme.primaryColor
-                  : Colors.transparent,
-              width: 1.5,
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.06),
+            blurRadius: 12,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Row(
+        children: [
+          // Search Icon
+          Padding(
+            padding: EdgeInsets.all(AppTheme.spacingMd.w),
+            child: Icon(
+              Icons.search_rounded,
+              color: theme.colorScheme.onSurfaceVariant,
+              size: 24.sp,
             ),
           ),
-          child: Stack(
-            alignment: Alignment.center,
-            children: [
-              IconButton(
-                onPressed: () {
-                  final jobsCubit = context.read<JobsCubit>();
-                  showModalBottomSheet(
-                    context: context,
-                    isScrollControlled: true,
-                    backgroundColor: Colors.transparent,
-                    builder: (context) =>
-                        JobFilterBottomSheet(jobsCubit: jobsCubit),
-                  );
-                },
-                icon: Icon(
-                  Icons.tune_rounded,
-                  color: hasActiveFilters
-                      ? AppTheme.primaryColor
-                      : theme.colorScheme.onSurfaceVariant,
-                  size: 22.sp,
+
+          // Input Field
+          Expanded(
+            child: TextField(
+              controller: _searchController,
+              decoration: InputDecoration(
+                hintText: 'Search job title, company, or keywords...',
+                border: InputBorder.none,
+                enabledBorder: InputBorder.none,
+                focusedBorder: InputBorder.none,
+                contentPadding: EdgeInsets.zero,
+                hintStyle: theme.textTheme.bodyMedium?.copyWith(
+                  color: theme.colorScheme.onSurfaceVariant.withOpacity(0.6),
                 ),
-                padding: EdgeInsets.zero,
               ),
-              if (hasActiveFilters)
-                Positioned(
-                  top: 4.h,
-                  right: 4.w,
-                  child: Container(
-                    padding: EdgeInsets.symmetric(
-                      horizontal: AppTheme.spacingXs.w,
-                      vertical: AppTheme.spacingXs.h,
+              style: theme.textTheme.bodyLarge,
+              onChanged: (query) {
+                context.read<JobsCubit>().updateSearchQuery(query);
+              },
+              onSubmitted: (query) {
+                context.read<JobsCubit>().updateSearchQuery(query);
+              },
+            ),
+          ),
+
+          // Filter Button with Badge
+          Container(
+            margin: EdgeInsets.only(right: AppTheme.spacingSm.w),
+            child: Stack(
+              alignment: Alignment.center,
+              children: [
+                Container(
+                  width: 48.w,
+                  height: 48.w,
+                  decoration: BoxDecoration(
+                    color: hasActiveFilters
+                        ? AppTheme.primaryColor.withOpacity(0.15)
+                        : theme.colorScheme.surfaceContainerHighest.withOpacity(
+                            0.3,
+                          ),
+                    borderRadius: BorderRadius.circular(
+                      AppTheme.radiusMedium.r,
                     ),
-                    decoration: BoxDecoration(
-                      color: AppTheme.primaryColor,
-                      shape: BoxShape.circle,
-                      border: Border.all(color: Colors.white, width: 1.5),
+                    border: Border.all(
+                      color: hasActiveFilters
+                          ? AppTheme.primaryColor
+                          : Colors.transparent,
+                      width: 1.5,
                     ),
-                    constraints: BoxConstraints(
-                      minWidth: 18.w,
-                      minHeight: 18.w,
+                  ),
+                  child: IconButton(
+                    onPressed: () {
+                      final jobsCubit = context.read<JobsCubit>();
+                      showModalBottomSheet(
+                        context: context,
+                        isScrollControlled: true,
+                        backgroundColor: Colors.transparent,
+                        builder: (context) =>
+                            JobFilterBottomSheet(jobsCubit: jobsCubit),
+                      );
+                    },
+                    icon: Icon(
+                      Icons.tune_rounded,
+                      color: hasActiveFilters
+                          ? AppTheme.primaryColor
+                          : theme.colorScheme.onSurfaceVariant,
+                      size: 24.sp,
                     ),
-                    child: Center(
-                      child: Text(
-                        activeFilterCount > 99 ? '99+' : '$activeFilterCount',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 10.sp,
-                          fontWeight: FontWeight.bold,
+                    padding: EdgeInsets.zero,
+                  ),
+                ),
+                if (hasActiveFilters)
+                  Positioned(
+                    top: 4.h,
+                    right: 4.w,
+                    child: Container(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: AppTheme.spacingXs.w,
+                        vertical: AppTheme.spacingXs.h,
+                      ),
+                      decoration: BoxDecoration(
+                        color: AppTheme.primaryColor,
+                        shape: BoxShape.circle,
+                        border: Border.all(color: Colors.white, width: 1.5),
+                      ),
+                      constraints: BoxConstraints(
+                        minWidth: 20.w,
+                        minHeight: 20.w,
+                      ),
+                      child: Center(
+                        child: Text(
+                          activeFilterCount > 99 ? '99+' : '$activeFilterCount',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 11.sp,
+                            fontWeight: FontWeight.bold,
+                          ),
+                          textAlign: TextAlign.center,
                         ),
-                        textAlign: TextAlign.center,
                       ),
                     ),
                   ),
-                ),
-            ],
+              ],
+            ),
           ),
-        ),
-      ],
+        ],
+      ),
     ),
   );
 

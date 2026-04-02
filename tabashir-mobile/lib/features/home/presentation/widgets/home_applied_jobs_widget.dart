@@ -24,32 +24,6 @@ class HomeAppliedJobsWidget extends StatelessWidget {
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Padding(
-              padding: EdgeInsets.symmetric(
-                horizontal: AppTheme.spacingLg.w,
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'My Applications',
-                    style: theme.textTheme.headlineMedium?.copyWith(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 20.sp,
-                    ),
-                  ),
-                  SizedBox(height: AppTheme.spacingXs.h),
-                  Text(
-                    'Track your job applications status',
-                    style: theme.textTheme.bodySmall?.copyWith(
-                      color: theme.colorScheme.onSurfaceVariant,
-                      fontSize: 13.sp,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            SizedBox(height: AppTheme.spacingMd.h),
             // Show empty state or applications list
             if (appliedJobs.isEmpty)
               _buildEmptyState(context, theme)
@@ -75,81 +49,78 @@ class HomeAppliedJobsWidget extends StatelessWidget {
     );
   }
 
-  Widget _buildEmptyState(BuildContext context, ThemeData theme) {
-    return Container(
-      width: double.infinity,
-      margin: EdgeInsets.symmetric(horizontal: AppTheme.spacingLg.w),
-      padding: EdgeInsets.all(AppTheme.spacingXl.w),
-      decoration: BoxDecoration(
-        color: AppTheme.zinc50,
-        borderRadius: BorderRadius.circular(AppTheme.radiusLarge.r),
-        border: Border.all(
-          color: AppTheme.zinc200!,
-          width: 1,
-        ),
+  Widget _buildEmptyState(BuildContext context, ThemeData theme) => Container(
+    width: double.infinity,
+    margin: EdgeInsets.symmetric(horizontal: AppTheme.spacingLg.w),
+    padding: EdgeInsets.all(AppTheme.spacingXl.w),
+    decoration: BoxDecoration(
+      color: AppTheme.zinc50,
+      borderRadius: BorderRadius.circular(AppTheme.radiusLarge.r),
+      border: Border.all(
+        color: AppTheme.zinc200,
       ),
-      child: Column(
-        children: [
-          Container(
-            padding: EdgeInsets.all(AppTheme.spacingMd.w),
-            decoration: BoxDecoration(
-              color: AppTheme.primaryColor.withOpacity(0.1),
-              shape: BoxShape.circle,
+    ),
+    child: Column(
+      children: [
+        Container(
+          padding: EdgeInsets.all(AppTheme.spacingMd.w),
+          decoration: BoxDecoration(
+            color: AppTheme.primaryColor.withOpacity(0.1),
+            shape: BoxShape.circle,
+          ),
+          child: Icon(
+            Icons.folder_open_rounded,
+            size: 48.sp,
+            color: AppTheme.primaryColor,
+          ),
+        ),
+        SizedBox(height: AppTheme.spacingLg.h),
+        Text(
+          'No Applications Yet',
+          style: theme.textTheme.titleLarge?.copyWith(
+            fontWeight: FontWeight.bold,
+            color: AppTheme.zinc700,
+            fontSize: 18.sp,
+          ),
+          textAlign: TextAlign.center,
+        ),
+        SizedBox(height: AppTheme.spacingSm.h),
+        Text(
+          'Start applying to jobs to track your applications here',
+          style: theme.textTheme.bodyMedium?.copyWith(
+            color: AppTheme.zinc500,
+            fontSize: 14.sp,
+          ),
+          textAlign: TextAlign.center,
+        ),
+        SizedBox(height: AppTheme.spacingLg.h),
+        ElevatedButton(
+          onPressed: () {
+            context.push('/jobs');
+          },
+          style: ElevatedButton.styleFrom(
+            backgroundColor: AppTheme.primaryColor,
+            foregroundColor: Colors.white,
+            elevation: 0,
+            padding: EdgeInsets.symmetric(
+              horizontal: AppTheme.spacingLg.w,
+              vertical: AppTheme.spacingMd.h,
             ),
-            child: Icon(
-              Icons.folder_open_rounded,
-              size: 48.sp,
-              color: AppTheme.primaryColor,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(AppTheme.radiusMedium.r),
             ),
           ),
-          SizedBox(height: AppTheme.spacingLg.h),
-          Text(
-            'No Applications Yet',
-            style: theme.textTheme.titleLarge?.copyWith(
-              fontWeight: FontWeight.bold,
-              color: AppTheme.zinc700,
-              fontSize: 18.sp,
-            ),
-            textAlign: TextAlign.center,
-          ),
-          SizedBox(height: AppTheme.spacingSm.h),
-          Text(
-            'Start applying to jobs to track your applications here',
-            style: theme.textTheme.bodyMedium?.copyWith(
-              color: AppTheme.zinc500,
+          child: Text(
+            'Browse Jobs',
+            style: theme.textTheme.labelLarge?.copyWith(
+              fontWeight: FontWeight.w600,
               fontSize: 14.sp,
             ),
-            textAlign: TextAlign.center,
           ),
-          SizedBox(height: AppTheme.spacingLg.h),
-          ElevatedButton(
-            onPressed: () {
-              context.push('/jobs');
-            },
-            style: ElevatedButton.styleFrom(
-              backgroundColor: AppTheme.primaryColor,
-              foregroundColor: Colors.white,
-              elevation: 0,
-              padding: EdgeInsets.symmetric(
-                horizontal: AppTheme.spacingLg.w,
-                vertical: AppTheme.spacingMd.h,
-              ),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(AppTheme.radiusMedium.r),
-              ),
-            ),
-            child: Text(
-              'Browse Jobs',
-              style: theme.textTheme.labelLarge?.copyWith(
-                fontWeight: FontWeight.w600,
-                fontSize: 14.sp,
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
+        ),
+      ],
+    ),
+  );
 }
 
 /// Individual applied job card widget
@@ -178,8 +149,7 @@ class _AppliedJobCard extends StatelessWidget {
           color: Colors.white,
           borderRadius: BorderRadius.circular(AppTheme.radiusMedium.r),
           border: Border.all(
-            color: AppTheme.zinc200!,
-            width: 1,
+            color: AppTheme.zinc200,
           ),
           boxShadow: [
             BoxShadow(
@@ -218,7 +188,6 @@ class _AppliedJobCard extends StatelessWidget {
                     borderRadius: BorderRadius.circular(AppTheme.radiusSmall.r),
                     border: Border.all(
                       color: statusColor.withOpacity(0.2),
-                      width: 1,
                     ),
                   ),
                   child: Row(
@@ -311,7 +280,7 @@ class _AppliedJobCard extends StatelessWidget {
     } else if (lowerStatus.contains('reject')) {
       return Colors.red;
     } else {
-      return AppTheme.zinc500!;
+      return AppTheme.zinc500;
     }
   }
 

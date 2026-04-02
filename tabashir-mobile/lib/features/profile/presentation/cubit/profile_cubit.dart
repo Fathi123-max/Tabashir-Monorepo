@@ -476,7 +476,7 @@ class ProfileCubit extends Cubit<ProfileState> {
         // Only treat as CV path if it looks like a local file system path (has / or \)
         final isLocalFile =
             cvValue != null &&
-            (cvValue.contains('/') || cvValue.contains('\\'));
+            (cvValue.contains('/') || cvValue.contains(r'\'));
         final cvPath = isLocalFile ? cvValue : null;
 
         final locStr = form.control('location').value as String? ?? '';
@@ -521,7 +521,7 @@ class ProfileCubit extends Cubit<ProfileState> {
       // Trigger home data refresh
       final email = state.profile?.email;
       if (email != null) {
-        getIt<HomeCubit>().refreshHomeData(userProfile: null);
+        getIt<HomeCubit>().refreshHomeData();
       }
 
       // Reload profile data from server to get updated information (both Web and AI)
@@ -569,7 +569,8 @@ class ProfileCubit extends Cubit<ProfileState> {
     final candidateProfile = response.candidateProfile;
 
     // Extract job title prioritizing jobType (where AI extracted positions go) or experience
-    final jobTitle = candidateProfile?.jobType ?? candidateProfile?.experience ?? '';
+    final jobTitle =
+        candidateProfile?.jobType ?? candidateProfile?.experience ?? '';
 
     // Extract company from recruiter profile (for recruiters) or use empty string
     final company = response.recruiterProfile?.companyName ?? '';
@@ -591,9 +592,13 @@ class ProfileCubit extends Cubit<ProfileState> {
     if (user.email != null) profileStrength += 15;
     if (candidateProfile?.phone != null) profileStrength += 10;
     if (candidateProfile?.nationality != null &&
-        candidateProfile!.nationality!.isNotEmpty) profileStrength += 10;
+        candidateProfile!.nationality!.isNotEmpty) {
+      profileStrength += 10;
+    }
     if (candidateProfile?.gender != null &&
-        candidateProfile!.gender!.isNotEmpty) profileStrength += 10;
+        candidateProfile!.gender!.isNotEmpty) {
+      profileStrength += 10;
+    }
     if (candidateProfile?.education != null) profileStrength += 15;
     if (candidateProfile?.experience != null) profileStrength += 15;
     if (candidateProfile?.skills != null &&

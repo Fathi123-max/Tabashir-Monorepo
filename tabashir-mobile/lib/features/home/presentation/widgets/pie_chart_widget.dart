@@ -29,7 +29,7 @@ class PieChartWidget extends StatelessWidget {
           ),
           pieTouchData: PieTouchData(
             enabled: true,
-            touchCallback: (FlTouchEvent event, pieTouchResponse) {
+            touchCallback: (event, pieTouchResponse) {
               // Handle touch events if needed
             },
           ),

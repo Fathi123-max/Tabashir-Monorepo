@@ -40,7 +40,7 @@ extension NetworkResultExtension<T> on NetworkResult<T> {
 
   /// Returns the data if this is a success, otherwise returns null
   T? get dataOrNull {
-    if (this case NetworkSuccess(data: final data)) {
+    if (this case NetworkSuccess(:final data)) {
       return data;
     }
     return null;
@@ -48,7 +48,7 @@ extension NetworkResultExtension<T> on NetworkResult<T> {
 
   /// Returns the error message if this is an error, otherwise returns null
   String? get errorOrNull {
-    if (this case NetworkError(message: final message)) {
+    if (this case NetworkError(:final message)) {
       return message;
     }
     return null;

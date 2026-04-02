@@ -13,14 +13,14 @@ import 'package:tabashir/core/services/apple_signin_service.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/router/route_names.dart';
 import '../cubit/auth_cubit.dart';
-import '../widgets/ai_assistant_widget.dart';
-import '../widgets/create_account_button_widget.dart';
-import '../widgets/signin_link_widget.dart';
+import '../widgets/signup_header_widget.dart';
 import '../widgets/social_login_button.dart';
 import '../widgets/signup_divider_widget.dart';
-import '../widgets/signup_header_widget.dart';
 import '../widgets/signup_text_field_widget.dart';
 import '../widgets/terms_checkbox_widget.dart';
+import '../widgets/create_account_button_widget.dart';
+import '../widgets/signin_link_widget.dart';
+import '../widgets/ai_assistant_widget.dart';
 
 class SignupScreen extends StatefulWidget {
   const SignupScreen({super.key});
@@ -45,7 +45,6 @@ class _SignupScreenState extends State<SignupScreen> {
     'Leo',
     'Layla',
   ];
-
   static const _dummyLastNames = [
     'Doe',
     'Smith',
@@ -58,14 +57,12 @@ class _SignupScreenState extends State<SignupScreen> {
     'Martinez',
     'Chen',
   ];
-
   static const _dummyEmailDomains = [
     'example.com',
     'mail.com',
     'test.dev',
     'demo.io',
   ];
-
   static const _dummyPasswordSpecials = ['!', '@', '#', r'$'];
 
   @override
@@ -128,10 +125,7 @@ class _SignupScreenState extends State<SignupScreen> {
   }
 
   Future<void> _createAccount() async {
-    if (!_formKey.currentState!.validate()) {
-      return;
-    }
-
+    if (!_formKey.currentState!.validate()) return;
     if (!_agreedToTerms) {
       _showMessage('Please agree to the terms and conditions'.tr());
       return;
@@ -142,32 +136,22 @@ class _SignupScreenState extends State<SignupScreen> {
     final password = _passwordController.text;
 
     try {
-      await _authCubit.register(
-        name: name,
-        email: email,
-        password: password,
-      );
-
+      await _authCubit.register(name: name, email: email, password: password);
       final state = _authCubit.state;
       if (state.status == AuthStatus.registerSuccess) {
-        // Verify user is properly authenticated before navigating
         final isAuthenticated =
             await AuthSessionService.instance.isAuthenticated;
-        if (isAuthenticated) {
-          // Navigate to onboarding wizard for new users, delayed to avoid GoRouter concurrent mutation with refreshListenable
-          if (mounted) {
-            Future.delayed(const Duration(milliseconds: 150), () {
-              if (mounted) context.go(RouteNames.onboardingWizard);
-            });
-          }
-        } else {
-          // If user is not authenticated, show error message
+        if (isAuthenticated && mounted) {
+          Future.delayed(const Duration(milliseconds: 150), () {
+            if (mounted) context.go(RouteNames.onboardingWizard);
+          });
+        } else if (mounted) {
           _showMessage(
             'Authentication failed after registration. Please try logging in.'
                 .tr(),
           );
         }
-      } else if (state.status == AuthStatus.error) {
+      } else if (state.status == AuthStatus.error && mounted) {
         _showMessage(
           state.errorMessage.isNotEmpty
               ? state.errorMessage
@@ -183,7 +167,6 @@ class _SignupScreenState extends State<SignupScreen> {
     final fullName = _generateDummyFullName();
     final email = _generateDummyEmail(fullName);
     final password = _generateDummyPassword();
-
     setState(() {
       _fullNameController.text = fullName;
       _emailController.text = email;
@@ -191,8 +174,6 @@ class _SignupScreenState extends State<SignupScreen> {
       _confirmPasswordController.text = password;
       _agreedToTerms = true;
     });
-
-    // Re-run validation to show immediate feedback with the dummy data
     _formKey.currentState?.validate();
   }
 
@@ -213,238 +194,245 @@ class _SignupScreenState extends State<SignupScreen> {
     return BlocProvider.value(
       value: _authCubit,
       child: Scaffold(
-        backgroundColor: theme.scaffoldBackgroundColor,
-        body: SafeArea(
-          child: Center(
-            child: SingleChildScrollView(
-              padding: EdgeInsets.symmetric(
-                horizontal: AppTheme.spacingMd.w,
-                vertical: AppTheme.spacingXl.h,
-              ),
-              child: Container(
-                constraints: BoxConstraints(maxWidth: 448.w),
-                child: Form(
-                  key: _formKey,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      // Header
-                      const SignupHeaderWidget(),
-                      SizedBox(height: AppTheme.spacingLg.h),
+        body: Container(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [
+                AppTheme.primaryColor.withOpacity(0.08),
+                theme.scaffoldBackgroundColor,
+              ],
+            ),
+          ),
+          child: SafeArea(
+            child: LayoutBuilder(
+              builder: (context, constraints) => SingleChildScrollView(
+                padding: EdgeInsets.symmetric(
+                  horizontal: AppTheme.spacingLg.w,
+                  vertical: AppTheme.spacingMd.h,
+                ),
+                child: ConstrainedBox(
+                  constraints: BoxConstraints(maxWidth: 448.w),
+                  child: Form(
+                    key: _formKey,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        // Compact Header
+                        SizedBox(height: AppTheme.spacingMd.h),
+                        const SignupHeaderWidget(),
+                        SizedBox(height: AppTheme.spacingLg.h),
 
-                      // Social Login Buttons
-                      // TO ACTIVATE: Uncomment the code below and import GoogleSignInService
-                      SocialLoginButton(
-                        platform: SocialPlatform.google,
-                        text: 'Sign up with Google'.tr(),
-                        onPressed: () async {
-                          try {
-                            await getIt<GoogleSignInService>().signIn();
-                            if (mounted) {
-                              Future.delayed(
-                                const Duration(milliseconds: 150),
-                                () {
-                                  if (mounted)
-                                    context.go(RouteNames.onboardingWizard);
-                                },
-                              );
+                        // Social Login - Compact
+                        SocialLoginButton(
+                          platform: SocialPlatform.google,
+                          text: 'Sign up with Google'.tr(),
+                          onPressed: () async {
+                            try {
+                              await getIt<GoogleSignInService>().signIn();
+                              if (mounted) {
+                                Future.delayed(
+                                  const Duration(milliseconds: 150),
+                                  () {
+                                    if (mounted)
+                                      context.go(RouteNames.onboardingWizard);
+                                  },
+                                );
+                              }
+                            } catch (e) {
+                              _showMessage('Google sign-up failed: $e');
                             }
-                          } catch (e) {
-                            _showMessage('Google sign-up failed: $e');
-                          }
-                        },
-                      ),
-                      SizedBox(height: AppTheme.spacingSm.h),
-                      // Apple Sign-In configured for production
-                      // Uses ae.tabashir bundle ID with custom backend API
-                      SocialLoginButton(
-                        platform: SocialPlatform.apple,
-                        text: 'Sign up with Apple'.tr(),
-                        onPressed: () async {
-                          try {
-                            await AppleSignInService.instance.signIn();
-                            // Backend verification complete, JWT stored in AuthSessionService
-                            // Navigate to onboarding wizard for new users
-                            if (mounted) {
-                              Future.delayed(
-                                const Duration(milliseconds: 150),
-                                () {
-                                  if (mounted)
-                                    context.go(RouteNames.onboardingWizard);
-                                },
-                              );
+                          },
+                        ),
+                        SizedBox(height: AppTheme.spacingSm.h),
+                        SocialLoginButton(
+                          platform: SocialPlatform.apple,
+                          text: 'Sign up with Apple'.tr(),
+                          onPressed: () async {
+                            try {
+                              await AppleSignInService.instance.signIn();
+                              if (mounted) {
+                                Future.delayed(
+                                  const Duration(milliseconds: 150),
+                                  () {
+                                    if (mounted)
+                                      context.go(RouteNames.onboardingWizard);
+                                  },
+                                );
+                              }
+                            } catch (e) {
+                              _showMessage('Apple sign-up failed: $e');
                             }
-                          } catch (e) {
-                            _showMessage('Apple sign-up failed: $e');
-                          }
-                        },
-                      ),
-                      SizedBox(height: AppTheme.spacingLg.h),
+                          },
+                        ),
+                        SizedBox(height: AppTheme.spacingMd.h),
 
-                      // Divider
-                      const SignupDividerWidget(),
-                      SizedBox(height: AppTheme.spacingLg.h),
+                        // Divider
+                        const SignupDividerWidget(),
+                        SizedBox(height: AppTheme.spacingMd.h),
 
-                      // Form Fields
-                      SignupTextFieldWidget(
-                        controller: _fullNameController,
-                        hintText: 'Full Name'.tr(),
-                        keyboardType: TextInputType.name,
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Please enter your full name'.tr();
-                          }
-                          return null;
-                        },
-                      ),
-                      SizedBox(height: AppTheme.spacingMd.h),
+                        // Form Fields - Compact
+                        SignupTextFieldWidget(
+                          controller: _fullNameController,
+                          hintText: 'Full Name'.tr(),
+                          keyboardType: TextInputType.name,
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Please enter your full name'.tr();
+                            }
+                            return null;
+                          },
+                        ),
+                        SizedBox(height: AppTheme.spacingSm.h),
+                        SignupTextFieldWidget(
+                          controller: _emailController,
+                          hintText: 'Email'.tr(),
+                          keyboardType: TextInputType.emailAddress,
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Please enter your email'.tr();
+                            }
+                            if (!RegExp(
+                              r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$',
+                            ).hasMatch(value)) {
+                              return 'Please enter a valid email'.tr();
+                            }
+                            return null;
+                          },
+                        ),
+                        SizedBox(height: AppTheme.spacingSm.h),
+                        SignupTextFieldWidget(
+                          controller: _passwordController,
+                          hintText: 'Password'.tr(),
+                          obscureText: _obscurePassword,
+                          suffixIcon: IconButton(
+                            onPressed: () {
+                              setState(() {
+                                _obscurePassword = !_obscurePassword;
+                              });
+                            },
+                            icon: Icon(
+                              _obscurePassword
+                                  ? Icons.visibility_outlined
+                                  : Icons.visibility_off_outlined,
+                              color: theme.colorScheme.onSurfaceVariant,
+                              size: 20.sp,
+                            ),
+                          ),
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Please enter a password'.tr();
+                            }
+                            if (value.length < 8) {
+                              return 'Password must be at least 8 characters'
+                                  .tr();
+                            }
+                            return null;
+                          },
+                        ),
+                        SizedBox(height: AppTheme.spacingXs.h),
+                        Padding(
+                          padding: EdgeInsets.only(left: AppTheme.spacingSm.w),
+                          child: Text(
+                            'At least 8 characters'.tr(),
+                            style: theme.textTheme.bodySmall?.copyWith(
+                              fontSize: 11.sp,
+                              color: theme.colorScheme.onSurfaceVariant,
+                            ),
+                          ),
+                        ),
+                        SizedBox(height: AppTheme.spacingSm.h),
+                        SignupTextFieldWidget(
+                          controller: _confirmPasswordController,
+                          hintText: 'Confirm Password'.tr(),
+                          obscureText: _obscureConfirmPassword,
+                          suffixIcon: IconButton(
+                            onPressed: () {
+                              setState(() {
+                                _obscureConfirmPassword =
+                                    !_obscureConfirmPassword;
+                              });
+                            },
+                            icon: Icon(
+                              _obscureConfirmPassword
+                                  ? Icons.visibility_outlined
+                                  : Icons.visibility_off_outlined,
+                              color: theme.colorScheme.onSurfaceVariant,
+                              size: 20.sp,
+                            ),
+                          ),
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Please confirm your password'.tr();
+                            }
+                            if (value != _passwordController.text) {
+                              return 'Passwords do not match'.tr();
+                            }
+                            return null;
+                          },
+                        ),
+                        SizedBox(height: AppTheme.spacingSm.h),
 
-                      SignupTextFieldWidget(
-                        controller: _emailController,
-                        hintText: 'Email'.tr(),
-                        keyboardType: TextInputType.emailAddress,
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Please enter your email'.tr();
-                          }
-                          if (!RegExp(
-                            r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$',
-                          ).hasMatch(value)) {
-                            return 'Please enter a valid email'.tr();
-                          }
-                          return null;
-                        },
-                      ),
-                      SizedBox(height: AppTheme.spacingMd.h),
-
-                      SignupTextFieldWidget(
-                        controller: _passwordController,
-                        hintText: 'Password'.tr(),
-                        obscureText: _obscurePassword,
-                        suffixIcon: IconButton(
-                          onPressed: () {
+                        // Terms Checkbox
+                        TermsCheckboxWidget(
+                          value: _agreedToTerms,
+                          onChanged: (value) {
                             setState(() {
-                              _obscurePassword = !_obscurePassword;
+                              _agreedToTerms = value;
                             });
                           },
-                          icon: Icon(
-                            _obscurePassword
-                                ? Icons.visibility_outlined
-                                : Icons.visibility_off_outlined,
-                            color: theme.colorScheme.onSurfaceVariant,
-                            size: 20.sp,
-                          ),
                         ),
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Please enter a password'.tr();
-                          }
-                          if (value.length < 8) {
-                            return 'Password must be at least 8 characters'
-                                .tr();
-                          }
-                          return null;
-                        },
-                      ),
-                      SizedBox(height: AppTheme.spacingXs.h),
-                      Padding(
-                        padding: EdgeInsets.only(left: AppTheme.spacingSm.w),
-                        child: Text(
-                          'At least 8 characters'.tr(),
-                          style: theme.textTheme.bodySmall?.copyWith(
-                            fontSize: 11.sp,
-                            color: theme.colorScheme.onSurfaceVariant,
-                          ),
-                        ),
-                      ),
-                      SizedBox(height: AppTheme.spacingMd.h),
+                        SizedBox(height: AppTheme.spacingSm.h),
 
-                      SignupTextFieldWidget(
-                        controller: _confirmPasswordController,
-                        hintText: 'Confirm Password'.tr(),
-                        obscureText: _obscureConfirmPassword,
-                        suffixIcon: IconButton(
-                          onPressed: () {
-                            setState(() {
-                              _obscureConfirmPassword =
-                                  !_obscureConfirmPassword;
-                            });
+                        // Demo Data Button - Compact
+                        OutlinedButton.icon(
+                          onPressed: _fillDummyData,
+                          icon: const Icon(Icons.auto_fix_high_outlined),
+                          label: Text('Fill demo data'.tr()),
+                          style: OutlinedButton.styleFrom(
+                            foregroundColor: theme.colorScheme.primary,
+                            side: BorderSide(color: theme.colorScheme.primary),
+                            padding: EdgeInsets.symmetric(
+                              vertical: AppTheme.spacingSm.h,
+                            ),
+                          ),
+                        ),
+                        SizedBox(height: AppTheme.spacingMd.h),
+
+                        // Create Account Button
+                        BlocBuilder<AuthCubit, AuthState>(
+                          builder: (context, state) {
+                            final isLoading =
+                                state.status == AuthStatus.loading;
+                            return CreateAccountButtonWidget(
+                              onPressed: (isLoading || !_agreedToTerms)
+                                  ? null
+                                  : _createAccount,
+                              isEnabled: _agreedToTerms && !isLoading,
+                              isLoading: isLoading,
+                            );
                           },
-                          icon: Icon(
-                            _obscureConfirmPassword
-                                ? Icons.visibility_outlined
-                                : Icons.visibility_off_outlined,
-                            color: theme.colorScheme.onSurfaceVariant,
-                            size: 20.sp,
-                          ),
                         ),
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Please confirm your password'.tr();
-                          }
-                          if (value != _passwordController.text) {
-                            return 'Passwords do not match'.tr();
-                          }
-                          return null;
-                        },
-                      ),
-                      SizedBox(height: AppTheme.spacingMd.h),
+                        SizedBox(height: AppTheme.spacingSm.h),
 
-                      // Terms Checkbox
-                      TermsCheckboxWidget(
-                        value: _agreedToTerms,
-                        onChanged: (value) {
-                          setState(() {
-                            _agreedToTerms = value;
-                          });
-                        },
-                      ),
-                      SizedBox(height: AppTheme.spacingSm.h),
-
-                      OutlinedButton.icon(
-                        onPressed: _fillDummyData,
-                        icon: const Icon(Icons.auto_fix_high_outlined),
-                        label: Text('Fill demo data'.tr()),
-                        style: OutlinedButton.styleFrom(
-                          foregroundColor: theme.colorScheme.primary,
-                          side: BorderSide(color: theme.colorScheme.primary),
-                          padding: EdgeInsets.symmetric(
-                            vertical: AppTheme.spacingSm.h,
-                          ),
+                        // AI Assistant - Compact
+                        AIAssistantWidget(
+                          message:
+                              "After signup, I'll help you build a standout profile in under 2 minutes."
+                                  .tr(),
                         ),
-                      ),
-                      SizedBox(height: AppTheme.spacingMd.h),
+                        SizedBox(height: AppTheme.spacingMd.h),
 
-                      // Create Account Button
-                      BlocBuilder<AuthCubit, AuthState>(
-                        builder: (context, state) {
-                          final isLoading = state.status == AuthStatus.loading;
-                          return CreateAccountButtonWidget(
-                            onPressed: (isLoading || !_agreedToTerms)
-                                ? null
-                                : _createAccount,
-                            isEnabled: _agreedToTerms && !isLoading,
-                            isLoading: isLoading,
-                          );
-                        },
-                      ),
-                      SizedBox(height: AppTheme.spacingLg.h),
-
-                      // AI Assistant Info
-                      AIAssistantWidget(
-                        message:
-                            "After signup, I'll help you build a standout profile in under 2 minutes."
-                                .tr(),
-                      ),
-                      SizedBox(height: AppTheme.spacingLg.h),
-
-                      // Sign In Link
-                      SigninLinkWidget(
-                        onTap: () {
-                          context.pushReplacement(RouteNames.login);
-                        },
-                      ),
-                    ],
+                        // Sign In Link - Always visible
+                        SigninLinkWidget(
+                          onTap: () {
+                            context.pushReplacement(RouteNames.login);
+                          },
+                        ),
+                        SizedBox(height: AppTheme.spacingMd.h),
+                      ],
+                    ),
                   ),
                 ),
               ),

@@ -17,5 +17,6 @@ sealed class SaveAndGenerateRequest with _$SaveAndGenerateRequest {
   factory SaveAndGenerateRequest.fromJson(Map<String, dynamic> json) =>
       _$SaveAndGenerateRequestFromJson(json);
 
+  @override
   Map<String, dynamic> toJson();
 }

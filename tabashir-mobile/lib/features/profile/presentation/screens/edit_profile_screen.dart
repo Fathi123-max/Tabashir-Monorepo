@@ -246,7 +246,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                         builder: (context, control, child) {
                           final value = control.value ?? '';
                           final isLocalFile =
-                              value.contains('/') || value.contains('\\');
+                              value.contains('/') || value.contains(r'\');
                           final hasFile = value.isNotEmpty;
 
                           return Column(
@@ -384,67 +384,62 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     ),
   );
 
-  Widget _buildSectionCard(ThemeData theme, {required List<Widget> children}) {
-    return Container(
-      padding: EdgeInsets.all(AppTheme.spacingMd.w),
-      decoration: BoxDecoration(
-        color: theme.cardColor,
-        borderRadius: BorderRadius.circular(16.r),
-        border: Border.all(
-          color: theme.colorScheme.outlineVariant.withValues(alpha: 0.5),
-          width: 1,
+  Widget _buildSectionCard(ThemeData theme, {required List<Widget> children}) =>
+      Container(
+        padding: EdgeInsets.all(AppTheme.spacingMd.w),
+        decoration: BoxDecoration(
+          color: theme.cardColor,
+          borderRadius: BorderRadius.circular(16.r),
+          border: Border.all(
+            color: theme.colorScheme.outlineVariant.withValues(alpha: 0.5),
+          ),
         ),
-      ),
-      child: Column(
-        children: children,
-      ),
-    );
-  }
+        child: Column(
+          children: children,
+        ),
+      );
 
   InputDecoration _buildInputDecoration(
     ThemeData theme,
     String label,
     IconData icon,
-  ) {
-    return InputDecoration(
-      labelText: label,
-      prefixIcon: Icon(icon, size: 20.sp),
-      filled: true,
-      fillColor: theme.colorScheme.surfaceContainerHighest.withValues(
-        alpha: 0.3,
+  ) => InputDecoration(
+    labelText: label,
+    prefixIcon: Icon(icon, size: 20.sp),
+    filled: true,
+    fillColor: theme.colorScheme.surfaceContainerHighest.withValues(
+      alpha: 0.3,
+    ),
+    border: OutlineInputBorder(
+      borderRadius: BorderRadius.circular(12.r),
+      borderSide: BorderSide.none,
+    ),
+    enabledBorder: OutlineInputBorder(
+      borderRadius: BorderRadius.circular(12.r),
+      borderSide: BorderSide(
+        color: theme.colorScheme.outlineVariant.withValues(alpha: 0.3),
       ),
-      border: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(12.r),
-        borderSide: BorderSide.none,
+    ),
+    focusedBorder: OutlineInputBorder(
+      borderRadius: BorderRadius.circular(12.r),
+      borderSide: BorderSide(
+        color: theme.colorScheme.primary.withValues(alpha: 0.5),
+        width: 1.5,
       ),
-      enabledBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(12.r),
-        borderSide: BorderSide(
-          color: theme.colorScheme.outlineVariant.withValues(alpha: 0.3),
-          width: 1,
-        ),
-      ),
-      focusedBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(12.r),
-        borderSide: BorderSide(
-          color: theme.colorScheme.primary.withValues(alpha: 0.5),
-          width: 1.5,
-        ),
-      ),
-      contentPadding: EdgeInsets.symmetric(
-        horizontal: 16.w,
-        vertical: 16.h,
-      ),
-      labelStyle: TextStyle(
-        fontSize: 14.sp,
-        color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
-      ),
-      floatingLabelStyle: TextStyle(
-        fontWeight: FontWeight.bold,
-        color: theme.colorScheme.primary,
-      ),
-    );
-  }
+    ),
+    contentPadding: EdgeInsets.symmetric(
+      horizontal: 16.w,
+      vertical: 16.h,
+    ),
+    labelStyle: TextStyle(
+      fontSize: 14.sp,
+      color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
+    ),
+    floatingLabelStyle: TextStyle(
+      fontWeight: FontWeight.bold,
+      color: theme.colorScheme.primary,
+    ),
+  );
 
   /// Create a basic form with empty/default values
   FormGroup _createBasicForm() => fb.group(<String, Object>{

@@ -18,7 +18,7 @@ class ReactiveDropdownSearch<T> extends ReactiveFormField<T, T> {
     this.decoration,
   }) : super(
          validationMessages: validationMessages,
-         builder: (ReactiveFormFieldState<T, T> field) {
+         builder: (field) {
            final filteredItems = <T>[];
 
            return StatefulBuilder(

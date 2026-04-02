@@ -17,54 +17,70 @@ class CreateAccountButtonWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
 
-    return SizedBox(
+    return Container(
       height: 56.h,
-      child: Container(
-        decoration: BoxDecoration(
-          gradient: isEnabled ? AppTheme.primaryGradient : null,
-          borderRadius: BorderRadius.circular(AppTheme.radiusDefault.r),
-          boxShadow: isEnabled
-              ? [
-                  BoxShadow(
-                    color: AppTheme.primaryColor.withOpacity(0.2),
-                    blurRadius: 8,
-                    offset: const Offset(0, 4),
-                  ),
-                ]
-              : null,
-        ),
-        child: ElevatedButton(
-          onPressed: onPressed,
-          style: ElevatedButton.styleFrom(
-            backgroundColor: isEnabled
-                ? Colors.transparent
-                : theme.disabledColor,
-            foregroundColor: Colors.white,
-            elevation: 0,
-            shadowColor: Colors.transparent,
-            disabledBackgroundColor: theme.disabledColor,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(AppTheme.radiusDefault.r),
-            ),
-          ),
-          child: isLoading
-              ? SizedBox(
-                  height: 20.h,
-                  width: 20.h,
-                  child: const CircularProgressIndicator(
-                    strokeWidth: 2,
-                    valueColor: AlwaysStoppedAnimation<Color>(
-                      Colors.white,
-                    ),
-                  ),
-                )
-              : Text(
-                  'Create Account',
-                  style: TextStyle(
-                    fontSize: 16.sp,
-                    fontWeight: FontWeight.w600,
-                  ),
+      decoration: BoxDecoration(
+        gradient: isEnabled ? AppTheme.primaryGradient : null,
+        borderRadius: BorderRadius.circular(AppTheme.radiusLarge.r),
+        boxShadow: isEnabled
+            ? [
+                BoxShadow(
+                  color: AppTheme.primaryColor.withOpacity(0.4),
+                  blurRadius: 16,
+                  offset: const Offset(0, 6),
+                  spreadRadius: 2,
                 ),
+                BoxShadow(
+                  color: Colors.white.withOpacity(0.1),
+                  blurRadius: 8,
+                  offset: const Offset(0, -2),
+                ),
+              ]
+            : null,
+      ),
+      child: Material(
+        color: isEnabled ? Colors.transparent : theme.disabledColor,
+        borderRadius: BorderRadius.circular(AppTheme.radiusLarge.r),
+        child: InkWell(
+          onTap: isEnabled ? onPressed : null,
+          borderRadius: BorderRadius.circular(AppTheme.radiusLarge.r),
+          child: Center(
+            child: isLoading
+                ? SizedBox(
+                    height: 24.h,
+                    width: 24.h,
+                    child: CircularProgressIndicator(
+                      strokeWidth: 2.5,
+                      valueColor: AlwaysStoppedAnimation<Color>(
+                        isEnabled ? Colors.white : theme.colorScheme.onSurface,
+                      ),
+                    ),
+                  )
+                : Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        'Create Account',
+                        style: theme.textTheme.titleLarge?.copyWith(
+                          fontSize: 17.sp,
+                          fontWeight: FontWeight.w700,
+                          color: isEnabled
+                              ? Colors.white
+                              : theme.colorScheme.onSurface,
+                          letterSpacing: 0.5,
+                        ),
+                      ),
+                      if (isEnabled) ...[
+                        SizedBox(width: AppTheme.spacingSm.w),
+                        Icon(
+                          Icons.arrow_forward_rounded,
+                          color: Colors.white,
+                          size: 20.sp,
+                        ),
+                      ],
+                    ],
+                  ),
+          ),
         ),
       ),
     );

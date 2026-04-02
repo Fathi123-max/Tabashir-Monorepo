@@ -123,9 +123,7 @@ class ResumeVaultCubit extends Cubit<ResumeVaultState> {
       await _repository.deleteResume(resumeId: id);
       print('🔵 [RESUME_VAULT_CUBIT] ✅ Repository delete successful');
 
-      final updatedResumes = state.resumes
-          .where((ResumeItem r) => r.id != id)
-          .toList();
+      final updatedResumes = state.resumes.where((r) => r.id != id).toList();
       print(
         '🔵 [RESUME_VAULT_CUBIT] Updated resumes count: ${updatedResumes.length}',
       );
@@ -161,7 +159,7 @@ class ResumeVaultCubit extends Cubit<ResumeVaultState> {
 
       final updatedResumes = state.resumes
           .map(
-            (ResumeItem resume) => resume.copyWith(isDefault: resume.id == id),
+            (resume) => resume.copyWith(isDefault: resume.id == id),
           )
           .toList();
 
@@ -227,7 +225,7 @@ class ResumeVaultCubit extends Cubit<ResumeVaultState> {
         '🔵 [RESUME_VAULT_CUBIT] ✅ Renamed resume to: ${updatedResume.name}',
       );
 
-      final updatedResumes = state.resumes.map((ResumeItem resume) {
+      final updatedResumes = state.resumes.map((resume) {
         if (resume.id == id) {
           return updatedResume;
         }
@@ -293,7 +291,7 @@ class ResumeVaultCubit extends Cubit<ResumeVaultState> {
       // Trigger AI Dashboard Refresh
       try {
         print('🔵 [RESUME_VAULT_CUBIT] Triggering HomeCubit refresh...');
-        getIt<HomeCubit>().refreshHomeData(userProfile: null);
+        getIt<HomeCubit>().refreshHomeData();
       } catch (e) {
         print(
           '🔵 [RESUME_VAULT_CUBIT] Failed to trigger HomeCubit refresh: $e',

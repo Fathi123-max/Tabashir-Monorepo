@@ -25,9 +25,7 @@ class HomeUAECitiesWidget extends StatelessWidget {
 
   /// Filter city counts to UAE cities only
   List<CityJobCount> _filterUAECities(List<CityJobCount> allCities) {
-    return allCities
-        .where((city) => _uaeCities.contains(city.city))
-        .toList()
+    return allCities.where((city) => _uaeCities.contains(city.city)).toList()
       ..sort((a, b) => b.count.compareTo(a.count)); // Sort by count descending
   }
 
@@ -48,32 +46,6 @@ class HomeUAECitiesWidget extends StatelessWidget {
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Padding(
-              padding: EdgeInsets.symmetric(
-                horizontal: AppTheme.spacingLg.w,
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'Jobs by City (UAE)',
-                    style: theme.textTheme.headlineMedium?.copyWith(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 20.sp,
-                    ),
-                  ),
-                  SizedBox(height: AppTheme.spacingXs.h),
-                  Text(
-                    'Explore opportunities across Emirates',
-                    style: theme.textTheme.bodySmall?.copyWith(
-                      color: theme.colorScheme.onSurfaceVariant,
-                      fontSize: 13.sp,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            SizedBox(height: AppTheme.spacingMd.h),
             // Horizontal scrollable chips
             SizedBox(
               height: 44.h,
@@ -105,61 +77,58 @@ class _CityChip extends StatelessWidget {
   final CityJobCount cityData;
 
   @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: () {
-        // Navigate to jobs screen filtered by city
-        context.push('/jobs?city=${Uri.encodeComponent(cityData.city)}');
-      },
-      child: Container(
-        padding: EdgeInsets.symmetric(
-          horizontal: AppTheme.spacingMd.w,
-          vertical: AppTheme.spacingSm.h,
-        ),
-        decoration: BoxDecoration(
-          color: AppTheme.primaryColor.withOpacity(0.08),
-          borderRadius: BorderRadius.circular(AppTheme.radiusFull.r),
-          border: Border.all(
-            color: AppTheme.primaryColor.withOpacity(0.2),
-            width: 1,
-          ),
-        ),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(
-              Icons.location_city_rounded,
-              size: 18.sp,
-              color: AppTheme.primaryColor,
-            ),
-            SizedBox(width: AppTheme.spacingSm.w),
-            Text(
-              cityData.city,
-              style: TextStyle(
-                fontWeight: FontWeight.w600,
-                color: AppTheme.primaryColor,
-                fontSize: 14.sp,
-              ),
-            ),
-            SizedBox(width: AppTheme.spacingSm.w),
-            Container(
-              padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 2.h),
-              decoration: BoxDecoration(
-                color: AppTheme.primaryColor,
-                borderRadius: BorderRadius.circular(AppTheme.radiusFull.r),
-              ),
-              child: Text(
-                '${cityData.count}',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 12.sp,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ),
-          ],
+  Widget build(BuildContext context) => GestureDetector(
+    onTap: () {
+      // Navigate to jobs screen filtered by city
+      context.push('/jobs?city=${Uri.encodeComponent(cityData.city)}');
+    },
+    child: Container(
+      padding: EdgeInsets.symmetric(
+        horizontal: AppTheme.spacingMd.w,
+        vertical: AppTheme.spacingSm.h,
+      ),
+      decoration: BoxDecoration(
+        color: AppTheme.primaryColor.withOpacity(0.08),
+        borderRadius: BorderRadius.circular(AppTheme.radiusFull.r),
+        border: Border.all(
+          color: AppTheme.primaryColor.withOpacity(0.2),
         ),
       ),
-    );
-  }
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(
+            Icons.location_city_rounded,
+            size: 18.sp,
+            color: AppTheme.primaryColor,
+          ),
+          SizedBox(width: AppTheme.spacingSm.w),
+          Text(
+            cityData.city,
+            style: TextStyle(
+              fontWeight: FontWeight.w600,
+              color: AppTheme.primaryColor,
+              fontSize: 14.sp,
+            ),
+          ),
+          SizedBox(width: AppTheme.spacingSm.w),
+          Container(
+            padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 2.h),
+            decoration: BoxDecoration(
+              color: AppTheme.primaryColor,
+              borderRadius: BorderRadius.circular(AppTheme.radiusFull.r),
+            ),
+            child: Text(
+              '${cityData.count}',
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 12.sp,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ),
+        ],
+      ),
+    ),
+  );
 }

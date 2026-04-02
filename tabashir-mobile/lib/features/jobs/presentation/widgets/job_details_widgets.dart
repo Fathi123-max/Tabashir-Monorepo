@@ -27,7 +27,6 @@ class JobDetailsHeader extends StatelessWidget {
       border: Border(
         bottom: BorderSide(
           color: Theme.of(context).dividerColor.withOpacity(0.1),
-          width: 1,
         ),
       ),
     ),
@@ -38,7 +37,9 @@ class JobDetailsHeader extends StatelessWidget {
           height: 40.w,
           width: 40.w,
           decoration: BoxDecoration(
-            color: Theme.of(context).colorScheme.surfaceContainerHighest.withOpacity(0.3),
+            color: Theme.of(
+              context,
+            ).colorScheme.surfaceContainerHighest.withOpacity(0.3),
             shape: BoxShape.circle,
           ),
           child: IconButton(
@@ -55,7 +56,9 @@ class JobDetailsHeader extends StatelessWidget {
               height: 40.w,
               width: 40.w,
               decoration: BoxDecoration(
-                color: Theme.of(context).colorScheme.surfaceContainerHighest.withOpacity(0.3),
+                color: Theme.of(
+                  context,
+                ).colorScheme.surfaceContainerHighest.withOpacity(0.3),
                 shape: BoxShape.circle,
               ),
               child: IconButton(
@@ -71,7 +74,9 @@ class JobDetailsHeader extends StatelessWidget {
               height: 40.w,
               width: 40.w,
               decoration: BoxDecoration(
-                color: Theme.of(context).colorScheme.surfaceContainerHighest.withOpacity(0.3),
+                color: Theme.of(
+                  context,
+                ).colorScheme.surfaceContainerHighest.withOpacity(0.3),
                 shape: BoxShape.circle,
               ),
               child: IconButton(
@@ -157,7 +162,6 @@ class JobTitleSection extends StatelessWidget {
                 borderRadius: BorderRadius.circular(AppTheme.radiusFull.r),
                 border: Border.all(
                   color: AppTheme.successColor.withOpacity(0.2),
-                  width: 1,
                 ),
               ),
               child: Row(
@@ -223,7 +227,6 @@ class JobMatchAlert extends StatelessWidget {
       borderRadius: BorderRadius.circular(AppTheme.radiusMedium.r),
       border: Border.all(
         color: AppTheme.primaryColor.withOpacity(0.15),
-        width: 1,
       ),
     ),
     child: Row(
@@ -290,7 +293,6 @@ class CompanyDetailsWidget extends StatelessWidget {
         borderRadius: BorderRadius.circular(AppTheme.radiusMedium.r),
         border: Border.all(
           color: Theme.of(context).colorScheme.outline.withOpacity(0.1),
-          width: 1,
         ),
         boxShadow: [
           BoxShadow(
@@ -370,7 +372,8 @@ class JobTagsWidget extends StatelessWidget {
       child: ListView.separated(
         scrollDirection: Axis.horizontal,
         itemCount: tags.length,
-        separatorBuilder: (context, index) => SizedBox(width: AppTheme.spacingSm.w),
+        separatorBuilder: (context, index) =>
+            SizedBox(width: AppTheme.spacingSm.w),
         itemBuilder: (context, index) {
           final tag = tags[index];
           return Container(
@@ -379,11 +382,12 @@ class JobTagsWidget extends StatelessWidget {
               vertical: AppTheme.spacingXs.h,
             ),
             decoration: BoxDecoration(
-              color: Theme.of(context).colorScheme.surfaceContainerHighest.withOpacity(0.5),
+              color: Theme.of(
+                context,
+              ).colorScheme.surfaceContainerHighest.withOpacity(0.5),
               borderRadius: BorderRadius.circular(AppTheme.radiusFull.r),
               border: Border.all(
                 color: Theme.of(context).colorScheme.outline.withOpacity(0.1),
-                width: 1,
               ),
             ),
             child: Center(
@@ -548,7 +552,6 @@ class BulletPointWithBadgeWidget extends StatelessWidget {
                     borderRadius: BorderRadius.circular(AppTheme.radiusFull.r),
                     border: Border.all(
                       color: AppTheme.warningColor.withOpacity(0.3),
-                      width: 1,
                     ),
                   ),
                   child: Icon(
@@ -752,7 +755,6 @@ class JobDetailsFooter extends StatelessWidget {
       border: Border(
         top: BorderSide(
           color: Theme.of(context).dividerColor.withOpacity(0.1),
-          width: 1,
         ),
       ),
       boxShadow: [
@@ -829,17 +831,22 @@ class JobDetailsFooter extends StatelessWidget {
                 horizontal: AppTheme.spacingMd.w,
               ),
               decoration: BoxDecoration(
-                color: Theme.of(context).colorScheme.surfaceContainerHighest.withOpacity(0.3),
+                color: Theme.of(
+                  context,
+                ).colorScheme.surfaceContainerHighest.withOpacity(0.3),
                 borderRadius: BorderRadius.circular(AppTheme.radiusMedium.r),
                 border: Border.all(
                   color: Theme.of(context).colorScheme.outline.withOpacity(0.2),
-                  width: 1,
                 ),
               ),
               child: Center(
                 child: Icon(
-                  isSaved ? Icons.bookmark_rounded : Icons.bookmark_border_rounded,
-                  color: isSaved ? AppTheme.primaryColor : Theme.of(context).colorScheme.onSurface,
+                  isSaved
+                      ? Icons.bookmark_rounded
+                      : Icons.bookmark_border_rounded,
+                  color: isSaved
+                      ? AppTheme.primaryColor
+                      : Theme.of(context).colorScheme.onSurface,
                   size: 24.sp,
                 ),
               ),

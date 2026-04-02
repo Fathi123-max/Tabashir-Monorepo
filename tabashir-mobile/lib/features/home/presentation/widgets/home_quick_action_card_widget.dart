@@ -27,7 +27,6 @@ class HomeQuickActionCardWidget extends StatelessWidget {
           borderRadius: BorderRadius.circular(AppTheme.radiusMedium.r),
           border: Border.all(
             color: theme.colorScheme.outline.withOpacity(0.1),
-            width: 1,
           ),
           boxShadow: [
             BoxShadow(

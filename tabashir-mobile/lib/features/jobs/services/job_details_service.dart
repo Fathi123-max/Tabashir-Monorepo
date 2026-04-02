@@ -23,7 +23,9 @@ class JobDetailsService {
     String? userEmail,
   }) async {
     print('[JOB_DETAILS_SERVICE] Fetching job details for jobId: $jobId');
-    print('[JOB_DETAILS_SERVICE] Correlation: userProfile = ${userProfile != null}, userEmail = $userEmail');
+    print(
+      '[JOB_DETAILS_SERVICE] Correlation: userProfile = ${userProfile != null}, userEmail = $userEmail',
+    );
 
     try {
       // Fetch job details from API, passing userEmail for backend matching
@@ -48,8 +50,9 @@ class JobDetailsService {
     CandidateProfileData? userProfile,
   ) {
     // Use match percentage from API response
-    final matchPercentage =
-        _jobMatchService.formatMatchPercentage(response.matchPercentage);
+    final matchPercentage = _jobMatchService.formatMatchPercentage(
+      response.matchPercentage,
+    );
 
     return JobDetails(
       id: response.jobId?.toString() ?? 'unknown',
