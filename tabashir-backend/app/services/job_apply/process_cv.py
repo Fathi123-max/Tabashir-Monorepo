@@ -573,11 +573,60 @@ def get_client_cv_filename(email):
             conn.close()
 
 
-LIBREOFFICE_BIN = "/usr/lib/libreoffice/program/soffice.bin"
+import subprocess
+import platform
+
+# Cross-platform LibreOffice path detection
+def get_libreoffice_path():
+    """Get the correct LibreOffice path for the current OS"""
+    system = platform.system()
+    
+    if system == "Darwin":  # macOS
+        # Common macOS paths
+        paths = [
+            "/Applications/LibreOffice.app/Contents/MacOS/soffice",
+            "/usr/local/bin/soffice",
+            "/opt/homebrew/bin/soffice"
+        ]
+    elif system == "Windows":
+        paths = [
+            r"C:\Program Files\LibreOffice\program\soffice.exe",
+            r"C:\Program Files (x86)\LibreOffice\program\soffice.exe"
+        ]
+    else:  # Linux
+        paths = [
+            "/usr/lib/libreoffice/program/soffice.bin",
+            "/usr/bin/soffice",
+            "/usr/local/bin/soffice"
+        ]
+    
+    # Return first existing path
+    for path in paths:
+        if os.path.exists(path):
+            return path
+    
+    # Default fallback
+    return "/usr/lib/libreoffice/program/soffice.bin"
+
+LIBREOFFICE_BIN = get_libreoffice_path()
 
 def convert_docx_to_pdf(docx_path: Path) -> Path:
+    """Convert DOCX to PDF using LibreOffice or alternative methods"""
     pdf_path = docx_path.with_suffix(".pdf")
-
+    
+    # Check if LibreOffice is installed
+    if not os.path.exists(LIBREOFFICE_BIN):
+        # LibreOffice not found, provide helpful error
+        raise FileNotFoundError(
+            f"LibreOffice not found at {LIBREOFFICE_BIN}. "
+            f"Please install LibreOffice for PDF conversion:\n"
+            f"  macOS: brew install libreoffice\n"
+            f"  Linux: sudo apt-get install libreoffice\n"
+            f"  Windows: Download from https://www.libreoffice.org\n"
+            f"\nJob credits have been successfully added to your account."
+        )
+    
+    # Try LibreOffice conversion
     cmd = [
         LIBREOFFICE_BIN,
         "--headless",
@@ -601,6 +650,7 @@ def convert_docx_to_pdf(docx_path: Path) -> Path:
     if not pdf_path.exists():
         raise RuntimeError("PDF not created")
 
+    print(f"PDF conversion successful using LibreOffice")
     return pdf_path
 
 PANDOC_BIN = "/usr/bin/pandoc"

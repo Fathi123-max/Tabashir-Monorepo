@@ -8,8 +8,8 @@ import 'package:tabashir/core/theme/app_theme.dart';
 import 'package:tabashir/core/network/models/user/user_profile_response.dart';
 import 'package:tabashir/features/shared/widgets/pro_badge_widget.dart';
 
-/// Premium Pro Header Widget with glass morphism
-/// Displays user info with Pro badge and premium styling
+/// Premium Pro Header Widget
+/// Displays user info with Pro badge - consistent with app design
 class ProHeaderWidget extends StatelessWidget {
   const ProHeaderWidget({
     super.key,
@@ -43,32 +43,20 @@ class ProHeaderWidget extends StatelessWidget {
         AppTheme.spacingMd.w,
         AppTheme.spacingLg.h,
         AppTheme.spacingMd.w,
-        AppTheme.spacingLg.h,
+        0,
       ),
       padding: EdgeInsets.all(AppTheme.spacingLg.w),
       decoration: BoxDecoration(
-        gradient: isPro ? AppTheme.proGradient : AppTheme.primaryGradient,
+        gradient: isPro ? AppTheme.goldGradient : AppTheme.primaryGradient,
         borderRadius: BorderRadius.circular(AppTheme.radiusLarge.r),
-        border: isPro
-            ? Border.all(
-                color: AppTheme.goldColor.withOpacity(0.5),
-                width: 2,
-              )
-            : null,
         boxShadow: [
           BoxShadow(
             color: isPro
                 ? AppTheme.goldColor.withOpacity(0.3)
                 : AppTheme.primaryColor.withOpacity(0.3),
-            blurRadius: 20,
-            offset: const Offset(0, 8),
+            blurRadius: 12,
+            offset: const Offset(0, 4),
           ),
-          if (isPro)
-            BoxShadow(
-              color: AppTheme.purpleColor.withOpacity(0.2),
-              blurRadius: 15,
-              offset: const Offset(0, -4),
-            ),
         ],
       ),
       child: Column(
@@ -78,47 +66,40 @@ class ProHeaderWidget extends StatelessWidget {
             children: [
               // Profile Picture with Pro Ring
               SizedBox(
-                width: 72.w,
-                height: 72.w,
+                width: 64.w,
+                height: 64.w,
                 child: Stack(
                   children: [
                     // Pro ring background
                     if (isPro)
                       Container(
-                        width: 72.w,
-                        height: 72.w,
+                        width: 64.w,
+                        height: 64.w,
                         decoration: BoxDecoration(
                           gradient: AppTheme.goldGradient,
                           shape: BoxShape.circle,
                           boxShadow: [
                             BoxShadow(
-                              color: AppTheme.goldColor.withOpacity(0.4),
-                              blurRadius: 12,
-                              offset: const Offset(0, 4),
+                              color: AppTheme.goldColor.withOpacity(0.3),
+                              blurRadius: 8,
+                              offset: const Offset(0, 2),
                             ),
                           ],
                         ),
                       ),
                     // Profile picture
                     Positioned(
-                      top: 3,
-                      left: 3,
+                      top: 2,
+                      left: 2,
                       child: Container(
-                        width: 66.w,
-                        height: 66.w,
+                        width: 60.w,
+                        height: 60.w,
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
                           border: Border.all(
                             color: Colors.white,
-                            width: 3,
+                            width: 2,
                           ),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black.withOpacity(0.2),
-                              blurRadius: 8,
-                              offset: const Offset(0, 2),
-                            ),
-                          ],
                         ),
                         child: ClipOval(
                           child: CachedNetworkImage(
@@ -128,7 +109,7 @@ class ProHeaderWidget extends StatelessWidget {
                               color: Colors.grey.shade300,
                               child: Icon(
                                 Icons.person,
-                                size: 32.sp,
+                                size: 28.sp,
                                 color: Colors.white,
                               ),
                             ),
@@ -136,7 +117,7 @@ class ProHeaderWidget extends StatelessWidget {
                               color: Colors.grey.shade300,
                               child: Icon(
                                 Icons.person,
-                                size: 32.sp,
+                                size: 28.sp,
                                 color: Colors.white,
                               ),
                             ),
@@ -150,9 +131,9 @@ class ProHeaderWidget extends StatelessWidget {
                         right: 0,
                         bottom: 0,
                         child: Transform.scale(
-                          scale: 0.6,
+                          scale: 0.5,
                           child: ProBadgeWidget(
-                            size: ProBadgeSize.large,
+                            size: ProBadgeSize.small,
                             showTooltip: false,
                           ),
                         ),
@@ -166,27 +147,13 @@ class ProHeaderWidget extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Row(
-                      children: [
-                        Expanded(
-                          child: Text(
-                            'hi_greeting'.tr(args: [userName]),
-                            style: theme.textTheme.displayMedium?.copyWith(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 28.sp,
-                              letterSpacing: 0.5,
-                              color: Colors.white,
-                              shadows: [
-                                Shadow(
-                                  color: Colors.black.withOpacity(0.3),
-                                  offset: const Offset(0, 2),
-                                  blurRadius: 4,
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      ],
+                    Text(
+                      'hi_greeting'.tr(args: [userName]),
+                      style: theme.textTheme.displayMedium?.copyWith(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 24.sp,
+                        color: Colors.white,
+                      ),
                     ),
                     SizedBox(height: AppTheme.spacingXs.h),
                     Row(
@@ -194,7 +161,7 @@ class ProHeaderWidget extends StatelessWidget {
                         if (isPro) ...[
                           // Small Pro badge for text line
                           Transform.scale(
-                            scale: 0.7,
+                            scale: 0.6,
                             child: ProBadgeWidget(
                               size: ProBadgeSize.small,
                               showTooltip: false,
@@ -206,11 +173,10 @@ class ProHeaderWidget extends StatelessWidget {
                           child: Text(
                             isPro
                                 ? 'Premium Member'
-                                : 'Welcome back! Ready to find your dream job?',
+                                : 'Welcome back!',
                             style: theme.textTheme.bodyMedium?.copyWith(
                               color: Colors.white.withOpacity(0.9),
-                              fontSize: 14.sp,
-                              fontWeight: isPro ? FontWeight.w600 : FontWeight.w400,
+                              fontSize: 13.sp,
                             ),
                           ),
                         ),
@@ -229,9 +195,6 @@ class ProHeaderWidget extends StatelessWidget {
               decoration: BoxDecoration(
                 color: Colors.white.withOpacity(0.15),
                 borderRadius: BorderRadius.circular(AppTheme.radiusMedium.r),
-                border: Border.all(
-                  color: Colors.white.withOpacity(0.3),
-                ),
               ),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -277,20 +240,13 @@ class ProHeaderWidget extends StatelessWidget {
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(AppTheme.radiusFull.r),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withOpacity(0.2),
-                      blurRadius: 8,
-                      offset: const Offset(0, 2),
-                    ),
-                  ],
                 ),
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     Icon(
                       Icons.workspace_premium_rounded,
-                      size: 20.sp,
+                      size: 18.sp,
                       color: AppTheme.primaryColor,
                     ),
                     SizedBox(width: AppTheme.spacingSm.w),
@@ -299,7 +255,7 @@ class ProHeaderWidget extends StatelessWidget {
                       style: theme.textTheme.labelLarge?.copyWith(
                         color: AppTheme.primaryColor,
                         fontWeight: FontWeight.bold,
-                        fontSize: 14.sp,
+                        fontSize: 13.sp,
                       ),
                     ),
                   ],
@@ -326,14 +282,14 @@ class ProHeaderWidget extends StatelessWidget {
         children: [
           Icon(
             icon,
-            size: 20.sp,
+            size: 18.sp,
             color: isHighlighted ? AppTheme.goldLight : Colors.white,
           ),
           SizedBox(height: AppTheme.spacingXs.h),
           Text(
             value,
             style: TextStyle(
-              fontSize: 18.sp,
+              fontSize: 16.sp,
               fontWeight: FontWeight.bold,
               color: Colors.white,
             ),
@@ -342,7 +298,7 @@ class ProHeaderWidget extends StatelessWidget {
             Text(
               '/ $total',
               style: TextStyle(
-                fontSize: 12.sp,
+                fontSize: 11.sp,
                 color: Colors.white.withOpacity(0.7),
               ),
             ),
@@ -351,7 +307,7 @@ class ProHeaderWidget extends StatelessWidget {
           Text(
             label,
             style: TextStyle(
-              fontSize: 11.sp,
+              fontSize: 10.sp,
               color: Colors.white.withOpacity(0.8),
             ),
             textAlign: TextAlign.center,
@@ -360,8 +316,8 @@ class ProHeaderWidget extends StatelessWidget {
             SizedBox(height: 2.h),
             Container(
               padding: EdgeInsets.symmetric(
-                horizontal: 6.w,
-                vertical: 2.h,
+                horizontal: 4.w,
+                vertical: 1.h,
               ),
               decoration: BoxDecoration(
                 color: AppTheme.goldColor.withOpacity(0.3),
@@ -370,7 +326,7 @@ class ProHeaderWidget extends StatelessWidget {
               child: Text(
                 subtitle,
                 style: TextStyle(
-                  fontSize: 10.sp,
+                  fontSize: 9.sp,
                   fontWeight: FontWeight.bold,
                   color: Colors.white,
                 ),
@@ -381,7 +337,7 @@ class ProHeaderWidget extends StatelessWidget {
       );
 
   Widget _buildDivider() => Container(
-        height: 40.h,
+        height: 32.h,
         width: 1,
         color: Colors.white.withOpacity(0.2),
       );
