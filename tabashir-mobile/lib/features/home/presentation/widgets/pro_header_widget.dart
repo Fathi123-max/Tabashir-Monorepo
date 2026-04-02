@@ -77,84 +77,88 @@ class ProHeaderWidget extends StatelessWidget {
           Row(
             children: [
               // Profile Picture with Pro Ring
-              Stack(
-                children: [
-                  // Pro ring background
-                  if (isPro)
-                    Container(
-                      width: 72.w,
-                      height: 72.w,
-                      decoration: BoxDecoration(
-                        gradient: AppTheme.goldGradient,
-                        shape: BoxShape.circle,
-                        boxShadow: [
-                          BoxShadow(
-                            color: AppTheme.goldColor.withOpacity(0.4),
-                            blurRadius: 12,
-                            offset: const Offset(0, 4),
-                          ),
-                        ],
-                      ),
-                    ),
-                  // Profile picture
-                  Positioned(
-                    top: 3,
-                    left: 3,
-                    child: Container(
-                      width: 66.w,
-                      height: 66.w,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        border: Border.all(
-                          color: Colors.white,
-                          width: 3,
-                        ),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withOpacity(0.2),
-                            blurRadius: 8,
-                            offset: const Offset(0, 2),
-                          ),
-                        ],
-                      ),
-                      child: ClipOval(
-                        child: CachedNetworkImage(
-                          imageUrl: profilePictureUrl ?? defaultAvatarUrl,
-                          fit: BoxFit.cover,
-                          placeholder: (context, url) => Container(
-                            color: Colors.grey.shade300,
-                            child: Icon(
-                              Icons.person,
-                              size: 32.sp,
-                              color: Colors.white,
+              SizedBox(
+                width: 72.w,
+                height: 72.w,
+                child: Stack(
+                  children: [
+                    // Pro ring background
+                    if (isPro)
+                      Container(
+                        width: 72.w,
+                        height: 72.w,
+                        decoration: BoxDecoration(
+                          gradient: AppTheme.goldGradient,
+                          shape: BoxShape.circle,
+                          boxShadow: [
+                            BoxShadow(
+                              color: AppTheme.goldColor.withOpacity(0.4),
+                              blurRadius: 12,
+                              offset: const Offset(0, 4),
                             ),
-                          ),
-                          errorWidget: (context, url, error) => Container(
-                            color: Colors.grey.shade300,
-                            child: Icon(
-                              Icons.person,
-                              size: 32.sp,
-                              color: Colors.white,
-                            ),
-                          ),
+                          ],
                         ),
                       ),
-                    ),
-                  ),
-                  // Pro Badge overlay
-                  if (isPro)
+                    // Profile picture
                     Positioned(
-                      right: 0,
-                      bottom: 0,
-                      child: Transform.scale(
-                        scale: 0.6,
-                        child: ProBadgeWidget(
-                          size: ProBadgeSize.large,
-                          showTooltip: false,
+                      top: 3,
+                      left: 3,
+                      child: Container(
+                        width: 66.w,
+                        height: 66.w,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          border: Border.all(
+                            color: Colors.white,
+                            width: 3,
+                          ),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.2),
+                              blurRadius: 8,
+                              offset: const Offset(0, 2),
+                            ),
+                          ],
+                        ),
+                        child: ClipOval(
+                          child: CachedNetworkImage(
+                            imageUrl: profilePictureUrl ?? defaultAvatarUrl,
+                            fit: BoxFit.cover,
+                            placeholder: (context, url) => Container(
+                              color: Colors.grey.shade300,
+                              child: Icon(
+                                Icons.person,
+                                size: 32.sp,
+                                color: Colors.white,
+                              ),
+                            ),
+                            errorWidget: (context, url, error) => Container(
+                              color: Colors.grey.shade300,
+                              child: Icon(
+                                Icons.person,
+                                size: 32.sp,
+                                color: Colors.white,
+                              ),
+                            ),
+                          ),
                         ),
                       ),
                     ),
-                ],
+                    // Pro Badge overlay
+                    if (isPro)
+                      Positioned(
+                        right: 0,
+                        bottom: 0,
+                        child: Transform.scale(
+                          scale: 0.6,
+                          child: ProBadgeWidget(
+                            size: ProBadgeSize.large,
+                            showTooltip: false,
+                          ),
+                        ),
+                      ),
+                  ],
+                ),
               ),
               SizedBox(width: AppTheme.spacingMd.w),
               // User info
