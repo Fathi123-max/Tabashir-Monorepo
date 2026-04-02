@@ -94,7 +94,7 @@ class JobDetailsHeader extends StatelessWidget {
   );
 }
 
-// Job Title Section
+// Job Title Section - Enhanced with better hierarchy
 class JobTitleSection extends StatelessWidget {
   const JobTitleSection({
     required this.title,
@@ -111,106 +111,206 @@ class JobTitleSection extends StatelessWidget {
   final String salary;
 
   @override
-  Widget build(BuildContext context) => Padding(
-    padding: EdgeInsets.all(AppTheme.spacingMd.w),
-    child: Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          title,
-          style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-            fontSize: 26.sp,
-            fontWeight: FontWeight.bold,
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
+    return Container(
+      width: double.infinity,
+      padding: EdgeInsets.all(AppTheme.spacingLg.w),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            AppTheme.primaryColor.withOpacity(0.08),
+            AppTheme.primaryColor.withOpacity(0.03),
+            theme.scaffoldBackgroundColor,
+          ],
+        ),
+        borderRadius: BorderRadius.circular(AppTheme.radiusLarge.r),
+        border: Border.all(
+          color: AppTheme.primaryColor.withOpacity(0.15),
+          width: 1.5,
+        ),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Job Title
+          Text(
+            title,
+            style: theme.textTheme.headlineMedium?.copyWith(
+              fontSize: 24.sp,
+              fontWeight: FontWeight.w800,
+              letterSpacing: -0.5,
+              color: AppTheme.zinc900,
+            ),
+          ),
+          SizedBox(height: AppTheme.spacingSm.h),
+
+          // Company Name with badge
+          Container(
+            padding: EdgeInsets.symmetric(
+              horizontal: AppTheme.spacingMd.w,
+              vertical: AppTheme.spacingXs.h,
+            ),
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                colors: [
+                  AppTheme.primaryColor.withOpacity(0.15),
+                  AppTheme.primaryColor.withOpacity(0.08),
+                ],
+              ),
+              borderRadius: BorderRadius.circular(AppTheme.radiusMedium.r),
+              border: Border.all(
+                color: AppTheme.primaryColor.withOpacity(0.2),
+              ),
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(
+                  Icons.business_rounded,
+                  size: 16.sp,
+                  color: AppTheme.primaryColor,
+                ),
+                SizedBox(width: 6.w),
+                Text(
+                  company,
+                  style: theme.textTheme.titleMedium?.copyWith(
+                    fontSize: 15.sp,
+                    fontWeight: FontWeight.w700,
+                    color: AppTheme.primaryColor,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          SizedBox(height: AppTheme.spacingMd.h),
+
+          // Location, Match%, Salary as chips
+          Wrap(
+            spacing: AppTheme.spacingSm.w,
+            runSpacing: AppTheme.spacingSm.h,
+            children: [
+              _buildInfoChip(
+                icon: Icons.location_on_rounded,
+                label: location,
+                color: AppTheme.zinc600,
+                bgColor: AppTheme.zinc100,
+              ),
+              _buildMatchChip(percentage: matchPercentage),
+              _buildInfoChip(
+                icon: Icons.attach_money_rounded,
+                label: salary,
+                color: AppTheme.successColor,
+                bgColor: AppTheme.successColor.withOpacity(0.1),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildInfoChip({
+    required IconData icon,
+    required String label,
+    required Color color,
+    required Color bgColor,
+  }) =>
+      Container(
+        padding: EdgeInsets.symmetric(
+          horizontal: AppTheme.spacingMd.w,
+          vertical: AppTheme.spacingXs.h,
+        ),
+        decoration: BoxDecoration(
+          color: bgColor,
+          borderRadius: BorderRadius.circular(AppTheme.radiusFull.r),
+          border: Border.all(
+            color: color.withOpacity(0.2),
           ),
         ),
-        SizedBox(height: AppTheme.spacingXs.h),
-        Text(
-          company,
-          style: Theme.of(context).textTheme.titleLarge?.copyWith(
-            color: AppTheme.primaryColor,
-            fontWeight: FontWeight.w600,
-          ),
-        ),
-        SizedBox(height: AppTheme.spacingXs.h),
-        Row(
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
           children: [
             Icon(
-              Icons.location_on_rounded,
-              size: 16.sp,
-              color: Theme.of(context).colorScheme.onSurfaceVariant,
+              icon,
+              size: 14.sp,
+              color: color,
             ),
             SizedBox(width: 4.w),
-            Text(
-              location,
-              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                color: Theme.of(context).colorScheme.onSurfaceVariant,
-              ),
-            ),
-          ],
-        ),
-        SizedBox(height: AppTheme.spacingMd.h),
-        Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Container(
-              padding: EdgeInsets.symmetric(
-                horizontal: AppTheme.spacingMd.w,
-                vertical: AppTheme.spacingXs.h,
-              ),
-              decoration: BoxDecoration(
-                color: AppTheme.successColor.withOpacity(0.1),
-                borderRadius: BorderRadius.circular(AppTheme.radiusFull.r),
-                border: Border.all(
-                  color: AppTheme.successColor.withOpacity(0.2),
+            Flexible(
+              child: Text(
+                label,
+                style: TextStyle(
+                  fontSize: 12.sp,
+                  fontWeight: FontWeight.w600,
+                  color: color,
                 ),
-              ),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Icon(
-                    Icons.star_rounded,
-                    size: 16.sp,
-                    color: AppTheme.successColor,
-                  ),
-                  SizedBox(width: 4.w),
-                  Text(
-                    matchPercentage,
-                    style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                      fontWeight: FontWeight.bold,
-                      color: AppTheme.successColor,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            SizedBox(width: AppTheme.spacingMd.w),
-            Expanded(
-              child: Row(
-                children: [
-                  Icon(
-                    Icons.attach_money_rounded,
-                    size: 18.sp,
-                    color: Theme.of(context).colorScheme.onSurfaceVariant,
-                  ),
-                  SizedBox(width: 4.w),
-                  Text(
-                    salary,
-                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                      color: Theme.of(context).colorScheme.onSurfaceVariant,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                ],
+                overflow: TextOverflow.ellipsis,
               ),
             ),
           ],
         ),
-      ],
-    ),
-  );
+      );
+
+  Widget _buildMatchChip({required String percentage}) {
+    final matchValue = int.tryParse(percentage.replaceAll('%', '')) ?? 0;
+    final matchColor = matchValue >= 80
+        ? AppTheme.successColor
+        : matchValue >= 60
+            ? AppTheme.warningColor
+            : AppTheme.errorColor;
+
+    return Container(
+      padding: EdgeInsets.symmetric(
+        horizontal: AppTheme.spacingMd.w,
+        vertical: AppTheme.spacingXs.h,
+      ),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          colors: [
+            matchColor.withOpacity(0.2),
+            matchColor.withOpacity(0.1),
+          ],
+        ),
+        borderRadius: BorderRadius.circular(AppTheme.radiusFull.r),
+        border: Border.all(
+          color: matchColor.withOpacity(0.3),
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: matchColor.withOpacity(0.2),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(
+            Icons.star_rounded,
+            size: 14.sp,
+            color: matchColor,
+          ),
+          SizedBox(width: 4.w),
+          Text(
+            '$percentage Match',
+            style: TextStyle(
+              fontSize: 12.sp,
+              fontWeight: FontWeight.w700,
+              color: matchColor,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
 }
 
-// Match Alert Widget
+// Match Alert Widget - Enhanced styling
 class JobMatchAlert extends StatelessWidget {
   const JobMatchAlert({
     required this.alertText,
@@ -286,7 +386,7 @@ class CompanyDetailsWidget extends StatelessWidget {
   Widget build(BuildContext context) => GestureDetector(
     onTap: onViewProfile,
     child: Container(
-      margin: EdgeInsets.symmetric(horizontal: AppTheme.spacingLg.w),
+      width: double.infinity,
       padding: EdgeInsets.all(AppTheme.spacingMd.w),
       decoration: BoxDecoration(
         color: Theme.of(context).cardColor,
@@ -365,8 +465,9 @@ class JobTagsWidget extends StatelessWidget {
   final List<String> tags;
 
   @override
-  Widget build(BuildContext context) => Padding(
-    padding: EdgeInsets.symmetric(horizontal: AppTheme.spacingMd.w),
+  Widget build(BuildContext context) => Container(
+    width: double.infinity,
+    padding: EdgeInsets.all(AppTheme.spacingMd.w),
     child: SizedBox(
       height: 40.h,
       child: ListView.separated(
@@ -440,32 +541,40 @@ class _ExpandableSectionState extends State<ExpandableSection> {
         button: true,
         child: GestureDetector(
           onTap: () => setState(() => _isExpanded = !_isExpanded),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                widget.title,
-                style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                  fontWeight: FontWeight.bold,
-                  color: Theme.of(context).textTheme.headlineSmall?.color,
+          child: Container(
+            margin: EdgeInsets.symmetric(horizontal: AppTheme.spacingMd.w),
+            padding: EdgeInsets.symmetric(vertical: AppTheme.spacingSm.h),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  widget.title,
+                  style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                    fontWeight: FontWeight.bold,
+                    color: Theme.of(context).textTheme.headlineSmall?.color,
+                  ),
                 ),
-              ),
-              AnimatedRotation(
-                turns: _isExpanded ? 0.5 : 0,
-                duration: const Duration(milliseconds: 300),
-                child: Icon(
-                  Icons.expand_more,
-                  color: Theme.of(context).hintColor,
-                  size: 24.w,
+                AnimatedRotation(
+                  turns: _isExpanded ? 0.5 : 0,
+                  duration: const Duration(milliseconds: 300),
+                  child: Icon(
+                    Icons.expand_more,
+                    color: Theme.of(context).hintColor,
+                    size: 24.w,
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
       if (_isExpanded) ...[
-        SizedBox(height: 16.h),
-        widget.content,
+        SizedBox(height: AppTheme.spacingSm.h),
+        Container(
+          margin: EdgeInsets.symmetric(horizontal: AppTheme.spacingMd.w),
+          child: widget.content,
+        ),
+        SizedBox(height: AppTheme.spacingLg.h),
       ],
     ],
   );

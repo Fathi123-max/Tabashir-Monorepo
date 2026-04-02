@@ -113,24 +113,25 @@ class _JobDetailScreenState extends State<JobDetailScreen> {
               onPressed: () => Navigator.of(context).pop(),
               tooltip: 'Back'.tr(),
             ),
-            actions: [
-              BlocBuilder<JobDetailsCubit, JobDetailsState>(
-                builder: (context, state) {
-                  final isSaved = state is JobDetailsLoaded && state.isSaved;
-                  return IconButton(
-                    icon: Icon(isSaved ? Icons.star : Icons.star_border),
-                    color: isSaved ? AppTheme.primaryColor : null,
-                    onPressed: () => _onSave(context, widget.jobId),
-                    tooltip: isSaved ? 'Unsave'.tr() : 'Save'.tr(),
-                  );
-                },
-              ),
-              IconButton(
-                icon: const Icon(Icons.share),
-                onPressed: () => _onShare(context),
-                tooltip: 'Share'.tr(),
-              ),
-            ],
+            // Hidden: Share and Save buttons
+            // actions: [
+            //   BlocBuilder<JobDetailsCubit, JobDetailsState>(
+            //     builder: (context, state) {
+            //       final isSaved = state is JobDetailsLoaded && state.isSaved;
+            //       return IconButton(
+            //         icon: Icon(isSaved ? Icons.star : Icons.star_border),
+            //         color: isSaved ? AppTheme.primaryColor : null,
+            //         onPressed: () => _onSave(context, widget.jobId),
+            //         tooltip: isSaved ? 'Unsave'.tr() : 'Save'.tr(),
+            //       );
+            //     },
+            //   ),
+            //   IconButton(
+            //     icon: const Icon(Icons.share),
+            //     onPressed: () => _onShare(context),
+            //     tooltip: 'Share'.tr(),
+            //   ),
+            // ],
           ),
           body: Column(
             children: [
@@ -216,7 +217,7 @@ class _JobDetailScreenState extends State<JobDetailScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Job Title Section
+          // Job Title Section - Full width, no extra margins
           Semantics(
             label:
                 'Job title: ${jobDetails.title}, Company: ${jobDetails.company}'
@@ -230,17 +231,7 @@ class _JobDetailScreenState extends State<JobDetailScreen> {
             ),
           ),
 
-          SizedBox(height: 24.h),
-
-          // Match Alert
-          JobMatchAlert(
-            alertText:
-                jobDetails.overview ??
-                "Your experience aligns perfectly with what they're looking for."
-                    .tr(),
-          ),
-
-          SizedBox(height: 24.h),
+          SizedBox(height: AppTheme.spacingMd.h),
 
           // Company Details
           CompanyDetailsWidget(
@@ -248,7 +239,7 @@ class _JobDetailScreenState extends State<JobDetailScreen> {
             onViewProfile: _onViewProfile,
           ),
 
-          SizedBox(height: 24.h),
+          SizedBox(height: AppTheme.spacingLg.h),
 
           // Job Tags
           Semantics(
@@ -258,29 +249,10 @@ class _JobDetailScreenState extends State<JobDetailScreen> {
             ),
           ),
 
-          SizedBox(height: 24.h),
+          SizedBox(height: AppTheme.spacingLg.h),
 
           // Job Details Sections
           _buildJobDetailsSections(jobDetails),
-
-          SizedBox(height: 24.h),
-
-          // Similar Opportunities (Removed)
-          // Semantics(
-          //   label: 'Similar job opportunities'.tr(),
-          //   child: SimilarOpportunitiesWidget(
-          //     opportunities: jobDetails.similarOpportunities
-          //         .map(
-          //           (job) => {
-          //             'title': job.title,
-          //             'company': job.company,
-          //             'match': job.matchPercentage,
-          //             'tags': job.tags,
-          //           },
-          //         )
-          //         .toList(),
-          //   ),
-          // ),
         ],
       ),
     ),
@@ -290,10 +262,124 @@ class _JobDetailScreenState extends State<JobDetailScreen> {
 
   Widget _buildJobDetailsSections(JobDetails jobDetails) => Column(
     children: [
+      // Employment Type, Experience Level, Working Hours
+      if (jobDetails.employmentType != null ||
+          jobDetails.experienceLevel != null ||
+          jobDetails.workingHours != null ||
+          jobDetails.workingDays != null) ...[
+        Container(
+          width: double.infinity,
+          padding: EdgeInsets.all(AppTheme.spacingMd.w),
+          decoration: BoxDecoration(
+            color: AppTheme.primaryColor.withOpacity(0.05),
+            borderRadius: BorderRadius.circular(AppTheme.radiusMedium.r),
+            border: Border.all(
+              color: AppTheme.primaryColor.withOpacity(0.15),
+            ),
+          ),
+          child: Wrap(
+            spacing: AppTheme.spacingSm.w,
+            runSpacing: AppTheme.spacingSm.h,
+            children: [
+              if (jobDetails.employmentType != null)
+                _buildInfoChip(
+                  icon: Icons.work_outline_rounded,
+                  label: jobDetails.employmentType!,
+                ),
+              if (jobDetails.experienceLevel != null)
+                _buildInfoChip(
+                  icon: Icons.trending_up_rounded,
+                  label: jobDetails.experienceLevel!,
+                ),
+              if (jobDetails.workingHours != null)
+                _buildInfoChip(
+                  icon: Icons.schedule_rounded,
+                  label: jobDetails.workingHours!,
+                ),
+              if (jobDetails.workingDays != null)
+                _buildInfoChip(
+                  icon: Icons.calendar_today_rounded,
+                  label: jobDetails.workingDays!,
+                ),
+            ],
+          ),
+        ),
+        SizedBox(height: AppTheme.spacingMd.h),
+      ],
+
+      // Skills Section
+      if (jobDetails.skills.isNotEmpty) ...[
+        Container(
+          width: double.infinity,
+          padding: EdgeInsets.all(AppTheme.spacingMd.w),
+          decoration: BoxDecoration(
+            color: AppTheme.zinc50,
+            borderRadius: BorderRadius.circular(AppTheme.radiusMedium.r),
+            border: Border.all(
+              color: AppTheme.zinc200!,
+            ),
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  Icon(
+                    Icons.psychology_rounded,
+                    size: 20.sp,
+                    color: AppTheme.primaryColor,
+                  ),
+                  SizedBox(width: AppTheme.spacingSm.w),
+                  Text(
+                    'Required Skills',
+                    style: TextStyle(
+                      fontSize: 16.sp,
+                      fontWeight: FontWeight.bold,
+                      color: AppTheme.zinc900,
+                    ),
+                  ),
+                ],
+              ),
+              SizedBox(height: AppTheme.spacingMd.h),
+              Wrap(
+                spacing: AppTheme.spacingSm.w,
+                runSpacing: AppTheme.spacingSm.h,
+                children: jobDetails.skills
+                    .map(
+                      (skill) => Container(
+                        padding: EdgeInsets.symmetric(
+                          horizontal: AppTheme.spacingMd.w,
+                          vertical: AppTheme.spacingXs.h,
+                        ),
+                        decoration: BoxDecoration(
+                          color: AppTheme.primaryColor.withOpacity(0.08),
+                          borderRadius: BorderRadius.circular(AppTheme.radiusFull.r),
+                          border: Border.all(
+                            color: AppTheme.primaryColor.withOpacity(0.2),
+                          ),
+                        ),
+                        child: Text(
+                          skill,
+                          style: TextStyle(
+                            fontSize: 12.sp,
+                            fontWeight: FontWeight.w600,
+                            color: AppTheme.primaryColor,
+                          ),
+                        ),
+                      ),
+                    )
+                    .toList(),
+              ),
+            ],
+          ),
+        ),
+        SizedBox(height: AppTheme.spacingMd.h),
+      ],
+
       // About the Role
       ExpandableSection(
         title: 'About the Role'.tr(),
-        initiallyExpanded: true,
+        initiallyExpanded: false,
         content: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -304,12 +390,11 @@ class _JobDetailScreenState extends State<JobDetailScreen> {
         ),
       ),
 
-      // Requirements - only show if not empty
+      // Requirements
       if (jobDetails.requirements.isNotEmpty) ...[
-        SizedBox(height: 16.h),
         ExpandableSection(
           title: 'Requirements'.tr(),
-          initiallyExpanded: true,
+          initiallyExpanded: false,
           content: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: jobDetails.requirements
@@ -322,8 +407,233 @@ class _JobDetailScreenState extends State<JobDetailScreen> {
           ),
         ),
       ],
+
+      // Contact Information
+      if (jobDetails.phone != null ||
+          jobDetails.applicationEmail != null ||
+          jobDetails.applyUrl != null) ...[
+        Container(
+          width: double.infinity,
+          padding: EdgeInsets.all(AppTheme.spacingMd.w),
+          decoration: BoxDecoration(
+            color: AppTheme.zinc50,
+            borderRadius: BorderRadius.circular(AppTheme.radiusMedium.r),
+            border: Border.all(
+              color: AppTheme.zinc200!,
+            ),
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  Icon(
+                    Icons.contact_mail_rounded,
+                    size: 20.sp,
+                    color: AppTheme.primaryColor,
+                  ),
+                  SizedBox(width: AppTheme.spacingSm.w),
+                  Text(
+                    'Contact Information',
+                    style: TextStyle(
+                      fontSize: 16.sp,
+                      fontWeight: FontWeight.bold,
+                      color: AppTheme.zinc900,
+                    ),
+                  ),
+                ],
+              ),
+              SizedBox(height: AppTheme.spacingMd.h),
+              if (jobDetails.phone != null) ...[
+                _buildContactRow(
+                  icon: Icons.phone_rounded,
+                  label: jobDetails.phone!,
+                ),
+                SizedBox(height: AppTheme.spacingSm.h),
+              ],
+              if (jobDetails.applicationEmail != null) ...[
+                _buildContactRow(
+                  icon: Icons.email_rounded,
+                  label: jobDetails.applicationEmail!,
+                ),
+                SizedBox(height: AppTheme.spacingSm.h),
+              ],
+              if (jobDetails.applyUrl != null) ...[
+                _buildContactRow(
+                  icon: Icons.link_rounded,
+                  label: 'Apply Online',
+                  isLink: true,
+                  url: jobDetails.applyUrl!,
+                ),
+              ],
+            ],
+          ),
+        ),
+        SizedBox(height: AppTheme.spacingMd.h),
+      ],
+
+      // Posted Date & Source
+      if (jobDetails.postedDate != null || jobDetails.source != null) ...[
+        Container(
+          width: double.infinity,
+          padding: EdgeInsets.all(AppTheme.spacingMd.w),
+          decoration: BoxDecoration(
+            color: AppTheme.zinc50,
+            borderRadius: BorderRadius.circular(AppTheme.radiusMedium.r),
+            border: Border.all(
+              color: AppTheme.zinc200!,
+            ),
+          ),
+          child: Wrap(
+            spacing: AppTheme.spacingMd.w,
+            runSpacing: AppTheme.spacingSm.h,
+            children: [
+              if (jobDetails.postedDate != null)
+                Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(
+                      Icons.access_time_rounded,
+                      size: 16.sp,
+                      color: AppTheme.zinc400,
+                    ),
+                    SizedBox(width: 4.w),
+                    Text(
+                      'Posted ${_formatPostedDate(jobDetails.postedDate!)}',
+                      style: TextStyle(
+                        fontSize: 13.sp,
+                        color: AppTheme.zinc500,
+                      ),
+                    ),
+                  ],
+                ),
+              if (jobDetails.source != null)
+                Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(
+                      Icons.source_rounded,
+                      size: 16.sp,
+                      color: AppTheme.zinc400,
+                    ),
+                    SizedBox(width: 4.w),
+                    Text(
+                      'Source: ${jobDetails.source!}',
+                      style: TextStyle(
+                        fontSize: 13.sp,
+                        color: AppTheme.zinc500,
+                      ),
+                    ),
+                  ],
+                ),
+            ],
+          ),
+        ),
+      ],
     ],
   );
+
+  Widget _buildInfoChip({
+    required IconData icon,
+    required String label,
+  }) =>
+      Container(
+        padding: EdgeInsets.symmetric(
+          horizontal: AppTheme.spacingSm.w,
+          vertical: AppTheme.spacingXs.h,
+        ),
+        decoration: BoxDecoration(
+          color: AppTheme.zinc100,
+          borderRadius: BorderRadius.circular(AppTheme.radiusSmall.r),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(
+              icon,
+              size: 14.sp,
+              color: AppTheme.zinc600,
+            ),
+            SizedBox(width: 4.w),
+            Text(
+              label,
+              style: TextStyle(
+                fontSize: 12.sp,
+                color: AppTheme.zinc700,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          ],
+        ),
+      );
+
+  Widget _buildContactRow({
+    required IconData icon,
+    required String label,
+    bool isLink = false,
+    String? url,
+  }) =>
+      Row(
+        children: [
+          Icon(
+            icon,
+            size: 18.sp,
+            color: AppTheme.primaryColor,
+          ),
+          SizedBox(width: 8.w),
+          isLink
+              ? Expanded(
+                  child: GestureDetector(
+                    onTap: () {
+                      // TODO: Open URL
+                      print('Open URL: $url');
+                    },
+                    child: Text(
+                      label,
+                      style: TextStyle(
+                        fontSize: 14.sp,
+                        color: AppTheme.primaryColor,
+                        fontWeight: FontWeight.w600,
+                        decoration: TextDecoration.underline,
+                      ),
+                    ),
+                  ),
+                )
+              : Expanded(
+                  child: Text(
+                    label,
+                    style: TextStyle(
+                      fontSize: 14.sp,
+                      color: AppTheme.zinc700,
+                    ),
+                  ),
+                ),
+        ],
+      );
+
+  String _formatPostedDate(String dateStr) {
+    try {
+      final date = DateTime.parse(dateStr);
+      final now = DateTime.now();
+      final difference = now.difference(date);
+
+      if (difference.inDays == 0) {
+        return 'today';
+      } else if (difference.inDays == 1) {
+        return 'yesterday';
+      } else if (difference.inDays < 7) {
+        return '${difference.inDays} days ago';
+      } else if (difference.inDays < 30) {
+        return '${(difference.inDays / 7).floor()} weeks ago';
+      } else if (difference.inDays < 365) {
+        return '${(difference.inDays / 30).floor()} months ago';
+      } else {
+        return '${(difference.inDays / 365).floor()} years ago';
+      }
+    } catch (e) {
+      return dateStr;
+    }
+  }
 
   // Callback methods
   void _onShare(BuildContext context) {

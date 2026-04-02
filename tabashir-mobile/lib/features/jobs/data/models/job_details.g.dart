@@ -11,29 +11,27 @@ _JobDetails _$JobDetailsFromJson(Map<String, dynamic> json) => _JobDetails(
   title: json['title'] as String,
   description: json['description'] as String,
   company: json['company'] as String,
-  industry: json['industry'] as String,
   location: json['location'] as String,
   salary: json['salary'] as String,
   matchPercentage: json['matchPercentage'] as String,
-  companySize: (json['companySize'] as num).toInt(),
-  foundedYear: (json['foundedYear'] as num).toInt(),
-  isVerified: json['isVerified'] as bool,
   tags: (json['tags'] as List<dynamic>).map((e) => e as String).toList(),
-  responsibilities: (json['responsibilities'] as List<dynamic>)
-      .map((e) => e as String)
-      .toList(),
   requirements: (json['requirements'] as List<dynamic>)
       .map((e) => e as String)
       .toList(),
   skills: (json['skills'] as List<dynamic>).map((e) => e as String).toList(),
-  similarOpportunities: (json['similarOpportunities'] as List<dynamic>)
-      .map((e) => SimilarJob.fromJson(e as Map<String, dynamic>))
-      .toList(),
-  overview: json['overview'] as String?,
-  benefits: json['benefits'] as String?,
   employmentType: json['employmentType'] as String?,
   experienceLevel: json['experienceLevel'] as String?,
+  workingHours: json['workingHours'] as String?,
+  workingDays: json['workingDays'] as String?,
+  phone: json['phone'] as String?,
+  applyUrl: json['applyUrl'] as String?,
+  applicationEmail: json['applicationEmail'] as String?,
+  source: json['source'] as String?,
+  nationality: json['nationality'] as String?,
+  gender: json['gender'] as String?,
+  academicQualification: json['academicQualification'] as String?,
   postedDate: json['postedDate'] as String?,
+  isSaved: json['isSaved'] as bool?,
 );
 
 Map<String, dynamic> _$JobDetailsToJson(_JobDetails instance) =>
@@ -42,38 +40,23 @@ Map<String, dynamic> _$JobDetailsToJson(_JobDetails instance) =>
       'title': instance.title,
       'description': instance.description,
       'company': instance.company,
-      'industry': instance.industry,
       'location': instance.location,
       'salary': instance.salary,
       'matchPercentage': instance.matchPercentage,
-      'companySize': instance.companySize,
-      'foundedYear': instance.foundedYear,
-      'isVerified': instance.isVerified,
       'tags': instance.tags,
-      'responsibilities': instance.responsibilities,
       'requirements': instance.requirements,
       'skills': instance.skills,
-      'similarOpportunities': instance.similarOpportunities,
-      'overview': instance.overview,
-      'benefits': instance.benefits,
       'employmentType': instance.employmentType,
       'experienceLevel': instance.experienceLevel,
+      'workingHours': instance.workingHours,
+      'workingDays': instance.workingDays,
+      'phone': instance.phone,
+      'applyUrl': instance.applyUrl,
+      'applicationEmail': instance.applicationEmail,
+      'source': instance.source,
+      'nationality': instance.nationality,
+      'gender': instance.gender,
+      'academicQualification': instance.academicQualification,
       'postedDate': instance.postedDate,
-    };
-
-_SimilarJob _$SimilarJobFromJson(Map<String, dynamic> json) => _SimilarJob(
-  id: json['id'] as String,
-  title: json['title'] as String,
-  company: json['company'] as String,
-  matchPercentage: json['matchPercentage'] as String,
-  tags: (json['tags'] as List<dynamic>).map((e) => e as String).toList(),
-);
-
-Map<String, dynamic> _$SimilarJobToJson(_SimilarJob instance) =>
-    <String, dynamic>{
-      'id': instance.id,
-      'title': instance.title,
-      'company': instance.company,
-      'matchPercentage': instance.matchPercentage,
-      'tags': instance.tags,
+      'isSaved': instance.isSaved,
     };

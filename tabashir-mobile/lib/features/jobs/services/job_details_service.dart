@@ -44,7 +44,7 @@ class JobDetailsService {
     }
   }
 
-  /// Maps API response to UI model
+  /// Maps API response to UI model - ONLY real backend data, NO mock data
   JobDetails _mapApiResponseToJobDetails(
     JobDetailsResponse response,
     CandidateProfileData? userProfile,
@@ -59,25 +59,28 @@ class JobDetailsService {
       title: response.jobTitle ?? 'Untitled Position',
       description: response.jobDescription ?? 'No description available',
       company: response.companyName ?? 'Unknown Company',
-      industry: 'Not specified', // API doesn't provide this yet
       location: response.location ?? 'Not specified',
       salary: response.salary ?? 'Not specified',
       matchPercentage: matchPercentage,
-      companySize: 0, // API doesn't provide this yet
-      foundedYear: 0, // API doesn't provide this yet
-      isVerified: false, // API doesn't provide this yet
-      tags: _extractTags(
-        response,
-      ), // Extract from job type, location, working hours
-      responsibilities: [], // API doesn't provide this yet
+      tags: _extractTags(response),
       requirements: _extractRequirements(response)
           .where((req) => req.trim().isNotEmpty)
-          .toList(), // Filter out empty requirements
-      skills: _extractSkills(response), // Extract from languages
-      similarOpportunities: [], // API doesn't provide this yet
+          .toList(),
+      skills: _extractSkills(response),
+      // Real backend data
       employmentType: response.jobType,
-      experienceLevel: response.experience ?? 'Not specified',
-      postedDate: response.jobDate, // Use job_date from API
+      experienceLevel: response.experience,
+      workingHours: response.workingHours,
+      workingDays: response.workingDays,
+      phone: response.phone,
+      applyUrl: response.applyUrl,
+      applicationEmail: response.applicationEmail,
+      source: response.source,
+      nationality: response.nationality,
+      gender: response.gender,
+      academicQualification: response.academicQualification,
+      postedDate: response.jobDate,
+      isSaved: response.isSaved ?? false,
     );
   }
 
