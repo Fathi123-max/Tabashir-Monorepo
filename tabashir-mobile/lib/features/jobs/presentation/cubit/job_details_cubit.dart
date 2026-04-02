@@ -118,6 +118,76 @@ class JobDetailsCubit extends Cubit<JobDetailsState> {
     }
   }
 
+  /// Applies to a job via API for Pro users.
+  /// Checks if user is Pro (subscription.plan contains 'PRO' or userType is 'PRO') before applying.
+  /// Returns true on success, false if user is not Pro.
+  Future<bool> applyToJobWithApi(String jobId) async {
+    try {
+      // Get user profile data
+      final profileCubit = _profileCubit ?? getIt<ProfileCubit>();
+      final profileState = profileCubit.state;
+
+      if (profileState.status != ProfileStatus.success ||
+          profileState.profile == null) {
+        emit(
+          const JobDetailsState.error(
+            'User profile not found. Please update your profile.',
+          ),
+        );
+        return false;
+      }
+
+      final profile = profileState.profile!;
+
+      // Check if user is Pro using subscription.plan from UserProfileResponse
+      // Note: CandidateProfileData does NOT have subscriptionPlan field
+      // Use profile.subscriptionPlan which comes from UserProfileResponse.subscription.plan
+      final subscriptionPlan = profile.subscriptionPlan ?? '';
+      final isPro = subscriptionPlan.toUpperCase().contains('PRO') ||
+                    profile.userType?.toUpperCase() == 'PRO';
+
+      if (!isPro) {
+        print('[JOB_DETAILS_CUBIT] User is not Pro. Subscription plan: $subscriptionPlan');
+        return false;
+      }
+
+      final email = profile.email;
+      final nationality = profile.nationality;
+      final gender = profile.gender;
+
+      // Call service to apply via API
+      final response = await service.applyViaApi(
+        jobId: jobId,
+        email: email,
+        nationality: nationality,
+        gender: gender,
+      );
+
+      // Update local storage
+      await _appliedJobsStorage.addAppliedJobId(jobId);
+      if (getIt.isRegistered<JobsCubit>()) {
+        getIt<JobsCubit>().markJobAsApplied(jobId);
+      }
+
+      // Update state
+      if (state is JobDetailsLoaded) {
+        final currentState = state as JobDetailsLoaded;
+        emit(
+          currentState.copyWith(
+            isApplied: true,
+          ),
+        );
+      }
+
+      print('[JOB_DETAILS_CUBIT] Successfully applied to job $jobId');
+      return response.success;
+    } catch (e) {
+      print('[JOB_DETAILS_CUBIT] Error applying to job: $e');
+      emit(JobDetailsState.error('Failed to apply: ${e.toString()}'));
+      return false;
+    }
+  }
+
   /// Toggles the saved status of the job.
   Future<void> toggleSaveJob(String jobId) async {
     final currentState = state;

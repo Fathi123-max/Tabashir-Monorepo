@@ -92,6 +92,15 @@ class PaymentCubit extends Cubit<PaymentState> {
 
           // 4. Handle payment result
           if (paymentResult.success) {
+            // Refresh profile data to get updated job_matching and jobs_to_apply_number
+            try {
+              await _profileCubit.loadProfileData(force: true);
+              print('[PaymentCubit] Profile refreshed after successful payment');
+            } catch (profileErr) {
+              print('[PaymentCubit] Failed to refresh profile: $profileErr');
+              // Don't fail the payment if profile refresh fails
+            }
+
             emit(
               state.copyWith(
                 status: PaymentStatus.success,
@@ -280,6 +289,14 @@ class PaymentCubit extends Cubit<PaymentState> {
       final result = await _stripeService.processPayment();
 
       if (result.success) {
+        // Refresh profile data to get updated job_matching and jobs_to_apply_number
+        try {
+          await _profileCubit.loadProfileData(force: true);
+          print('[PaymentCubit] Profile refreshed after payment sheet success');
+        } catch (profileErr) {
+          print('[PaymentCubit] Failed to refresh profile: $profileErr');
+        }
+
         emit(
           state.copyWith(
             status: PaymentStatus.success,

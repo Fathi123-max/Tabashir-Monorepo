@@ -8,7 +8,9 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:tabashir/core/di/injection.dart';
 import 'package:tabashir/core/theme/app_theme.dart';
 import 'package:tabashir/core/network/models/payment/payment_intent_request.dart';
+import 'package:tabashir/core/models/stripe/stripe_enums.dart';
 import 'package:tabashir/features/payments/presentation/cubit/payment_cubit.dart';
+import 'package:tabashir/features/payments/presentation/screens/payment_success_screen.dart';
 
 import '../cubit/services_cubit.dart';
 import '../widgets/info_banner.dart';
@@ -20,8 +22,16 @@ import '../widgets/trust_indicators.dart';
 /// - AI LinkedIn Enhancement
 /// - AI Job Apply Service
 /// - Interview Prep AI
-class ServicesScreen extends StatelessWidget {
+class ServicesScreen extends StatefulWidget {
   const ServicesScreen({super.key});
+
+  @override
+  State<ServicesScreen> createState() => _ServicesScreenState();
+}
+
+class _ServicesScreenState extends State<ServicesScreen> {
+  String? _pendingServiceTitle;
+  double? _pendingAmount;
 
   Future<void> _onLinkedInEnhancerPressed(BuildContext context) async {
     // WhatsApp number (format: country code + number without + or spaces)
@@ -55,6 +65,12 @@ class ServicesScreen extends StatelessWidget {
   ) async {
     final paymentCubit = context.read<PaymentCubit>();
 
+    // Store service info for success screen
+    setState(() {
+      _pendingServiceTitle = serviceTitle;
+      _pendingAmount = amount;
+    });
+
     // Create payment intent
     final request = PaymentIntentRequest(
       amount: amount,
@@ -79,237 +95,263 @@ class ServicesScreen extends StatelessWidget {
           value: getIt<PaymentCubit>(),
         ),
       ],
-      child: BlocBuilder<ServicesCubit, ServicesState>(
-        builder: (context, state) => Scaffold(
-          backgroundColor: theme.scaffoldBackgroundColor,
-          body: SafeArea(
-            child: Column(
-              children: [
-                // Main scrollable content
-                Expanded(
-                  child: ListView(
-                    padding: EdgeInsets.only(
-                      bottom: kBottomNavigationBarHeight + AppTheme.spacingXl.h,
-                    ),
-                    children: [
-                      // Hero Header with gradient background
-                      Container(
-                        margin: EdgeInsets.fromLTRB(
-                          AppTheme.spacingMd.w,
-                          AppTheme.spacingLg.h,
-                          AppTheme.spacingMd.w,
-                          AppTheme.spacingMd.h,
-                        ),
-                        padding: EdgeInsets.all(AppTheme.spacingLg.w),
-                        decoration: BoxDecoration(
-                          gradient: LinearGradient(
-                            begin: Alignment.topLeft,
-                            end: Alignment.bottomRight,
-                            colors: [
-                              AppTheme.primaryColor.withOpacity(0.1),
-                              AppTheme.primaryColor.withOpacity(0.05),
-                              theme.scaffoldBackgroundColor,
-                            ],
+      child: BlocListener<PaymentCubit, PaymentState>(
+        listener: (context, state) {
+          // Show success screen when payment is successful
+          if (state.status == PaymentStatus.success && state.paymentSuccessful) {
+            // Get payment intent ID from state if available
+            final transactionId = state.paymentIntent?.data?.paymentIntentId;
+
+            // Navigate to success screen
+            Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (context) => PaymentSuccessScreen(
+                  serviceTitle: _pendingServiceTitle,
+                  amount: _pendingAmount,
+                  transactionId: transactionId,
+                ),
+              ),
+            );
+
+            // Clear pending info
+            setState(() {
+              _pendingServiceTitle = null;
+              _pendingAmount = null;
+            });
+          }
+        },
+        child: BlocBuilder<ServicesCubit, ServicesState>(
+          builder: (context, state) => Scaffold(
+            backgroundColor: theme.scaffoldBackgroundColor,
+            body: SafeArea(
+              child: Column(
+                children: [
+                  // Main scrollable content
+                  Expanded(
+                    child: ListView(
+                      padding: EdgeInsets.only(
+                        bottom: kBottomNavigationBarHeight + AppTheme.spacingXl.h,
+                      ),
+                      children: [
+                        // Hero Header with gradient background
+                        Container(
+                          margin: EdgeInsets.fromLTRB(
+                            AppTheme.spacingMd.w,
+                            AppTheme.spacingLg.h,
+                            AppTheme.spacingMd.w,
+                            AppTheme.spacingMd.h,
                           ),
-                          borderRadius: BorderRadius.circular(
-                            AppTheme.radiusLarge.r,
-                          ),
-                        ),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Row(
-                              children: [
-                                Container(
-                                  padding: EdgeInsets.all(AppTheme.spacingSm.w),
-                                  decoration: BoxDecoration(
-                                    gradient: AppTheme.primaryGradient,
-                                    borderRadius: BorderRadius.circular(
-                                      AppTheme.radiusMedium.r,
-                                    ),
-                                    boxShadow: [
-                                      BoxShadow(
-                                        color: AppTheme.primaryColor
-                                            .withOpacity(0.3),
-                                        blurRadius: 12,
-                                        offset: const Offset(0, 4),
-                                      ),
-                                    ],
-                                  ),
-                                  child: Icon(
-                                    Icons.auto_awesome_rounded,
-                                    size: 24.sp,
-                                    color: Colors.white,
-                                  ),
-                                ),
-                                SizedBox(width: AppTheme.spacingMd.w),
-                                Expanded(
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        'AI Services',
-                                        style: theme.textTheme.displayMedium
-                                            ?.copyWith(
-                                              fontSize: 28.sp,
-                                              fontWeight: FontWeight.bold,
-                                              letterSpacing: 0.5,
-                                            ),
-                                      ),
-                                      SizedBox(height: AppTheme.spacingXs.h),
-                                      Text(
-                                        'Boost your job search with smart tools.',
-                                        style: theme.textTheme.bodyMedium
-                                            ?.copyWith(
-                                              color: theme
-                                                  .colorScheme
-                                                  .onSurfaceVariant,
-                                              fontSize: 14.sp,
-                                            ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
+                          padding: EdgeInsets.all(AppTheme.spacingLg.w),
+                          decoration: BoxDecoration(
+                            gradient: LinearGradient(
+                              begin: Alignment.topLeft,
+                              end: Alignment.bottomRight,
+                              colors: [
+                                AppTheme.primaryColor.withOpacity(0.1),
+                                AppTheme.primaryColor.withOpacity(0.05),
+                                theme.scaffoldBackgroundColor,
                               ],
                             ),
-                          ],
-                        ),
-                      ),
-
-                      // Service Cards
-                      Padding(
-                        padding: EdgeInsets.symmetric(
-                          horizontal: AppTheme.spacingMd.w,
-                        ),
-                        child: Column(
-                          children: [
-                            // Featured Badge
-                            Container(
-                              margin: EdgeInsets.only(
-                                bottom: AppTheme.spacingMd.h,
-                              ),
-                              padding: EdgeInsets.symmetric(
-                                horizontal: AppTheme.spacingMd.w,
-                                vertical: AppTheme.spacingSm.h,
-                              ),
-                              decoration: BoxDecoration(
-                                color: AppTheme.primaryColor.withOpacity(0.1),
-                                borderRadius: BorderRadius.circular(
-                                  AppTheme.radiusFull.r,
-                                ),
-                                border: Border.all(
-                                  color: AppTheme.primaryColor.withOpacity(0.2),
-                                ),
-                              ),
-                              child: Row(
-                                mainAxisSize: MainAxisSize.min,
+                            borderRadius: BorderRadius.circular(
+                              AppTheme.radiusLarge.r,
+                            ),
+                          ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(
                                 children: [
-                                  Icon(
-                                    Icons.star_rounded,
-                                    size: 16.sp,
-                                    color: AppTheme.primaryColor,
+                                  Container(
+                                    padding: EdgeInsets.all(AppTheme.spacingSm.w),
+                                    decoration: BoxDecoration(
+                                      gradient: AppTheme.primaryGradient,
+                                      borderRadius: BorderRadius.circular(
+                                        AppTheme.radiusMedium.r,
+                                      ),
+                                      boxShadow: [
+                                        BoxShadow(
+                                          color: AppTheme.primaryColor
+                                              .withOpacity(0.3),
+                                          blurRadius: 12,
+                                          offset: const Offset(0, 4),
+                                        ),
+                                      ],
+                                    ),
+                                    child: Icon(
+                                      Icons.auto_awesome_rounded,
+                                      size: 24.sp,
+                                      color: Colors.white,
+                                    ),
                                   ),
-                                  SizedBox(width: AppTheme.spacingXs.w),
-                                  Text(
-                                    'Most Popular',
-                                    style: theme.textTheme.labelLarge?.copyWith(
-                                      color: AppTheme.primaryColor,
-                                      fontWeight: FontWeight.w600,
-                                      fontSize: 13.sp,
+                                  SizedBox(width: AppTheme.spacingMd.w),
+                                  Expanded(
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          'AI Services',
+                                          style: theme.textTheme.displayMedium
+                                              ?.copyWith(
+                                                fontSize: 28.sp,
+                                                fontWeight: FontWeight.bold,
+                                                letterSpacing: 0.5,
+                                              ),
+                                        ),
+                                        SizedBox(height: AppTheme.spacingXs.h),
+                                        Text(
+                                          'Boost your job search with smart tools.',
+                                          style: theme.textTheme.bodyMedium
+                                              ?.copyWith(
+                                                color: theme
+                                                    .colorScheme
+                                                    .onSurfaceVariant,
+                                                fontSize: 14.sp,
+                                              ),
+                                        ),
+                                      ],
                                     ),
                                   ),
                                 ],
                               ),
-                            ),
-
-                            ServiceCard(
-                              icon: Icons.workspace_premium_rounded,
-                              title: 'AI Job Apply Service - Premium',
-                              description:
-                                  'Premium plan with priority applications and '
-                                      .tr() +
-                                  'advanced AI matching.'.tr(),
-                              price: 'AED 200',
-                              buttonText: 'Auto Apply'.tr(),
-                              isEnabled: true,
-                              isFeatured: true,
-                              onPressed: () {
-                                _onJobApplyServicePressed(
-                                  context,
-                                  'ai-job-apply-premium',
-                                  200,
-                                  'AI Job Apply Service - Premium',
-                                );
-                              },
-                            ),
-                            SizedBox(height: AppTheme.spacingMd.h),
-
-                            ServiceCard(
-                              icon: Icons.flash_on_rounded,
-                              title: 'AI Job Apply Service - Basic',
-                              description:
-                                  'Let our AI find and apply to the best jobs for '
-                                      .tr() +
-                                  'you automatically.'.tr(),
-                              price: 'AED 100',
-                              buttonText: 'Auto Apply'.tr(),
-                              isEnabled: true,
-                              onPressed: () {
-                                _onJobApplyServicePressed(
-                                  context,
-                                  'ai-job-apply-basic',
-                                  100,
-                                  'AI Job Apply Service - Basic',
-                                );
-                              },
-                            ),
-                            SizedBox(height: AppTheme.spacingMd.h),
-
-                            ServiceCard(
-                              icon: Icons.description_rounded,
-                              title: 'AI Resume Optimization',
-                              description:
-                                  'Get your resume scored and optimized by AI to '
-                                      .tr() +
-                                  'pass ATS and impress recruiters.'.tr(),
-                              price: 'Free trial • AED 29',
-                              buttonText: 'Get Started'.tr(),
-                              isEnabled: true,
-                              badgeText: 'Free Trial',
-                              onPressed: () {
-                                context.pushNamed('ai-resume-screen');
-                              },
-                            ),
-                            SizedBox(height: AppTheme.spacingMd.h),
-
-                            ServiceCard(
-                              icon: Icons.link_rounded,
-                              title: 'AI LinkedIn Enhancement',
-                              description:
-                                  'Optimize your LinkedIn profile to attract more '
-                                      .tr() +
-                                  'recruiters and opportunities.'.tr(),
-                              price: 'AED 19',
-                              buttonText: 'Enhance Now'.tr(),
-                              isEnabled: true,
-                              onPressed: () {
-                                _onLinkedInEnhancerPressed(context);
-                              },
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
-                      ),
 
-                      // Trust Indicators
-                      Padding(
-                        padding: EdgeInsets.all(AppTheme.spacingMd.w),
-                        child: const TrustIndicators(),
-                      ),
-                    ],
+                        // Service Cards
+                        Padding(
+                          padding: EdgeInsets.symmetric(
+                            horizontal: AppTheme.spacingMd.w,
+                          ),
+                          child: Column(
+                            children: [
+                              // Featured Badge
+                              Container(
+                                margin: EdgeInsets.only(
+                                  bottom: AppTheme.spacingMd.h,
+                                ),
+                                padding: EdgeInsets.symmetric(
+                                  horizontal: AppTheme.spacingMd.w,
+                                  vertical: AppTheme.spacingSm.h,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: AppTheme.primaryColor.withOpacity(0.1),
+                                  borderRadius: BorderRadius.circular(
+                                    AppTheme.radiusFull.r,
+                                  ),
+                                  border: Border.all(
+                                    color: AppTheme.primaryColor.withOpacity(0.2),
+                                  ),
+                                ),
+                                child: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Icon(
+                                      Icons.star_rounded,
+                                      size: 16.sp,
+                                      color: AppTheme.primaryColor,
+                                    ),
+                                    SizedBox(width: AppTheme.spacingXs.w),
+                                    Text(
+                                      'Most Popular',
+                                      style: theme.textTheme.labelLarge?.copyWith(
+                                        color: AppTheme.primaryColor,
+                                        fontWeight: FontWeight.w600,
+                                        fontSize: 13.sp,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+
+                              ServiceCard(
+                                icon: Icons.workspace_premium_rounded,
+                                title: 'AI Job Apply Service - Premium',
+                                description:
+                                    'Premium plan with priority applications and '
+                                        .tr() +
+                                    'advanced AI matching.'.tr(),
+                                price: 'AED 200',
+                                buttonText: 'Auto Apply'.tr(),
+                                isEnabled: true,
+                                isFeatured: true,
+                                onPressed: () {
+                                  _onJobApplyServicePressed(
+                                    context,
+                                    'ai-job-apply-premium',
+                                    200,
+                                    'AI Job Apply Service - Premium',
+                                  );
+                                },
+                              ),
+                              SizedBox(height: AppTheme.spacingMd.h),
+
+                              ServiceCard(
+                                icon: Icons.flash_on_rounded,
+                                title: 'AI Job Apply Service - Basic',
+                                description:
+                                    'Let our AI find and apply to the best jobs for '
+                                        .tr() +
+                                    'you automatically.'.tr(),
+                                price: 'AED 100',
+                                buttonText: 'Auto Apply'.tr(),
+                                isEnabled: true,
+                                onPressed: () {
+                                  _onJobApplyServicePressed(
+                                    context,
+                                    'ai-job-apply-basic',
+                                    100,
+                                    'AI Job Apply Service - Basic',
+                                  );
+                                },
+                              ),
+                              SizedBox(height: AppTheme.spacingMd.h),
+
+                              ServiceCard(
+                                icon: Icons.description_rounded,
+                                title: 'AI Resume Optimization',
+                                description:
+                                    'Get your resume scored and optimized by AI to '
+                                        .tr() +
+                                    'pass ATS and impress recruiters.'.tr(),
+                                price: 'Free trial • AED 29',
+                                buttonText: 'Get Started'.tr(),
+                                isEnabled: true,
+                                badgeText: 'Free Trial',
+                                onPressed: () {
+                                  context.pushNamed('ai-resume-screen');
+                                },
+                              ),
+                              SizedBox(height: AppTheme.spacingMd.h),
+
+                              ServiceCard(
+                                icon: Icons.link_rounded,
+                                title: 'AI LinkedIn Enhancement',
+                                description:
+                                    'Optimize your LinkedIn profile to attract more '
+                                        .tr() +
+                                    'recruiters and opportunities.'.tr(),
+                                price: 'AED 19',
+                                buttonText: 'Enhance Now'.tr(),
+                                isEnabled: true,
+                                onPressed: () {
+                                  _onLinkedInEnhancerPressed(context);
+                                },
+                              ),
+                            ],
+                          ),
+                        ),
+
+                        // Trust Indicators
+                        Padding(
+                          padding: EdgeInsets.all(AppTheme.spacingMd.w),
+                          child: const TrustIndicators(),
+                        ),
+                      ],
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
         ),

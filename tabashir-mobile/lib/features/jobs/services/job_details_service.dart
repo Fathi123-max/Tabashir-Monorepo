@@ -1,7 +1,10 @@
+import 'package:dio/dio.dart';
 import 'package:injectable/injectable.dart';
 import 'package:tabashir/core/di/injection.dart';
 import 'package:tabashir/core/network/models/job_details_response.dart';
+import 'package:tabashir/core/network/models/jobs_match_response.dart';
 import 'package:tabashir/core/network/models/user/user_profile_response.dart';
+import 'package:tabashir/core/network/services/job/tabashir_api_service.dart';
 import 'package:tabashir/core/services/job_match_service.dart';
 import '../data/models/job_details.dart';
 import '../domain/repositories/jobs_repository.dart';
@@ -166,6 +169,37 @@ class JobDetailsService {
     // Simulate network delay
     await Future.delayed(const Duration(seconds: 1));
     // In a real implementation, this would send a request to apply to the job
+  }
+
+  /// Applies to a job via API for Pro users.
+  /// The backend will use the user's latest resume from the database if no file is provided.
+  Future<ApplyToJobResponse> applyViaApi({
+    required String jobId,
+    required String email,
+    String? nationality,
+    String? gender,
+    MultipartFile? resumeFile,
+  }) async {
+    print('[JOB_DETAILS_SERVICE] Applying to job $jobId via API for $email');
+
+    try {
+      // Pass a placeholder file if no resume provided - backend uses DB resume
+      final fileToUse = resumeFile ?? MultipartFile.fromString('', filename: 'placeholder.txt');
+      
+      final response = await getIt<TabashirApiService>().applyToJob(
+        jobId,
+        fileToUse,
+        email,
+        nationality ?? '',
+        gender ?? '',
+      );
+
+      print('[JOB_DETAILS_SERVICE] Apply API response: ${response.data}');
+      return response.data;
+    } catch (e) {
+      print('[JOB_DETAILS_SERVICE] Error applying to job: $e');
+      rethrow;
+    }
   }
 
   /// Prepares the job with the given [jobId] for sharing.

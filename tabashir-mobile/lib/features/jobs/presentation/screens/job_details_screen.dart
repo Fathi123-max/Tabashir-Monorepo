@@ -3,14 +3,16 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:tabashir/core/di/injection.dart';
+import 'package:tabashir/core/router/route_names.dart';
 import 'package:tabashir/core/theme/app_theme.dart';
 import 'package:tabashir/features/ai_job_apply/presentation/cubit/ai_job_apply_cubit.dart';
 import 'package:tabashir/features/ai_job_apply/presentation/cubit/ai_job_apply_state.dart';
 import 'package:tabashir/features/jobs/data/models/job_details.dart';
 import 'package:tabashir/features/jobs/presentation/widgets/job_details_widgets.dart';
-// import 'package:tabashir/features/jobs/presentation/widgets/job_details_widgets.dart'; // Removed - SimilarOpportunitiesWidget no longer used
 import 'package:tabashir/features/profile/presentation/cubit/profile_cubit.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../cubit/job_details_cubit.dart';
 
 class JobDetailScreen extends StatefulWidget {
@@ -50,10 +52,6 @@ class _JobDetailScreenState extends State<JobDetailScreen> {
         create: (context) =>
             JobDetailsCubit(service: getIt(), profileCubit: _profileCubit)
               ..getJobDetails(widget.jobId),
-      ),
-      // Provide AiJobApplyCubit for application feedback
-      BlocProvider(
-        create: (context) => getIt<AiJobApplyCubit>(),
       ),
       // Provide AiJobApplyCubit for application feedback
       BlocProvider(
@@ -711,7 +709,44 @@ class _JobDetailScreenState extends State<JobDetailScreen> {
         }
 
         final jobId = loadedState.jobDetails.id;
-        context.read<JobDetailsCubit>().applyToJob(jobId);
+
+        // Check if user is Pro using subscription.plan from UserProfileResponse
+        // Note: CandidateProfileData does NOT have subscriptionPlan field
+        // Use profile.subscriptionPlan which comes from UserProfileResponse.subscription.plan
+        final profile = profileState.profile!;
+        final subscriptionPlan = profile.subscriptionPlan ?? '';
+        final isPro = subscriptionPlan.toUpperCase().contains('PRO') ||
+                      profile.userType?.toUpperCase() == 'PRO';
+
+        if (isPro) {
+          // Pro user: Apply via API
+          print('[JOB_DETAILS_SCREEN] Pro user applying to job $jobId');
+          final success = await context
+              .read<JobDetailsCubit>()
+              .applyToJobWithApi(jobId);
+
+          if (success && mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text('Application submitted successfully!'.tr()),
+                backgroundColor: Colors.green,
+              ),
+            );
+          } else if (mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text('Failed to submit application. Please try again.'.tr()),
+                backgroundColor: Colors.red,
+              ),
+            );
+          }
+        } else {
+          // Free user: Show contact info dialog
+          print('[JOB_DETAILS_SCREEN] Free user, showing contact dialog');
+          if (mounted) {
+            _showContactInfoDialog(context, loadedState.jobDetails);
+          }
+        }
       } finally {
         // Always reset loading state in the finally block to ensure it's reset even if there's an error
         setState(() {
@@ -719,5 +754,198 @@ class _JobDetailScreenState extends State<JobDetailScreen> {
         });
       }
     }
+  }
+
+  /// Shows contact information dialog for free users
+  void _showContactInfoDialog(BuildContext context, JobDetails jobDetails) {
+    final hasPhone = jobDetails.phone != null && jobDetails.phone!.isNotEmpty;
+    final hasEmail = jobDetails.applicationEmail != null &&
+        jobDetails.applicationEmail!.isNotEmpty;
+    final hasUrl = jobDetails.applyUrl != null && jobDetails.applyUrl!.isNotEmpty;
+
+    showDialog<void>(
+      context: context,
+      builder: (BuildContext context) => AlertDialog(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(AppTheme.radiusMedium.r),
+        ),
+        title: Row(
+          children: [
+            Icon(
+              Icons.info_outline_rounded,
+              color: AppTheme.primaryColor,
+              size: 24.sp,
+            ),
+            SizedBox(width: 8.w),
+            Expanded(
+              child: Text(
+                'Contact Employer',
+                style: TextStyle(
+                  fontSize: 18.sp,
+                  fontWeight: FontWeight.bold,
+                  color: AppTheme.zinc900,
+                ),
+              ),
+            ),
+          ],
+        ),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'Upgrade to Pro to apply directly, or contact the employer using the options below:',
+              style: TextStyle(
+                fontSize: 14.sp,
+                color: AppTheme.zinc600,
+              ),
+            ),
+            SizedBox(height: AppTheme.spacingMd.h),
+            if (hasPhone)
+              ListTile(
+                leading: Icon(
+                  Icons.phone_rounded,
+                  color: AppTheme.primaryColor,
+                  size: 20.sp,
+                ),
+                title: Text(
+                  'Call',
+                  style: TextStyle(
+                    fontSize: 14.sp,
+                    color: AppTheme.zinc900,
+                  ),
+                ),
+                subtitle: Text(
+                  jobDetails.phone!,
+                  style: TextStyle(
+                    fontSize: 12.sp,
+                    color: AppTheme.zinc500,
+                  ),
+                ),
+                onTap: () async {
+                  final uri = Uri.parse('tel:${jobDetails.phone}');
+                  if (await canLaunchUrl(uri)) {
+                    await launchUrl(uri);
+                  }
+                },
+              ),
+            if (hasEmail)
+              ListTile(
+                leading: Icon(
+                  Icons.email_rounded,
+                  color: AppTheme.primaryColor,
+                  size: 20.sp,
+                ),
+                title: Text(
+                  'Email',
+                  style: TextStyle(
+                    fontSize: 14.sp,
+                    color: AppTheme.zinc900,
+                  ),
+                ),
+                subtitle: Text(
+                  jobDetails.applicationEmail!,
+                  style: TextStyle(
+                    fontSize: 12.sp,
+                    color: AppTheme.zinc500,
+                  ),
+                ),
+                onTap: () async {
+                  final uri = Uri.parse(
+                    'mailto:${jobDetails.applicationEmail}?subject=Application for ${jobDetails.title}',
+                  );
+                  if (await canLaunchUrl(uri)) {
+                    await launchUrl(uri);
+                  }
+                },
+              ),
+            if (hasUrl)
+              ListTile(
+                leading: Icon(
+                  Icons.link_rounded,
+                  color: AppTheme.primaryColor,
+                  size: 20.sp,
+                ),
+                title: Text(
+                  'Apply Online',
+                  style: TextStyle(
+                    fontSize: 14.sp,
+                    color: AppTheme.zinc900,
+                  ),
+                ),
+                subtitle: Text(
+                  'Open application website',
+                  style: TextStyle(
+                    fontSize: 12.sp,
+                    color: AppTheme.zinc500,
+                  ),
+                ),
+                onTap: () async {
+                  final uri = Uri.parse(jobDetails.applyUrl!);
+                  if (await canLaunchUrl(uri)) {
+                    await launchUrl(uri);
+                  }
+                },
+              ),
+            if (!hasPhone && !hasEmail && !hasUrl)
+              Text(
+                'No contact information available.',
+                style: TextStyle(
+                  fontSize: 14.sp,
+                  color: AppTheme.zinc500,
+                ),
+              ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: Text(
+              'Close',
+              style: TextStyle(
+                fontSize: 14.sp,
+                color: AppTheme.zinc600,
+              ),
+            ),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+              // Navigate to Services screen for upgrade
+              context.push(RouteNames.services);
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: AppTheme.primaryColor,
+              foregroundColor: Colors.white,
+              padding: EdgeInsets.symmetric(
+                horizontal: AppTheme.spacingLg.w,
+                vertical: AppTheme.spacingSm.h,
+              ),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(AppTheme.radiusSmall.r),
+              ),
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(
+                  Icons.star_rounded,
+                  size: 18.sp,
+                  color: Colors.white,
+                ),
+                SizedBox(width: 4.w),
+                Text(
+                  'Upgrade to Pro',
+                  style: TextStyle(
+                    fontSize: 14.sp,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
   }
 }
