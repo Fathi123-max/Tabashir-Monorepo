@@ -66,6 +66,127 @@ class _HomeScreenState extends State<HomeScreen> {
     return locations.isEmpty ? ['your area'.tr()] : locations.toList();
   }
 
+  /// Home Header - Matching Jobs screen design
+  Widget _buildHomeHeader(
+    BuildContext context,
+    ThemeData theme,
+    dynamic user,
+    String? subscriptionPlan,
+  ) {
+    final plan = subscriptionPlan ?? '';
+    final userType = (user as Map<String, dynamic>?)?['userType']?.toString() ?? '';
+    final isPro = plan.toUpperCase().contains('PRO') ||
+        userType.toUpperCase().contains('PRO');
+    final userName = (user as Map<String, dynamic>?)?['name']?.toString() ?? 'User';
+
+    return Container(
+      margin: EdgeInsets.fromLTRB(
+        AppTheme.spacingMd.w,
+        AppTheme.spacingLg.h,
+        AppTheme.spacingMd.w,
+        AppTheme.spacingMd.h,
+      ),
+      padding: EdgeInsets.all(AppTheme.spacingLg.w),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: <Color>[
+            if (isPro) ...[
+              AppTheme.goldColor.withOpacity(0.15),
+              AppTheme.purpleColor.withOpacity(0.08),
+            ] else ...[
+              AppTheme.primaryColor.withOpacity(0.1),
+              AppTheme.primaryColor.withOpacity(0.05),
+            ],
+            theme.scaffoldBackgroundColor,
+          ],
+        ),
+        borderRadius: BorderRadius.circular(AppTheme.radiusLarge.r),
+      ),
+      child: Row(
+        children: [
+          // Gradient Icon Container
+          Container(
+            padding: EdgeInsets.all(AppTheme.spacingSm.w),
+            decoration: BoxDecoration(
+              gradient: isPro ? AppTheme.goldGradient : AppTheme.primaryGradient,
+              borderRadius: BorderRadius.circular(AppTheme.radiusMedium.r),
+              boxShadow: [
+                BoxShadow(
+                  color: (isPro ? AppTheme.goldColor : AppTheme.primaryColor)
+                      .withOpacity(0.3),
+                  blurRadius: 12,
+                  offset: const Offset(0, 4),
+                ),
+              ],
+            ),
+            child: Icon(
+              isPro ? Icons.workspace_premium_rounded : Icons.home_rounded,
+              size: 24.sp,
+              color: Colors.white,
+            ),
+          ),
+          SizedBox(width: AppTheme.spacingMd.w),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'hi_greeting'.tr(args: [userName!]),
+                  style: theme.textTheme.displayMedium?.copyWith(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 28.sp,
+                    letterSpacing: 0.5,
+                  ),
+                ),
+                SizedBox(height: AppTheme.spacingXs.h),
+                Row(
+                  children: [
+                    if (isPro) ...[
+                      Container(
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 8.w,
+                          vertical: 2.h,
+                        ),
+                        decoration: BoxDecoration(
+                          gradient: AppTheme.goldGradient,
+                          borderRadius: BorderRadius.circular(
+                            AppTheme.radiusFull.r,
+                          ),
+                        ),
+                        child: Text(
+                          'PRO',
+                          style: TextStyle(
+                            fontSize: 10.sp,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ),
+                      SizedBox(width: AppTheme.spacingSm.w),
+                    ],
+                    Expanded(
+                      child: Text(
+                        isPro
+                            ? 'Premium Member'
+                            : 'Welcome back! Ready to find your dream job?',
+                        style: theme.textTheme.bodyMedium?.copyWith(
+                          color: theme.colorScheme.onSurfaceVariant,
+                          fontSize: 14.sp,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   /// Builds a section header with icon
   Widget _buildSectionHeader({
     required IconData icon,
@@ -237,16 +358,18 @@ class _HomeScreenState extends State<HomeScreen> {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                // Pro Header - Premium design with Pro badge
+                                // Home Header - Matching Jobs screen design
                                 BlocBuilder<ProfileCubit, ProfileState>(
                                   builder: (context, profileState) {
-                                    return ProHeaderWidget(
-                                      user: state.user,
-                                      subscriptionPlan: profileState.profile?.subscriptionPlan,
-                                      subscriptionStatus: profileState.profile?.subscriptionStatus,
+                                    return _buildHomeHeader(
+                                      context,
+                                      Theme.of(context),
+                                      state.user,
+                                      profileState.profile?.subscriptionPlan,
                                     );
                                   },
                                 ),
+                                SizedBox(height: AppTheme.spacingMd.h),
 
                                 // AI Match Banner - Enhanced with gradient
                                 Container(
