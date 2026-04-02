@@ -6,6 +6,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:tabashir/core/di/injection.dart';
 import 'package:tabashir/core/theme/app_theme.dart';
+import 'package:tabashir/core/network/models/user/user_profile_response.dart';
 import 'package:tabashir/features/home/presentation/cubit/cubit.dart';
 import 'package:tabashir/features/home/presentation/cubit/app_initialization_cubit.dart';
 import 'package:tabashir/features/home/data/models/app_initialization_state.dart';
@@ -74,10 +75,10 @@ class _HomeScreenState extends State<HomeScreen> {
     String? subscriptionPlan,
   ) {
     final plan = subscriptionPlan ?? '';
-    final userType = (user as Map<String, dynamic>?)?['userType']?.toString() ?? '';
+    final userType = user is UserData ? (user.userType ?? '') : '';
     final isPro = plan.toUpperCase().contains('PRO') ||
         userType.toUpperCase().contains('PRO');
-    final userName = (user as Map<String, dynamic>?)?['name']?.toString() ?? 'User';
+    final userName = (user is UserData ? user.name : null) ?? 'User';
 
     return Container(
       margin: EdgeInsets.fromLTRB(
