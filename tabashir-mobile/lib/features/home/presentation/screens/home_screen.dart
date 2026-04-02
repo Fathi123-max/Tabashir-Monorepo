@@ -10,6 +10,9 @@ import 'package:tabashir/features/home/presentation/cubit/cubit.dart';
 import 'package:tabashir/features/home/presentation/cubit/app_initialization_cubit.dart';
 import 'package:tabashir/features/home/data/models/app_initialization_state.dart';
 import 'package:tabashir/features/home/presentation/widgets/widgets.dart';
+import 'package:tabashir/features/home/presentation/widgets/pro_header_widget.dart';
+import 'package:tabashir/features/home/presentation/widgets/pro_quick_actions_widget.dart';
+import 'package:tabashir/features/profile/presentation/cubit/profile_cubit.dart';
 import 'package:tabashir/features/home/presentation/screens/all_matched_jobs_screen.dart';
 import 'package:tabashir/features/jobs/presentation/cubit/jobs_cubit.dart';
 import 'package:tabashir/shared/widgets/cv_required_blur.dart';
@@ -234,8 +237,16 @@ class _HomeScreenState extends State<HomeScreen> {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                // Header with elaborate design
-                                HomeHeaderWidget(user: state.user),
+                                // Pro Header - Premium design with Pro badge
+                                BlocBuilder<ProfileCubit, ProfileState>(
+                                  builder: (context, profileState) {
+                                    return ProHeaderWidget(
+                                      user: state.user,
+                                      subscriptionPlan: profileState.profile?.subscriptionPlan,
+                                      subscriptionStatus: profileState.profile?.subscriptionStatus,
+                                    );
+                                  },
+                                ),
 
                                 // AI Match Banner - Enhanced with gradient
                                 Container(
@@ -255,23 +266,9 @@ class _HomeScreenState extends State<HomeScreen> {
                                 ),
                                 SizedBox(height: AppTheme.spacingLg.h),
 
-                                // Quick Actions Section - MOVED UP (Action-oriented)
-                                _buildSection(
-                                  icon: Icons.bolt_rounded,
-                                  title: 'Quick Actions',
-                                  iconColor: AppTheme.accentColor,
-                                  iconBgColor: AppTheme.accentColor.withOpacity(
-                                    0.1,
-                                  ),
-                                  iconBorderColor: AppTheme.accentColor
-                                      .withOpacity(0.2),
-                                  content: Padding(
-                                    padding: EdgeInsets.symmetric(
-                                      horizontal: AppTheme.spacingMd.w,
-                                    ),
-                                    child: const HomeQuickActionsGridWidget(),
-                                  ),
-                                ),
+                                // Pro Quick Actions - Premium AI tools
+                                const ProQuickActionsWidget(),
+                                SizedBox(height: AppTheme.spacingLg.h),
 
                                 // Matched Jobs Section - MOVED UP (Core value)
                                 _buildSection(

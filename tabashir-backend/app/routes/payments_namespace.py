@@ -231,8 +231,9 @@ class StripeWebhook(Resource):
         """Activate job apply for a user with specified number of jobs"""
         try:
             from app.routes.resumes_namespace import get_client_cv_filename, Config as ResumesConfig
-            from app.services.cv_formatting import format_cv_from_path, convert_docx_to_pdf
+            from app.routes.resumes_namespace import format_cv_from_path, convert_docx_to_pdf
             import shutil
+            import os
 
             # Get user email
             user_data = execute_query('SELECT email FROM users WHERE id = %s', (user_id,), fetch_one=True)
@@ -245,41 +246,78 @@ class StripeWebhook(Resource):
 
             # Get CV filename
             filename = get_client_cv_filename(email)
+            
+            # Update job count in AI DB even if CV formatting fails
+            from app.database.db import get_ai_db_connection
+            ai_conn = get_ai_db_connection()
+            ai_cursor = ai_conn.cursor()
+            ai_cursor.execute(
+                'UPDATE clients SET jobs_to_apply_number = jobs_to_apply_number + %s, job_matching = 1 WHERE email = %s',
+                (jobs_number, email)
+            )
+            ai_conn.commit()
+            ai_cursor.close()
+            ai_conn.close()
+            logger.info(f"Updated job count for {email}: +{jobs_number} jobs")
+            
             if not filename:
-                logger.warning(f"No CV filename found for {email}")
+                logger.warning(f"No CV filename found for {email}, but job credits added")
                 return
 
             cv_dir = ResumesConfig.CV_STORAGE_PATH
             original_cv_path = cv_dir / filename
 
+            # If exact filename not found, try to find matching file
             if not original_cv_path.exists():
-                logger.warning(f"CV file not found at {original_cv_path}")
+                logger.warning(f"CV file not found at {original_cv_path}, searching for match...")
+                
+                # Search for files containing the filename UUID
+                matching_files = [
+                    f for f in os.listdir(cv_dir) 
+                    if filename.replace('.pdf', '') in f and f.endswith('.pdf')
+                ]
+                
+                if matching_files:
+                    # Use the most recent matching file
+                    original_cv_path = cv_dir / matching_files[0]
+                    logger.info(f"Found matching CV file: {matching_files[0]}")
+                else:
+                    logger.warning(f"No matching CV file found for {email}, but job credits already added")
+                    return
+
+            if not original_cv_path.exists():
+                logger.warning(f"CV file still not found at {original_cv_path}, but job credits already added")
                 return
 
-            # Format CV
-            formatted_docx = format_cv_from_path(original_cv_path)
+            try:
+                # Format CV
+                formatted_docx = format_cv_from_path(original_cv_path)
 
-            # Convert to PDF
-            pdf_path = convert_docx_to_pdf(formatted_docx)
+                # Convert to PDF
+                pdf_path = convert_docx_to_pdf(formatted_docx)
 
-            final_filename = pdf_path.name
-            final_path = cv_dir / final_filename
+                final_filename = pdf_path.name
+                final_path = cv_dir / final_filename
 
-            # Replace original CV
-            shutil.move(pdf_path, final_path)
+                # Replace original CV
+                shutil.move(pdf_path, final_path)
 
-            # Cleanup temp DOCX
-            if formatted_docx.exists():
-                formatted_docx.unlink()
+                # Cleanup temp DOCX
+                if formatted_docx.exists():
+                    formatted_docx.unlink()
 
-            # Update DB
-            execute_query(
-                'UPDATE users SET "cvFilename" = %s, "jobCount" = "jobCount" + %s, "aiJobApplyCount" = "aiJobApplyCount" + 1 WHERE email = %s',
-                (final_filename, jobs_number, email),
-                commit=True
-            )
+                # Update main DB
+                execute_query(
+                    'UPDATE users SET "cvFilename" = %s, "jobCount" = "jobCount" + %s, "aiJobApplyCount" = "aiJobApplyCount" + 1 WHERE email = %s',
+                    (final_filename, jobs_number, email),
+                    commit=True
+                )
 
-            logger.info(f"Successfully activated job apply for {email} with {jobs_number} jobs")
+                logger.info(f"Successfully activated job apply for {email} with {jobs_number} jobs")
+                
+            except Exception as cv_error:
+                logger.error(f"CV formatting failed for {email}: {str(cv_error)}")
+                logger.warning(f"Job credits already added, but CV formatting skipped")
 
         except Exception as e:
             logger.error(f"Error in _activate_job_apply: {str(e)}")

@@ -8,6 +8,14 @@ class AppTheme {
   static Color primaryToColor = const Color(0xFF0D57E1);
   static Color accentColor = const Color(0xFF34D399);
 
+  // Pro/Premium color palette
+  static Color goldColor = const Color(0xFFFFD700);
+  static Color goldLight = const Color(0xFFFFE55C);
+  static Color goldDark = const Color(0xFFFFA500);
+  static Color purpleColor = const Color(0xFF667EEA);
+  static Color purpleDark = const Color(0xFF764BA2);
+  static Color platinumColor = const Color(0xFFE5E4E2);
+
   // Color aliases for easier access
   static Color primaryBlue = primaryColor;
   static Color accentGreen = accentColor;
@@ -796,6 +804,38 @@ class AppTheme {
     begin: Alignment.topLeft,
     end: Alignment.bottomRight,
     colors: [const Color(0xFFD97706), warningColor],
+  );
+
+  // Pro/Premium gradients
+  static LinearGradient goldGradient = LinearGradient(
+    begin: Alignment.topLeft,
+    end: Alignment.bottomRight,
+    colors: [goldLight, goldColor, goldDark],
+  );
+
+  static LinearGradient proGradient = LinearGradient(
+    begin: Alignment.topLeft,
+    end: Alignment.bottomRight,
+    colors: [purpleColor, purpleDark, goldColor],
+  );
+
+  static LinearGradient glassGradient = LinearGradient(
+    begin: Alignment.topLeft,
+    end: Alignment.bottomRight,
+    colors: [
+      Colors.white.withOpacity(0.1),
+      Colors.white.withOpacity(0.05),
+    ],
+  );
+
+  static LinearGradient shimmerGradient = LinearGradient(
+    begin: Alignment.centerLeft,
+    end: Alignment.centerRight,
+    colors: [
+      Colors.white.withOpacity(0.0),
+      Colors.white.withOpacity(0.8),
+      Colors.white.withOpacity(0.0),
+    ],
   );
 
   // Custom text styles

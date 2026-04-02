@@ -202,13 +202,15 @@ def cv_formatter(cv_txt: str, translate_to_english=False) -> Resume:
                                             date = leadership[2],
                                             location = leadership[3],
                                             details = leadership[4]))
-            
-        for work_entry in work: # If lship and work have any "copy/paste" instances, remove them from lship (prioritize work experience over leadership experience)
-            for lship_entry in lship:
-                if lship_entry == work_entry:
-                    lship.remove(lship_entry)
-            
-        if work == []: # If there are 0 work experiences, leadership experiences become work experiences (as they are technically the same thing)
+
+        # If lship and work have any "copy/paste" instances, remove them from lship (prioritize work experience over leadership experience)
+        if work:  # Check if work is not None before iterating
+            for work_entry in work:
+                for lship_entry in lship:
+                    if lship_entry == work_entry:
+                        lship.remove(lship_entry)
+
+        if not work or work == []:  # If there are 0 work experiences, leadership experiences become work experiences (as they are technically the same thing)
             work = lship
             lship = None
     else:
