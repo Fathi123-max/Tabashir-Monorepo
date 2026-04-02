@@ -390,9 +390,25 @@ class _HomeScreenState extends State<HomeScreen> {
                                 ),
                                 SizedBox(height: AppTheme.spacingLg.h),
 
-                                // Pro Quick Actions - Premium AI tools
-                                const ProQuickActionsWidget(),
-                                SizedBox(height: AppTheme.spacingLg.h),
+                                // Pro Quick Actions - Premium AI tools (Pro users only)
+                                BlocBuilder<ProfileCubit, ProfileState>(
+                                  builder: (context, profileState) {
+                                    final plan = profileState.profile?.subscriptionPlan ?? '';
+                                    final userType = state.user is UserData ? (state.user as UserData).userType ?? '' : '';
+                                    final isPro = plan.toUpperCase().contains('PRO') ||
+                                        userType.toUpperCase().contains('PRO');
+                                    
+                                    if (isPro) {
+                                      return Column(
+                                        children: [
+                                          const ProQuickActionsWidget(),
+                                          SizedBox(height: AppTheme.spacingLg.h),
+                                        ],
+                                      );
+                                    }
+                                    return const SizedBox.shrink();
+                                  },
+                                ),
 
                                 // Matched Jobs Section - MOVED UP (Core value)
                                 _buildSection(
