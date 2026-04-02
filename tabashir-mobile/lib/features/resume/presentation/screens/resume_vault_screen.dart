@@ -190,7 +190,7 @@ class _ResumeVaultScreenState extends State<ResumeVaultScreen> {
               elevation: 12,
               highlightElevation: 16,
               extendedPadding: EdgeInsets.symmetric(
-                horizontal: AppTheme.spacingXl.w,
+                horizontal: AppTheme.spacingMd.w,
                 vertical: AppTheme.spacingMd.h,
               ),
               shape: RoundedRectangleBorder(

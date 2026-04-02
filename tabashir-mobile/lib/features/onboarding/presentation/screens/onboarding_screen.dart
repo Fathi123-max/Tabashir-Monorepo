@@ -72,7 +72,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
             // Enhanced Get Started Button
             Padding(
               padding: EdgeInsets.symmetric(
-                horizontal: AppTheme.spacingLg.w,
+                horizontal: AppTheme.spacingMd.w,
                 vertical: AppTheme.spacingMd.h,
               ),
               child: OnboardingNextButton(

@@ -255,20 +255,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                 ),
                                 SizedBox(height: AppTheme.spacingLg.h),
 
-                                // Stats Cards Section
-                                _buildSection(
-                                  icon: Icons.analytics_rounded,
-                                  title: 'Your Stats',
-                                  iconColor: AppTheme.primaryColor,
-                                  iconBgColor: AppTheme.primaryColor
-                                      .withOpacity(0.1),
-                                  iconBorderColor: AppTheme.primaryColor
-                                      .withOpacity(0.2),
-                                  content: const HomeStatsCardsRowWidget(),
-                                  useGradient: true,
-                                ),
-
-                                // Quick Actions Section
+                                // Quick Actions Section - MOVED UP (Action-oriented)
                                 _buildSection(
                                   icon: Icons.bolt_rounded,
                                   title: 'Quick Actions',
@@ -286,7 +273,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                   ),
                                 ),
 
-                                // Matched Jobs Section
+                                // Matched Jobs Section - MOVED UP (Core value)
                                 _buildSection(
                                   icon: Icons.auto_awesome_rounded,
                                   title: 'Matched For You',
@@ -319,19 +306,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                   ),
                                 ),
 
-                                // UAE Cities Section
-                                _buildSection(
-                                  icon: Icons.location_city_rounded,
-                                  title: 'Jobs by Location',
-                                  iconColor: AppTheme.warningColor,
-                                  iconBgColor: AppTheme.warningColor
-                                      .withOpacity(0.1),
-                                  iconBorderColor: AppTheme.warningColor
-                                      .withOpacity(0.2),
-                                  content: const HomeUAECitiesWidget(),
-                                ),
-
-                                // My Applications Section
+                                // My Applications Section - MOVED UP (Progress tracking)
                                 _buildSection(
                                   icon: Icons.folder_shared_rounded,
                                   title: 'My Applications',
@@ -356,6 +331,34 @@ class _HomeScreenState extends State<HomeScreen> {
                                     ),
                                   ),
                                 ),
+
+                                // Stats Cards Section - MOVED DOWN (Motivation after context)
+                                _buildSection(
+                                  icon: Icons.analytics_rounded,
+                                  title: 'Your Stats',
+                                  iconColor: AppTheme.primaryColor,
+                                  iconBgColor: AppTheme.primaryColor
+                                      .withOpacity(0.1),
+                                  iconBorderColor: AppTheme.primaryColor
+                                      .withOpacity(0.2),
+                                  content: const HomeStatsCardsRowWidget(),
+                                  useGradient: true,
+                                ),
+
+                                // UAE Cities Section - Discovery (lower priority)
+                                _buildSection(
+                                  icon: Icons.location_city_rounded,
+                                  title: 'Jobs by Location',
+                                  iconColor: AppTheme.warningColor,
+                                  iconBgColor: AppTheme.warningColor
+                                      .withOpacity(0.1),
+                                  iconBorderColor: AppTheme.warningColor
+                                      .withOpacity(0.2),
+                                  content: const HomeUAECitiesWidget(),
+                                ),
+
+                                // AI Matching Settings
+                                const HomeAISettingsWidget(),
                               ],
                             ),
                           ),

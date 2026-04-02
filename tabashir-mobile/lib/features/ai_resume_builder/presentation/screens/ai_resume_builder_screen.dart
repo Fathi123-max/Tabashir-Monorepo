@@ -173,7 +173,7 @@ class AiResumeBuilderView extends StatelessWidget {
                   child: Card(
                     margin: EdgeInsets.symmetric(horizontal: 40.w),
                     child: Padding(
-                      padding: EdgeInsets.all(AppTheme.spacingLg.w),
+                      padding: EdgeInsets.all(AppTheme.spacingMd.w),
                       child: Column(
                         mainAxisSize: MainAxisSize.min,
                         children: [

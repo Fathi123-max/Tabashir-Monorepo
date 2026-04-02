@@ -1,6 +1,8 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:go_router/go_router.dart';
+import 'package:tabashir/core/router/route_names.dart';
 import 'package:tabashir/core/theme/app_theme.dart';
 
 class HomeAIMatchBannerWidget extends StatelessWidget {
@@ -71,7 +73,7 @@ class HomeAIMatchBannerWidget extends StatelessWidget {
                     Expanded(
                       child: ElevatedButton(
                         onPressed: () {
-                          onTabChange?.call(1); // Switch to Jobs tab (index 1)
+                          context.push(RouteNames.jobs);
                         },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.white.withOpacity(0.2),
@@ -101,17 +103,12 @@ class HomeAIMatchBannerWidget extends StatelessWidget {
                     // Auto Apply Button
                     Expanded(
                       child: ElevatedButton(
-                        onPressed: count > 0
-                            ? () {
-                                // TODO: Implement auto-apply functionality
-                                onTabChange?.call(1);
-                              }
-                            : null, // Disable if no matches
+                        onPressed: () {
+                          context.push(RouteNames.services);
+                        },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.white,
-                          foregroundColor: count > 0
-                              ? AppTheme.primaryToColor
-                              : Colors.grey,
+                          foregroundColor: AppTheme.primaryToColor,
                           elevation: 0,
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(

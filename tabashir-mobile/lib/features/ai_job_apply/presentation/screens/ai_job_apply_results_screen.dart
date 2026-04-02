@@ -49,7 +49,7 @@ class AiJobApplyResultsScreen extends StatelessWidget {
 
     return Center(
       child: Padding(
-        padding: EdgeInsets.all(AppTheme.spacingXl.w),
+        padding: EdgeInsets.all(AppTheme.spacingMd.w),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [

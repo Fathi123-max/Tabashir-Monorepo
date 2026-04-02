@@ -53,20 +53,20 @@ Map<String, dynamic> _$ApplyJobsResponseToJson(_ApplyJobsResponse instance) =>
 
 _ApplySummary _$ApplySummaryFromJson(Map<String, dynamic> json) =>
     _ApplySummary(
-      applyResult: json['apply_result'] == null
-          ? null
-          : ApplyResult.fromJson(json['apply_result'] as Map<String, dynamic>),
       email: json['email'] as String,
       rankingResult: RankingResult.fromJson(
         json['ranking_result'] as Map<String, dynamic>,
       ),
+      applyResult: json['apply_result'] == null
+          ? null
+          : ApplyResult.fromJson(json['apply_result'] as Map<String, dynamic>),
     );
 
 Map<String, dynamic> _$ApplySummaryToJson(_ApplySummary instance) =>
     <String, dynamic>{
-      'apply_result': instance.applyResult,
       'email': instance.email,
       'ranking_result': instance.rankingResult,
+      'apply_result': instance.applyResult,
     };
 
 _ApplyResult _$ApplyResultFromJson(Map<String, dynamic> json) => _ApplyResult(

@@ -311,6 +311,8 @@ class HomeRepositoryImpl implements HomeRepository {
           'location': aiClientData.location,
           'positions': aiClientData.positions,
           'filename': aiClientData.filename,
+          'jobs_to_apply_number': aiClientData.jobsToApplyNumber,
+          'job_matching': aiClientData.jobMatching,
         };
       }
       return {};

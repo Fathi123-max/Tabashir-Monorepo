@@ -756,7 +756,7 @@ class _EditItemSheetState extends State<_EditItemSheet> {
             ),
           ),
           Padding(
-            padding: EdgeInsets.symmetric(horizontal: AppTheme.spacingLg.w),
+            padding: EdgeInsets.symmetric(horizontal: AppTheme.spacingMd.w),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -770,7 +770,7 @@ class _EditItemSheetState extends State<_EditItemSheet> {
           ),
           Flexible(
             child: SingleChildScrollView(
-              padding: EdgeInsets.all(AppTheme.spacingLg.w),
+              padding: EdgeInsets.all(AppTheme.spacingMd.w),
               child: Column(
                 children: [
                   ...widget.fields.map((field) {

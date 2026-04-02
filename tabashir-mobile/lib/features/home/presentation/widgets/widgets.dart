@@ -2,6 +2,7 @@
 export 'bar_chart_widget.dart';
 export 'home_activity_timeline_widget.dart';
 export 'home_ai_match_banner_widget.dart';
+export 'home_ai_settings_widget.dart';
 export 'home_analytics_widget.dart';
 export 'home_application_stat_item_widget.dart';
 export 'home_application_stats_widget.dart';

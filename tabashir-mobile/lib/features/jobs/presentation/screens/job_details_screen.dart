@@ -212,7 +212,7 @@ class _JobDetailScreenState extends State<JobDetailScreen> {
       ),
     ),
     JobDetailsLoaded(:final jobDetails) => SingleChildScrollView(
-      padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 16.h),
+      padding: EdgeInsets.symmetric(horizontal: AppTheme.spacingMd.w, vertical: AppTheme.spacingMd.h),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [

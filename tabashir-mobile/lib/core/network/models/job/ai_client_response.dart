@@ -23,6 +23,8 @@ sealed class AiClientData with _$AiClientData {
     String? location,
     String? positions,
     String? filename,
+    @JsonKey(name: 'jobs_to_apply_number') int? jobsToApplyNumber,
+    @JsonKey(name: 'job_matching') int? jobMatching,
   }) = _AiClientData;
 
   factory AiClientData.fromJson(Map<String, dynamic> json) =>

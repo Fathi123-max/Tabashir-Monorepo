@@ -302,7 +302,7 @@ $AiClientDataCopyWith<$Res>? get data {
 /// @nodoc
 mixin _$AiClientData {
 
- String? get nationality; String? get gender; String? get location; String? get positions; String? get filename;
+ String? get nationality; String? get gender; String? get location; String? get positions; String? get filename;@JsonKey(name: 'jobs_to_apply_number') int? get jobsToApplyNumber;@JsonKey(name: 'job_matching') int? get jobMatching;
 /// Create a copy of AiClientData
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -315,16 +315,16 @@ $AiClientDataCopyWith<AiClientData> get copyWith => _$AiClientDataCopyWithImpl<A
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is AiClientData&&(identical(other.nationality, nationality) || other.nationality == nationality)&&(identical(other.gender, gender) || other.gender == gender)&&(identical(other.location, location) || other.location == location)&&(identical(other.positions, positions) || other.positions == positions)&&(identical(other.filename, filename) || other.filename == filename));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is AiClientData&&(identical(other.nationality, nationality) || other.nationality == nationality)&&(identical(other.gender, gender) || other.gender == gender)&&(identical(other.location, location) || other.location == location)&&(identical(other.positions, positions) || other.positions == positions)&&(identical(other.filename, filename) || other.filename == filename)&&(identical(other.jobsToApplyNumber, jobsToApplyNumber) || other.jobsToApplyNumber == jobsToApplyNumber)&&(identical(other.jobMatching, jobMatching) || other.jobMatching == jobMatching));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,nationality,gender,location,positions,filename);
+int get hashCode => Object.hash(runtimeType,nationality,gender,location,positions,filename,jobsToApplyNumber,jobMatching);
 
 @override
 String toString() {
-  return 'AiClientData(nationality: $nationality, gender: $gender, location: $location, positions: $positions, filename: $filename)';
+  return 'AiClientData(nationality: $nationality, gender: $gender, location: $location, positions: $positions, filename: $filename, jobsToApplyNumber: $jobsToApplyNumber, jobMatching: $jobMatching)';
 }
 
 
@@ -335,7 +335,7 @@ abstract mixin class $AiClientDataCopyWith<$Res>  {
   factory $AiClientDataCopyWith(AiClientData value, $Res Function(AiClientData) _then) = _$AiClientDataCopyWithImpl;
 @useResult
 $Res call({
- String? nationality, String? gender, String? location, String? positions, String? filename
+ String? nationality, String? gender, String? location, String? positions, String? filename,@JsonKey(name: 'jobs_to_apply_number') int? jobsToApplyNumber,@JsonKey(name: 'job_matching') int? jobMatching
 });
 
 
@@ -352,14 +352,16 @@ class _$AiClientDataCopyWithImpl<$Res>
 
 /// Create a copy of AiClientData
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? nationality = freezed,Object? gender = freezed,Object? location = freezed,Object? positions = freezed,Object? filename = freezed,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? nationality = freezed,Object? gender = freezed,Object? location = freezed,Object? positions = freezed,Object? filename = freezed,Object? jobsToApplyNumber = freezed,Object? jobMatching = freezed,}) {
   return _then(_self.copyWith(
 nationality: freezed == nationality ? _self.nationality : nationality // ignore: cast_nullable_to_non_nullable
 as String?,gender: freezed == gender ? _self.gender : gender // ignore: cast_nullable_to_non_nullable
 as String?,location: freezed == location ? _self.location : location // ignore: cast_nullable_to_non_nullable
 as String?,positions: freezed == positions ? _self.positions : positions // ignore: cast_nullable_to_non_nullable
 as String?,filename: freezed == filename ? _self.filename : filename // ignore: cast_nullable_to_non_nullable
-as String?,
+as String?,jobsToApplyNumber: freezed == jobsToApplyNumber ? _self.jobsToApplyNumber : jobsToApplyNumber // ignore: cast_nullable_to_non_nullable
+as int?,jobMatching: freezed == jobMatching ? _self.jobMatching : jobMatching // ignore: cast_nullable_to_non_nullable
+as int?,
   ));
 }
 
@@ -441,10 +443,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String? nationality,  String? gender,  String? location,  String? positions,  String? filename)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String? nationality,  String? gender,  String? location,  String? positions,  String? filename, @JsonKey(name: 'jobs_to_apply_number')  int? jobsToApplyNumber, @JsonKey(name: 'job_matching')  int? jobMatching)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _AiClientData() when $default != null:
-return $default(_that.nationality,_that.gender,_that.location,_that.positions,_that.filename);case _:
+return $default(_that.nationality,_that.gender,_that.location,_that.positions,_that.filename,_that.jobsToApplyNumber,_that.jobMatching);case _:
   return orElse();
 
 }
@@ -462,10 +464,10 @@ return $default(_that.nationality,_that.gender,_that.location,_that.positions,_t
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String? nationality,  String? gender,  String? location,  String? positions,  String? filename)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String? nationality,  String? gender,  String? location,  String? positions,  String? filename, @JsonKey(name: 'jobs_to_apply_number')  int? jobsToApplyNumber, @JsonKey(name: 'job_matching')  int? jobMatching)  $default,) {final _that = this;
 switch (_that) {
 case _AiClientData():
-return $default(_that.nationality,_that.gender,_that.location,_that.positions,_that.filename);}
+return $default(_that.nationality,_that.gender,_that.location,_that.positions,_that.filename,_that.jobsToApplyNumber,_that.jobMatching);}
 }
 /// A variant of `when` that fallback to returning `null`
 ///
@@ -479,10 +481,10 @@ return $default(_that.nationality,_that.gender,_that.location,_that.positions,_t
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String? nationality,  String? gender,  String? location,  String? positions,  String? filename)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String? nationality,  String? gender,  String? location,  String? positions,  String? filename, @JsonKey(name: 'jobs_to_apply_number')  int? jobsToApplyNumber, @JsonKey(name: 'job_matching')  int? jobMatching)?  $default,) {final _that = this;
 switch (_that) {
 case _AiClientData() when $default != null:
-return $default(_that.nationality,_that.gender,_that.location,_that.positions,_that.filename);case _:
+return $default(_that.nationality,_that.gender,_that.location,_that.positions,_that.filename,_that.jobsToApplyNumber,_that.jobMatching);case _:
   return null;
 
 }
@@ -494,7 +496,7 @@ return $default(_that.nationality,_that.gender,_that.location,_that.positions,_t
 @JsonSerializable()
 
 class _AiClientData implements AiClientData {
-  const _AiClientData({this.nationality, this.gender, this.location, this.positions, this.filename});
+  const _AiClientData({this.nationality, this.gender, this.location, this.positions, this.filename, @JsonKey(name: 'jobs_to_apply_number') this.jobsToApplyNumber, @JsonKey(name: 'job_matching') this.jobMatching});
   factory _AiClientData.fromJson(Map<String, dynamic> json) => _$AiClientDataFromJson(json);
 
 @override final  String? nationality;
@@ -502,6 +504,8 @@ class _AiClientData implements AiClientData {
 @override final  String? location;
 @override final  String? positions;
 @override final  String? filename;
+@override@JsonKey(name: 'jobs_to_apply_number') final  int? jobsToApplyNumber;
+@override@JsonKey(name: 'job_matching') final  int? jobMatching;
 
 /// Create a copy of AiClientData
 /// with the given fields replaced by the non-null parameter values.
@@ -516,16 +520,16 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _AiClientData&&(identical(other.nationality, nationality) || other.nationality == nationality)&&(identical(other.gender, gender) || other.gender == gender)&&(identical(other.location, location) || other.location == location)&&(identical(other.positions, positions) || other.positions == positions)&&(identical(other.filename, filename) || other.filename == filename));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _AiClientData&&(identical(other.nationality, nationality) || other.nationality == nationality)&&(identical(other.gender, gender) || other.gender == gender)&&(identical(other.location, location) || other.location == location)&&(identical(other.positions, positions) || other.positions == positions)&&(identical(other.filename, filename) || other.filename == filename)&&(identical(other.jobsToApplyNumber, jobsToApplyNumber) || other.jobsToApplyNumber == jobsToApplyNumber)&&(identical(other.jobMatching, jobMatching) || other.jobMatching == jobMatching));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,nationality,gender,location,positions,filename);
+int get hashCode => Object.hash(runtimeType,nationality,gender,location,positions,filename,jobsToApplyNumber,jobMatching);
 
 @override
 String toString() {
-  return 'AiClientData(nationality: $nationality, gender: $gender, location: $location, positions: $positions, filename: $filename)';
+  return 'AiClientData(nationality: $nationality, gender: $gender, location: $location, positions: $positions, filename: $filename, jobsToApplyNumber: $jobsToApplyNumber, jobMatching: $jobMatching)';
 }
 
 
@@ -536,7 +540,7 @@ abstract mixin class _$AiClientDataCopyWith<$Res> implements $AiClientDataCopyWi
   factory _$AiClientDataCopyWith(_AiClientData value, $Res Function(_AiClientData) _then) = __$AiClientDataCopyWithImpl;
 @override @useResult
 $Res call({
- String? nationality, String? gender, String? location, String? positions, String? filename
+ String? nationality, String? gender, String? location, String? positions, String? filename,@JsonKey(name: 'jobs_to_apply_number') int? jobsToApplyNumber,@JsonKey(name: 'job_matching') int? jobMatching
 });
 
 
@@ -553,14 +557,16 @@ class __$AiClientDataCopyWithImpl<$Res>
 
 /// Create a copy of AiClientData
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? nationality = freezed,Object? gender = freezed,Object? location = freezed,Object? positions = freezed,Object? filename = freezed,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? nationality = freezed,Object? gender = freezed,Object? location = freezed,Object? positions = freezed,Object? filename = freezed,Object? jobsToApplyNumber = freezed,Object? jobMatching = freezed,}) {
   return _then(_AiClientData(
 nationality: freezed == nationality ? _self.nationality : nationality // ignore: cast_nullable_to_non_nullable
 as String?,gender: freezed == gender ? _self.gender : gender // ignore: cast_nullable_to_non_nullable
 as String?,location: freezed == location ? _self.location : location // ignore: cast_nullable_to_non_nullable
 as String?,positions: freezed == positions ? _self.positions : positions // ignore: cast_nullable_to_non_nullable
 as String?,filename: freezed == filename ? _self.filename : filename // ignore: cast_nullable_to_non_nullable
-as String?,
+as String?,jobsToApplyNumber: freezed == jobsToApplyNumber ? _self.jobsToApplyNumber : jobsToApplyNumber // ignore: cast_nullable_to_non_nullable
+as int?,jobMatching: freezed == jobMatching ? _self.jobMatching : jobMatching // ignore: cast_nullable_to_non_nullable
+as int?,
   ));
 }
 

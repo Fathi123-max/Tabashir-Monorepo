@@ -137,6 +137,8 @@ class HomeCubit extends Cubit<HomeState> {
           matchedJobsTotal: matchedJobs.length,
           matchedJobsHasMore:
               matchedJobs.length == 10, // Assume has more if we got 10
+          jobsToApplyNumber: clientProfile['jobs_to_apply_number'] as int? ?? 0,
+          jobMatching: clientProfile['job_matching'] as int? ?? 0,
           cityJobCounts: cityCounts,
           latestJobsList: processedLatestJobs.isNotEmpty
               ? processedLatestJobs

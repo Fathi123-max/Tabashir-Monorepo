@@ -343,7 +343,7 @@ class ResumeImportScreen extends StatelessWidget {
               backgroundColor: AppTheme.primaryColor,
               foregroundColor: Colors.white,
               padding: EdgeInsets.symmetric(
-                horizontal: AppTheme.spacingXl.w,
+                horizontal: AppTheme.spacingMd.w,
                 vertical: AppTheme.spacingMd.h,
               ),
               shape: RoundedRectangleBorder(

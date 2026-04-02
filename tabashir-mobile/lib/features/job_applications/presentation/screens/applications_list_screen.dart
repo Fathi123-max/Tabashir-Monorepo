@@ -125,7 +125,7 @@ class _ApplicationsListContent extends StatelessWidget {
 
   Widget _buildEmptyState(ThemeData theme, BuildContext context) => Center(
     child: Padding(
-      padding: EdgeInsets.all(AppTheme.spacingLg.w),
+      padding: EdgeInsets.all(AppTheme.spacingMd.w),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
@@ -160,7 +160,7 @@ class _ApplicationsListContent extends StatelessWidget {
               backgroundColor: AppTheme.primaryColor,
               foregroundColor: Colors.white,
               padding: EdgeInsets.symmetric(
-                horizontal: AppTheme.spacingLg.w,
+                horizontal: AppTheme.spacingMd.w,
                 vertical: AppTheme.spacingMd.h,
               ),
               shape: RoundedRectangleBorder(

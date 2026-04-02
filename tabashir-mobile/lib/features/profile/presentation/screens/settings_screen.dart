@@ -94,285 +94,294 @@ class _SettingsScreenState extends State<SettingsScreen> {
         ),
       ),
       body: SingleChildScrollView(
-        child: Padding(
-          padding: EdgeInsets.all(AppTheme.spacingMd.w),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Notifications Section
-              Text(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Notifications Section
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: AppTheme.spacingMd.w),
+              child: Text(
                 'Notifications'.tr(),
                 style: theme.textTheme.titleLarge?.copyWith(
                   fontWeight: FontWeight.bold,
                 ),
               ),
-              SizedBox(height: AppTheme.spacingMd.h),
+            ),
+            SizedBox(height: AppTheme.spacingMd.h),
 
-              MenuTile(
-                icon: Icons.notifications_outlined,
-                text: 'Push Notifications'.tr(),
-                trailing: Switch(
-                  value: _pushNotificationsEnabled,
-                  onChanged: (value) async {
-                    setState(() {
-                      _pushNotificationsEnabled = value;
-                    });
-                    await _savePushNotificationPreference(value);
-                  },
-                  activeThumbColor: AppTheme.primaryColor,
-                ),
-                onTap: () async {
+            MenuTile(
+              icon: Icons.notifications_outlined,
+              text: 'Push Notifications'.tr(),
+              trailing: Switch(
+                value: _pushNotificationsEnabled,
+                onChanged: (value) async {
                   setState(() {
-                    _pushNotificationsEnabled = !_pushNotificationsEnabled;
+                    _pushNotificationsEnabled = value;
                   });
-                  await _savePushNotificationPreference(
-                    _pushNotificationsEnabled,
-                  );
+                  await _savePushNotificationPreference(value);
                 },
+                activeThumbColor: AppTheme.primaryColor,
               ),
-              SizedBox(height: AppTheme.spacingSm.h),
+              onTap: () async {
+                setState(() {
+                  _pushNotificationsEnabled = !_pushNotificationsEnabled;
+                });
+                await _savePushNotificationPreference(
+                  _pushNotificationsEnabled,
+                );
+              },
+            ),
+            SizedBox(height: AppTheme.spacingSm.h),
 
-              // Hidden: Email Notifications
-              // MenuTile(
-              //   icon: Icons.email_outlined,
-              //   text: 'Email Notifications'.tr(),
-              //   trailing: Switch(
-              //     value: _emailNotificationsEnabled,
-              //     onChanged: (value) async {
-              //       setState(() {
-              //         _emailNotificationsEnabled = value;
-              //       });
-              //       await _saveEmailNotificationPreference(value);
-              //     },
-              //     activeThumbColor: AppTheme.primaryColor,
-              //   ),
-              //   onTap: () async {
-              //     setState(() {
-              //       _emailNotificationsEnabled = !_emailNotificationsEnabled;
-              //     });
-              //     await _saveEmailNotificationPreference(_emailNotificationsEnabled);
-              //   },
-              // ),
-              // SizedBox(height: AppTheme.spacingSm.h),
+            // Hidden: Email Notifications
+            // MenuTile(
+            //   icon: Icons.email_outlined,
+            //   text: 'Email Notifications'.tr(),
+            //   trailing: Switch(
+            //     value: _emailNotificationsEnabled,
+            //     onChanged: (value) async {
+            //       setState(() {
+            //         _emailNotificationsEnabled = value;
+            //       });
+            //       await _saveEmailNotificationPreference(value);
+            //     },
+            //     activeThumbColor: AppTheme.primaryColor,
+            //   ),
+            //   onTap: () async {
+            //     setState(() {
+            //       _emailNotificationsEnabled = !_emailNotificationsEnabled;
+            //     });
+            //     await _saveEmailNotificationPreference(_emailNotificationsEnabled);
+            //   },
+            // ),
+            // SizedBox(height: AppTheme.spacingSm.h),
 
-              // Hidden: SMS Notifications
-              // MenuTile(
-              //   icon: Icons.message_outlined,
-              //   text: 'SMS Notifications'.tr(),
-              //   trailing: Switch(
-              //     value: _smsNotificationsEnabled,
-              //     onChanged: (value) async {
-              //       setState(() {
-              //         _smsNotificationsEnabled = value;
-              //       });
-              //       await _saveSMSNotificationPreference(value);
-              //     },
-              //     activeThumbColor: AppTheme.primaryColor,
-              //   ),
-              //   onTap: () async {
-              //     setState(() {
-              //       _smsNotificationsEnabled = !_smsNotificationsEnabled;
-              //     });
-              //     await _saveSMSNotificationPreference(_smsNotificationsEnabled);
-              //   },
-              // ),
-              SizedBox(height: AppTheme.spacingLg.h),
+            // Hidden: SMS Notifications
+            // MenuTile(
+            //   icon: Icons.message_outlined,
+            //   text: 'SMS Notifications'.tr(),
+            //   trailing: Switch(
+            //     value: _smsNotificationsEnabled,
+            //     onChanged: (value) async {
+            //       setState(() {
+            //         _smsNotificationsEnabled = value;
+            //       });
+            //       await _saveSMSNotificationPreference(value);
+            //     },
+            //     activeThumbColor: AppTheme.primaryColor,
+            //   ),
+            //   onTap: () async {
+            //     setState(() {
+            //       _smsNotificationsEnabled = !_smsNotificationsEnabled;
+            //     });
+            //     await _saveSMSNotificationPreference(_smsNotificationsEnabled);
+            //   },
+            // ),
+            SizedBox(height: AppTheme.spacingLg.h),
 
-              // Appearance Section
-              Text(
+            // Appearance Section
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: AppTheme.spacingMd.w),
+              child: Text(
                 'Appearance'.tr(),
                 style: theme.textTheme.titleLarge?.copyWith(
                   fontWeight: FontWeight.bold,
                 ),
               ),
-              SizedBox(height: AppTheme.spacingMd.h),
+            ),
+            SizedBox(height: AppTheme.spacingMd.h),
 
-              AnimatedBuilder(
-                animation: _themeManager,
-                builder: (context, child) {
-                  final isDarkMode = _themeManager.isDarkMode;
-                  return MenuTile(
-                    icon: isDarkMode ? Icons.dark_mode : Icons.light_mode,
-                    text: 'Dark Mode'.tr(),
-                    trailing: Switch(
-                      value: isDarkMode,
-                      onChanged: (value) {
-                        _themeManager.themeMode = value
-                            ? ThemeMode.dark
-                            : ThemeMode.light;
-                        _themeManager.savePreferences();
-                        _showThemeChangeDialog(value);
-                      },
-                      activeThumbColor: AppTheme.primaryColor,
-                    ),
-                    onTap: () {
-                      _themeManager.toggleTheme();
+            AnimatedBuilder(
+              animation: _themeManager,
+              builder: (context, child) {
+                final isDarkMode = _themeManager.isDarkMode;
+                return MenuTile(
+                  icon: isDarkMode ? Icons.dark_mode : Icons.light_mode,
+                  text: 'Dark Mode'.tr(),
+                  trailing: Switch(
+                    value: isDarkMode,
+                    onChanged: (value) {
+                      _themeManager.themeMode = value
+                          ? ThemeMode.dark
+                          : ThemeMode.light;
                       _themeManager.savePreferences();
-                      _showThemeChangeDialog(_themeManager.isDarkMode);
+                      _showThemeChangeDialog(value);
                     },
+                    activeThumbColor: AppTheme.primaryColor,
+                  ),
+                  onTap: () {
+                    _themeManager.toggleTheme();
+                    _themeManager.savePreferences();
+                    _showThemeChangeDialog(_themeManager.isDarkMode);
+                  },
+                );
+              },
+            ),
+            SizedBox(height: AppTheme.spacingMd.h),
+
+            // Language Section
+            MenuTile(
+              icon: Icons.language_outlined,
+              text: 'Language'.tr(),
+              trailing: PopupMenuButton<Locale>(
+                icon: Icon(
+                  Icons.arrow_drop_down,
+                  color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
+                ),
+                onSelected: (locale) {
+                  context.setLocale(locale);
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text(
+                        'Language changed to ${locale.languageCode == 'en'
+                                ? 'English'
+                                : locale.languageCode == 'ar'
+                                ? 'العربية'
+                                : 'Español'}'
+                            .tr(),
+                      ),
+                      backgroundColor: AppTheme.primaryColor,
+                    ),
                   );
                 },
-              ),
-              SizedBox(height: AppTheme.spacingMd.h),
-
-              // Language Section
-              MenuTile(
-                icon: Icons.language_outlined,
-                text: 'Language'.tr(),
-                trailing: PopupMenuButton<Locale>(
-                  icon: Icon(
-                    Icons.arrow_drop_down,
-                    color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
+                itemBuilder: (context) => [
+                  PopupMenuItem<Locale>(
+                    value: const Locale('en'),
+                    child: Row(
+                      children: [
+                        Text('English'.tr()),
+                        const Spacer(),
+                        if (context.locale.languageCode == 'en')
+                          Icon(
+                            Icons.check_circle,
+                            color: AppTheme.primaryColor,
+                            size: 20.sp,
+                          ),
+                      ],
+                    ),
                   ),
-                  onSelected: (locale) {
-                    context.setLocale(locale);
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text(
-                          'Language changed to ${locale.languageCode == 'en'
-                                  ? 'English'
-                                  : locale.languageCode == 'ar'
-                                  ? 'العربية'
-                                  : 'Español'}'
-                              .tr(),
-                        ),
-                        backgroundColor: AppTheme.primaryColor,
-                      ),
-                    );
-                  },
-                  itemBuilder: (context) => [
-                    PopupMenuItem<Locale>(
-                      value: const Locale('en'),
-                      child: Row(
-                        children: [
-                          Text('English'.tr()),
-                          const Spacer(),
-                          if (context.locale.languageCode == 'en')
-                            Icon(
-                              Icons.check_circle,
-                              color: AppTheme.primaryColor,
-                              size: 20.sp,
-                            ),
-                        ],
-                      ),
+                  PopupMenuItem<Locale>(
+                    value: const Locale('ar'),
+                    child: Row(
+                      children: [
+                        const Text('العربية'),
+                        const Spacer(),
+                        if (context.locale.languageCode == 'ar')
+                          Icon(
+                            Icons.check_circle,
+                            color: AppTheme.primaryColor,
+                            size: 20.sp,
+                          ),
+                      ],
                     ),
-                    PopupMenuItem<Locale>(
-                      value: const Locale('ar'),
-                      child: Row(
-                        children: [
-                          const Text('العربية'),
-                          const Spacer(),
-                          if (context.locale.languageCode == 'ar')
-                            Icon(
-                              Icons.check_circle,
-                              color: AppTheme.primaryColor,
-                              size: 20.sp,
-                            ),
-                        ],
-                      ),
+                  ),
+                  PopupMenuItem<Locale>(
+                    value: const Locale('es'),
+                    child: Row(
+                      children: [
+                        const Text('Español'),
+                        const Spacer(),
+                        if (context.locale.languageCode == 'es')
+                          Icon(
+                            Icons.check_circle,
+                            color: AppTheme.primaryColor,
+                            size: 20.sp,
+                          ),
+                      ],
                     ),
-                    PopupMenuItem<Locale>(
-                      value: const Locale('es'),
-                      child: Row(
-                        children: [
-                          const Text('Español'),
-                          const Spacer(),
-                          if (context.locale.languageCode == 'es')
-                            Icon(
-                              Icons.check_circle,
-                              color: AppTheme.primaryColor,
-                              size: 20.sp,
-                            ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-                onTap: () {
-                  // Language selection handled by PopupMenuButton
-                },
+                  ),
+                ],
               ),
-              SizedBox(height: AppTheme.spacingLg.h),
+              onTap: () {
+                // Language selection handled by PopupMenuButton
+              },
+            ),
+            SizedBox(height: AppTheme.spacingLg.h),
 
-              // Privacy Section
-              Text(
+            // Privacy Section
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: AppTheme.spacingMd.w),
+              child: Text(
                 'Privacy & Data'.tr(),
                 style: theme.textTheme.titleLarge?.copyWith(
                   fontWeight: FontWeight.bold,
                 ),
               ),
-              SizedBox(height: AppTheme.spacingMd.h),
+            ),
+            SizedBox(height: AppTheme.spacingMd.h),
 
-              MenuTile(
-                icon: Icons.privacy_tip_outlined,
-                text: 'Privacy Policy'.tr(),
-                onTap: () {
-                  _showComingSoonDialog('Privacy Policy'.tr());
-                },
-              ),
-              SizedBox(height: AppTheme.spacingSm.h),
+            MenuTile(
+              icon: Icons.privacy_tip_outlined,
+              text: 'Privacy Policy'.tr(),
+              onTap: () {
+                _showComingSoonDialog('Privacy Policy'.tr());
+              },
+            ),
+            SizedBox(height: AppTheme.spacingSm.h),
 
-              MenuTile(
-                icon: Icons.description_outlined,
-                text: 'Terms of Service'.tr(),
-                onTap: () {
-                  _showComingSoonDialog('Terms of Service'.tr());
-                },
-              ),
-              SizedBox(height: AppTheme.spacingSm.h),
+            MenuTile(
+              icon: Icons.description_outlined,
+              text: 'Terms of Service'.tr(),
+              onTap: () {
+                _showComingSoonDialog('Terms of Service'.tr());
+              },
+            ),
+            SizedBox(height: AppTheme.spacingSm.h),
 
-              MenuTile(
-                icon: Icons.cleaning_services_outlined,
-                text: 'Clear Cache'.tr(),
-                onTap: _showClearCacheDialog,
-              ),
-              SizedBox(height: AppTheme.spacingSm.h),
+            MenuTile(
+              icon: Icons.cleaning_services_outlined,
+              text: 'Clear Cache'.tr(),
+              onTap: _showClearCacheDialog,
+            ),
+            SizedBox(height: AppTheme.spacingSm.h),
 
-              MenuTile(
-                icon: Icons.delete_forever,
-                text: 'Delete Account'.tr(),
-                showLogoutColor: true,
-                onTap: _showDeleteAccountDialog,
-              ),
-              SizedBox(height: AppTheme.spacingLg.h),
+            MenuTile(
+              icon: Icons.delete_forever,
+              text: 'Delete Account'.tr(),
+              showLogoutColor: true,
+              onTap: _showDeleteAccountDialog,
+            ),
+            SizedBox(height: AppTheme.spacingLg.h),
 
-              // App Information Section
-              Text(
+            // App Information Section
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: AppTheme.spacingMd.w),
+              child: Text(
                 'App Information'.tr(),
                 style: theme.textTheme.titleLarge?.copyWith(
                   fontWeight: FontWeight.bold,
                 ),
               ),
-              SizedBox(height: AppTheme.spacingMd.h),
+            ),
+            SizedBox(height: AppTheme.spacingMd.h),
 
-              MenuTile(
-                icon: Icons.info_outline,
-                text: 'About Tabashir'.tr(),
-                onTap: _showAboutDialog,
-              ),
-              SizedBox(height: AppTheme.spacingSm.h),
+            MenuTile(
+              icon: Icons.info_outline,
+              text: 'About Tabashir'.tr(),
+              onTap: _showAboutDialog,
+            ),
+            SizedBox(height: AppTheme.spacingSm.h),
 
-              MenuTile(
-                icon: Icons.star_outline,
-                text: 'Rate the App'.tr(),
-                onTap: () {
-                  _showComingSoonDialog('Rate the App'.tr());
-                },
-              ),
-              SizedBox(height: AppTheme.spacingSm.h),
+            MenuTile(
+              icon: Icons.star_outline,
+              text: 'Rate the App'.tr(),
+              onTap: () {
+                _showComingSoonDialog('Rate the App'.tr());
+              },
+            ),
+            SizedBox(height: AppTheme.spacingSm.h),
 
-              MenuTile(
-                icon: Icons.share_outlined,
-                text: 'Share with Friends'.tr(),
-                onTap: () {
-                  _showComingSoonDialog('Share with Friends'.tr());
-                },
-              ),
-              SizedBox(
-                height: kBottomNavigationBarHeight + AppTheme.spacingLg.h,
-              ),
-            ],
-          ),
+            MenuTile(
+              icon: Icons.share_outlined,
+              text: 'Share with Friends'.tr(),
+              onTap: () {
+                _showComingSoonDialog('Share with Friends'.tr());
+              },
+            ),
+            SizedBox(
+              height: kBottomNavigationBarHeight + AppTheme.spacingLg.h,
+            ),
+          ],
         ),
       ),
     );

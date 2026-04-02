@@ -671,29 +671,33 @@ def get_client_data(email):
         )
 
         query = """
-            SELECT nationality, gender, job_location_based, positions, filename 
-            FROM clients 
+            SELECT nationality, gender, job_location_based, positions, filename, jobs_to_apply_number, job_matching
+            FROM clients
             WHERE email = %s
         """
 
         with conn.cursor() as cur:
             cur.execute(query, (email,))
             row = cur.fetchone()
-            
+
             if row:
                 return {
                     "nationality": row[0],
                     "gender": row[1],
                     "location": row[2],
                     "positions": row[3],
-                    "filename": row[4]
+                    "filename": row[4],
+                    "jobs_to_apply_number": row[5],
+                    "job_matching": row[6]
                 }
             return {
                 "nationality": None,
                 "gender": None,
                 "location": None,
                 "positions": None,
-                "filename": None
+                "filename": None,
+                "jobs_to_apply_number": None,
+                "job_matching": None
             }
 
     except psycopg2.Error as e:

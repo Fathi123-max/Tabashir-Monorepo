@@ -34,6 +34,8 @@ sealed class HomeState with _$HomeState {
 
     // AI Enhanced Native Fields
     Map<String, dynamic>? clientProfile,
+    @Default(0) int? jobsToApplyNumber,
+    @Default(0) int? jobMatching,
     @Default([]) List<CityJobCount> cityJobCounts,
     @Default([]) List<Map<String, dynamic>> latestJobsList,
     @Default([]) List<JobRecommendation> matchedJobsList,

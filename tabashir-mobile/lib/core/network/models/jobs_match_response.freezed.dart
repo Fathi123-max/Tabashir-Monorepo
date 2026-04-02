@@ -854,10 +854,10 @@ $ApplySummaryCopyWith<$Res> get summary {
 /// @nodoc
 mixin _$ApplySummary {
 
-/// Apply result
-@JsonKey(name: 'apply_result') ApplyResult? get applyResult;/// Client email
+/// Client email
  String get email;/// Ranking result
-@JsonKey(name: 'ranking_result') RankingResult get rankingResult;
+@JsonKey(name: 'ranking_result') RankingResult get rankingResult;/// Apply result
+@JsonKey(name: 'apply_result') ApplyResult? get applyResult;
 /// Create a copy of ApplySummary
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -870,16 +870,16 @@ $ApplySummaryCopyWith<ApplySummary> get copyWith => _$ApplySummaryCopyWithImpl<A
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is ApplySummary&&(identical(other.applyResult, applyResult) || other.applyResult == applyResult)&&(identical(other.email, email) || other.email == email)&&(identical(other.rankingResult, rankingResult) || other.rankingResult == rankingResult));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is ApplySummary&&(identical(other.email, email) || other.email == email)&&(identical(other.rankingResult, rankingResult) || other.rankingResult == rankingResult)&&(identical(other.applyResult, applyResult) || other.applyResult == applyResult));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,applyResult,email,rankingResult);
+int get hashCode => Object.hash(runtimeType,email,rankingResult,applyResult);
 
 @override
 String toString() {
-  return 'ApplySummary(applyResult: $applyResult, email: $email, rankingResult: $rankingResult)';
+  return 'ApplySummary(email: $email, rankingResult: $rankingResult, applyResult: $applyResult)';
 }
 
 
@@ -890,11 +890,11 @@ abstract mixin class $ApplySummaryCopyWith<$Res>  {
   factory $ApplySummaryCopyWith(ApplySummary value, $Res Function(ApplySummary) _then) = _$ApplySummaryCopyWithImpl;
 @useResult
 $Res call({
-@JsonKey(name: 'apply_result') ApplyResult? applyResult, String email,@JsonKey(name: 'ranking_result') RankingResult rankingResult
+ String email,@JsonKey(name: 'ranking_result') RankingResult rankingResult,@JsonKey(name: 'apply_result') ApplyResult? applyResult
 });
 
 
-$ApplyResultCopyWith<$Res>? get applyResult;$RankingResultCopyWith<$Res> get rankingResult;
+$RankingResultCopyWith<$Res> get rankingResult;$ApplyResultCopyWith<$Res>? get applyResult;
 
 }
 /// @nodoc
@@ -907,15 +907,24 @@ class _$ApplySummaryCopyWithImpl<$Res>
 
 /// Create a copy of ApplySummary
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? applyResult = freezed,Object? email = null,Object? rankingResult = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? email = null,Object? rankingResult = null,Object? applyResult = freezed,}) {
   return _then(_self.copyWith(
-applyResult: freezed == applyResult ? _self.applyResult : applyResult // ignore: cast_nullable_to_non_nullable
-as ApplyResult?,email: null == email ? _self.email : email // ignore: cast_nullable_to_non_nullable
+email: null == email ? _self.email : email // ignore: cast_nullable_to_non_nullable
 as String,rankingResult: null == rankingResult ? _self.rankingResult : rankingResult // ignore: cast_nullable_to_non_nullable
-as RankingResult,
+as RankingResult,applyResult: freezed == applyResult ? _self.applyResult : applyResult // ignore: cast_nullable_to_non_nullable
+as ApplyResult?,
   ));
 }
 /// Create a copy of ApplySummary
+/// with the given fields replaced by the non-null parameter values.
+@override
+@pragma('vm:prefer-inline')
+$RankingResultCopyWith<$Res> get rankingResult {
+  
+  return $RankingResultCopyWith<$Res>(_self.rankingResult, (value) {
+    return _then(_self.copyWith(rankingResult: value));
+  });
+}/// Create a copy of ApplySummary
 /// with the given fields replaced by the non-null parameter values.
 @override
 @pragma('vm:prefer-inline')
@@ -926,15 +935,6 @@ $ApplyResultCopyWith<$Res>? get applyResult {
 
   return $ApplyResultCopyWith<$Res>(_self.applyResult!, (value) {
     return _then(_self.copyWith(applyResult: value));
-  });
-}/// Create a copy of ApplySummary
-/// with the given fields replaced by the non-null parameter values.
-@override
-@pragma('vm:prefer-inline')
-$RankingResultCopyWith<$Res> get rankingResult {
-  
-  return $RankingResultCopyWith<$Res>(_self.rankingResult, (value) {
-    return _then(_self.copyWith(rankingResult: value));
   });
 }
 }
@@ -1015,10 +1015,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function(@JsonKey(name: 'apply_result')  ApplyResult? applyResult,  String email, @JsonKey(name: 'ranking_result')  RankingResult rankingResult)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String email, @JsonKey(name: 'ranking_result')  RankingResult rankingResult, @JsonKey(name: 'apply_result')  ApplyResult? applyResult)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _ApplySummary() when $default != null:
-return $default(_that.applyResult,_that.email,_that.rankingResult);case _:
+return $default(_that.email,_that.rankingResult,_that.applyResult);case _:
   return orElse();
 
 }
@@ -1036,10 +1036,10 @@ return $default(_that.applyResult,_that.email,_that.rankingResult);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function(@JsonKey(name: 'apply_result')  ApplyResult? applyResult,  String email, @JsonKey(name: 'ranking_result')  RankingResult rankingResult)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String email, @JsonKey(name: 'ranking_result')  RankingResult rankingResult, @JsonKey(name: 'apply_result')  ApplyResult? applyResult)  $default,) {final _that = this;
 switch (_that) {
 case _ApplySummary():
-return $default(_that.applyResult,_that.email,_that.rankingResult);}
+return $default(_that.email,_that.rankingResult,_that.applyResult);}
 }
 /// A variant of `when` that fallback to returning `null`
 ///
@@ -1053,10 +1053,10 @@ return $default(_that.applyResult,_that.email,_that.rankingResult);}
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function(@JsonKey(name: 'apply_result')  ApplyResult? applyResult,  String email, @JsonKey(name: 'ranking_result')  RankingResult rankingResult)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String email, @JsonKey(name: 'ranking_result')  RankingResult rankingResult, @JsonKey(name: 'apply_result')  ApplyResult? applyResult)?  $default,) {final _that = this;
 switch (_that) {
 case _ApplySummary() when $default != null:
-return $default(_that.applyResult,_that.email,_that.rankingResult);case _:
+return $default(_that.email,_that.rankingResult,_that.applyResult);case _:
   return null;
 
 }
@@ -1068,15 +1068,15 @@ return $default(_that.applyResult,_that.email,_that.rankingResult);case _:
 @JsonSerializable()
 
 class _ApplySummary implements ApplySummary {
-  const _ApplySummary({@JsonKey(name: 'apply_result') this.applyResult, required this.email, @JsonKey(name: 'ranking_result') required this.rankingResult});
+  const _ApplySummary({required this.email, @JsonKey(name: 'ranking_result') required this.rankingResult, @JsonKey(name: 'apply_result') this.applyResult});
   factory _ApplySummary.fromJson(Map<String, dynamic> json) => _$ApplySummaryFromJson(json);
 
-/// Apply result
-@override@JsonKey(name: 'apply_result') final  ApplyResult? applyResult;
 /// Client email
 @override final  String email;
 /// Ranking result
 @override@JsonKey(name: 'ranking_result') final  RankingResult rankingResult;
+/// Apply result
+@override@JsonKey(name: 'apply_result') final  ApplyResult? applyResult;
 
 /// Create a copy of ApplySummary
 /// with the given fields replaced by the non-null parameter values.
@@ -1091,16 +1091,16 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _ApplySummary&&(identical(other.applyResult, applyResult) || other.applyResult == applyResult)&&(identical(other.email, email) || other.email == email)&&(identical(other.rankingResult, rankingResult) || other.rankingResult == rankingResult));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _ApplySummary&&(identical(other.email, email) || other.email == email)&&(identical(other.rankingResult, rankingResult) || other.rankingResult == rankingResult)&&(identical(other.applyResult, applyResult) || other.applyResult == applyResult));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,applyResult,email,rankingResult);
+int get hashCode => Object.hash(runtimeType,email,rankingResult,applyResult);
 
 @override
 String toString() {
-  return 'ApplySummary(applyResult: $applyResult, email: $email, rankingResult: $rankingResult)';
+  return 'ApplySummary(email: $email, rankingResult: $rankingResult, applyResult: $applyResult)';
 }
 
 
@@ -1111,11 +1111,11 @@ abstract mixin class _$ApplySummaryCopyWith<$Res> implements $ApplySummaryCopyWi
   factory _$ApplySummaryCopyWith(_ApplySummary value, $Res Function(_ApplySummary) _then) = __$ApplySummaryCopyWithImpl;
 @override @useResult
 $Res call({
-@JsonKey(name: 'apply_result') ApplyResult? applyResult, String email,@JsonKey(name: 'ranking_result') RankingResult rankingResult
+ String email,@JsonKey(name: 'ranking_result') RankingResult rankingResult,@JsonKey(name: 'apply_result') ApplyResult? applyResult
 });
 
 
-@override $ApplyResultCopyWith<$Res>? get applyResult;@override $RankingResultCopyWith<$Res> get rankingResult;
+@override $RankingResultCopyWith<$Res> get rankingResult;@override $ApplyResultCopyWith<$Res>? get applyResult;
 
 }
 /// @nodoc
@@ -1128,16 +1128,25 @@ class __$ApplySummaryCopyWithImpl<$Res>
 
 /// Create a copy of ApplySummary
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? applyResult = freezed,Object? email = null,Object? rankingResult = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? email = null,Object? rankingResult = null,Object? applyResult = freezed,}) {
   return _then(_ApplySummary(
-applyResult: freezed == applyResult ? _self.applyResult : applyResult // ignore: cast_nullable_to_non_nullable
-as ApplyResult?,email: null == email ? _self.email : email // ignore: cast_nullable_to_non_nullable
+email: null == email ? _self.email : email // ignore: cast_nullable_to_non_nullable
 as String,rankingResult: null == rankingResult ? _self.rankingResult : rankingResult // ignore: cast_nullable_to_non_nullable
-as RankingResult,
+as RankingResult,applyResult: freezed == applyResult ? _self.applyResult : applyResult // ignore: cast_nullable_to_non_nullable
+as ApplyResult?,
   ));
 }
 
 /// Create a copy of ApplySummary
+/// with the given fields replaced by the non-null parameter values.
+@override
+@pragma('vm:prefer-inline')
+$RankingResultCopyWith<$Res> get rankingResult {
+  
+  return $RankingResultCopyWith<$Res>(_self.rankingResult, (value) {
+    return _then(_self.copyWith(rankingResult: value));
+  });
+}/// Create a copy of ApplySummary
 /// with the given fields replaced by the non-null parameter values.
 @override
 @pragma('vm:prefer-inline')
@@ -1148,15 +1157,6 @@ $ApplyResultCopyWith<$Res>? get applyResult {
 
   return $ApplyResultCopyWith<$Res>(_self.applyResult!, (value) {
     return _then(_self.copyWith(applyResult: value));
-  });
-}/// Create a copy of ApplySummary
-/// with the given fields replaced by the non-null parameter values.
-@override
-@pragma('vm:prefer-inline')
-$RankingResultCopyWith<$Res> get rankingResult {
-  
-  return $RankingResultCopyWith<$Res>(_self.rankingResult, (value) {
-    return _then(_self.copyWith(rankingResult: value));
   });
 }
 }

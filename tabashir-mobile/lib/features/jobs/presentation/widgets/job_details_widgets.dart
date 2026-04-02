@@ -112,7 +112,7 @@ class JobTitleSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Padding(
-    padding: EdgeInsets.all(AppTheme.spacingLg.w),
+    padding: EdgeInsets.all(AppTheme.spacingMd.w),
     child: Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -220,7 +220,7 @@ class JobMatchAlert extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Container(
-    margin: EdgeInsets.symmetric(horizontal: AppTheme.spacingLg.w),
+    margin: EdgeInsets.symmetric(horizontal: AppTheme.spacingMd.w),
     padding: EdgeInsets.all(AppTheme.spacingMd.w),
     decoration: BoxDecoration(
       color: AppTheme.primaryColor.withOpacity(0.08),
@@ -366,7 +366,7 @@ class JobTagsWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Padding(
-    padding: EdgeInsets.symmetric(horizontal: AppTheme.spacingLg.w),
+    padding: EdgeInsets.symmetric(horizontal: AppTheme.spacingMd.w),
     child: SizedBox(
       height: 40.h,
       child: ListView.separated(
@@ -598,7 +598,7 @@ class SimilarOpportunitiesWidget extends StatelessWidget {
             scrollDirection: Axis.horizontal,
             itemCount: opportunities.length,
             separatorBuilder: (context, index) =>
-                SizedBox(width: AppTheme.spacingLg.w),
+                SizedBox(width: AppTheme.spacingMd.w),
             itemBuilder: (context, index) {
               final job = opportunities[index];
               return Container(
@@ -745,9 +745,9 @@ class JobDetailsFooter extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Container(
     padding: EdgeInsets.fromLTRB(
-      AppTheme.spacingLg.w,
+      AppTheme.spacingMd.w,
       AppTheme.spacingMd.h,
-      AppTheme.spacingLg.w,
+      AppTheme.spacingMd.w,
       AppTheme.spacingLg.h,
     ),
     decoration: BoxDecoration(

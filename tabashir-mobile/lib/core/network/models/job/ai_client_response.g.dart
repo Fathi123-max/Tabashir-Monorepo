@@ -29,6 +29,8 @@ _AiClientData _$AiClientDataFromJson(Map<String, dynamic> json) =>
       location: json['location'] as String?,
       positions: json['positions'] as String?,
       filename: json['filename'] as String?,
+      jobsToApplyNumber: (json['jobs_to_apply_number'] as num?)?.toInt(),
+      jobMatching: (json['job_matching'] as num?)?.toInt(),
     );
 
 Map<String, dynamic> _$AiClientDataToJson(_AiClientData instance) =>
@@ -38,4 +40,6 @@ Map<String, dynamic> _$AiClientDataToJson(_AiClientData instance) =>
       'location': instance.location,
       'positions': instance.positions,
       'filename': instance.filename,
+      'jobs_to_apply_number': instance.jobsToApplyNumber,
+      'job_matching': instance.jobMatching,
     };
