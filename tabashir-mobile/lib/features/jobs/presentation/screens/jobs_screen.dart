@@ -627,11 +627,13 @@ class _JobsViewState extends State<JobsView> {
             child: TextField(
               controller: _searchController,
               decoration: InputDecoration(
-                hintText: 'Search by job title, company, or keywords...',
+                hintText: 'Search by job title',
                 border: InputBorder.none,
                 enabledBorder: InputBorder.none,
                 focusedBorder: InputBorder.none,
                 contentPadding: EdgeInsets.zero,
+                filled: false,
+                fillColor: Colors.transparent,
                 hintStyle: theme.textTheme.bodyMedium?.copyWith(
                   color: theme.colorScheme.onSurfaceVariant.withOpacity(0.5),
                   fontSize: 14.sp,
@@ -640,6 +642,7 @@ class _JobsViewState extends State<JobsView> {
               style: theme.textTheme.bodyLarge?.copyWith(
                 fontSize: 15.sp,
                 fontWeight: FontWeight.w500,
+                color: theme.colorScheme.onSurface,
               ),
               onChanged: (query) {
                 context.read<JobsCubit>().updateSearchQuery(query);
