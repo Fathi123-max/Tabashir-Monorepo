@@ -27,17 +27,10 @@ class PaymentSuccessScreen extends StatelessWidget {
       body: SafeArea(
         child: SingleChildScrollView(
           padding: EdgeInsets.all(AppTheme.spacingXl.w),
-          child: ConstrainedBox(
-            constraints: BoxConstraints(
-              minHeight: MediaQuery.of(context).size.height -
-                  MediaQuery.of(context).padding.top -
-                  MediaQuery.of(context).padding.bottom,
-            ),
-            child: IntrinsicHeight(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const Spacer(flex: 2),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              SizedBox(height: 40.h),
 
               // Success Animation
               _buildSuccessAnimation(),
@@ -131,7 +124,7 @@ class PaymentSuccessScreen extends StatelessWidget {
                   ),
                 ),
 
-              const Spacer(flex: 3),
+              SizedBox(height: AppTheme.spacingMd.h),
 
               // OK Button - Refreshes data and navigates to home
               SizedBox(
@@ -169,8 +162,6 @@ class PaymentSuccessScreen extends StatelessWidget {
 
               SizedBox(height: AppTheme.spacingLg.h),
             ],
-            ),
-            ),
           ),
         ),
       ),
