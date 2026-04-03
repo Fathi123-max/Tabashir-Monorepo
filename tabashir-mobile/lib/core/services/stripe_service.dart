@@ -83,7 +83,10 @@ class StripeService {
         message: 'Payment successful',
       );
     } on StripeException catch (e) {
-      if (e.error.code == PaymentSheetError.Canceled.code) {
+      final errorCode = e.error.code;
+      final errorMessage = e.error.message?.toLowerCase() ?? '';
+      if (errorCode == 'Canceled' ||
+          (errorCode == 'Failed' && errorMessage.contains('cancel'))) {
         return PaymentResult.canceled(
           message: 'Payment was canceled',
         );
