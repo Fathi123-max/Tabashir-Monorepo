@@ -94,27 +94,56 @@ class HomeAppliedJobsWidget extends StatelessWidget {
           textAlign: TextAlign.center,
         ),
         SizedBox(height: AppTheme.spacingLg.h),
-        ElevatedButton(
-          onPressed: () {
-            context.push('/jobs');
-          },
-          style: ElevatedButton.styleFrom(
-            backgroundColor: AppTheme.primaryColor,
-            foregroundColor: Colors.white,
-            elevation: 0,
-            padding: EdgeInsets.symmetric(
-              horizontal: AppTheme.spacingLg.w,
-              vertical: AppTheme.spacingMd.h,
-            ),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(AppTheme.radiusMedium.r),
-            ),
+        // Enhanced Browse Jobs Button
+        Container(
+          width: double.infinity,
+          height: 52.h,
+          decoration: BoxDecoration(
+            gradient: AppTheme.primaryGradient,
+            borderRadius: BorderRadius.circular(AppTheme.radiusMedium.r),
+            boxShadow: [
+              BoxShadow(
+                color: AppTheme.primaryColor.withOpacity(0.3),
+                blurRadius: 12,
+                offset: const Offset(0, 4),
+              ),
+            ],
           ),
-          child: Text(
-            'Browse Jobs',
-            style: theme.textTheme.labelLarge?.copyWith(
-              fontWeight: FontWeight.w600,
-              fontSize: 14.sp,
+          child: ElevatedButton(
+            onPressed: () {
+              context.push('/jobs');
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.transparent,
+              foregroundColor: Colors.white,
+              elevation: 0,
+              shadowColor: Colors.transparent,
+              padding: EdgeInsets.symmetric(
+                horizontal: AppTheme.spacingLg.w,
+                vertical: AppTheme.spacingMd.h,
+              ),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(AppTheme.radiusMedium.r),
+              ),
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(
+                  Icons.search_rounded,
+                  size: 22.sp,
+                  color: Colors.white,
+                ),
+                SizedBox(width: AppTheme.spacingSm.w),
+                Text(
+                  'Browse Jobs',
+                  style: theme.textTheme.labelLarge?.copyWith(
+                    fontWeight: FontWeight.w600,
+                    fontSize: 15.sp,
+                    color: Colors.white,
+                  ),
+                ),
+              ],
             ),
           ),
         ),

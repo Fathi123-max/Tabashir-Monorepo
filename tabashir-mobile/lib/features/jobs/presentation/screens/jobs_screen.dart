@@ -300,20 +300,22 @@ class _JobsViewState extends State<JobsView> {
     if (state is JobsStateLoaded) {
       jobs = state.jobs;
       isLoadingMore = state.isLoadingMore;
+      // Only count as filter if values differ from defaults
       hasActiveFilters =
           state.searchQuery.isNotEmpty ||
           state.selectedLocations.isNotEmpty ||
           state.selectedJobTypes.isNotEmpty ||
           state.selectedExperienceLevels.isNotEmpty ||
           state.minSalary > 0 ||
-          state.maxSalary < 500000;
+          state.maxSalary < 100000; // Default is 100000
+      // Count actual active filters
       activeFilterCount =
           (state.searchQuery.isNotEmpty ? 1 : 0) +
           state.selectedLocations.length +
           state.selectedJobTypes.length +
           state.selectedExperienceLevels.length +
           (state.minSalary > 0 ? 1 : 0) +
-          (state.maxSalary < 500000 ? 1 : 0);
+          (state.maxSalary < 100000 ? 1 : 0); // Default is 100000
     }
 
     return BlocBuilder<ResumeVaultCubit, ResumeVaultState>(
@@ -339,6 +341,7 @@ class _JobsViewState extends State<JobsView> {
                     hasActiveFilters: hasActiveFilters,
                     activeFilterCount: activeFilterCount,
                   ),
+                  SizedBox(height: AppTheme.spacingMd.h),
 
                   // AI Banner (if shown)
 
@@ -586,43 +589,58 @@ class _JobsViewState extends State<JobsView> {
         color: theme.cardTheme.color,
         borderRadius: BorderRadius.circular(AppTheme.radiusLarge.r),
         border: Border.all(
-          color: theme.colorScheme.outline.withOpacity(0.1),
+          color: theme.colorScheme.outline.withOpacity(0.15),
+          width: 1.5,
         ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.06),
-            blurRadius: 12,
-            offset: const Offset(0, 4),
+            color: Colors.black.withOpacity(0.04),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
           ),
         ],
       ),
       child: Row(
         children: [
-          // Search Icon
-          Padding(
-            padding: EdgeInsets.all(AppTheme.spacingMd.w),
+          // Search Icon with background
+          Container(
+            margin: EdgeInsets.only(
+              left: AppTheme.spacingSm.w,
+              top: AppTheme.spacingSm.h,
+              bottom: AppTheme.spacingSm.h,
+            ),
+            padding: EdgeInsets.symmetric(horizontal: AppTheme.spacingSm.w),
+            decoration: BoxDecoration(
+              color: theme.colorScheme.surfaceContainerHighest.withOpacity(0.5),
+              borderRadius: BorderRadius.circular(AppTheme.radiusMedium.r),
+            ),
             child: Icon(
               Icons.search_rounded,
               color: theme.colorScheme.onSurfaceVariant,
-              size: 24.sp,
+              size: 22.sp,
             ),
           ),
+          SizedBox(width: AppTheme.spacingSm.w),
 
           // Input Field
           Expanded(
             child: TextField(
               controller: _searchController,
               decoration: InputDecoration(
-                hintText: 'Search job title, company, or keywords...',
+                hintText: 'Search by job title, company, or keywords...',
                 border: InputBorder.none,
                 enabledBorder: InputBorder.none,
                 focusedBorder: InputBorder.none,
                 contentPadding: EdgeInsets.zero,
                 hintStyle: theme.textTheme.bodyMedium?.copyWith(
-                  color: theme.colorScheme.onSurfaceVariant.withOpacity(0.6),
+                  color: theme.colorScheme.onSurfaceVariant.withOpacity(0.5),
+                  fontSize: 14.sp,
                 ),
               ),
-              style: theme.textTheme.bodyLarge,
+              style: theme.textTheme.bodyLarge?.copyWith(
+                fontSize: 15.sp,
+                fontWeight: FontWeight.w500,
+              ),
               onChanged: (query) {
                 context.read<JobsCubit>().updateSearchQuery(query);
               },
@@ -632,6 +650,14 @@ class _JobsViewState extends State<JobsView> {
             ),
           ),
 
+          // Divider
+          Container(
+            width: 1,
+            height: 32.h,
+            margin: EdgeInsets.only(right: AppTheme.spacingSm.w),
+            color: theme.colorScheme.outline.withOpacity(0.15),
+          ),
+
           // Filter Button with Badge
           Container(
             margin: EdgeInsets.only(right: AppTheme.spacingSm.w),
@@ -639,22 +665,25 @@ class _JobsViewState extends State<JobsView> {
               alignment: Alignment.center,
               children: [
                 Container(
-                  width: 48.w,
-                  height: 48.w,
+                  width: 44.w,
+                  height: 44.h,
                   decoration: BoxDecoration(
+                    gradient: hasActiveFilters
+                        ? AppTheme.primaryGradient
+                        : null,
                     color: hasActiveFilters
-                        ? AppTheme.primaryColor.withOpacity(0.15)
+                        ? null
                         : theme.colorScheme.surfaceContainerHighest.withOpacity(
-                            0.3,
+                            0.5,
                           ),
                     borderRadius: BorderRadius.circular(
                       AppTheme.radiusMedium.r,
                     ),
                     border: Border.all(
                       color: hasActiveFilters
-                          ? AppTheme.primaryColor
-                          : Colors.transparent,
-                      width: 1.5,
+                          ? AppTheme.primaryColor.withOpacity(0.3)
+                          : theme.colorScheme.outline.withOpacity(0.15),
+                      width: 1,
                     ),
                   ),
                   child: IconButton(
@@ -671,37 +700,47 @@ class _JobsViewState extends State<JobsView> {
                     icon: Icon(
                       Icons.tune_rounded,
                       color: hasActiveFilters
-                          ? AppTheme.primaryColor
+                          ? Colors.white
                           : theme.colorScheme.onSurfaceVariant,
-                      size: 24.sp,
+                      size: 22.sp,
                     ),
                     padding: EdgeInsets.zero,
                   ),
                 ),
-                if (hasActiveFilters)
+                if (hasActiveFilters && activeFilterCount > 0)
                   Positioned(
-                    top: 4.h,
-                    right: 4.w,
+                    top: 2.h,
+                    right: 2.w,
                     child: Container(
                       padding: EdgeInsets.symmetric(
-                        horizontal: AppTheme.spacingXs.w,
-                        vertical: AppTheme.spacingXs.h,
+                        horizontal: 5.w,
+                        vertical: 2.h,
                       ),
                       decoration: BoxDecoration(
-                        color: AppTheme.primaryColor,
+                        color: AppTheme.errorColor,
                         shape: BoxShape.circle,
-                        border: Border.all(color: Colors.white, width: 1.5),
+                        border: Border.all(
+                          color: Colors.white,
+                          width: 2,
+                        ),
+                        boxShadow: [
+                          BoxShadow(
+                            color: AppTheme.errorColor.withOpacity(0.4),
+                            blurRadius: 6,
+                            offset: const Offset(0, 2),
+                          ),
+                        ],
                       ),
                       constraints: BoxConstraints(
-                        minWidth: 20.w,
-                        minHeight: 20.w,
+                        minWidth: 18.w,
+                        minHeight: 18.h,
                       ),
                       child: Center(
                         child: Text(
                           activeFilterCount > 99 ? '99+' : '$activeFilterCount',
                           style: TextStyle(
                             color: Colors.white,
-                            fontSize: 11.sp,
+                            fontSize: 10.sp,
                             fontWeight: FontWeight.bold,
                           ),
                           textAlign: TextAlign.center,

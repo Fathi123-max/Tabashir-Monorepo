@@ -128,8 +128,14 @@ class PaymentSuccessScreen extends StatelessWidget {
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
-                  onPressed: () {
-                    // Navigate to home screen and pop all payment screens
+                  onPressed: () async {
+                    // First pop the success screen
+                    Navigator.of(context).pop();
+                    
+                    // Small delay to ensure profile refresh completes
+                    await Future.delayed(Duration(milliseconds: 500));
+                    
+                    // Navigate to home screen (this will trigger a rebuild)
                     context.goNamed('home');
                   },
                   style: ElevatedButton.styleFrom(

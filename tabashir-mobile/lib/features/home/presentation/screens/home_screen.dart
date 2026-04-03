@@ -11,7 +11,6 @@ import 'package:tabashir/features/home/presentation/cubit/cubit.dart';
 import 'package:tabashir/features/home/presentation/cubit/app_initialization_cubit.dart';
 import 'package:tabashir/features/home/data/models/app_initialization_state.dart';
 import 'package:tabashir/features/home/presentation/widgets/widgets.dart';
-import 'package:tabashir/features/home/presentation/widgets/pro_header_widget.dart';
 import 'package:tabashir/features/home/presentation/widgets/pro_quick_actions_widget.dart';
 import 'package:tabashir/features/profile/presentation/cubit/profile_cubit.dart';
 import 'package:tabashir/features/home/presentation/screens/all_matched_jobs_screen.dart';
@@ -33,6 +32,20 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   late ThemeData widgetTheme;
+  DateTime? _lastPaymentTime;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    // Check if we're returning from a payment (profile was refreshed)
+    final profileState = context.read<ProfileCubit>().state;
+    if (profileState.status == ProfileStatus.success) {
+      // Trigger a rebuild to show updated Pro status
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) setState(() {});
+      });
+    }
+  }
 
   /// Extract the primary job title from the jobs list
   String? _extractPrimaryJobTitle(List<Map<String, dynamic>> jobs) {
@@ -67,7 +80,7 @@ class _HomeScreenState extends State<HomeScreen> {
     return locations.isEmpty ? ['your area'.tr()] : locations.toList();
   }
 
-  /// Home Header - Matching Jobs screen design
+  /// Home Header - Enhanced UI/UX Design
   Widget _buildHomeHeader(
     BuildContext context,
     ThemeData theme,
@@ -76,7 +89,8 @@ class _HomeScreenState extends State<HomeScreen> {
   ) {
     final plan = subscriptionPlan ?? '';
     final userType = user is UserData ? (user.userType ?? '') : '';
-    final isPro = plan.toUpperCase().contains('PRO') ||
+    final isPro =
+        plan.toUpperCase().contains('PRO') ||
         userType.toUpperCase().contains('PRO');
     final userName = (user is UserData ? user.name : null) ?? 'User';
 
@@ -111,7 +125,9 @@ class _HomeScreenState extends State<HomeScreen> {
           Container(
             padding: EdgeInsets.all(AppTheme.spacingSm.w),
             decoration: BoxDecoration(
-              gradient: isPro ? AppTheme.goldGradient : AppTheme.primaryGradient,
+              gradient: isPro
+                  ? AppTheme.goldGradient
+                  : AppTheme.primaryGradient,
               borderRadius: BorderRadius.circular(AppTheme.radiusMedium.r),
               boxShadow: [
                 BoxShadow(
@@ -178,12 +194,130 @@ class _HomeScreenState extends State<HomeScreen> {
                         ),
                       ),
                     ),
+                    // Notification Button - Better Aligned
+                    SizedBox(width: AppTheme.spacingSm.w),
+                    _buildNotificationButton(context, theme),
                   ],
                 ),
               ],
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  /// Enhanced Notification Button with Badge
+  Widget _buildNotificationButton(
+    BuildContext context,
+    ThemeData theme,
+  ) {
+    // TODO: Get actual notification count from backend/state
+    final notificationCount = 0; // Replace with actual count
+    final hasNotifications = notificationCount > 0;
+
+    return Container(
+      margin: EdgeInsets.only(top: 2.h),
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: () {
+            context.pushNamed('notifications-screen');
+          },
+          borderRadius: BorderRadius.circular(AppTheme.radiusMedium.r),
+          child: Container(
+            width: 36.w,
+            height: 36.h,
+            decoration: BoxDecoration(
+              color: theme.colorScheme.surfaceContainerHighest,
+              borderRadius: BorderRadius.circular(AppTheme.radiusMedium.r),
+              border: Border.all(
+                color: theme.colorScheme.outlineVariant.withOpacity(0.5),
+                width: 1,
+              ),
+            ),
+            child: Stack(
+              alignment: Alignment.center,
+              children: [
+                // Bell Icon
+                Icon(
+                  hasNotifications
+                      ? Icons.notifications_rounded
+                      : Icons.notifications_outlined,
+                  size: 20.sp,
+                  color: hasNotifications
+                      ? AppTheme.primaryColor
+                      : theme.colorScheme.onSurfaceVariant,
+                ),
+                // Notification Badge with Count
+                if (hasNotifications)
+                  Positioned(
+                    right: 8.w,
+                    top: 6.h,
+                    child: Container(
+                      constraints: BoxConstraints(
+                        minWidth: 14.w,
+                        minHeight: 14.h,
+                      ),
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 3.w,
+                        vertical: 1.h,
+                      ),
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          colors: [
+                            AppTheme.errorColor,
+                            AppTheme.errorColor.withOpacity(0.8),
+                          ],
+                        ),
+                        borderRadius: BorderRadius.circular(
+                          AppTheme.radiusFull.r,
+                        ),
+                        border: Border.all(
+                          color: theme.scaffoldBackgroundColor,
+                          width: 1.5,
+                        ),
+                        boxShadow: [
+                          BoxShadow(
+                            color: AppTheme.errorColor.withOpacity(0.4),
+                            blurRadius: 6,
+                            offset: const Offset(0, 2),
+                          ),
+                        ],
+                      ),
+                      child: Text(
+                        notificationCount > 99 ? '99+' : '$notificationCount',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 8.sp,
+                          fontWeight: FontWeight.bold,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                  )
+                else
+                  // Unread indicator dot
+                  Positioned(
+                    right: 10.w,
+                    top: 8.h,
+                    child: Container(
+                      width: 7.w,
+                      height: 7.h,
+                      decoration: BoxDecoration(
+                        color: AppTheme.primaryColor,
+                        shape: BoxShape.circle,
+                        border: Border.all(
+                          color: theme.scaffoldBackgroundColor,
+                          width: 1.5,
+                        ),
+                      ),
+                    ),
+                  ),
+              ],
+            ),
+          ),
+        ),
       ),
     );
   }
@@ -361,48 +495,61 @@ class _HomeScreenState extends State<HomeScreen> {
                               children: [
                                 // Home Header - Matching Jobs screen design
                                 BlocBuilder<ProfileCubit, ProfileState>(
-                                  builder: (context, profileState) {
-                                    return _buildHomeHeader(
-                                      context,
-                                      Theme.of(context),
-                                      state.user,
-                                      profileState.profile?.subscriptionPlan,
-                                    );
-                                  },
+                                  builder: (context, profileState) =>
+                                      _buildHomeHeader(
+                                        context,
+                                        Theme.of(context),
+                                        state.user,
+                                        profileState.profile?.subscriptionPlan,
+                                      ),
                                 ),
                                 SizedBox(height: AppTheme.spacingMd.h),
 
                                 // AI Match Banner - Enhanced with gradient
-                                Container(
-                                  margin: EdgeInsets.symmetric(
-                                    horizontal: AppTheme.spacingLg.w,
-                                  ),
-                                  child: HomeAIMatchBannerWidget(
-                                    onTabChange: widget.onTabChange,
-                                    matchCount: state.matches,
-                                    jobTitle: _extractPrimaryJobTitle(
-                                      state.jobs,
-                                    ),
-                                    locations: _extractUniqueLocations(
-                                      state.jobs,
-                                    ),
-                                  ),
-                                ),
+                                // Container(
+                                //   margin: EdgeInsets.symmetric(
+                                //     horizontal: AppTheme.spacingLg.w,
+                                //   ),
+                                //   child: HomeAIMatchBannerWidget(
+                                //     onTabChange: widget.onTabChange,
+                                //     matchCount: state.matches,
+                                //     jobTitle: _extractPrimaryJobTitle(
+                                //       state.jobs,
+                                //     ),
+                                //     locations: _extractUniqueLocations(
+                                //       state.jobs,
+                                //     ),
+                                //   ),
+                                // ),
+                                // SizedBox(height: AppTheme.spacingLg.h),
+
+                                // AI Matching Settings - Hidden
+                                const HomeAISettingsWidget(),
                                 SizedBox(height: AppTheme.spacingLg.h),
 
                                 // Pro Quick Actions - Premium AI tools (Pro users only)
                                 BlocBuilder<ProfileCubit, ProfileState>(
                                   builder: (context, profileState) {
-                                    final plan = profileState.profile?.subscriptionPlan ?? '';
-                                    final userType = state.user is UserData ? (state.user as UserData).userType ?? '' : '';
-                                    final isPro = plan.toUpperCase().contains('PRO') ||
+                                    final plan =
+                                        profileState
+                                            .profile
+                                            ?.subscriptionPlan ??
+                                        '';
+                                    final userType = state.user is UserData
+                                        ? (state.user as UserData).userType ??
+                                              ''
+                                        : '';
+                                    final isPro =
+                                        plan.toUpperCase().contains('PRO') ||
                                         userType.toUpperCase().contains('PRO');
-                                    
+
                                     if (isPro) {
                                       return Column(
                                         children: [
                                           const ProQuickActionsWidget(),
-                                          SizedBox(height: AppTheme.spacingLg.h),
+                                          SizedBox(
+                                            height: AppTheme.spacingLg.h,
+                                          ),
                                         ],
                                       );
                                     }
@@ -410,7 +557,32 @@ class _HomeScreenState extends State<HomeScreen> {
                                   },
                                 ),
 
-                                // Matched Jobs Section - MOVED UP (Core value)
+                                // Stats Cards Section - MOVED UP (Before Matched Jobs)
+                                _buildSection(
+                                  icon: Icons.analytics_rounded,
+                                  title: 'Your Stats',
+                                  iconColor: AppTheme.primaryColor,
+                                  iconBgColor: AppTheme.primaryColor
+                                      .withOpacity(0.1),
+                                  iconBorderColor: AppTheme.primaryColor
+                                      .withOpacity(0.2),
+                                  content: const HomeStatsCardsRowWidget(),
+                                  useGradient: true,
+                                ),
+
+                                // UAE Cities Section - MOVED UP (Before Matched Jobs)
+                                _buildSection(
+                                  icon: Icons.location_city_rounded,
+                                  title: 'Jobs by Location',
+                                  iconColor: AppTheme.warningColor,
+                                  iconBgColor: AppTheme.warningColor
+                                      .withOpacity(0.1),
+                                  iconBorderColor: AppTheme.warningColor
+                                      .withOpacity(0.2),
+                                  content: const HomeUAECitiesWidget(),
+                                ),
+
+                                // Matched Jobs Section - Core value
                                 _buildSection(
                                   icon: Icons.auto_awesome_rounded,
                                   title: 'Matched For You',
@@ -443,7 +615,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                   ),
                                 ),
 
-                                // My Applications Section - MOVED UP (Progress tracking)
+                                // My Applications Section - Progress tracking
                                 _buildSection(
                                   icon: Icons.folder_shared_rounded,
                                   title: 'My Applications',
@@ -468,34 +640,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                     ),
                                   ),
                                 ),
-
-                                // Stats Cards Section - MOVED DOWN (Motivation after context)
-                                _buildSection(
-                                  icon: Icons.analytics_rounded,
-                                  title: 'Your Stats',
-                                  iconColor: AppTheme.primaryColor,
-                                  iconBgColor: AppTheme.primaryColor
-                                      .withOpacity(0.1),
-                                  iconBorderColor: AppTheme.primaryColor
-                                      .withOpacity(0.2),
-                                  content: const HomeStatsCardsRowWidget(),
-                                  useGradient: true,
-                                ),
-
-                                // UAE Cities Section - Discovery (lower priority)
-                                _buildSection(
-                                  icon: Icons.location_city_rounded,
-                                  title: 'Jobs by Location',
-                                  iconColor: AppTheme.warningColor,
-                                  iconBgColor: AppTheme.warningColor
-                                      .withOpacity(0.1),
-                                  iconBorderColor: AppTheme.warningColor
-                                      .withOpacity(0.2),
-                                  content: const HomeUAECitiesWidget(),
-                                ),
-
-                                // AI Matching Settings
-                                const HomeAISettingsWidget(),
+                                SizedBox(height: AppTheme.spacingLg.h),
                               ],
                             ),
                           ),

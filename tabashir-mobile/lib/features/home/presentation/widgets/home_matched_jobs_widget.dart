@@ -151,33 +151,34 @@ class HomeMatchedJobsWidget extends StatelessWidget {
           textAlign: TextAlign.center,
         ),
         SizedBox(height: AppTheme.spacingMd.h),
-        Container(
-          padding: EdgeInsets.all(AppTheme.spacingMd.w),
-          decoration: BoxDecoration(
-            color: AppTheme.primaryColor.withOpacity(0.05),
-            borderRadius: BorderRadius.circular(AppTheme.radiusMedium.r),
-          ),
-          child: Row(
-            children: [
-              Icon(
-                Icons.lightbulb_outline_rounded,
-                size: 20.sp,
-                color: AppTheme.primaryColor,
-              ),
-              SizedBox(width: AppTheme.spacingSm.w),
-              Expanded(
-                child: Text(
-                  'Tip: Complete your profile and upload your resume to get better matches',
-                  style: theme.textTheme.bodySmall?.copyWith(
-                    color: AppTheme.primaryColor,
-                    fontSize: 13.sp,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
+        // Tip container hidden
+        // Container(
+        //   padding: EdgeInsets.all(AppTheme.spacingMd.w),
+        //   decoration: BoxDecoration(
+        //     color: AppTheme.primaryColor.withOpacity(0.05),
+        //     borderRadius: BorderRadius.circular(AppTheme.radiusMedium.r),
+        //   ),
+        //   child: Row(
+        //     children: [
+        //       Icon(
+        //         Icons.lightbulb_outline_rounded,
+        //         size: 20.sp,
+        //         color: AppTheme.primaryColor,
+        //       ),
+        //       SizedBox(width: AppTheme.spacingSm.w),
+        //       Expanded(
+        //         child: Text(
+        //           'Tip: Complete your profile and upload your resume to get better matches',
+        //           style: theme.textTheme.bodySmall?.copyWith(
+        //             color: AppTheme.primaryColor,
+        //             fontSize: 13.sp,
+        //             fontWeight: FontWeight.w500,
+        //           ),
+        //         ),
+        //       ),
+        //     ],
+        //   ),
+        // ),
       ],
     ),
   );
