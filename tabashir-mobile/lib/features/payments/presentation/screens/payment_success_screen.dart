@@ -25,12 +25,19 @@ class PaymentSuccessScreen extends StatelessWidget {
 
     return Scaffold(
       body: SafeArea(
-        child: Padding(
+        child: SingleChildScrollView(
           padding: EdgeInsets.all(AppTheme.spacingXl.w),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const Spacer(flex: 2),
+          child: ConstrainedBox(
+            constraints: BoxConstraints(
+              minHeight: MediaQuery.of(context).size.height -
+                  MediaQuery.of(context).padding.top -
+                  MediaQuery.of(context).padding.bottom,
+            ),
+            child: IntrinsicHeight(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Spacer(flex: 2),
 
               // Success Animation
               _buildSuccessAnimation(),
@@ -156,6 +163,8 @@ class PaymentSuccessScreen extends StatelessWidget {
 
               SizedBox(height: AppTheme.spacingLg.h),
             ],
+            ),
+            ),
           ),
         ),
       ),
