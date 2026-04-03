@@ -17,7 +17,7 @@ class PaymentSuccessScreen extends StatelessWidget {
   final String? serviceTitle;
   final double? amount;
   final String? transactionId;
-  final VoidCallback? onOkPressed;
+  final Future<void> Function()? onOkPressed;
 
   @override
   Widget build(BuildContext context) {
@@ -137,9 +137,15 @@ class PaymentSuccessScreen extends StatelessWidget {
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
-                  onPressed: () {
-                    onOkPressed?.call();
-                    context.goNamed('home');
+                  onPressed: () async {
+                    print('[PaymentSuccessScreen] OK button pressed');
+                    if (onOkPressed != null) {
+                      await onOkPressed!();
+                    }
+                    print('[PaymentSuccessScreen] Navigating to home');
+                    if (context.mounted) {
+                      context.goNamed('home');
+                    }
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: AppTheme.primaryColor,

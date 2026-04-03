@@ -114,13 +114,17 @@ class _ServicesScreenState extends State<ServicesScreen> {
             onOkPressed: () async {
               // Refresh profile and home data before navigating home
               try {
+                print('[ServicesScreen] onOkPressed: refreshing profile...');
                 await getIt<ProfileCubit>().loadProfileData(force: true);
                 final homeCubit = getIt<HomeCubit>();
                 final email =
                     getIt<ProfileCubit>().state.profile?.email ?? '';
+                print('[ServicesScreen] onOkPressed: email=$email');
                 if (email.isNotEmpty) {
+                  print('[ServicesScreen] onOkPressed: refreshing home...');
                   await homeCubit.loadAiEnhancedHomeData(email: email);
                 }
+                print('[ServicesScreen] onOkPressed: refresh complete');
               } catch (e) {
                 print(
                   '[ServicesScreen] Error refreshing data on OK: $e',

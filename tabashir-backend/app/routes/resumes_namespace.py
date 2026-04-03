@@ -1057,11 +1057,11 @@ class AddClient(Resource):
 
             print(f"[ADD_CLIENT] ✅ Ranking completed successfully")
             print(f"[ADD_CLIENT] 🔄 Calling apply_jobs()...")
-            
+
             apply_result = apply_jobs(email=email, file_path=temp_input_path) # we can also use client IDs
-            
+
             print(f"[ADD_CLIENT] 📋 Apply result: {apply_result}")
-            
+
             if not apply_result:
                 print(f"[ADD_CLIENT] ❌ apply_jobs() returned None or empty")
                 raise ValueError("Failed to apply for jobs")

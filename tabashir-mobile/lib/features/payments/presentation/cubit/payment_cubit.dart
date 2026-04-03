@@ -35,7 +35,7 @@ class PaymentCubit extends Cubit<PaymentState> {
   /// Callback fired after successful payment.
   /// Set this before calling createPaymentIntent to handle navigation
   /// from a screen that may have been disposed during the payment sheet.
-  Function(PaymentIntentResponse? paymentIntent)? onPaymentSuccess;
+  Future<void> Function(PaymentIntentResponse? paymentIntent)? onPaymentSuccess;
 
   /// Get the current user ID from profile cubit
   /// Throws an exception if user ID is not available
