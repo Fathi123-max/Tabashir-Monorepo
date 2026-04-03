@@ -11,11 +11,13 @@ class PaymentSuccessScreen extends StatelessWidget {
     this.serviceTitle,
     this.amount,
     this.transactionId,
+    this.onOkPressed,
   });
 
   final String? serviceTitle;
   final double? amount;
   final String? transactionId;
+  final VoidCallback? onOkPressed;
 
   @override
   Widget build(BuildContext context) {
@@ -124,18 +126,12 @@ class PaymentSuccessScreen extends StatelessWidget {
 
               const Spacer(flex: 3),
 
-              // Continue Button
+              // OK Button - Refreshes data and navigates to home
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
-                  onPressed: () async {
-                    // First pop the success screen
-                    Navigator.of(context).pop();
-                    
-                    // Small delay to ensure profile refresh completes
-                    await Future.delayed(Duration(milliseconds: 500));
-                    
-                    // Navigate to home screen (this will trigger a rebuild)
+                  onPressed: () {
+                    onOkPressed?.call();
                     context.goNamed('home');
                   },
                   style: ElevatedButton.styleFrom(
@@ -148,40 +144,11 @@ class PaymentSuccessScreen extends StatelessWidget {
                     elevation: 0,
                   ),
                   child: Text(
-                    'Continue to Home',
+                    'OK',
                     style: theme.textTheme.titleMedium?.copyWith(
-                      fontSize: 16.sp,
-                      fontWeight: FontWeight.w600,
+                      fontSize: 18.sp,
+                      fontWeight: FontWeight.bold,
                       color: Colors.white,
-                    ),
-                  ),
-                ),
-              ),
-
-              SizedBox(height: AppTheme.spacingMd.h),
-
-              // View Services Button (Secondary)
-              SizedBox(
-                width: double.infinity,
-                child: OutlinedButton(
-                  onPressed: () {
-                    context.pop();
-                  },
-                  style: OutlinedButton.styleFrom(
-                    foregroundColor: AppTheme.primaryColor,
-                    side: BorderSide(
-                      color: AppTheme.primaryColor.withOpacity(0.3),
-                    ),
-                    padding: EdgeInsets.symmetric(vertical: 16.h),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(AppTheme.radiusLarge.r),
-                    ),
-                  ),
-                  child: Text(
-                    'View More Services',
-                    style: theme.textTheme.titleMedium?.copyWith(
-                      fontSize: 16.sp,
-                      fontWeight: FontWeight.w500,
                     ),
                   ),
                 ),

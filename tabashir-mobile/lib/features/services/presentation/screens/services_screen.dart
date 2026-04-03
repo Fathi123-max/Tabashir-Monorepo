@@ -9,8 +9,10 @@ import 'package:tabashir/core/di/injection.dart';
 import 'package:tabashir/core/theme/app_theme.dart';
 import 'package:tabashir/core/network/models/payment/payment_intent_request.dart';
 import 'package:tabashir/core/models/stripe/stripe_enums.dart';
+import 'package:tabashir/features/home/presentation/cubit/home_cubit.dart';
 import 'package:tabashir/features/payments/presentation/cubit/payment_cubit.dart';
 import 'package:tabashir/features/payments/presentation/screens/payment_success_screen.dart';
+import 'package:tabashir/features/profile/presentation/cubit/profile_cubit.dart';
 
 import '../cubit/services_cubit.dart';
 import '../widgets/info_banner.dart';
@@ -102,15 +104,33 @@ class _ServicesScreenState extends State<ServicesScreen> {
             // Get payment intent ID from state if available
             final transactionId = state.paymentIntent?.data?.paymentIntentId;
 
-            // Navigate to success screen
-            Navigator.of(context).push(
+            // Navigate to success screen (replace current route)
+            Navigator.of(context).pushAndRemoveUntil(
               MaterialPageRoute(
                 builder: (context) => PaymentSuccessScreen(
                   serviceTitle: _pendingServiceTitle,
                   amount: _pendingAmount,
                   transactionId: transactionId,
+                  onOkPressed: () async {
+                    // Refresh profile and home data before navigating home
+                    try {
+                      await getIt<ProfileCubit>().loadProfileData(force: true);
+                      final homeCubit = getIt<HomeCubit>();
+                      final email =
+                          getIt<ProfileCubit>().state.profile?.email ?? '';
+                      if (email.isNotEmpty) {
+                        await homeCubit.loadAiEnhancedHomeData(email: email);
+                      }
+                    } catch (e) {
+                      // Navigate home even if refresh fails
+                      print(
+                        '[ServicesScreen] Error refreshing data on OK: $e',
+                      );
+                    }
+                  },
                 ),
               ),
+              (route) => route.isFirst, // Keep only the first route (home)
             );
 
             // Clear pending info
