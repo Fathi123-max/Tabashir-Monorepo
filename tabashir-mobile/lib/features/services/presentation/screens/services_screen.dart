@@ -8,6 +8,7 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:tabashir/core/di/injection.dart';
 import 'package:tabashir/core/theme/app_theme.dart';
 import 'package:tabashir/core/network/models/payment/payment_intent_request.dart';
+import 'package:tabashir/core/network/models/payment/payment_intent_response.dart';
 import 'package:tabashir/core/models/stripe/stripe_enums.dart';
 import 'package:tabashir/features/home/presentation/cubit/home_cubit.dart';
 import 'package:tabashir/features/payments/presentation/cubit/payment_cubit.dart';
@@ -73,6 +74,12 @@ class _ServicesScreenState extends State<ServicesScreen> {
       _pendingAmount = amount;
     });
 
+    // Set callback for successful payment (fires even if widget is disposed)
+    paymentCubit.onPaymentSuccess = (paymentIntent) {
+      if (!mounted) return;
+      _navigateToSuccessScreen(paymentIntent);
+    };
+
     // Create payment intent
     final request = PaymentIntentRequest(
       amount: amount,
@@ -82,8 +89,55 @@ class _ServicesScreenState extends State<ServicesScreen> {
     );
 
     await paymentCubit.createPaymentIntent(request: request);
-    // Note: Navigation to success screen is handled by BlocListener
+    // Note: Navigation to success screen is handled by onPaymentSuccess callback
     // Do NOT add navigation logic here
+  }
+
+  void _navigateToSuccessScreen(PaymentIntentResponse? paymentIntent) {
+    // Wait for Stripe payment sheet to fully dismiss before navigating
+    Future.delayed(const Duration(milliseconds: 500), () {
+      if (!mounted) return;
+
+      final transactionId = paymentIntent?.data?.paymentIntentId;
+
+      print(
+        '[ServicesScreen] Navigating to PaymentSuccessScreen: '
+        'service=$_pendingServiceTitle, amount=$_pendingAmount',
+      );
+
+      Navigator.of(context).pushAndRemoveUntil(
+        MaterialPageRoute(
+          builder: (context) => PaymentSuccessScreen(
+            serviceTitle: _pendingServiceTitle,
+            amount: _pendingAmount,
+            transactionId: transactionId,
+            onOkPressed: () async {
+              // Refresh profile and home data before navigating home
+              try {
+                await getIt<ProfileCubit>().loadProfileData(force: true);
+                final homeCubit = getIt<HomeCubit>();
+                final email =
+                    getIt<ProfileCubit>().state.profile?.email ?? '';
+                if (email.isNotEmpty) {
+                  await homeCubit.loadAiEnhancedHomeData(email: email);
+                }
+              } catch (e) {
+                print(
+                  '[ServicesScreen] Error refreshing data on OK: $e',
+                );
+              }
+            },
+          ),
+        ),
+        (route) => route.isFirst, // Keep only the first route (home)
+      );
+
+      // Clear pending info
+      setState(() {
+        _pendingServiceTitle = null;
+        _pendingAmount = null;
+      });
+    });
   }
 
   @override
@@ -100,61 +154,9 @@ class _ServicesScreenState extends State<ServicesScreen> {
         ),
       ],
       child: BlocListener<PaymentCubit, PaymentState>(
-        listener: (context, state) {
-          print(
-            '[ServicesScreen] BlocListener: status=${state.status}, '
-            'paymentSuccessful=${state.paymentSuccessful}',
-          );
-          // Show success screen when payment is successful
-          if (state.status == PaymentStatus.success && state.paymentSuccessful) {
-            // Wait for Stripe payment sheet to fully dismiss before navigating
-            Future.delayed(const Duration(milliseconds: 500), () {
-              if (!context.mounted) return;
-
-              // Get payment intent ID from state if available
-              final transactionId = state.paymentIntent?.data?.paymentIntentId;
-
-              print(
-                '[ServicesScreen] Navigating to PaymentSuccessScreen: '
-                'service=$_pendingServiceTitle, amount=$_pendingAmount',
-              );
-
-              // Navigate to success screen (replace current route)
-              Navigator.of(context).pushAndRemoveUntil(
-                MaterialPageRoute(
-                  builder: (context) => PaymentSuccessScreen(
-                    serviceTitle: _pendingServiceTitle,
-                    amount: _pendingAmount,
-                    transactionId: transactionId,
-                    onOkPressed: () async {
-                      // Refresh profile and home data before navigating home
-                      try {
-                        await getIt<ProfileCubit>().loadProfileData(force: true);
-                        final homeCubit = getIt<HomeCubit>();
-                        final email =
-                            getIt<ProfileCubit>().state.profile?.email ?? '';
-                        if (email.isNotEmpty) {
-                          await homeCubit.loadAiEnhancedHomeData(email: email);
-                        }
-                      } catch (e) {
-                        print(
-                          '[ServicesScreen] Error refreshing data on OK: $e',
-                        );
-                      }
-                    },
-                  ),
-                ),
-                (route) => route.isFirst, // Keep only the first route (home)
-              );
-
-              // Clear pending info
-              setState(() {
-                _pendingServiceTitle = null;
-                _pendingAmount = null;
-              });
-            });
-          }
-        },
+        // Navigation is handled by onPaymentSuccess callback on the cubit.
+        // This listener is kept as a fallback but should not be needed.
+        listener: (context, state) {},
         child: BlocBuilder<ServicesCubit, ServicesState>(
           builder: (context, state) => Scaffold(
             backgroundColor: theme.scaffoldBackgroundColor,

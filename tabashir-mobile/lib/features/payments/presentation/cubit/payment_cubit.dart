@@ -2,9 +2,10 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:flutter_stripe/flutter_stripe.dart';
 import 'package:injectable/injectable.dart';
+import 'package:tabashir/core/di/injection.dart';
+import 'package:tabashir/core/models/stripe/stripe_enums.dart';
 import 'package:tabashir/core/models/stripe/payment_sheet_config.dart';
 import 'package:tabashir/core/models/stripe/stripe_payment_method.dart';
-import 'package:tabashir/core/models/stripe/stripe_enums.dart';
 import 'package:tabashir/core/network/models/payment/checkout_session_request.dart';
 import 'package:tabashir/core/network/models/payment/checkout_session_response.dart';
 import 'package:tabashir/core/network/models/payment/latest_payment_response.dart';
@@ -13,6 +14,7 @@ import 'package:tabashir/core/network/models/payment/payment_intent_response.dar
 import 'package:tabashir/core/services/stripe_service.dart';
 import 'package:tabashir/features/payments/domain/repositories/payment_repository.dart';
 import 'package:tabashir/features/profile/presentation/cubit/profile_cubit.dart';
+import 'package:tabashir/features/home/presentation/cubit/home_cubit.dart';
 
 part 'payment_state.dart';
 part 'payment_cubit.freezed.dart';
@@ -29,6 +31,11 @@ class PaymentCubit extends Cubit<PaymentState> {
   final PaymentRepository _repository;
   final StripeService _stripeService;
   final ProfileCubit _profileCubit;
+
+  /// Callback fired after successful payment.
+  /// Set this before calling createPaymentIntent to handle navigation
+  /// from a screen that may have been disposed during the payment sheet.
+  Function(PaymentIntentResponse? paymentIntent)? onPaymentSuccess;
 
   /// Get the current user ID from profile cubit
   /// Throws an exception if user ID is not available
@@ -96,6 +103,18 @@ class PaymentCubit extends Cubit<PaymentState> {
             try {
               await _profileCubit.loadProfileData(force: true);
               print('[PaymentCubit] Profile refreshed after successful payment');
+              
+              // Also refresh HomeCubit to update the UI with new job credits
+              try {
+                final homeCubit = getIt<HomeCubit>();
+                final email = _profileCubit.state.profile?.email;
+                if (email != null && email.isNotEmpty) {
+                  await homeCubit.loadAiEnhancedHomeData(email: email);
+                  print('[PaymentCubit] HomeCubit refreshed with new job credits');
+                }
+              } catch (homeErr) {
+                print('[PaymentCubit] Failed to refresh HomeCubit: $homeErr');
+              }
             } catch (profileErr) {
               print('[PaymentCubit] Failed to refresh profile: $profileErr');
               // Don't fail the payment if profile refresh fails
@@ -108,6 +127,11 @@ class PaymentCubit extends Cubit<PaymentState> {
                 paymentSheetInitialized: false,
               ),
             );
+
+            // Fire callback for screens that may have been disposed
+            // during the payment sheet presentation
+            onPaymentSuccess?.call(state.paymentIntent);
+            onPaymentSuccess = null; // Clear to prevent double-firing
           } else if (paymentResult.canceled) {
             emit(
               state.copyWith(
@@ -293,6 +317,18 @@ class PaymentCubit extends Cubit<PaymentState> {
         try {
           await _profileCubit.loadProfileData(force: true);
           print('[PaymentCubit] Profile refreshed after payment sheet success');
+          
+          // Also refresh HomeCubit to update the UI with new job credits
+          try {
+            final homeCubit = getIt<HomeCubit>();
+            final email = _profileCubit.state.profile?.email;
+            if (email != null && email.isNotEmpty) {
+              await homeCubit.loadAiEnhancedHomeData(email: email);
+              print('[PaymentCubit] HomeCubit refreshed with new job credits');
+            }
+          } catch (homeErr) {
+            print('[PaymentCubit] Failed to refresh HomeCubit: $homeErr');
+          }
         } catch (profileErr) {
           print('[PaymentCubit] Failed to refresh profile: $profileErr');
         }
