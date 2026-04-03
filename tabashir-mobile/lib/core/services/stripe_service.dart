@@ -75,22 +75,19 @@ class StripeService {
   Future<PaymentResult> processPayment() async {
     try {
       // Present the payment sheet
-      final result = await Stripe.instance.presentPaymentSheet();
+      await Stripe.instance.presentPaymentSheet();
 
-      if (result != null) {
-        // Payment sheet was presented successfully
-        // Now confirm the payment
-        await Stripe.instance.confirmPaymentSheetPayment();
-
-        return PaymentResult.success(
-          message: 'Payment successful',
-        );
-      } else {
+      // If we reach here, the payment sheet was completed successfully
+      // confirmPaymentSheetPayment() is handled internally by the SDK
+      return PaymentResult.success(
+        message: 'Payment successful',
+      );
+    } on StripeException catch (e) {
+      if (e.error.code == PaymentSheetError.Canceled.code) {
         return PaymentResult.canceled(
           message: 'Payment was canceled',
         );
       }
-    } on StripeException catch (e) {
       return PaymentResult.failed(
         message: e.error.message ?? 'Payment failed',
       );
