@@ -82,6 +82,8 @@ class _ServicesScreenState extends State<ServicesScreen> {
     );
 
     await paymentCubit.createPaymentIntent(request: request);
+    // Note: Navigation to success screen is handled by BlocListener
+    // Do NOT add navigation logic here
   }
 
   @override
@@ -99,44 +101,57 @@ class _ServicesScreenState extends State<ServicesScreen> {
       ],
       child: BlocListener<PaymentCubit, PaymentState>(
         listener: (context, state) {
+          print(
+            '[ServicesScreen] BlocListener: status=${state.status}, '
+            'paymentSuccessful=${state.paymentSuccessful}',
+          );
           // Show success screen when payment is successful
           if (state.status == PaymentStatus.success && state.paymentSuccessful) {
-            // Get payment intent ID from state if available
-            final transactionId = state.paymentIntent?.data?.paymentIntentId;
+            // Wait for Stripe payment sheet to fully dismiss before navigating
+            Future.delayed(const Duration(milliseconds: 500), () {
+              if (!context.mounted) return;
 
-            // Navigate to success screen (replace current route)
-            Navigator.of(context).pushAndRemoveUntil(
-              MaterialPageRoute(
-                builder: (context) => PaymentSuccessScreen(
-                  serviceTitle: _pendingServiceTitle,
-                  amount: _pendingAmount,
-                  transactionId: transactionId,
-                  onOkPressed: () async {
-                    // Refresh profile and home data before navigating home
-                    try {
-                      await getIt<ProfileCubit>().loadProfileData(force: true);
-                      final homeCubit = getIt<HomeCubit>();
-                      final email =
-                          getIt<ProfileCubit>().state.profile?.email ?? '';
-                      if (email.isNotEmpty) {
-                        await homeCubit.loadAiEnhancedHomeData(email: email);
+              // Get payment intent ID from state if available
+              final transactionId = state.paymentIntent?.data?.paymentIntentId;
+
+              print(
+                '[ServicesScreen] Navigating to PaymentSuccessScreen: '
+                'service=$_pendingServiceTitle, amount=$_pendingAmount',
+              );
+
+              // Navigate to success screen (replace current route)
+              Navigator.of(context).pushAndRemoveUntil(
+                MaterialPageRoute(
+                  builder: (context) => PaymentSuccessScreen(
+                    serviceTitle: _pendingServiceTitle,
+                    amount: _pendingAmount,
+                    transactionId: transactionId,
+                    onOkPressed: () async {
+                      // Refresh profile and home data before navigating home
+                      try {
+                        await getIt<ProfileCubit>().loadProfileData(force: true);
+                        final homeCubit = getIt<HomeCubit>();
+                        final email =
+                            getIt<ProfileCubit>().state.profile?.email ?? '';
+                        if (email.isNotEmpty) {
+                          await homeCubit.loadAiEnhancedHomeData(email: email);
+                        }
+                      } catch (e) {
+                        print(
+                          '[ServicesScreen] Error refreshing data on OK: $e',
+                        );
                       }
-                    } catch (e) {
-                      // Navigate home even if refresh fails
-                      print(
-                        '[ServicesScreen] Error refreshing data on OK: $e',
-                      );
-                    }
-                  },
+                    },
+                  ),
                 ),
-              ),
-              (route) => route.isFirst, // Keep only the first route (home)
-            );
+                (route) => route.isFirst, // Keep only the first route (home)
+              );
 
-            // Clear pending info
-            setState(() {
-              _pendingServiceTitle = null;
-              _pendingAmount = null;
+              // Clear pending info
+              setState(() {
+                _pendingServiceTitle = null;
+                _pendingAmount = null;
+              });
             });
           }
         },
