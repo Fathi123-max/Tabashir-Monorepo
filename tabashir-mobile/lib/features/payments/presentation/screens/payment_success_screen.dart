@@ -135,9 +135,10 @@ class PaymentSuccessScreen extends StatelessWidget {
                     if (onOkPressed != null) {
                       await onOkPressed!();
                     }
-                    print('[PaymentSuccessScreen] Navigating to home');
+                    print('[PaymentSuccessScreen] Popping back to home');
                     if (context.mounted) {
-                      context.goNamed('home');
+                      // Since we pushed with Navigator, we pop with Navigator
+                      Navigator.of(context).popUntil((route) => route.isFirst);
                     }
                   },
                   style: ElevatedButton.styleFrom(

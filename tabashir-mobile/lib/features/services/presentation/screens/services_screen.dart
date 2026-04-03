@@ -75,9 +75,10 @@ class _ServicesScreenState extends State<ServicesScreen> {
     });
 
     // Set callback for successful payment (fires even if widget is disposed)
-    paymentCubit.onPaymentSuccess = (paymentIntent) {
-      if (!mounted) return;
-      _navigateToSuccessScreen(paymentIntent);
+    paymentCubit.onPaymentSuccess = (paymentIntent) async {
+      if (mounted) {
+        _navigateToSuccessScreen(paymentIntent);
+      }
     };
 
     // Create payment intent
@@ -96,51 +97,50 @@ class _ServicesScreenState extends State<ServicesScreen> {
   void _navigateToSuccessScreen(PaymentIntentResponse? paymentIntent) {
     // Wait for Stripe payment sheet to fully dismiss before navigating
     Future.delayed(const Duration(milliseconds: 500), () {
-      if (!mounted) return;
+      if (mounted) {
+        final transactionId = paymentIntent?.data?.paymentIntentId;
 
-      final transactionId = paymentIntent?.data?.paymentIntentId;
+        print(
+          '[ServicesScreen] Navigating to PaymentSuccessScreen: '
+          'service=$_pendingServiceTitle, amount=$_pendingAmount',
+        );
 
-      print(
-        '[ServicesScreen] Navigating to PaymentSuccessScreen: '
-        'service=$_pendingServiceTitle, amount=$_pendingAmount',
-      );
-
-      Navigator.of(context).pushAndRemoveUntil(
-        MaterialPageRoute(
-          builder: (context) => PaymentSuccessScreen(
-            serviceTitle: _pendingServiceTitle,
-            amount: _pendingAmount,
-            transactionId: transactionId,
-            onOkPressed: () async {
-              // Refresh profile and home data before navigating home
-              try {
-                print('[ServicesScreen] onOkPressed: refreshing profile...');
-                await getIt<ProfileCubit>().loadProfileData(force: true);
-                final homeCubit = getIt<HomeCubit>();
-                final email =
-                    getIt<ProfileCubit>().state.profile?.email ?? '';
-                print('[ServicesScreen] onOkPressed: email=$email');
-                if (email.isNotEmpty) {
-                  print('[ServicesScreen] onOkPressed: refreshing home...');
-                  await homeCubit.loadAiEnhancedHomeData(email: email);
+        Navigator.of(context).pushAndRemoveUntil(
+          MaterialPageRoute(
+            builder: (context) => PaymentSuccessScreen(
+              serviceTitle: _pendingServiceTitle,
+              amount: _pendingAmount,
+              transactionId: transactionId,
+              onOkPressed: () async {
+                // Refresh profile and home data before navigating home
+                try {
+                  print('[ServicesScreen] onOkPressed: refreshing profile...');
+                  await getIt<ProfileCubit>().loadProfileData(force: true);
+                  final homeCubit = getIt<HomeCubit>();
+                  final email = getIt<ProfileCubit>().state.profile?.email ?? '';
+                  print('[ServicesScreen] onOkPressed: email=$email');
+                  if (email.isNotEmpty) {
+                    print('[ServicesScreen] onOkPressed: refreshing home...');
+                    await homeCubit.loadAiEnhancedHomeData(email: email);
+                  }
+                  print('[ServicesScreen] onOkPressed: refresh complete');
+                } catch (e) {
+                  print(
+                    '[ServicesScreen] Error refreshing data on OK: $e',
+                  );
                 }
-                print('[ServicesScreen] onOkPressed: refresh complete');
-              } catch (e) {
-                print(
-                  '[ServicesScreen] Error refreshing data on OK: $e',
-                );
-              }
-            },
+              },
+            ),
           ),
-        ),
-        (route) => route.isFirst, // Keep only the first route (home)
-      );
+          (route) => route.isFirst, // Keep only the first route (home)
+        );
 
-      // Clear pending info
-      setState(() {
-        _pendingServiceTitle = null;
-        _pendingAmount = null;
-      });
+        // Clear pending info
+        setState(() {
+          _pendingServiceTitle = null;
+          _pendingAmount = null;
+        });
+      }
     });
   }
 
@@ -171,7 +171,8 @@ class _ServicesScreenState extends State<ServicesScreen> {
                   Expanded(
                     child: ListView(
                       padding: EdgeInsets.only(
-                        bottom: kBottomNavigationBarHeight + AppTheme.spacingXl.h,
+                        bottom:
+                            kBottomNavigationBarHeight + AppTheme.spacingXl.h,
                       ),
                       children: [
                         // Hero Header with gradient background
@@ -203,7 +204,9 @@ class _ServicesScreenState extends State<ServicesScreen> {
                               Row(
                                 children: [
                                   Container(
-                                    padding: EdgeInsets.all(AppTheme.spacingSm.w),
+                                    padding: EdgeInsets.all(
+                                      AppTheme.spacingSm.w,
+                                    ),
                                     decoration: BoxDecoration(
                                       gradient: AppTheme.primaryGradient,
                                       borderRadius: BorderRadius.circular(
@@ -281,7 +284,9 @@ class _ServicesScreenState extends State<ServicesScreen> {
                                     AppTheme.radiusFull.r,
                                   ),
                                   border: Border.all(
-                                    color: AppTheme.primaryColor.withOpacity(0.2),
+                                    color: AppTheme.primaryColor.withOpacity(
+                                      0.2,
+                                    ),
                                   ),
                                 ),
                                 child: Row(
@@ -295,11 +300,12 @@ class _ServicesScreenState extends State<ServicesScreen> {
                                     SizedBox(width: AppTheme.spacingXs.w),
                                     Text(
                                       'Most Popular',
-                                      style: theme.textTheme.labelLarge?.copyWith(
-                                        color: AppTheme.primaryColor,
-                                        fontWeight: FontWeight.w600,
-                                        fontSize: 13.sp,
-                                      ),
+                                      style: theme.textTheme.labelLarge
+                                          ?.copyWith(
+                                            color: AppTheme.primaryColor,
+                                            fontWeight: FontWeight.w600,
+                                            fontSize: 13.sp,
+                                          ),
                                     ),
                                   ],
                                 ),
