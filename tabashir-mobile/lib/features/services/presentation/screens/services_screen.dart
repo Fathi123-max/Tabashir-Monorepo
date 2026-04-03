@@ -117,7 +117,8 @@ class _ServicesScreenState extends State<ServicesScreen> {
                   print('[ServicesScreen] onOkPressed: refreshing profile...');
                   await getIt<ProfileCubit>().loadProfileData(force: true);
                   final homeCubit = getIt<HomeCubit>();
-                  final email = getIt<ProfileCubit>().state.profile?.email ?? '';
+                  final email =
+                      getIt<ProfileCubit>().state.profile?.email ?? '';
                   print('[ServicesScreen] onOkPressed: email=$email');
                   if (email.isNotEmpty) {
                     print('[ServicesScreen] onOkPressed: refreshing home...');
@@ -354,23 +355,22 @@ class _ServicesScreenState extends State<ServicesScreen> {
                               ),
                               SizedBox(height: AppTheme.spacingMd.h),
 
-                              ServiceCard(
-                                icon: Icons.description_rounded,
-                                title: 'AI Resume Optimization',
-                                description:
-                                    'Get your resume scored and optimized by AI to '
-                                        .tr() +
-                                    'pass ATS and impress recruiters.'.tr(),
-                                price: 'Free trial • AED 29',
-                                buttonText: 'Get Started'.tr(),
-                                isEnabled: true,
-                                badgeText: 'Free Trial',
-                                onPressed: () {
-                                  context.pushNamed('ai-resume-screen');
-                                },
-                              ),
-                              SizedBox(height: AppTheme.spacingMd.h),
-
+                              // ServiceCard(
+                              //   icon: Icons.description_rounded,
+                              //   title: 'AI Resume Optimization',
+                              //   description:
+                              //       'Get your resume scored and optimized by AI to '
+                              //           .tr() +
+                              //       'pass ATS and impress recruiters.'.tr(),
+                              //   price: 'Free trial • AED 29',
+                              //   buttonText: 'Get Started'.tr(),
+                              //   isEnabled: true,
+                              //   badgeText: 'Free Trial',
+                              //   onPressed: () {
+                              //     context.pushNamed('ai-resume-screen');
+                              //   },
+                              // ),
+                              // SizedBox(height: AppTheme.spacingMd.h),
                               ServiceCard(
                                 icon: Icons.link_rounded,
                                 title: 'AI LinkedIn Enhancement',

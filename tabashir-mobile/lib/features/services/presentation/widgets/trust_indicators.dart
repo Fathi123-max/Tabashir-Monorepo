@@ -38,7 +38,7 @@ class TrustIndicators extends StatelessWidget {
               ),
               SizedBox(width: AppTheme.spacingSm.w),
               Text(
-                '10,000+ resumes optimized'.tr(),
+                '100+ resumes optimized'.tr(),
                 style: theme.textTheme.bodyMedium?.copyWith(
                   color: theme.colorScheme.onSurfaceVariant,
                   fontWeight: FontWeight.w500,
