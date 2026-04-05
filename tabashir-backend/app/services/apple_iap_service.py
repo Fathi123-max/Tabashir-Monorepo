@@ -13,6 +13,16 @@ class AppleIAPService:
     and receipt verification for StoreKit 2 purchases.
     """
 
+    def __init__(self):
+        if not all([
+            Config.APPLE_KEY_ID,
+            Config.APPLE_ISSUER_ID,
+            Config.APPLE_TEAM_ID,
+            Config.APPLE_BUNDLE_ID,
+            Config.APPLE_PRIVATE_KEY_PATH,
+        ]):
+            logger.warning('Apple IAP config is incomplete')
+
     APPLE_ROOT_URLS = {
         'Sandbox': 'https://api.storekit-sandbox.itunes.apple.com',
         'Production': 'https://api.storekit.itunes.apple.com',
@@ -84,6 +94,9 @@ class AppleIAPService:
             response = requests.get(url, headers=headers, timeout=10)
             response.raise_for_status()
             return response.json()
+        except requests.exceptions.HTTPError as e:
+            logger.error(f'Apple receipt verification failed (HTTP {response.status_code}): {str(e)}')
+            return None
         except requests.exceptions.RequestException as e:
             logger.error(f'Apple receipt verification failed: {str(e)}')
             return None
