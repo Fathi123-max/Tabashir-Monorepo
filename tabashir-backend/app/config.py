@@ -43,7 +43,7 @@ class Config:
     EMAIL_HOST = 'mail.tabashir.ae'
     EMAIL_PORT = 465
     EMAIL_USERNAME = 'support@tabashir.ae'
-    EMAIL_PASSWORD = 'm=%.]]d@tcrZ'
+    EMAIL_PASSWORD = os.getenv('EMAIL_PASSWORD')
 
     # Templates path
     ARABIC_TEMPLATE_PATH = BASE_DIR / os.getenv('TEMPLATE_FOLDER', 'templates') / "Arabic Docxtpl Compatible CV Template.docx"
