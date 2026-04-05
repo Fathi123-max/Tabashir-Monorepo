@@ -234,6 +234,7 @@ class VerifyAppleReceipt(Resource):
                 INSERT INTO "Payment"
                 (id, amount, currency, status, "paymentMethod", "transactionId", "paymentDate", "userId", "createdAt", "updatedAt")
                 VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+                ON CONFLICT ("transactionId") DO NOTHING
                 """,
                 (
                     payment_id,
