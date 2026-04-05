@@ -153,7 +153,16 @@ class StripeWebhook(Resource):
             logger.info(f'Payment record created for transaction: {transaction_id}')
 
             # Delegate to shared fulfillment service
-            fulfillment_service.fulfill(service_id, user_id, amount)
+            try:
+                fulfillment_service.fulfill(service_id, user_id, amount)
+            except Exception as e:
+                logger.error(f'Fulfillment failed for payment {transaction_id}: {str(e)}')
+                execute_query(
+                    'UPDATE "Payment" SET status = %s, "updatedAt" = %s WHERE "transactionId" = %s',
+                    ('FAILED', datetime.now(), transaction_id),
+                    commit=True
+                )
+                raise
 
         except Exception as e:
             logger.error(f'Error updating database after payment: {str(e)}')
@@ -236,7 +245,7 @@ class VerifyAppleReceipt(Resource):
             # Extract environment from receipt
             environment = receipt_data.get('environment', 'Sandbox')
 
-            # Create payment record
+            # Create payment record with PENDING status
             payment_id = f"pay_{uuid.uuid4().hex[:12]}"
             execute_query(
                 """
@@ -249,7 +258,7 @@ class VerifyAppleReceipt(Resource):
                     payment_id,
                     price,
                     'AED',
-                    'COMPLETED',
+                    'PENDING',
                     'apple',
                     transaction_id,
                     datetime.now(),
@@ -260,8 +269,22 @@ class VerifyAppleReceipt(Resource):
                 commit=True
             )
 
-            # Fulfill the purchase
-            fulfillment_service.fulfill(product_id, user_id, price, receipt_data)
+            # Fulfill the purchase, then mark as COMPLETED
+            try:
+                fulfillment_service.fulfill(product_id, user_id, price, receipt_data)
+                execute_query(
+                    'UPDATE "Payment" SET status = %s, "updatedAt" = %s WHERE "transactionId" = %s',
+                    ('COMPLETED', datetime.now(), transaction_id),
+                    commit=True
+                )
+            except Exception as e:
+                logger.error(f'Fulfillment failed for payment {transaction_id}: {str(e)}')
+                execute_query(
+                    'UPDATE "Payment" SET status = %s, "updatedAt" = %s WHERE "transactionId" = %s',
+                    ('FAILED', datetime.now(), transaction_id),
+                    commit=True
+                )
+                raise
 
             return {
                 'success': True,
