@@ -60,3 +60,10 @@ class Config:
     STRIPE_SECRET_KEY = os.getenv('STRIPE_SECRET_KEY')
     STRIPE_PUBLISHABLE_KEY = os.getenv('STRIPE_PUBLISHABLE_KEY')
     STRIPE_WEBHOOK_SECRET = os.getenv('STRIPE_WEBHOOK_SECRET')
+
+    # Apple IAP (App Store Server API)
+    APPLE_KEY_ID = os.getenv('APPLE_KEY_ID')
+    APPLE_ISSUER_ID = os.getenv('APPLE_ISSUER_ID')
+    APPLE_TEAM_ID = os.getenv('APPLE_TEAM_ID')
+    APPLE_BUNDLE_ID = os.getenv('APPLE_BUNDLE_ID')
+    APPLE_PRIVATE_KEY_PATH = os.getenv('APPLE_PRIVATE_KEY_PATH')
