@@ -23,7 +23,8 @@ class TestVerifyAppleReceipt:
                 content_type='application/json'
             )
 
-    def test_missing_fields_returns_400(self):
+    @mock.patch('app.routes.payments_namespace.execute_query')
+    def test_missing_fields_returns_400(self, mock_execute):
         from app import create_app
         app = create_app()
 
@@ -90,7 +91,8 @@ class TestVerifyAppleReceipt:
 
         assert response.status_code == 400
 
-    def test_resume_optimization_requires_resume_id(self):
+    @mock.patch('app.routes.payments_namespace.execute_query')
+    def test_resume_optimization_requires_resume_id(self, mock_execute):
         from app import create_app
         app = create_app()
 
@@ -103,3 +105,43 @@ class TestVerifyAppleReceipt:
         assert response.status_code == 400
         data = json.loads(response.data)
         assert 'resumeId' in data.get('error', '')
+
+    @mock.patch('app.routes.payments_namespace.fulfillment_service')
+    @mock.patch('app.routes.payments_namespace.execute_query')
+    @mock.patch('app.services.apple_iap_service.AppleIAPService')
+    def test_successful_receipt_verification(self, mock_apple_class, mock_execute, mock_fulfill):
+        from app import create_app
+        app = create_app()
+
+        # First call: idempotency check returns None (not found)
+        # Second call: INSERT Payment
+        mock_execute.side_effect = [None, None]
+
+        mock_apple_instance = mock.Mock()
+        mock_apple_instance.verify_transaction.return_value = {
+            'transactionId': 'txn_456',
+            'productId': 'ai-job-apply-basic',
+            'environment': 'Sandbox'
+        }
+        mock_apple_class.return_value = mock_apple_instance
+
+        response = self._make_request(app, {
+            'transactionId': 'txn_456',
+            'productId': 'ai-job-apply-basic',
+            'userId': 'user456'
+        })
+
+        assert response.status_code == 200
+        data = json.loads(response.data)
+        assert data['success'] is True
+        assert data['data']['transactionId'] == 'txn_456'
+        assert data['data']['productId'] == 'ai-job-apply-basic'
+        assert 'paymentId' in data['data']
+        assert data['data']['environment'] == 'Sandbox'
+
+        # Verify fulfillment was called with correct args
+        mock_fulfill.fulfill.assert_called_once()
+        call_args = mock_fulfill.fulfill.call_args
+        assert call_args[0][0] == 'ai-job-apply-basic'
+        assert call_args[0][1] == 'user456'
+        assert call_args[0][2] == 100

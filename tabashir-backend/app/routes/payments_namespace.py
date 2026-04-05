@@ -192,6 +192,11 @@ class VerifyAppleReceipt(Resource):
             if product_id == 'ai-resume-optimization' and not resume_id:
                 return {'error': 'resumeId is required for this product'}, 400
 
+            # Get price for this product
+            price = stripe_service.get_service_price(product_id)
+            if not price:
+                return {'error': 'Invalid product ID'}, 400
+
             # Check idempotency
             existing = execute_query(
                 'SELECT id FROM "Payment" WHERE "transactionId" = %s AND status = %s',
@@ -204,11 +209,6 @@ class VerifyAppleReceipt(Resource):
                     'message': 'Transaction already processed',
                     'data': {'transactionId': transaction_id}
                 }, 200
-
-            # Get price for this product
-            price = StripeService.get_service_price(product_id)
-            if not price:
-                return {'error': 'Invalid product ID'}, 400
 
             # Verify receipt with Apple
             from app.services.apple_iap_service import AppleIAPService
