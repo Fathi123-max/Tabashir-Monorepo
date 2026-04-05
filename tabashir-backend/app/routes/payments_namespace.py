@@ -165,3 +165,104 @@ class StripeWebhook(Resource):
             (status, datetime.now(), transaction_id),
             commit=True
         )
+
+
+@payments_ns.route('/verify-apple-receipt')
+class VerifyAppleReceipt(Resource):
+    @payments_ns.doc('verify_apple_receipt',
+                     params={
+                         'transactionId': 'StoreKit 2 transaction ID',
+                         'productId': 'Product identifier (e.g., ai-job-apply-basic)',
+                         'userId': 'User ID',
+                         'resumeId': 'Resume ID (required for ai-resume-optimization)'
+                     })
+    def post(self):
+        """Verify an Apple StoreKit 2 purchase receipt"""
+        try:
+            data = request.json
+            transaction_id = data.get('transactionId')
+            product_id = data.get('productId')
+            user_id = data.get('userId')
+            resume_id = data.get('resumeId')
+
+            if not all([transaction_id, product_id, user_id]):
+                return {'error': 'transactionId, productId, and userId are required'}, 400
+
+            # resumeId required for ai-resume-optimization
+            if product_id == 'ai-resume-optimization' and not resume_id:
+                return {'error': 'resumeId is required for this product'}, 400
+
+            # Check idempotency
+            existing = execute_query(
+                'SELECT id FROM "Payment" WHERE "transactionId" = %s AND status = %s',
+                (transaction_id, 'COMPLETED'),
+                fetch_one=True
+            )
+            if existing:
+                return {
+                    'success': True,
+                    'message': 'Transaction already processed',
+                    'data': {'transactionId': transaction_id}
+                }, 200
+
+            # Get price for this product
+            price = StripeService.get_service_price(product_id)
+            if not price:
+                return {'error': 'Invalid product ID'}, 400
+
+            # Verify receipt with Apple
+            from app.services.apple_iap_service import AppleIAPService
+            apple_service = AppleIAPService()
+            receipt_data = apple_service.verify_transaction(transaction_id)
+
+            if not receipt_data:
+                return {'error': 'Receipt verification failed'}, 400
+
+            # Validate product matches receipt
+            receipt_product = receipt_data.get('productId')
+            if receipt_product and receipt_product != product_id:
+                logger.warning(f'Product mismatch: expected {product_id}, got {receipt_product}')
+                return {'error': 'Product ID does not match receipt'}, 400
+
+            # Extract environment from receipt
+            environment = receipt_data.get('environment', 'Sandbox')
+
+            # Create payment record
+            payment_id = f"pay_{uuid.uuid4().hex[:12]}"
+            execute_query(
+                """
+                INSERT INTO "Payment"
+                (id, amount, currency, status, "paymentMethod", "transactionId", "paymentDate", "userId", "createdAt", "updatedAt")
+                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+                """,
+                (
+                    payment_id,
+                    price,
+                    'AED',
+                    'COMPLETED',
+                    'apple',
+                    transaction_id,
+                    datetime.now(),
+                    user_id,
+                    datetime.now(),
+                    datetime.now()
+                ),
+                commit=True
+            )
+
+            # Fulfill the purchase
+            fulfillment_service.fulfill(product_id, user_id, price, receipt_data)
+
+            return {
+                'success': True,
+                'data': {
+                    'transactionId': transaction_id,
+                    'productId': product_id,
+                    'paymentId': payment_id,
+                    'environment': environment
+                }
+            }, 200
+
+        except Exception as e:
+            logger.error(f'Error verifying Apple receipt: {str(e)}')
+            return {'success': False, 'error': str(e)}, 500
