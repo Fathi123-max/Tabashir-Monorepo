@@ -197,6 +197,15 @@ class VerifyAppleReceipt(Resource):
             if not price:
                 return {'error': 'Invalid product ID'}, 400
 
+            # Validate user exists
+            user = execute_query(
+                'SELECT id, email FROM users WHERE id = %s',
+                (user_id,),
+                fetch_one=True
+            )
+            if not user:
+                return {'error': 'User not found'}, 404
+
             # Check idempotency
             existing = execute_query(
                 'SELECT id FROM "Payment" WHERE "transactionId" = %s AND status = %s',
