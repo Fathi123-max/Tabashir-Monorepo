@@ -76,7 +76,7 @@ class AppleIAPService:
             environment: 'Sandbox' or 'Production' -- determines which Apple API URL to use
 
         Returns:
-            dict with transaction details, or None on failure
+            dict with transaction details, or None on failure after retries
         """
         token = self.generate_app_store_token()
         if not token:
@@ -90,13 +90,24 @@ class AppleIAPService:
             'Content-Type': 'application/json',
         }
 
-        try:
-            response = requests.get(url, headers=headers, timeout=10)
-            response.raise_for_status()
-            return response.json()
-        except requests.exceptions.HTTPError as e:
-            logger.error(f'Apple receipt verification failed (HTTP {response.status_code}): {str(e)}')
-            return None
-        except requests.exceptions.RequestException as e:
-            logger.error(f'Apple receipt verification failed: {str(e)}')
-            return None
+        max_retries = 3
+        for attempt in range(max_retries):
+            try:
+                response = requests.get(url, headers=headers, timeout=10)
+                response.raise_for_status()
+                return response.json()
+            except requests.exceptions.HTTPError as e:
+                status_code = response.status_code
+                # 4xx errors are not retriable (except 429)
+                if 400 <= status_code < 500 and status_code != 429:
+                    logger.error(f'Apple receipt verification failed (HTTP {status_code}): {str(e)}')
+                    return None
+                if attempt == max_retries - 1:
+                    logger.error(f'Apple receipt verification failed after {max_retries} retries (HTTP {status_code}): {str(e)}')
+                    return None
+                time.sleep(2 ** attempt)  # Exponential backoff: 1s, 2s, 4s
+            except requests.exceptions.RequestException as e:
+                if attempt == max_retries - 1:
+                    logger.error(f'Apple receipt verification failed after {max_retries} retries: {str(e)}')
+                    return None
+                time.sleep(2 ** attempt)
