@@ -80,6 +80,8 @@ import '../../features/onboarding/presentation/cubit/onboarding_wizard_cubit.dar
     as _i891;
 import '../../features/payments/data/repositories/payment_repository_impl.dart'
     as _i842;
+import '../../features/payments/domain/repositories/payment_platform.dart'
+    as _i821;
 import '../../features/payments/domain/repositories/payment_repository.dart'
     as _i315;
 import '../../features/payments/presentation/cubit/payment_cubit.dart' as _i782;
@@ -156,6 +158,7 @@ import '../network/services/subscription/subscription_api_service.dart'
     as _i190;
 import '../network/services/upload/upload_api_service.dart' as _i772;
 import '../network/services/user/user_api_service.dart' as _i676;
+import '../services/apple_iap_service.dart' as _i722;
 import '../services/applied_jobs_storage.dart' as _i801;
 import '../services/file_service.dart' as _i367;
 import '../services/google_signin_service.dart' as _i699;
@@ -241,6 +244,12 @@ extension GetItInjectableX on _i174.GetIt {
     );
     gh.lazySingleton<_i801.AppliedJobsStorage>(
       () => registerModule.appliedJobsStorage,
+    );
+    gh.lazySingleton<_i722.AppleIAPService>(
+      () => registerModule.appleIAPService,
+    );
+    gh.lazySingleton<_i821.PaymentPlatform>(
+      () => registerModule.paymentPlatform,
     );
     gh.lazySingleton<_i763.SessionCubit>(() => _i763.SessionCubit());
     gh.lazySingleton<_i9.HomeCubit>(() => _i9.HomeCubit());
@@ -385,6 +394,12 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factory<_i459.JobApplicationsCubit>(
       () => _i459.JobApplicationsCubit(gh<_i860.JobApplicationsRepository>()),
     );
+    gh.factory<_i782.PaymentCubit>(
+      () => _i782.PaymentCubit(
+        gh<_i821.PaymentPlatform>(),
+        gh<_i36.ProfileCubit>(),
+      ),
+    );
     gh.factory<_i117.AuthCubit>(
       () => _i117.AuthCubit(gh<_i787.AuthRepository>()),
     );
@@ -393,13 +408,6 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i588.AiJobApplyRepository>(),
         gh<_i36.ProfileCubit>(),
         gh<_i117.AuthCubit>(),
-      ),
-    );
-    gh.factory<_i782.PaymentCubit>(
-      () => _i782.PaymentCubit(
-        gh<_i315.PaymentRepository>(),
-        gh<_i333.StripeService>(),
-        gh<_i36.ProfileCubit>(),
       ),
     );
     gh.factory<_i618.AiResumeCubit>(

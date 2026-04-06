@@ -11,9 +11,6 @@ sealed class PaymentState with _$PaymentState {
     @Default(false) bool paymentSheetInitialized,
     @Default(false) bool paymentSuccessful,
   }) = _PaymentState;
-
-  factory PaymentState.fromJson(Map<String, dynamic> json) =>
-      _$PaymentStateFromJson(json);
 }
 
 // Note: Using PaymentStatus from stripe_enums.dart for consistency

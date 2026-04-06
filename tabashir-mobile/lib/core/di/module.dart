@@ -1,9 +1,16 @@
+import 'dart:io';
+
+import 'package:flutter/foundation.dart';
 import 'package:get_it/get_it.dart';
 import 'package:injectable/injectable.dart';
 import 'package:dio/dio.dart';
 
 import '../../features/notifications/data/repositories/notifications_repository_impl.dart';
 import '../../features/notifications/domain/repositories/notifications_repository.dart';
+import '../../features/payments/data/repositories/apple_payment_platform.dart';
+import '../../features/payments/data/repositories/stripe_payment_platform.dart';
+import '../../features/payments/domain/repositories/payment_platform.dart';
+import '../../features/payments/domain/repositories/payment_repository.dart';
 
 import '../database/repositories/local_resume_repository.dart';
 import '../database/repositories/profile_isar_repository.dart';
@@ -27,6 +34,7 @@ import '../network/services/upload/upload_api_service.dart';
 import '../network/services/user/user_api_service.dart';
 import '../../features/home/services/home_api_service.dart';
 import '../services/analytics_service.dart';
+import '../services/apple_iap_service.dart';
 import '../services/file_service.dart';
 import '../services/google_signin_service.dart';
 import '../services/notification_service.dart';
@@ -138,6 +146,19 @@ abstract class RegisterModule {
 
   @lazySingleton
   AppliedJobsStorage get appliedJobsStorage => AppliedJobsStorage();
+
+  // Apple IAP Service (used on iOS)
+  @lazySingleton
+  AppleIAPService get appleIAPService => AppleIAPService(dio);
+
+  // PaymentPlatform — platform-specific implementation
+  @lazySingleton
+  PaymentPlatform get paymentPlatform {
+    if (defaultTargetPlatform == TargetPlatform.iOS) {
+      return ApplePaymentPlatform(appleIAPService);
+    }
+    return StripePaymentPlatform(stripeService, GetIt.instance<PaymentRepository>());
+  }
 
   // SyncHybridResumeRepository is auto-registered via @Injectable annotation
   // It combines backend storage with local caching for offline access

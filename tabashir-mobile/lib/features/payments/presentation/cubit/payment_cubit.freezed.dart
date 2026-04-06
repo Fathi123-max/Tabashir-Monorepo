@@ -11,7 +11,6 @@ part of 'payment_cubit.dart';
 
 // dart format off
 T _$identity<T>(T value) => value;
-
 /// @nodoc
 mixin _$PaymentState {
 
@@ -22,18 +21,16 @@ mixin _$PaymentState {
 @pragma('vm:prefer-inline')
 $PaymentStateCopyWith<PaymentState> get copyWith => _$PaymentStateCopyWithImpl<PaymentState>(this as PaymentState, _$identity);
 
-  /// Serializes this PaymentState to a JSON map.
-  Map<String, dynamic> toJson();
 
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is PaymentState&&(identical(other.status, status) || other.status == status)&&(identical(other.errorMessage, errorMessage) || other.errorMessage == errorMessage)&&(identical(other.paymentIntent, paymentIntent) || other.paymentIntent == paymentIntent)&&(identical(other.checkoutSession, checkoutSession) || other.checkoutSession == checkoutSession)&&(identical(other.latestPayment, latestPayment) || other.latestPayment == latestPayment)&&(identical(other.paymentSheetInitialized, paymentSheetInitialized) || other.paymentSheetInitialized == paymentSheetInitialized)&&(identical(other.paymentSuccessful, paymentSuccessful) || other.paymentSuccessful == paymentSuccessful));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is PaymentState&&(identical(other.status, status) || other.status == status)&&(identical(other.errorMessage, errorMessage) || other.errorMessage == errorMessage)&&const DeepCollectionEquality().equals(other.paymentIntent, paymentIntent)&&const DeepCollectionEquality().equals(other.checkoutSession, checkoutSession)&&const DeepCollectionEquality().equals(other.latestPayment, latestPayment)&&(identical(other.paymentSheetInitialized, paymentSheetInitialized) || other.paymentSheetInitialized == paymentSheetInitialized)&&(identical(other.paymentSuccessful, paymentSuccessful) || other.paymentSuccessful == paymentSuccessful));
 }
 
-@JsonKey(includeFromJson: false, includeToJson: false)
+
 @override
-int get hashCode => Object.hash(runtimeType,status,errorMessage,paymentIntent,checkoutSession,latestPayment,paymentSheetInitialized,paymentSuccessful);
+int get hashCode => Object.hash(runtimeType,status,errorMessage,const DeepCollectionEquality().hash(paymentIntent),const DeepCollectionEquality().hash(checkoutSession),const DeepCollectionEquality().hash(latestPayment),paymentSheetInitialized,paymentSuccessful);
 
 @override
 String toString() {
@@ -52,7 +49,7 @@ $Res call({
 });
 
 
-$PaymentIntentResponseCopyWith<$Res>? get paymentIntent;$CheckoutSessionResponseCopyWith<$Res>? get checkoutSession;$LatestPaymentResponseCopyWith<$Res>? get latestPayment;
+
 
 }
 /// @nodoc
@@ -77,43 +74,7 @@ as bool,paymentSuccessful: null == paymentSuccessful ? _self.paymentSuccessful :
 as bool,
   ));
 }
-/// Create a copy of PaymentState
-/// with the given fields replaced by the non-null parameter values.
-@override
-@pragma('vm:prefer-inline')
-$PaymentIntentResponseCopyWith<$Res>? get paymentIntent {
-    if (_self.paymentIntent == null) {
-    return null;
-  }
 
-  return $PaymentIntentResponseCopyWith<$Res>(_self.paymentIntent!, (value) {
-    return _then(_self.copyWith(paymentIntent: value));
-  });
-}/// Create a copy of PaymentState
-/// with the given fields replaced by the non-null parameter values.
-@override
-@pragma('vm:prefer-inline')
-$CheckoutSessionResponseCopyWith<$Res>? get checkoutSession {
-    if (_self.checkoutSession == null) {
-    return null;
-  }
-
-  return $CheckoutSessionResponseCopyWith<$Res>(_self.checkoutSession!, (value) {
-    return _then(_self.copyWith(checkoutSession: value));
-  });
-}/// Create a copy of PaymentState
-/// with the given fields replaced by the non-null parameter values.
-@override
-@pragma('vm:prefer-inline')
-$LatestPaymentResponseCopyWith<$Res>? get latestPayment {
-    if (_self.latestPayment == null) {
-    return null;
-  }
-
-  return $LatestPaymentResponseCopyWith<$Res>(_self.latestPayment!, (value) {
-    return _then(_self.copyWith(latestPayment: value));
-  });
-}
 }
 
 
@@ -242,11 +203,11 @@ return $default(_that.status,_that.errorMessage,_that.paymentIntent,_that.checko
 }
 
 /// @nodoc
-@JsonSerializable()
+
 
 class _PaymentState implements PaymentState {
   const _PaymentState({this.status = PaymentStatus.initial, this.errorMessage = '', this.paymentIntent, this.checkoutSession, this.latestPayment, this.paymentSheetInitialized = false, this.paymentSuccessful = false});
-  factory _PaymentState.fromJson(Map<String, dynamic> json) => _$PaymentStateFromJson(json);
+  
 
 @override@JsonKey() final  PaymentStatus status;
 @override@JsonKey() final  String errorMessage;
@@ -262,19 +223,16 @@ class _PaymentState implements PaymentState {
 @pragma('vm:prefer-inline')
 _$PaymentStateCopyWith<_PaymentState> get copyWith => __$PaymentStateCopyWithImpl<_PaymentState>(this, _$identity);
 
-@override
-Map<String, dynamic> toJson() {
-  return _$PaymentStateToJson(this, );
-}
+
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _PaymentState&&(identical(other.status, status) || other.status == status)&&(identical(other.errorMessage, errorMessage) || other.errorMessage == errorMessage)&&(identical(other.paymentIntent, paymentIntent) || other.paymentIntent == paymentIntent)&&(identical(other.checkoutSession, checkoutSession) || other.checkoutSession == checkoutSession)&&(identical(other.latestPayment, latestPayment) || other.latestPayment == latestPayment)&&(identical(other.paymentSheetInitialized, paymentSheetInitialized) || other.paymentSheetInitialized == paymentSheetInitialized)&&(identical(other.paymentSuccessful, paymentSuccessful) || other.paymentSuccessful == paymentSuccessful));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _PaymentState&&(identical(other.status, status) || other.status == status)&&(identical(other.errorMessage, errorMessage) || other.errorMessage == errorMessage)&&const DeepCollectionEquality().equals(other.paymentIntent, paymentIntent)&&const DeepCollectionEquality().equals(other.checkoutSession, checkoutSession)&&const DeepCollectionEquality().equals(other.latestPayment, latestPayment)&&(identical(other.paymentSheetInitialized, paymentSheetInitialized) || other.paymentSheetInitialized == paymentSheetInitialized)&&(identical(other.paymentSuccessful, paymentSuccessful) || other.paymentSuccessful == paymentSuccessful));
 }
 
-@JsonKey(includeFromJson: false, includeToJson: false)
+
 @override
-int get hashCode => Object.hash(runtimeType,status,errorMessage,paymentIntent,checkoutSession,latestPayment,paymentSheetInitialized,paymentSuccessful);
+int get hashCode => Object.hash(runtimeType,status,errorMessage,const DeepCollectionEquality().hash(paymentIntent),const DeepCollectionEquality().hash(checkoutSession),const DeepCollectionEquality().hash(latestPayment),paymentSheetInitialized,paymentSuccessful);
 
 @override
 String toString() {
@@ -293,7 +251,7 @@ $Res call({
 });
 
 
-@override $PaymentIntentResponseCopyWith<$Res>? get paymentIntent;@override $CheckoutSessionResponseCopyWith<$Res>? get checkoutSession;@override $LatestPaymentResponseCopyWith<$Res>? get latestPayment;
+
 
 }
 /// @nodoc
@@ -319,43 +277,7 @@ as bool,
   ));
 }
 
-/// Create a copy of PaymentState
-/// with the given fields replaced by the non-null parameter values.
-@override
-@pragma('vm:prefer-inline')
-$PaymentIntentResponseCopyWith<$Res>? get paymentIntent {
-    if (_self.paymentIntent == null) {
-    return null;
-  }
 
-  return $PaymentIntentResponseCopyWith<$Res>(_self.paymentIntent!, (value) {
-    return _then(_self.copyWith(paymentIntent: value));
-  });
-}/// Create a copy of PaymentState
-/// with the given fields replaced by the non-null parameter values.
-@override
-@pragma('vm:prefer-inline')
-$CheckoutSessionResponseCopyWith<$Res>? get checkoutSession {
-    if (_self.checkoutSession == null) {
-    return null;
-  }
-
-  return $CheckoutSessionResponseCopyWith<$Res>(_self.checkoutSession!, (value) {
-    return _then(_self.copyWith(checkoutSession: value));
-  });
-}/// Create a copy of PaymentState
-/// with the given fields replaced by the non-null parameter values.
-@override
-@pragma('vm:prefer-inline')
-$LatestPaymentResponseCopyWith<$Res>? get latestPayment {
-    if (_self.latestPayment == null) {
-    return null;
-  }
-
-  return $LatestPaymentResponseCopyWith<$Res>(_self.latestPayment!, (value) {
-    return _then(_self.copyWith(latestPayment: value));
-  });
-}
 }
 
 // dart format on
