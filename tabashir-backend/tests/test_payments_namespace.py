@@ -52,11 +52,17 @@ class TestVerifyAppleReceipt:
         data = json.loads(response.data)
         assert 'already processed' in data.get('message', '').lower() or data.get('success') is True
 
-    @mock.patch('app.routes.payments_namespace.execute_query', return_value=None)
+    @mock.patch('app.routes.payments_namespace.execute_query')
     @mock.patch('app.services.apple_iap_service.AppleIAPService')
     def test_invalid_receipt_returns_400(self, mock_apple_service_class, mock_execute):
         from app import create_app
         app = create_app()
+
+        # userId validation returns a user; idempotency check returns None
+        mock_execute.side_effect = [
+            {'id': 'user123', 'email': 'test@test.com'},
+            None,
+        ]
 
         mock_instance = mock.MagicMock()
         mock_instance.verify_transaction.return_value = None
@@ -70,11 +76,17 @@ class TestVerifyAppleReceipt:
 
         assert response.status_code == 400
 
-    @mock.patch('app.routes.payments_namespace.execute_query', return_value=None)
+    @mock.patch('app.routes.payments_namespace.execute_query')
     @mock.patch('app.services.apple_iap_service.AppleIAPService')
     def test_product_mismatch_returns_400(self, mock_apple_service_class, mock_execute):
         from app import create_app
         app = create_app()
+
+        # userId validation returns a user; idempotency check returns None
+        mock_execute.side_effect = [
+            {'id': 'user123', 'email': 'test@test.com'},
+            None,
+        ]
 
         mock_instance = mock.MagicMock()
         mock_instance.verify_transaction.return_value = {
@@ -113,9 +125,13 @@ class TestVerifyAppleReceipt:
         from app import create_app
         app = create_app()
 
-        # First call: idempotency check returns None (not found)
-        # Second call: INSERT Payment
-        mock_execute.side_effect = [None, None]
+        # Calls: 1) userId validation, 2) idempotency check, 3) INSERT Payment, 4) UPDATE to COMPLETED
+        mock_execute.side_effect = [
+            {'id': 'user456', 'email': 'test@test.com'},  # userId check
+            None,                                          # idempotency (not found)
+            None,                                          # INSERT
+            None,                                          # UPDATE to COMPLETED
+        ]
 
         mock_apple_instance = mock.Mock()
         mock_apple_instance.verify_transaction.return_value = {
