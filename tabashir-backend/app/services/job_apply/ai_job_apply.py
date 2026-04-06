@@ -15,7 +15,7 @@ from app.services.cv_processor import get_openai_client
 SMTP_SERVER = "smtp.hostinger.com"
 SMTP_PORT = 465
 EMAIL_ADDRESS = "application@tabashirai.com"
-EMAIL_PASSWORD = "Tabashir@uae2024#*"
+EMAIL_PASSWORD = os.getenv('EMAIL_PASSWORD')
 
 
 def generate_cover_letter(client_details, job_description):
