@@ -1,25 +1,28 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:flutter_stripe/flutter_stripe.dart';
-import 'package:tabashir/core/theme/app_theme.dart';
 import 'package:tabashir/core/models/stripe/stripe_enums.dart';
+import 'package:tabashir/core/theme/app_theme.dart';
 
 import '../cubit/payment_cubit.dart';
 
-/// Widget that displays the Stripe Payment Sheet
-/// Call [initPaymentSheet] first, then [presentPaymentSheet] for the user
+/// Widget that displays a payment button using the unified PaymentPlatform.
+/// Provide [serviceId] and [amount] to trigger payments.
 class StripePaymentSheetWidget extends StatefulWidget {
   const StripePaymentSheetWidget({
     required this.onPaymentComplete,
+    required this.serviceId,
+    required this.amount,
     super.key,
+    this.resumeId,
     this.onError,
-    this.merchantDisplayName = 'Tabashir',
   });
 
   final VoidCallback onPaymentComplete;
+  final String serviceId;
+  final double amount;
+  final String? resumeId;
   final Function(String error)? onError;
-  final String merchantDisplayName;
 
   @override
   State<StripePaymentSheetWidget> createState() =>
@@ -27,7 +30,6 @@ class StripePaymentSheetWidget extends StatefulWidget {
 }
 
 class _StripePaymentSheetWidgetState extends State<StripePaymentSheetWidget> {
-  bool _isInitialized = false;
   bool _isProcessing = false;
 
   @override
@@ -35,13 +37,7 @@ class _StripePaymentSheetWidgetState extends State<StripePaymentSheetWidget> {
     BuildContext context,
   ) => BlocConsumer<PaymentCubit, PaymentState>(
     listener: (context, state) {
-      if (state.status == PaymentStatus.success) {
-        if (state.paymentSheetInitialized && !_isInitialized) {
-          setState(() {
-            _isInitialized = true;
-          });
-        }
-      } else if (state.status == PaymentStatus.failed) {
+      if (state.status == PaymentStatus.failed) {
         setState(() {
           _isProcessing = false;
         });
@@ -64,75 +60,59 @@ class _StripePaymentSheetWidgetState extends State<StripePaymentSheetWidget> {
       return Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          // Payment sheet initialization is done via Cubit
-          // The actual payment sheet UI is handled by Stripe's native component
+          SizedBox(
+            width: double.infinity,
+            child: ElevatedButton(
+              onPressed: _isProcessing
+                  ? null
+                  : () async {
+                      setState(() {
+                        _isProcessing = true;
+                      });
 
-          // Custom UI for the payment button
-          if (_isInitialized) ...[
-            SizedBox(height: 16.h),
-            SizedBox(
-              width: double.infinity,
-              child: ElevatedButton(
-                onPressed: _isProcessing
-                    ? null
-                    : () async {
-                        setState(() {
-                          _isProcessing = true;
-                        });
-
-                        context.read<PaymentCubit>().processPaymentSheet();
-                      },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: AppTheme.primaryColor,
-                  foregroundColor: Colors.white,
-                  padding: EdgeInsets.symmetric(vertical: 16.h),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12.r),
-                  ),
+                      context.read<PaymentCubit>().processPayment(
+                            serviceId: widget.serviceId,
+                            amount: widget.amount,
+                            resumeId: widget.resumeId,
+                          );
+                    },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: AppTheme.primaryColor,
+                foregroundColor: Colors.white,
+                padding: EdgeInsets.symmetric(vertical: 16.h),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12.r),
                 ),
-                child: _isProcessing
-                    ? SizedBox(
-                        height: 20.h,
-                        width: 20.w,
-                        child: const CircularProgressIndicator(
-                          strokeWidth: 2,
-                          valueColor: AlwaysStoppedAnimation<Color>(
-                            Colors.white,
-                          ),
-                        ),
-                      )
-                    : Text(
-                        'Pay Now',
-                        style: TextStyle(
-                          fontSize: 16.sp,
-                          fontWeight: FontWeight.w600,
+              ),
+              child: _isProcessing
+                  ? SizedBox(
+                      height: 20.h,
+                      width: 20.w,
+                      child: const CircularProgressIndicator(
+                        strokeWidth: 2,
+                        valueColor: AlwaysStoppedAnimation<Color>(
+                          Colors.white,
                         ),
                       ),
-              ),
+                    )
+                  : Text(
+                      'Pay Now',
+                      style: TextStyle(
+                        fontSize: 16.sp,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
             ),
-          ] else ...[
-            // Payment sheet not yet initialized
-            Text(
-              'Initializing payment...',
-              style: TextStyle(
-                fontSize: 14.sp,
-                color: Colors.grey[600],
-              ),
+          ),
+          SizedBox(height: 12.h),
+          Text(
+            'Secure payment',
+            style: TextStyle(
+              fontSize: 12.sp,
+              color: Colors.grey[600],
             ),
-          ],
-
-          // Payment methods hint
-          if (_isInitialized) ...[
-            SizedBox(height: 12.h),
-            Text(
-              'Secure payment powered by Stripe',
-              style: TextStyle(
-                fontSize: 12.sp,
-                color: Colors.grey[600],
-              ),
-              textAlign: TextAlign.center,
-            ),
-          ],
+            textAlign: TextAlign.center,
+          ),
         ],
       );
     },
