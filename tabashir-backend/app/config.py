@@ -25,7 +25,7 @@ class Config:
     AI_POSTGRES_HOST = os.getenv("AI_POSTGRES_HOST", "localhost")
     AI_POSTGRES_PORT = os.getenv("AI_POSTGRES_PORT", "5432")
     AI_POSTGRES_DB = os.getenv("AI_POSTGRES_DB", "tabashir_ai")
-    AI_POSTGRES_USER = os.getenv("AI_POSTGRES_USER", "Apple")
+    AI_POSTGRES_USER = os.getenv("AI_POSTGRES_USER", "")
     AI_POSTGRES_PASSWORD = os.getenv("AI_POSTGRES_PASSWORD", "")
 
 

@@ -94,8 +94,8 @@ class _ServicesScreenState extends State<ServicesScreen> {
   }
 
   void _navigateToSuccessScreen(String? transactionId) {
-    // Wait for Stripe payment sheet to fully dismiss before navigating
-    Future.delayed(const Duration(milliseconds: 500), () {
+    // Wait for payment sheet animation to dismiss before navigating
+    Future.delayed(const Duration(milliseconds: 200), () {
       if (mounted) {
         AppLogger.debug('[ServicesScreen] Navigating to PaymentSuccessScreen: ' 'service=$_pendingServiceTitle, amount=$_pendingAmount', tag: 'Services');
 

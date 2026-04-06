@@ -61,8 +61,7 @@ class PaymentFulfillmentService:
             fetch_one=True
         )
         if not user_data or not user_data.get('email'):
-            logger.warning(f'User {user_id} email not found')
-            return
+            raise ValueError(f'User {user_id} email not found — cannot activate job apply')
 
         email = user_data['email']
         logger.info(f'Activating job apply for {email} with {jobs_number} jobs')
