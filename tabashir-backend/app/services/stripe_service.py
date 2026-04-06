@@ -78,12 +78,12 @@ class StripeService:
         Matching the logic from tabashir-frontend/lib/payment-data.ts
         """
         prices = {
-            "ai-job-apply-basic": 100,
-            "ai-job-apply-premium": 200,
-            "linkedin-optimization": 60,
-            "ai-linkedin-enhancement": 19,
-            "ai-resume-optimization": 29,
-            "interview-training": 150
+            "ai_job_apply_basic": 100,
+            "ai_job_apply_premium": 200,
+            "linkedin_optimization": 60,
+            "ai_linkedin_enhancement": 19,
+            "ai_resume_optimization": 29,
+            "interview_training": 150
         }
         return prices.get(service_id)
 
@@ -93,11 +93,11 @@ class StripeService:
         Returns a friendly title for the service.
         """
         titles = {
-            "ai-job-apply-basic": "AI Job Apply - Basic",
-            "ai-job-apply-premium": "AI Job Apply - Premium",
-            "linkedin-optimization": "LinkedIn Optimization",
-            "ai-linkedin-enhancement": "LinkedIn Profile Enhancement",
-            "ai-resume-optimization": "ATS CV Optimization",
-            "interview-training": "Interview Training"
+            "ai_job_apply_basic": "AI Job Apply - Basic",
+            "ai_job_apply_premium": "AI Job Apply - Premium",
+            "linkedin_optimization": "LinkedIn Optimization",
+            "ai_linkedin_enhancement": "LinkedIn Profile Enhancement",
+            "ai_resume_optimization": "ATS CV Optimization",
+            "interview_training": "Interview Training"
         }
         return titles.get(service_id, service_id)

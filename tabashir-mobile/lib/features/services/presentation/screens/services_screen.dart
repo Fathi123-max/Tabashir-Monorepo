@@ -318,7 +318,7 @@ class _ServicesScreenState extends State<ServicesScreen> {
                                 onPressed: () {
                                   _onJobApplyServicePressed(
                                     context,
-                                    'ai-job-apply-premium',
+                                    'ai_job_apply_premium',
                                     200,
                                     'AI Job Apply Service - Premium',
                                   );
@@ -339,7 +339,7 @@ class _ServicesScreenState extends State<ServicesScreen> {
                                 onPressed: () {
                                   _onJobApplyServicePressed(
                                     context,
-                                    'ai-job-apply-basic',
+                                    'ai_job_apply_basic',
                                     100,
                                     'AI Job Apply Service - Basic',
                                   );

@@ -39,12 +39,12 @@ class PaymentFulfillmentService:
     def _get_handler(self, service_id, user_id, amount, resume_id=None):
         """Return the handler function for the given service_id."""
         handlers = {
-            'ai-job-apply-basic': lambda: self._activate_job_apply(user_id, 100),
-            'ai-job-apply-premium': lambda: self._activate_job_apply(user_id, 200),
-            'ai-resume-optimization': lambda: self._update_ai_resume(user_id, amount, resume_id),
-            'linkedin-optimization': lambda: self._create_linkedin_subscription(user_id),
-            'ai-linkedin-enhancement': lambda: self._send_linkedin_email(user_id),
-            'interview-training': lambda: self._log_interview_training(user_id),
+            'ai_job_apply_basic': lambda: self._activate_job_apply(user_id, 100),
+            'ai_job_apply_premium': lambda: self._activate_job_apply(user_id, 200),
+            'ai_resume_optimization': lambda: self._update_ai_resume(user_id, amount, resume_id),
+            'linkedin_optimization': lambda: self._create_linkedin_subscription(user_id),
+            'ai_linkedin_enhancement': lambda: self._send_linkedin_email(user_id),
+            'interview_training': lambda: self._log_interview_training(user_id),
         }
         return handlers.get(service_id)
 

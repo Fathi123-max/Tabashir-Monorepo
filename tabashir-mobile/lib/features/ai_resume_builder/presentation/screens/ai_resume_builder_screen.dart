@@ -285,7 +285,7 @@ class AiResumeBuilderView extends StatelessWidget {
                 context.read<PaymentCubit>().reset();
               };
               context.read<PaymentCubit>().processPayment(
-                serviceId: 'ai-resume-optimization',
+                serviceId: 'ai_resume_optimization',
                 amount: 40,
               );
             },
