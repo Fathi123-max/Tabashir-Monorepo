@@ -16,6 +16,7 @@ import '../widgets/resume_vault_empty_state.dart';
 import '../widgets/resume_vault_error_state.dart';
 import '../widgets/resume_vault_options_sheet.dart';
 import '../widgets/add_resume_options_sheet.dart';
+import 'package:tabashir/core/utils/app_logger.dart';
 
 class ResumeVaultScreen extends StatefulWidget {
   const ResumeVaultScreen({super.key});
@@ -28,12 +29,12 @@ class _ResumeVaultScreenState extends State<ResumeVaultScreen> {
   @override
   void initState() {
     super.initState();
-    print('🔵 [RESUME_VAULT_SCREEN] initState() called');
+    AppLogger.debug('🔵 [RESUME_VAULT_SCREEN] initState() called', tag: 'Resume');
   }
 
   @override
   Widget build(BuildContext context) {
-    print('🔵 [RESUME_VAULT_SCREEN] Building screen');
+    AppLogger.debug('🔵 [RESUME_VAULT_SCREEN] Building screen', tag: 'Resume');
     final theme = Theme.of(context);
 
     return Scaffold(
@@ -57,13 +58,9 @@ class _ResumeVaultScreenState extends State<ResumeVaultScreen> {
       ),
       body: BlocConsumer<ResumeVaultCubit, ResumeVaultState>(
         listener: (context, state) {
-          print(
-            '🔵 [RESUME_VAULT_SCREEN] Listener called with state: ${state.status}',
-          );
+          AppLogger.debug('🔵 [RESUME_VAULT_SCREEN] Listener called with state: ${state.status}', tag: 'Resume');
           if (state.hasError && state.errorMessage != null) {
-            print(
-              '🔵 [RESUME_VAULT_SCREEN] Showing error: ${state.errorMessage}',
-            );
+            AppLogger.error('🔵 [RESUME_VAULT_SCREEN] Showing error: ${state.errorMessage}', tag: 'Resume');
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
                 content: Text(state.errorMessage!),
@@ -74,19 +71,15 @@ class _ResumeVaultScreenState extends State<ResumeVaultScreen> {
           // Show success messages for various operations
           if (state.status == ResumeVaultStatus.success) {
             if (state.resumes.isNotEmpty) {
-              print(
-                '🔵 [RESUME_VAULT_SCREEN] Loaded ${state.resumes.length} resumes successfully',
-              );
+              AppLogger.debug('🔵 [RESUME_VAULT_SCREEN] Loaded ${state.resumes.length} resumes successfully', tag: 'Resume');
             }
           }
         },
         builder: (context, state) {
-          print(
-            '🔵 [RESUME_VAULT_SCREEN] Builder called with status: ${state.status}, resumes count: ${state.resumes.length}',
-          );
+          AppLogger.debug('🔵 [RESUME_VAULT_SCREEN] Builder called with status: ${state.status}, resumes count: ${state.resumes.length}', tag: 'Resume');
 
           if (state.status == ResumeVaultStatus.loading) {
-            print('🔵 [RESUME_VAULT_SCREEN] Showing loading indicator');
+            AppLogger.debug('🔵 [RESUME_VAULT_SCREEN] Showing loading indicator', tag: 'Resume');
             return const Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -100,22 +93,18 @@ class _ResumeVaultScreenState extends State<ResumeVaultScreen> {
           }
 
           if (state.status == ResumeVaultStatus.failure) {
-            print('🔵 [RESUME_VAULT_SCREEN] Showing error state');
+            AppLogger.error('🔵 [RESUME_VAULT_SCREEN] Showing error state', tag: 'Resume');
             return ResumeVaultErrorState(
               onRetry: () {
-                print(
-                  '🔵 [RESUME_VAULT_SCREEN] Retry tapped, reloading resumes...',
-                );
+                AppLogger.debug('🔵 [RESUME_VAULT_SCREEN] Retry tapped, reloading resumes...', tag: 'Resume');
                 context.read<ResumeVaultCubit>().loadResumes();
               },
             );
           }
 
           if (state.isEmpty) {
-            print('🔵 [RESUME_VAULT_SCREEN] Showing empty state (no resumes)');
-            print(
-              '🔵 [RESUME_VAULT_SCREEN] Tip: Tap the + button to add your first resume!',
-            );
+            AppLogger.debug('🔵 [RESUME_VAULT_SCREEN] Showing empty state (no resumes)', tag: 'Resume');
+            AppLogger.debug('🔵 [RESUME_VAULT_SCREEN] Tip: Tap the + button to add your first resume!', tag: 'Resume');
             return ResumeVaultEmptyState(
               onAddResume: () => _showAddResumeOptions(context),
             );
@@ -204,9 +193,7 @@ class _ResumeVaultScreenState extends State<ResumeVaultScreen> {
   }
 
   Widget _buildContent(BuildContext context, ResumeVaultState state) {
-    print(
-      '🔵 [RESUME_VAULT_SCREEN] Building content with ${state.resumes.length} resumes',
-    );
+    AppLogger.debug('🔵 [RESUME_VAULT_SCREEN] Building content with ${state.resumes.length} resumes', tag: 'Resume');
 
     // Filter out duplicates by filename to hide duplicate resumes
     final uniqueResumes = <String>{};
@@ -219,15 +206,11 @@ class _ResumeVaultScreenState extends State<ResumeVaultScreen> {
       return true;
     }).toList();
 
-    print(
-      '🔵 [RESUME_VAULT_SCREEN] After filtering duplicates: ${filteredResumes.length} unique resumes',
-    );
+    AppLogger.debug('🔵 [RESUME_VAULT_SCREEN] After filtering duplicates: ${filteredResumes.length} unique resumes', tag: 'Resume');
 
     return RefreshIndicator(
       onRefresh: () async {
-        print(
-          '🔵 [RESUME_VAULT_SCREEN] Refresh indicator triggered, reloading...',
-        );
+        AppLogger.debug('🔵 [RESUME_VAULT_SCREEN] Refresh indicator triggered, reloading...', tag: 'Resume');
         await context.read<ResumeVaultCubit>().loadResumes();
       },
       child: ListView.builder(
@@ -235,9 +218,7 @@ class _ResumeVaultScreenState extends State<ResumeVaultScreen> {
         itemCount: filteredResumes.length,
         itemBuilder: (context, index) {
           final resume = filteredResumes[index];
-          print(
-            '🔵 [RESUME_VAULT_SCREEN] Building card for resume: ${resume.name}',
-          );
+          AppLogger.debug('🔵 [RESUME_VAULT_SCREEN] Building card for resume: ${resume.name}', tag: 'Resume');
           return Padding(
             padding: EdgeInsets.only(bottom: AppTheme.spacingMd.h),
             child: ResumeCard(
@@ -252,7 +233,7 @@ class _ResumeVaultScreenState extends State<ResumeVaultScreen> {
   }
 
   void _viewResume(BuildContext context, ResumeItem resume) {
-    print('🔵 [RESUME_VAULT_SCREEN] View resume tapped for: ${resume.name}');
+    AppLogger.debug('🔵 [RESUME_VAULT_SCREEN] View resume tapped for: ${resume.name}', tag: 'Resume');
 
     // Create a core ResumeItem for the preview
     final coreResume = ResumeItem(
@@ -273,7 +254,7 @@ class _ResumeVaultScreenState extends State<ResumeVaultScreen> {
   }
 
   Future<void> _showAddResumeOptions(BuildContext context) async {
-    print('🔵 [RESUME_VAULT_SCREEN] Add resume options requested');
+    AppLogger.debug('🔵 [RESUME_VAULT_SCREEN] Add resume options requested', tag: 'Resume');
     await AddResumeOptionsSheet.show(context);
   }
 
@@ -282,9 +263,7 @@ class _ResumeVaultScreenState extends State<ResumeVaultScreen> {
     ResumeItem resume,
     int index,
   ) async {
-    print(
-      '🔵 [RESUME_VAULT_SCREEN] Resume options requested for: ${resume.name}',
-    );
+    AppLogger.debug('🔵 [RESUME_VAULT_SCREEN] Resume options requested for: ${resume.name}', tag: 'Resume');
     final cubit = context.read<ResumeVaultCubit>();
     await ResumeVaultOptionsSheet.show(context, resume, index, cubit);
   }

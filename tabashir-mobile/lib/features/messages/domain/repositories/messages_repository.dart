@@ -38,4 +38,34 @@ abstract class MessagesRepository {
   Future<void> deleteMessage({
     required String messageId,
   });
+
+  /// Report a user for inappropriate content
+  /// Returns void when report is submitted
+  Future<void> reportUser({
+    required String reportedUserId,
+    required String reason,
+    String? messageId,
+  });
+
+  /// Block a user
+  /// Returns void when user is blocked
+  Future<void> blockUser({
+    required String blockedUserId,
+  });
+
+  /// Unblock a user
+  /// Returns void when user is unblocked
+  Future<void> unblockUser({
+    required String blockedUserId,
+  });
+
+  /// Check if a user is blocked
+  /// Returns true if user is blocked
+  Future<bool> isUserBlocked({
+    required String userId,
+  });
+
+  /// Get list of blocked users
+  /// Returns list of blocked user IDs
+  Future<List<String>> getBlockedUsers();
 }

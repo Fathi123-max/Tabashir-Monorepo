@@ -11,6 +11,7 @@ import 'package:tabashir/core/services/auth_session_service.dart';
 import 'package:tabashir/features/home/presentation/cubit/home_cubit.dart';
 import 'package:tabashir/features/resume/domain/repositories/resume_vault_repository.dart';
 import 'package:tabashir/features/resume/services/resume_parsing_service.dart';
+import 'package:tabashir/core/utils/app_logger.dart';
 
 part 'resume_import_state.dart';
 part 'resume_import_cubit.freezed.dart';
@@ -25,12 +26,12 @@ class ResumeImportCubit extends Cubit<ResumeImportState> {
   final ResumeVaultRepository _resumeVaultRepository;
 
   Future<void> pickResumeFile() async {
-    print('\n🔵 [RESUME_IMPORT] === pickResumeFile() STARTED ===');
+    AppLogger.debug('\n🔵 [RESUME_IMPORT] === pickResumeFile() STARTED ===', tag: 'Resume');
 
     // Check if user is authenticated before proceeding
     final isAuthenticated = await AuthSessionService.instance.isAuthenticated;
     if (!isAuthenticated) {
-      print('🔴 [RESUME_IMPORT] User not authenticated - cannot upload resume');
+      AppLogger.debug('🔴 [RESUME_IMPORT] User not authenticated - cannot upload resume', tag: 'Resume');
       emit(
         const ResumeImportState.error(
           'Authentication required. Please complete sign up/login first, then try importing your resume again.',
@@ -40,68 +41,61 @@ class ResumeImportCubit extends Cubit<ResumeImportState> {
     }
 
     emit(const ResumeImportState.loading());
-    print('🔵 [RESUME_IMPORT] Emitted loading state');
+    AppLogger.debug('🔵 [RESUME_IMPORT] Emitted loading state', tag: 'Resume');
 
     try {
-      print('🔵 [RESUME_IMPORT] Opening file picker...');
+      AppLogger.debug('🔵 [RESUME_IMPORT] Opening file picker...', tag: 'Resume');
       final result = await FilePicker.platform.pickFiles(
         type: FileType.custom,
         allowedExtensions: ['pdf', 'doc', 'docx'],
       );
-      print(
-        '🔵 [RESUME_IMPORT] File picker returned: ${result != null ? 'files selected' : 'user cancelled'}',
-      );
+      AppLogger.debug('🔵 [RESUME_IMPORT] File picker returned: ${result != null ? 'files selected' : 'user cancelled'}', tag: 'Resume');
 
       if (result != null) {
-        print('🔵 [RESUME_IMPORT] Files selected: ${result.files.length}');
+        AppLogger.debug('🔵 [RESUME_IMPORT] Files selected: ${result.files.length}', tag: 'Resume');
         final file = result.files.single;
-        print('🔵 [RESUME_IMPORT] Selected file details:');
-        print('  - Name: ${file.name}');
-        print('  - Path: ${file.path}');
-        print('  - Size: ${file.size} bytes');
-        print('  - Extension: ${file.extension}');
+        AppLogger.debug('🔵 [RESUME_IMPORT] Selected file details:', tag: 'Resume');
+        AppLogger.debug('  - Name: ${file.name}', tag: 'Resume');
+        AppLogger.debug('  - Path: ${file.path}', tag: 'Resume');
+        AppLogger.debug('  - Size: ${file.size} bytes', tag: 'Resume');
+        AppLogger.debug('  - Extension: ${file.extension}', tag: 'Resume');
 
         if (file.path == null) {
-          print('🔴 [RESUME_IMPORT] File path is null');
+          AppLogger.debug('🔴 [RESUME_IMPORT] File path is null', tag: 'Resume');
           emit(const ResumeImportState.error('File path is invalid'));
           return;
         }
 
         // Validate file exists
-        print('🔵 [RESUME_IMPORT] Checking if file exists at path...');
+        AppLogger.debug('🔵 [RESUME_IMPORT] Checking if file exists at path...', tag: 'Resume');
         final resumeFile = File(file.path!);
         final fileExists = await resumeFile.exists();
-        print('🔵 [RESUME_IMPORT] File exists: $fileExists');
+        AppLogger.debug('🔵 [RESUME_IMPORT] File exists: $fileExists', tag: 'Resume');
 
         if (fileExists) {
-          print(
-            '🔵 [RESUME_IMPORT] File confirmed, calling _uploadResume()',
-          );
+          AppLogger.debug('🔵 [RESUME_IMPORT] File confirmed, calling _uploadResume()', tag: 'Resume');
           await _uploadResume(
             fileName: file.name,
             filePath: file.path!,
             fileType: file.extension?.toLowerCase() ?? '',
             fileSize: file.size,
           );
-          print('🔵 [RESUME_IMPORT] _uploadResume() completed');
+          AppLogger.debug('🔵 [RESUME_IMPORT] _uploadResume() completed', tag: 'Resume');
         } else {
-          print(
-            '🔴 [RESUME_IMPORT] ERROR: File does not exist at path: ${file.path}',
-          );
+          AppLogger.debug('🔴 [RESUME_IMPORT] ERROR: File does not exist at path: ${file.path}', tag: 'Resume');
           emit(const ResumeImportState.error('Selected file not found'));
         }
       } else {
-        print('🔵 [RESUME_IMPORT] User cancelled file selection');
-        print('🔵 [RESUME_IMPORT] Emitting initial state');
+        AppLogger.debug('🔵 [RESUME_IMPORT] User cancelled file selection', tag: 'Resume');
+        AppLogger.debug('🔵 [RESUME_IMPORT] Emitting initial state', tag: 'Resume');
         emit(const ResumeImportState.initial());
       }
     } catch (e, stackTrace) {
-      print('🔴 [RESUME_IMPORT] EXCEPTION occurred in pickResumeFile():');
-      print('🔴 [RESUME_IMPORT] Error: $e');
-      print('🔴 [RESUME_IMPORT] StackTrace: $stackTrace');
+      AppLogger.debug('🔴 [RESUME_IMPORT] EXCEPTION occurred in pickResumeFile():', tag: 'Resume');
+      AppLogger.error('🔴 [RESUME_IMPORT]', tag: 'Resume', error: e, stackTrace: stackTrace);
       emit(ResumeImportState.error(e.toString()));
     }
-    print('🔵 [RESUME_IMPORT] === pickResumeFile() COMPLETED ===\n');
+    AppLogger.debug('🔵 [RESUME_IMPORT] === pickResumeFile() COMPLETED ===\n', tag: 'Resume');
   }
 
   Future<void> importFromCloud() async {
@@ -110,14 +104,12 @@ class ResumeImportCubit extends Cubit<ResumeImportState> {
   }
 
   Future<void> pasteResumeText(String resumeText) async {
-    print('\n🔵 [RESUME_IMPORT] === pasteResumeText() STARTED ===');
+    AppLogger.debug('\n🔵 [RESUME_IMPORT] === pasteResumeText() STARTED ===', tag: 'Resume');
 
     // Check if user is authenticated before proceeding
     final isAuthenticated = await AuthSessionService.instance.isAuthenticated;
     if (!isAuthenticated) {
-      print(
-        '🔴 [RESUME_IMPORT] User not authenticated - cannot process resume text',
-      );
+      AppLogger.debug('🔴 [RESUME_IMPORT] User not authenticated - cannot process resume text', tag: 'Resume');
       emit(
         const ResumeImportState.error(
           'Authentication required. Please complete sign up/login first, then try importing your resume again.',
@@ -126,39 +118,35 @@ class ResumeImportCubit extends Cubit<ResumeImportState> {
       return;
     }
 
-    print('🔵 [RESUME_IMPORT] Text length: ${resumeText.length} characters');
+    AppLogger.debug('🔵 [RESUME_IMPORT] Text length: ${resumeText.length} characters', tag: 'Resume');
 
     if (resumeText.trim().isEmpty) {
-      print('🔴 [RESUME_IMPORT] ERROR: Resume text is empty');
+      AppLogger.debug('🔴 [RESUME_IMPORT] ERROR: Resume text is empty', tag: 'Resume');
       emit(const ResumeImportState.error('Resume text cannot be empty'));
       return;
     }
 
     emit(const ResumeImportState.loading());
-    print('🔵 [RESUME_IMPORT] Emitted loading state');
+    AppLogger.debug('🔵 [RESUME_IMPORT] Emitted loading state', tag: 'Resume');
 
     try {
-      print(
-        '🔵 [RESUME_IMPORT] Processing pasted text with resume parsing service...',
-      );
+      AppLogger.debug('🔵 [RESUME_IMPORT] Processing pasted text with resume parsing service...', tag: 'Resume');
       final parsedData = await _resumeParsingService.parseResumeFromText(
         resumeText,
       );
-      print('🟢 [RESUME_IMPORT] ✅ Resume text parsed successfully');
-      print('🟢 [RESUME_IMPORT] Parsed data: $parsedData');
+      AppLogger.debug('🟢 [RESUME_IMPORT] ✅ Resume text parsed successfully', tag: 'Resume');
+      AppLogger.debug('🟢 [RESUME_IMPORT] Parsed data: $parsedData', tag: 'Resume');
 
-      print('🔵 [RESUME_IMPORT] Emitting success state');
+      AppLogger.debug('🔵 [RESUME_IMPORT] Emitting success state', tag: 'Resume');
       emit(const ResumeImportState.success());
-      print('🟢 [RESUME_IMPORT] ✅ Successfully emitted success state');
+      AppLogger.debug('🟢 [RESUME_IMPORT] ✅ Successfully emitted success state', tag: 'Resume');
     } catch (e, stackTrace) {
-      print('\n🔴 [RESUME_IMPORT] ❌ ERROR in pasteResumeText():');
-      print('🔴 [RESUME_IMPORT] Exception: $e');
-      print('🔴 [RESUME_IMPORT] StackTrace: $stackTrace');
+      AppLogger.error('\n🔴 [RESUME_IMPORT]', tag: 'Resume', error: e, stackTrace: stackTrace);
 
       emit(ResumeImportState.error(e.toString()));
-      print('🔴 [RESUME_IMPORT] Error state emitted');
+      AppLogger.error('🔴 [RESUME_IMPORT] Error state emitted', tag: 'Resume');
     }
-    print('\n🔵 [RESUME_IMPORT] === pasteResumeText() COMPLETED ===\n');
+    AppLogger.debug('\n🔵 [RESUME_IMPORT] === pasteResumeText() COMPLETED ===\n', tag: 'Resume');
   }
 
   Future<void> _uploadResume({
@@ -167,34 +155,30 @@ class ResumeImportCubit extends Cubit<ResumeImportState> {
     required String fileType,
     required int fileSize,
   }) async {
-    print('\n🟡 [RESUME_IMPORT] === _uploadResume() STARTED ===');
-    print('🟡 [RESUME_IMPORT] Parameters:');
-    print('  - fileName: $fileName');
-    print('  - filePath: $filePath');
-    print('  - fileType: $fileType');
-    print('  - fileSize: $fileSize bytes');
+    AppLogger.debug('\n🟡 [RESUME_IMPORT] === _uploadResume() STARTED ===', tag: 'Resume');
+    AppLogger.debug('🟡 [RESUME_IMPORT] Parameters:', tag: 'Resume');
+    AppLogger.debug('  - fileName: $fileName', tag: 'Resume');
+    AppLogger.debug('  - filePath: $filePath', tag: 'Resume');
+    AppLogger.debug('  - fileType: $fileType', tag: 'Resume');
+    AppLogger.debug('  - fileSize: $fileSize bytes', tag: 'Resume');
 
     emit(const ResumeImportState.loading());
-    print('🟡 [RESUME_IMPORT] Emitted loading state');
+    AppLogger.debug('🟡 [RESUME_IMPORT] Emitted loading state', tag: 'Resume');
 
     try {
-      print('🟡 [RESUME_IMPORT] Extracting structured data before upload...');
+      AppLogger.debug('🟡 [RESUME_IMPORT] Extracting structured data before upload...', tag: 'Resume');
       Map<String, dynamic>? parsedData;
       try {
         parsedData = await _resumeParsingService.parseResumeFile(
           File(filePath),
           fileName,
         );
-        print('🟢 [RESUME_IMPORT] Local parsing completed.');
+        AppLogger.debug('🟢 [RESUME_IMPORT] Local parsing completed.', tag: 'Resume');
       } catch (e) {
-        print(
-          '⚠️ [RESUME_IMPORT] Local parsing failed, will continue without parsed data. Error: $e',
-        );
+        AppLogger.error('⚠️ [RESUME_IMPORT] Local parsing failed, will continue without parsed data. Error: $e', tag: 'Resume', error: e);
       }
 
-      print(
-        '🟡 [RESUME_IMPORT] Uploading resume to backend API...',
-      );
+      AppLogger.debug('🟡 [RESUME_IMPORT] Uploading resume to backend API...', tag: 'Resume');
 
       final result = await _resumeVaultRepository.uploadResume(
         fileName: fileName,
@@ -203,49 +187,47 @@ class ResumeImportCubit extends Cubit<ResumeImportState> {
         fileSize: fileSize,
       );
 
-      print('🟢 [RESUME_IMPORT] ✅ uploadResume() completed');
-      print('🟢 [RESUME_IMPORT] Upload result ID: ${result.id}');
+      AppLogger.debug('🟢 [RESUME_IMPORT] ✅ uploadResume() completed', tag: 'Resume');
+      AppLogger.debug('🟢 [RESUME_IMPORT] Upload result ID: ${result.id}', tag: 'Resume');
 
       // Trigger dashboard refresh via HomeCubit to show new profile data
       try {
-        print('🟡 [RESUME_IMPORT] Triggering HomeCubit refresh...');
+        AppLogger.debug('🟡 [RESUME_IMPORT] Triggering HomeCubit refresh...', tag: 'Resume');
         await getIt<HomeCubit>().refreshHomeData();
       } catch (e) {
-        print('🔴 [RESUME_IMPORT] Failed to trigger HomeCubit refresh: $e');
+        AppLogger.error('🔴 [RESUME_IMPORT] Failed to trigger HomeCubit refresh: $e', tag: 'Resume', error: e);
       }
 
       // Emit success state
-      print('🟡 [RESUME_IMPORT] Emitting success state');
+      AppLogger.debug('🟡 [RESUME_IMPORT] Emitting success state', tag: 'Resume');
       emit(
         ResumeImportState.success(
           resume: result,
           parsedData: parsedData,
         ),
       );
-      print('🟢 [RESUME_IMPORT] ✅ Successfully emitted success state');
+      AppLogger.debug('🟢 [RESUME_IMPORT] ✅ Successfully emitted success state', tag: 'Resume');
     } catch (e, stackTrace) {
-      print('\n🔴 [RESUME_IMPORT] ❌ Upload failed: $e');
-      print('🔴 [RESUME_IMPORT] StackTrace: $stackTrace');
+      AppLogger.error('\n🔴 [RESUME_IMPORT] ❌ Upload failed: $e', tag: 'Resume', error: e);
+      AppLogger.debug('🔴 [RESUME_IMPORT] StackTrace: $stackTrace', tag: 'Resume');
 
       // Check if this is an authentication error
       final errorMessage = e.toString();
       if (errorMessage.contains('401') ||
           errorMessage.toLowerCase().contains('unauthorized')) {
-        print(
-          '🟡 [RESUME_IMPORT] Authentication error - user might not be logged in yet',
-        );
+        AppLogger.error('🟡 [RESUME_IMPORT] Authentication error - user might not be logged in yet', tag: 'Resume');
         emit(
           const ResumeImportState.error(
             'Authentication required. Please complete sign up/login first, then try importing your resume again.',
           ),
         );
       } else {
-        print('\n🔴 [RESUME_IMPORT] Emitting error state...');
+        AppLogger.error('\n🔴 [RESUME_IMPORT] Emitting error state...', tag: 'Resume');
         emit(ResumeImportState.error(e.toString()));
       }
-      print('🔴 [RESUME_IMPORT] Error state emitted');
+      AppLogger.error('🔴 [RESUME_IMPORT] Error state emitted', tag: 'Resume');
     }
-    print('\n🟡 [RESUME_IMPORT] === _uploadResume() COMPLETED ===\n');
+    AppLogger.debug('\n🟡 [RESUME_IMPORT] === _uploadResume() COMPLETED ===\n', tag: 'Resume');
   }
 
   void skipForNow() {

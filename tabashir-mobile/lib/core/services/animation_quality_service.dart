@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'device_capability_service.dart';
+import 'package:tabashir/core/utils/app_logger.dart';
 
 /// Animation quality levels
 enum AnimationQuality {
@@ -60,7 +61,7 @@ class AnimationQualityService {
       return _parseQualityString(qualityString);
     } catch (e) {
       if (kDebugMode) {
-        print('[AnimationQuality] Error getting preference: $e');
+        AppLogger.error('[AnimationQuality] Error getting preference: $e', tag: 'Service', error: e);
       }
       return null;
     }
@@ -83,13 +84,11 @@ class AnimationQualityService {
       }
 
       if (kDebugMode) {
-        print(
-          '[AnimationQuality] Quality preference set to: ${quality ?? 'auto-detect'}',
-        );
+        AppLogger.debug('[AnimationQuality] Quality preference set to: ${quality ?? 'auto-detect'}', tag: 'Service');
       }
     } catch (e) {
       if (kDebugMode) {
-        print('[AnimationQuality] Error setting preference: $e');
+        AppLogger.error('[AnimationQuality] Error setting preference: $e', tag: 'Service', error: e);
       }
     }
   }

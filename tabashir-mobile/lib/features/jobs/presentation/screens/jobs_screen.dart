@@ -18,6 +18,7 @@ import 'package:tabashir/features/jobs/presentation/widgets/job_card.dart';
 import 'package:tabashir/features/jobs/presentation/widgets/job_filter_bottom_sheet.dart';
 import 'package:tabashir/shared/widgets/cv_required_blur.dart';
 import 'package:tabashir/features/resume/presentation/cubit/resume_vault_cubit.dart';
+import 'package:tabashir/core/utils/app_logger.dart';
 
 class JobsScreen extends StatelessWidget {
   const JobsScreen({
@@ -74,60 +75,50 @@ class _JobsViewState extends State<JobsView> {
   }
 
   Future<void> _initializeData() async {
-    print('[JOBS_SCREEN] _initializeData() started');
+    AppLogger.debug('[JOBS_SCREEN] _initializeData() started', tag: 'Jobs');
     await _profileCubit.loadProfileData();
 
     // Ensure profile has email before loading jobs (fixes race condition)
     var profile = _profileCubit.state.profile;
-    print(
-      '[JOBS_SCREEN] Profile after first load: ${profile?.email ?? "null"}',
-    );
+    AppLogger.debug('[JOBS_SCREEN] Profile after first load: ${profile?.email ?? "null"}', tag: 'Jobs');
 
     if (profile == null || profile.email.isEmpty) {
-      print('[JOBS_SCREEN] Profile email not available, forcing reload...');
+      AppLogger.debug('[JOBS_SCREEN] Profile email not available, forcing reload...', tag: 'Jobs');
       await _profileCubit.loadProfileData(force: true);
       profile = _profileCubit.state.profile;
-      print(
-        '[JOBS_SCREEN] Profile after force reload: ${profile?.email ?? "null"}',
-      );
+      AppLogger.debug('[JOBS_SCREEN] Profile after force reload: ${profile?.email ?? "null"}', tag: 'Jobs');
     }
 
     // Wait for email to be available (with timeout - max 5 seconds)
     // This ensures match percentages are calculated correctly on app restart
     var waitAttempts = 0;
     while ((profile == null || profile.email.isEmpty) && waitAttempts < 10) {
-      print(
-        '[JOBS_SCREEN] Waiting for profile email... attempt ${waitAttempts + 1}/10',
-      );
+      AppLogger.debug('[JOBS_SCREEN] Waiting for profile email... attempt ${waitAttempts + 1}/10', tag: 'Jobs');
       await Future.delayed(const Duration(milliseconds: 500));
       profile = _profileCubit.state.profile;
-      print('[JOBS_SCREEN] Profile check: ${profile?.email ?? "null"}');
+      AppLogger.debug('[JOBS_SCREEN] Profile check: ${profile?.email ?? "null"}', tag: 'Jobs');
       waitAttempts++;
     }
 
     final email = profile?.email;
     if (email == null || email.isEmpty) {
-      print(
-        '[JOBS_SCREEN] ⚠️ Profile email still not available after waiting. Jobs will load without matching.',
-      );
+      AppLogger.debug('[JOBS_SCREEN] ⚠️ Profile email still not available after waiting. Jobs will load without matching.', tag: 'Jobs');
     } else {
-      print('[JOBS_SCREEN] ✅ Profile email available: $email');
-      print('[JOBS_SCREEN] Will pass email to JobsCubit for matching');
+      AppLogger.debug('[JOBS_SCREEN] ✅ Profile email available: $email', tag: 'Jobs');
+      AppLogger.debug('[JOBS_SCREEN] Will pass email to JobsCubit for matching', tag: 'Jobs');
     }
 
     await _loadAppliedJobs();
     if (mounted) {
       // Pass email directly to ensure it's used for matching
       // Force reload to ensure jobs are loaded with email for matching
-      print(
-        '[JOBS_SCREEN] Calling initializeState with email: $email (force reload)',
-      );
+      AppLogger.debug('[JOBS_SCREEN] Calling initializeState with email: $email (force reload)', tag: 'Jobs');
       context.read<JobsCubit>().initializeState(
         email: email,
         forceReload: true,
       );
     } else {
-      print('[JOBS_SCREEN] ⚠️ Widget not mounted, skipping initializeState');
+      AppLogger.debug('[JOBS_SCREEN] ⚠️ Widget not mounted, skipping initializeState', tag: 'Jobs');
     }
   }
 
@@ -153,7 +144,7 @@ class _JobsViewState extends State<JobsView> {
         context.read<JobsCubit>().updateAppliedJobIds(ids);
       }
     } catch (e) {
-      debugPrint('[JOBS_SCREEN] Failed to load applied jobs: $e');
+      AppLogger.debug('[JOBS_SCREEN] Failed to load applied jobs: $e', tag: 'Jobs');
     } finally {
       if (mounted) {
         setState(() {
@@ -189,21 +180,21 @@ class _JobsViewState extends State<JobsView> {
       final profileState = _profileCubit.state;
 
       // Debug logging
-      print('[JOBS_SCREEN] Profile status: ${profileState.status}');
-      print('[JOBS_SCREEN] Profile data: ${profileState.profile}');
-      print('[JOBS_SCREEN] Email: ${profileState.profile?.email}');
+      AppLogger.debug('[JOBS_SCREEN] Profile status: ${profileState.status}', tag: 'Jobs');
+      AppLogger.debug('[JOBS_SCREEN] Profile data: ${profileState.profile}', tag: 'Jobs');
+      AppLogger.debug('[JOBS_SCREEN] Email: ${profileState.profile?.email}', tag: 'Jobs');
 
       // If profile is not loaded, try to load it
       if (profileState.status == ProfileStatus.initial) {
-        print('[JOBS_SCREEN] Profile not loaded, loading now...');
+        AppLogger.debug('[JOBS_SCREEN] Profile not loaded, loading now...', tag: 'Jobs');
         await _profileCubit.loadProfileData();
         // Wait a bit for the load to complete
         await Future<void>.delayed(const Duration(milliseconds: 500));
 
         // Check again after loading
         final updatedState = _profileCubit.state;
-        print('[JOBS_SCREEN] Updated profile status: ${updatedState.status}');
-        print('[JOBS_SCREEN] Updated profile data: ${updatedState.profile}');
+        AppLogger.debug('[JOBS_SCREEN] Updated profile status: ${updatedState.status}', tag: 'Jobs');
+        AppLogger.debug('[JOBS_SCREEN] Updated profile data: ${updatedState.profile}', tag: 'Jobs');
       }
 
       if (profileState.status != ProfileStatus.success ||

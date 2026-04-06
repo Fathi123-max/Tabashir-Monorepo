@@ -1,6 +1,7 @@
 import 'package:injectable/injectable.dart';
 import 'package:tabashir/core/services/local_storage_service.dart';
 import 'package:tabashir/core/network/models/user/user_profile_response.dart';
+import 'package:tabashir/core/utils/app_logger.dart';
 
 /// Local data source for home screen
 /// Handles caching of user profile and home data
@@ -18,7 +19,7 @@ class HomeLocalDataSource {
 
   /// Cache user profile data
   Future<void> cacheUserProfile(UserProfileResponse profile) async {
-    print('[HOME_LOCAL_DS] Caching user profile');
+    AppLogger.debug('[HOME_LOCAL_DS] Caching user profile', tag: 'Home');
     await _localStorageService.setString(
       _userProfileKey,
       profile.toJson().toString(),
@@ -46,24 +47,24 @@ class HomeLocalDataSource {
 
       final age = DateTime.now().millisecondsSinceEpoch - timestamp;
       if (age > _cacheExpiry.inMilliseconds) {
-        print('[HOME_LOCAL_DS] Cache expired, clearing');
+        AppLogger.debug('[HOME_LOCAL_DS] Cache expired, clearing', tag: 'Home');
         await clearCache();
         return null;
       }
 
-      print('[HOME_LOCAL_DS] Returning cached user profile');
+      AppLogger.debug('[HOME_LOCAL_DS] Returning cached user profile', tag: 'Home');
       // Note: In a real implementation, you'd parse the JSON back to the object
       // For now, returning null to force fresh API call
       return null;
     } catch (e) {
-      print('[HOME_LOCAL_DS] Error reading cache: $e');
+      AppLogger.error('[HOME_LOCAL_DS] Error reading cache: $e', tag: 'Home', error: e);
       return null;
     }
   }
 
   /// Cache home dashboard data
   Future<void> cacheHomeData(Map<String, dynamic> data) async {
-    print('[HOME_LOCAL_DS] Caching home data');
+    AppLogger.debug('[HOME_LOCAL_DS] Caching home data', tag: 'Home');
     await _localStorageService.setString(
       _homeDataKey,
       data.toString(),
@@ -77,18 +78,18 @@ class HomeLocalDataSource {
       if (dataStr == null) {
         return null;
       }
-      print('[HOME_LOCAL_DS] Returning cached home data');
+      AppLogger.debug('[HOME_LOCAL_DS] Returning cached home data', tag: 'Home');
       // Note: In a real implementation, you'd parse the JSON
       return null;
     } catch (e) {
-      print('[HOME_LOCAL_DS] Error reading home cache: $e');
+      AppLogger.error('[HOME_LOCAL_DS] Error reading home cache: $e', tag: 'Home', error: e);
       return null;
     }
   }
 
   /// Clear all cached data
   Future<void> clearCache() async {
-    print('[HOME_LOCAL_DS] Clearing cache');
+    AppLogger.debug('[HOME_LOCAL_DS] Clearing cache', tag: 'Home');
     await _localStorageService.remove(_userProfileKey);
     await _localStorageService.remove(_homeDataKey);
     await _localStorageService.remove(_cacheTimestampKey);

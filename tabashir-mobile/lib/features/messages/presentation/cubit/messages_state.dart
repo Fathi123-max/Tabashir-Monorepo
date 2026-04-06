@@ -9,6 +9,7 @@ sealed class MessagesState with _$MessagesState {
     @Default(false) bool isLoading,
     @Default(false) bool hasError,
     @Default('') String errorMessage,
+    @Default([]) List<String> blockedUsers,
   }) = _MessagesState;
 
   factory MessagesState.fromJson(Map<String, dynamic> json) =>

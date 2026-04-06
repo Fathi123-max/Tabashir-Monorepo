@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/foundation.dart';
+import 'package:tabashir/core/utils/app_logger.dart';
 
 /// Device performance tiers
 enum DeviceTier {
@@ -66,7 +67,7 @@ class DeviceCapabilityService {
       return DeviceTier.medium;
     } catch (e) {
       if (kDebugMode) {
-        print('[DeviceCapability] Error detecting device tier: $e');
+        AppLogger.error('[DeviceCapability] Error detecting device tier: $e', tag: 'Service', error: e);
       }
       return DeviceTier.medium; // Default to medium tier
     }

@@ -8,6 +8,16 @@ plugins {
     id("dev.flutter.flutter-gradle-plugin")
 }
 
+// Load keystore properties for release signing
+val keystorePropertiesFile = rootProject.file("key.properties")
+val keystoreProperties = if (keystorePropertiesFile.exists()) {
+    val props = java.util.Properties()
+    props.load(java.io.FileInputStream(keystorePropertiesFile))
+    props
+} else {
+    null
+}
+
 android {
     namespace = "ae.tabashir"
     compileSdk = flutter.compileSdkVersion
@@ -29,11 +39,30 @@ android {
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
         versionName = flutter.versionName
+        
+        // Manifest placeholders for Stripe
+        manifestPlaceholders["STRIPE_PUBLISHABLE_KEY"] = System.getenv("STRIPE_PUBLISHABLE_KEY") ?: "pk_test_replace_before_release"
+    }
+
+    signingConfigs {
+        create("release") {
+            if (keystoreProperties != null) {
+                keyAlias = keystoreProperties["keyAlias"] as String
+                keyPassword = keystoreProperties["keyPassword"] as String
+                storeFile = file(keystoreProperties["storeFile"] as String)
+                storePassword = keystoreProperties["storePassword"] as String
+            }
+        }
     }
 
     buildTypes {
         release {
-            signingConfig = signingConfigs.getByName("debug")
+            if (keystoreProperties != null) {
+                signingConfig = signingConfigs.getByName("release")
+            } else {
+                // Fallback to debug signing if keystore not configured (dev only)
+                signingConfig = signingConfigs.getByName("debug")
+            }
         }
     }
 }

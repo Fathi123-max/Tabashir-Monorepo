@@ -1,6 +1,7 @@
 import 'package:tabashir/core/network/services/notification/notification_api_service.dart';
 import 'package:tabashir/features/notifications/data/models/notification_model.dart';
 import 'package:tabashir/features/notifications/domain/repositories/notifications_repository.dart';
+import 'package:tabashir/core/utils/app_logger.dart';
 
 class NotificationsRepositoryImpl implements NotificationsRepository {
   NotificationsRepositoryImpl(this._apiService);
@@ -12,7 +13,7 @@ class NotificationsRepositoryImpl implements NotificationsRepository {
       final response = await _apiService.getNotifications();
       return response.data.notifications;
     } catch (e) {
-      print('Error fetching notifications: $e');
+      AppLogger.error('Error fetching notifications: $e', tag: 'Notifications', error: e);
       return [];
     }
   }
@@ -22,7 +23,7 @@ class NotificationsRepositoryImpl implements NotificationsRepository {
     try {
       await _apiService.markAsRead(body: {'notificationId': id});
     } catch (e) {
-      print('Error marking notification as read: $e');
+      AppLogger.error('Error marking notification as read: $e', tag: 'Notifications', error: e);
       rethrow;
     }
   }
@@ -32,7 +33,7 @@ class NotificationsRepositoryImpl implements NotificationsRepository {
     try {
       await _apiService.markAsRead(body: {});
     } catch (e) {
-      print('Error marking all notifications as read: $e');
+      AppLogger.error('Error marking all notifications as read: $e', tag: 'Notifications', error: e);
       rethrow;
     }
   }

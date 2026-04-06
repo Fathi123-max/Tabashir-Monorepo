@@ -353,15 +353,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         theme: currentTheme,
                       ),
                       SizedBox(height: AppTheme.spacingMd.h),
-                      MenuTile(
-                        icon: Icons.lock_outline,
-                        text: 'Change Password'.tr(),
-                        trailing: const SizedBox(),
-                        onTap: () {
-                          context.push(RouteNames.changePassword);
-                        },
-                      ),
-                      SizedBox(height: AppTheme.spacingSm.h),
+                      // Change Password - Hidden
+                      // MenuTile(
+                      //   icon: Icons.lock_outline,
+                      //   text: 'Change Password'.tr(),
+                      //   trailing: const SizedBox(),
+                      //   onTap: () {
+                      //     context.push(RouteNames.changePassword);
+                      //   },
+                      // ),
+                      // SizedBox(height: AppTheme.spacingSm.h),
                       MenuTile(
                         icon: Icons.settings_outlined,
                         text: 'Settings'.tr(),

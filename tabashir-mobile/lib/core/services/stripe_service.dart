@@ -1,8 +1,9 @@
 import 'dart:async';
 
-import 'package:flutter/foundation.dart';
-
+import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_stripe/flutter_stripe.dart';
+import 'package:tabashir/core/utils/app_logger.dart';
 
 // import '../constants/stripe_constants.dart';
 
@@ -13,18 +14,28 @@ class StripeService {
     _initializeStripe();
   }
 
-  /// Initialize Stripe with publishable key
+  /// Initialize Stripe with publishable key from environment
   Future<void> _initializeStripe() async {
     try {
-      // Set publishable key if available, otherwise will be set dynamically via setPublishableKey
-      // Stripe.publishableKey = StripeConstants.publishableKey;
+      final publishableKey = dotenv.env['STRIPE_PUBLISHABLE_KEY'];
+      if (publishableKey == null || publishableKey.isEmpty) {
+        AppLogger.warning(
+          'Stripe publish key not found in environment variables',
+          tag: 'Service',
+        );
+        return;
+      }
+
+      Stripe.publishableKey = publishableKey;
 
       // Optional: Set merchant identifier for Apple Pay
       if (defaultTargetPlatform == TargetPlatform.iOS) {
         await Stripe.instance.applySettings();
       }
+      
+      AppLogger.info('Stripe initialized successfully', tag: 'Service');
     } catch (e) {
-      debugPrint('Error initializing Stripe: $e');
+      AppLogger.error('Error initializing Stripe: $e', tag: 'Service');
       rethrow;
     }
   }
@@ -65,7 +76,7 @@ class StripeService {
         paymentSheetParameters: parameters,
       );
     } catch (e) {
-      debugPrint('Error initializing payment sheet: $e');
+      AppLogger.debug('Error initializing payment sheet: $e', tag: 'Service');
       rethrow;
     }
   }
@@ -151,7 +162,7 @@ class StripeService {
         params: params,
       );
     } catch (e) {
-      debugPrint('Error creating payment method: $e');
+      AppLogger.debug('Error creating payment method: $e', tag: 'Service');
       rethrow;
     }
   }
@@ -161,7 +172,7 @@ class StripeService {
     try {
       return await Stripe.instance.isPlatformPaySupported();
     } catch (e) {
-      debugPrint('Error checking Platform Pay availability: $e');
+      AppLogger.debug('Error checking Platform Pay availability: $e', tag: 'Service');
       return false;
     }
   }
@@ -247,7 +258,7 @@ class StripeService {
     try {
       Stripe.instance.resetPaymentSheetCustomer();
     } catch (e) {
-      debugPrint('Error resetting payment sheet: $e');
+      AppLogger.debug('Error resetting payment sheet: $e', tag: 'Service');
     }
   }
 

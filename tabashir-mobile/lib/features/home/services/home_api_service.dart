@@ -5,6 +5,7 @@ import 'package:tabashir/core/network/models/job_details_response.dart';
 import 'package:tabashir/core/network/services/job/tabashir_api_service.dart';
 import 'package:tabashir/core/network/services/user/user_api_service.dart';
 import 'package:tabashir/core/services/local_storage_service.dart';
+import 'package:tabashir/core/utils/app_logger.dart';
 
 /// Service for fetching home dashboard data
 @injectable
@@ -28,7 +29,7 @@ class HomeApiService {
     int featuredJobsLimit = 3,
     String? email,
   }) async {
-    print('[HOME_API_SERVICE] Fetching home dashboard data for email: $email');
+    AppLogger.debug('[HOME_API_SERVICE] Fetching home dashboard data for email: $email', tag: 'Home');
 
     try {
       // Fetch data from the new dashboard API endpoint
@@ -38,7 +39,7 @@ class HomeApiService {
 
       final responseData = response.data as Map<String, dynamic>;
 
-      print('[HOME_API_SERVICE] Fetched dashboard data: $responseData');
+      AppLogger.debug('[HOME_API_SERVICE] Fetched dashboard data: $responseData', tag: 'Home');
 
       // Extract stats and metrics from response
       final metrics = responseData['metrics'] as Map<String, dynamic>? ?? {};
@@ -77,16 +78,12 @@ class HomeApiService {
         finalFeaturedJobs = allJobs.take(featuredJobsLimit).toList();
       }
 
-      print(
-        '[HOME_API_SERVICE] Fetched ${finalFeaturedJobs.length} featured jobs',
-      );
+      AppLogger.debug('[HOME_API_SERVICE] Fetched ${finalFeaturedJobs.length} featured jobs', tag: 'Home');
 
       // Format match distribution as "inReview | interviews | offers"
       final matchDistribution = '$inReview | $interviews | $offers';
 
-      print(
-        '[HOME_API_SERVICE] Statistics - Matches: $totalMatches, Salary: $avgMarketSalary, In Review: $inReview, Interviews: $interviews, Offers: $offers',
-      );
+      AppLogger.debug('[HOME_API_SERVICE] Statistics - Matches: $totalMatches, Salary: $avgMarketSalary, In Review: $inReview, Interviews: $interviews, Offers: $offers', tag: 'Home');
 
       return HomeDashboardResponse(
         featuredJobs: finalFeaturedJobs,
@@ -103,24 +100,24 @@ class HomeApiService {
         applicationSuccessRate: applicationSuccessRate,
       );
     } catch (e) {
-      print('[HOME_API_SERVICE] Error: $e');
+      AppLogger.error('[HOME_API_SERVICE] Error: $e', tag: 'Home', error: e);
       rethrow;
     }
   }
 
   /// Get enhanced job recommendations
   Future<Map<String, dynamic>> getEnhancedRecommendations() async {
-    print('[HOME_API_SERVICE] Fetching enhanced recommendations');
+    AppLogger.debug('[HOME_API_SERVICE] Fetching enhanced recommendations', tag: 'Home');
 
     try {
       final response = await _authDioClient.dio.get(
         '$_homeBaseUrl/recommendations',
       );
 
-      print('[HOME_API_SERVICE] Fetched recommendations: ${response.data}');
+      AppLogger.debug('[HOME_API_SERVICE] Fetched recommendations: ${response.data}', tag: 'Home');
       return response.data as Map<String, dynamic>;
     } catch (e) {
-      print('[HOME_API_SERVICE] Error fetching recommendations: $e');
+      AppLogger.error('[HOME_API_SERVICE] Error fetching recommendations: $e', tag: 'Home', error: e);
       rethrow;
     }
   }

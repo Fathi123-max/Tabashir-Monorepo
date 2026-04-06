@@ -9,6 +9,7 @@ import 'package:tabashir/features/home/presentation/cubit/home_cubit.dart';
 import 'package:tabashir/features/home/presentation/cubit/home_state.dart';
 import 'package:tabashir/features/home/presentation/screens/all_matched_jobs_screen.dart';
 import 'package:tabashir/features/jobs/presentation/widgets/job_card.dart';
+import 'package:tabashir/core/utils/app_logger.dart';
 
 /// Displays a grid of AI-matched job cards using standard JobCard component
 class HomeMatchedJobsWidget extends StatelessWidget {
@@ -22,12 +23,10 @@ class HomeMatchedJobsWidget extends StatelessWidget {
       builder: (context, state) {
         final matchedJobs = state.matchedJobsList;
 
-        print('[HOME_MATCHED_WIDGET] Building widget');
-        print(
-          '[HOME_MATCHED_WIDGET] Matched jobs count from state: ${matchedJobs.length}',
-        );
+        AppLogger.debug('[HOME_MATCHED_WIDGET] Building widget', tag: 'Home');
+        AppLogger.debug('[HOME_MATCHED_WIDGET] Matched jobs count from state: ${matchedJobs.length}', tag: 'Home');
         if (matchedJobs.isNotEmpty) {
-          print('[HOME_MATCHED_WIDGET] First job: ${matchedJobs.first.title}');
+          AppLogger.debug('[HOME_MATCHED_WIDGET] First job: ${matchedJobs.first.title}', tag: 'Home');
         }
 
         return Column(
@@ -81,9 +80,7 @@ class HomeMatchedJobsWidget extends StatelessWidget {
                           pathParameters: {'jobId': job.id},
                         );
                       } else {
-                        print(
-                          '[HOME_MATCHED_WIDGET] Job ID is null or empty for job: ${job.title}',
-                        );
+                        AppLogger.debug('[HOME_MATCHED_WIDGET] Job ID is null or empty for job: ${job.title}', tag: 'Home');
                       }
                     },
                     child: JobCard(

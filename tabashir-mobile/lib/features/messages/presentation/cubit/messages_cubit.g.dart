@@ -22,6 +22,11 @@ _MessagesState _$MessagesStateFromJson(Map<String, dynamic> json) =>
       isLoading: json['isLoading'] as bool? ?? false,
       hasError: json['hasError'] as bool? ?? false,
       errorMessage: json['errorMessage'] as String? ?? '',
+      blockedUsers:
+          (json['blockedUsers'] as List<dynamic>?)
+              ?.map((e) => e as String)
+              .toList() ??
+          const [],
     );
 
 Map<String, dynamic> _$MessagesStateToJson(_MessagesState instance) =>
@@ -32,6 +37,7 @@ Map<String, dynamic> _$MessagesStateToJson(_MessagesState instance) =>
       'isLoading': instance.isLoading,
       'hasError': instance.hasError,
       'errorMessage': instance.errorMessage,
+      'blockedUsers': instance.blockedUsers,
     };
 
 const _$MessagesStatusEnumMap = {

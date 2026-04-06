@@ -10,6 +10,7 @@ import 'package:tabashir/core/network/api_client.dart';
 import 'package:tabashir/core/network/models/auth/login_request.dart';
 import 'package:tabashir/core/network/models/auth/register_request.dart';
 import 'package:tabashir/core/error/dio_error_mapper.dart';
+import 'package:tabashir/core/utils/app_logger.dart';
 
 void main() async {
   // Get the API client from dependency injection
@@ -38,15 +39,15 @@ Future<void> loginExample(ApiClient apiClient) async {
     // Check response
     final authResponse = response.data;
     if (authResponse.success ?? true) {
-      print('Login successful!');
-      print('Token: ${authResponse.token}');
-      print('User: ${authResponse.data?.name}');
+      AppLogger.info('Login successful!', tag: 'AuthExample');
+      AppLogger.info('Token: ${authResponse.token}', tag: 'AuthExample');
+      AppLogger.info('User: ${authResponse.data?.name}', tag: 'AuthExample');
     } else {
-      print('Login failed: ${authResponse.message}');
+      AppLogger.warning('Login failed: ${authResponse.message}', tag: 'AuthExample');
     }
   } on DioException catch (error) {
     final errorMessage = DioErrorMapper.mapDioError(error);
-    print('Login error: $errorMessage');
+    AppLogger.error('Login error: $errorMessage', tag: 'AuthExample');
 
     // Log error to Crashlytics
     await DioErrorMapper.reportError(error);
@@ -71,15 +72,15 @@ Future<void> registerExample(ApiClient apiClient) async {
     // Check response
     final authResponse = response.data;
     if (authResponse.success ?? true) {
-      print('Registration successful!');
-      print('User: ${authResponse.data?.name}');
-      print('Email: ${authResponse.data?.email}');
+      AppLogger.info('Registration successful!', tag: 'AuthExample');
+      AppLogger.info('User: ${authResponse.data?.name}', tag: 'AuthExample');
+      AppLogger.info('Email: ${authResponse.data?.email}', tag: 'AuthExample');
     } else {
-      print('Registration failed: ${authResponse.message}');
+      AppLogger.warning('Registration failed: ${authResponse.message}', tag: 'AuthExample');
     }
   } on DioException catch (error) {
     final errorMessage = DioErrorMapper.mapDioError(error);
-    print('Registration error: $errorMessage');
+    AppLogger.error('Registration error: $errorMessage', tag: 'AuthExample');
 
     // Log error to Crashlytics
     await DioErrorMapper.reportError(error);

@@ -172,12 +172,37 @@ class MessagesView extends StatelessWidget {
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
                   ),
-                  trailing: Text(
-                    _formatDate(message.createdAt),
-                    style: const TextStyle(
-                      fontSize: 12,
-                      color: Colors.grey,
-                    ),
+                  trailing: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        _formatDate(message.createdAt),
+                        style: const TextStyle(
+                          fontSize: 12,
+                          color: Colors.grey,
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      // Report button
+                      IconButton(
+                        icon: const Icon(Icons.flag, size: 20),
+                        color: Colors.orange,
+                        onPressed: () => _showReportDialog(
+                          context,
+                          reportedUserId: message.senderId ?? '',
+                          messageId: message.id,
+                        ),
+                      ),
+                      // Block button
+                      IconButton(
+                        icon: const Icon(Icons.block, size: 20),
+                        color: Colors.red,
+                        onPressed: () => _showBlockDialog(
+                          context,
+                          blockedUserId: message.senderId ?? '',
+                        ),
+                      ),
+                    ],
                   ),
                   onTap: () {
                     if (!message.isRead) {
@@ -229,6 +254,103 @@ class MessagesView extends StatelessWidget {
     } else {
       return 'Just now';
     }
+  }
+
+  void _showReportDialog(
+    BuildContext context, {
+    required String reportedUserId,
+    String? messageId,
+  }) {
+    final reasonController = TextEditingController();
+    
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Report User'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Text(
+              'Please provide a reason for reporting this user:',
+              style: TextStyle(fontSize: 14),
+            ),
+            const SizedBox(height: 16),
+            TextField(
+              controller: reasonController,
+              maxLines: 3,
+              decoration: const InputDecoration(
+                border: OutlineInputBorder(),
+                hintText: 'Reason for report...',
+              ),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Cancel'),
+          ),
+          FilledButton(
+            onPressed: () {
+              if (reasonController.text.trim().isNotEmpty) {
+                context.read<MessagesCubit>().reportUser(
+                  reportedUserId: reportedUserId,
+                  reason: reasonController.text.trim(),
+                  messageId: messageId,
+                );
+                Navigator.pop(context);
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text('User reported successfully'),
+                    backgroundColor: Colors.green,
+                  ),
+                );
+              }
+            },
+            child: const Text('Report'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showBlockDialog(
+    BuildContext context, {
+    required String blockedUserId,
+  }) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Block User'),
+        content: const Text(
+          'Are you sure you want to block this user? You will no longer receive messages from them.',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Cancel'),
+          ),
+          FilledButton(
+            style: FilledButton.styleFrom(
+              backgroundColor: Colors.red,
+            ),
+            onPressed: () {
+              context.read<MessagesCubit>().blockUser(
+                blockedUserId: blockedUserId,
+              );
+              Navigator.pop(context);
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  content: Text('User blocked successfully'),
+                  backgroundColor: Colors.green,
+                ),
+              );
+            },
+            child: const Text('Block'),
+          ),
+        ],
+      ),
+    );
   }
 }
 

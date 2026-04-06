@@ -9,6 +9,7 @@ import 'package:tabashir/core/services/isar_service.dart';
 import 'package:tabashir/features/jobs/presentation/cubit/jobs_cubit.dart';
 import 'package:tabashir/features/jobs/services/job_details_service.dart';
 import 'package:tabashir/features/profile/presentation/cubit/profile_cubit.dart';
+import 'package:tabashir/core/utils/app_logger.dart';
 
 part 'job_details_state.dart';
 part 'job_details_cubit.freezed.dart';
@@ -147,7 +148,7 @@ class JobDetailsCubit extends Cubit<JobDetailsState> {
                     profile.userType?.toUpperCase() == 'PRO';
 
       if (!isPro) {
-        print('[JOB_DETAILS_CUBIT] User is not Pro. Subscription plan: $subscriptionPlan');
+        AppLogger.debug('[JOB_DETAILS_CUBIT] User is not Pro. Subscription plan: $subscriptionPlan', tag: 'Jobs');
         return false;
       }
 
@@ -179,10 +180,10 @@ class JobDetailsCubit extends Cubit<JobDetailsState> {
         );
       }
 
-      print('[JOB_DETAILS_CUBIT] Successfully applied to job $jobId');
+      AppLogger.debug('[JOB_DETAILS_CUBIT] Successfully applied to job $jobId', tag: 'Jobs');
       return response.success;
     } catch (e) {
-      print('[JOB_DETAILS_CUBIT] Error applying to job: $e');
+      AppLogger.error('[JOB_DETAILS_CUBIT] Error applying to job: $e', tag: 'Jobs', error: e);
       emit(JobDetailsState.error('Failed to apply: ${e.toString()}'));
       return false;
     }

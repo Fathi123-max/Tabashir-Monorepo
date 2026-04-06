@@ -14,6 +14,7 @@ import 'package:tabashir/features/jobs/presentation/widgets/saved_jobs_controls.
 import 'package:tabashir/features/jobs/presentation/widgets/saved_jobs_empty_state.dart';
 import 'package:tabashir/features/jobs/presentation/widgets/saved_jobs_header.dart';
 import 'package:tabashir/features/jobs/presentation/widgets/saved_jobs_search_bar.dart';
+import 'package:tabashir/core/utils/app_logger.dart';
 
 class SavedJobsScreen extends StatelessWidget {
   const SavedJobsScreen({super.key});
@@ -43,7 +44,7 @@ class SavedJobsScreen extends StatelessWidget {
         listenWhen: (previous, current) =>
             previous is! JobsStateLoaded && current is JobsStateLoaded,
         listener: (context, state) {
-          print('[SAVED_JOBS] JobsCubit loaded, initializing saved jobs...');
+          AppLogger.debug('[SAVED_JOBS] JobsCubit loaded, initializing saved jobs...', tag: 'Jobs');
           // Get JobsCubit from the widget tree to ensure we have the correct instance
           final jobsCubit = context.read<JobsCubit>();
           savedJobsCubit.initializeSavedJobs(jobsCubit);

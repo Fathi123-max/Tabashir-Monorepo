@@ -1,5 +1,6 @@
 import 'package:injectable/injectable.dart';
 import 'package:onesignal_flutter/onesignal_flutter.dart';
+import 'package:tabashir/core/utils/app_logger.dart';
 
 /// Base interface for OneSignal notification service
 abstract class OneSignalNotificationServiceBase {
@@ -42,7 +43,7 @@ class OneSignalNotificationService implements OneSignalNotificationServiceBase {
     // Initialize OneSignal with app ID (returns void)
     OneSignal.initialize(appId);
 
-    print('OneSignal: Initialized successfully');
+    AppLogger.debug('OneSignal: Initialized successfully', tag: 'Service');
   }
 
   /// Setup notification event listeners
@@ -50,9 +51,7 @@ class OneSignalNotificationService implements OneSignalNotificationServiceBase {
     // Foreground notification display listener
     OneSignal.Notifications.addForegroundWillDisplayListener(
       (event) {
-        print(
-          'OneSignal: Notification will show in foreground: ${event.notification.title}',
-        );
+        AppLogger.debug('OneSignal: Notification will show in foreground: ${event.notification.title}', tag: 'Service');
         // Prevent default to handle manually if needed
         // event.preventDefault();
         // Display the notification
@@ -63,10 +62,8 @@ class OneSignalNotificationService implements OneSignalNotificationServiceBase {
     // Notification click listener
     OneSignal.Notifications.addClickListener(
       (event) {
-        print('OneSignal: Notification opened: ${event.notification.title}');
-        print(
-          'OneSignal: Notification data: ${event.notification.additionalData}',
-        );
+        AppLogger.debug('OneSignal: Notification opened: ${event.notification.title}', tag: 'Service');
+        AppLogger.debug('OneSignal: Notification data: ${event.notification.additionalData}', tag: 'Service');
         _handleNotificationTap(event.notification.additionalData);
       },
     );
@@ -74,15 +71,15 @@ class OneSignalNotificationService implements OneSignalNotificationServiceBase {
     // Permission observer
     OneSignal.Notifications.addPermissionObserver(
       (state) {
-        print('OneSignal: Permission state changed: $state');
+        AppLogger.debug('OneSignal: Permission state changed: $state', tag: 'Service');
       },
     );
 
     // Push subscription observer
     OneSignal.User.pushSubscription.addObserver(
       (state) {
-        print('OneSignal: Push subscription changed');
-        print('OneSignal: Current opted in: ${state.current.optedIn}');
+        AppLogger.debug('OneSignal: Push subscription changed', tag: 'Service');
+        AppLogger.debug('OneSignal: Current opted in: ${state.current.optedIn}', tag: 'Service');
       },
     );
   }
@@ -94,7 +91,7 @@ class OneSignalNotificationService implements OneSignalNotificationServiceBase {
     // Handle different notification types based on data
     if (additionalData.containsKey('screen')) {
       final screen = additionalData['screen'];
-      print('OneSignal: Should navigate to screen: $screen');
+      AppLogger.debug('OneSignal: Should navigate to screen: $screen', tag: 'Service');
       // You can add navigation logic here
     }
   }
@@ -103,7 +100,7 @@ class OneSignalNotificationService implements OneSignalNotificationServiceBase {
   @override
   Future<String?> getPlayerId() async {
     final userId = await OneSignal.User.getOnesignalId();
-    print('OneSignal: Player ID: $userId');
+    AppLogger.debug('OneSignal: Player ID: $userId', tag: 'Service');
     return userId;
   }
 
@@ -111,7 +108,7 @@ class OneSignalNotificationService implements OneSignalNotificationServiceBase {
   @override
   Future<String?> getPushToken() async {
     final token = OneSignal.User.pushSubscription.token;
-    print('OneSignal: Push token: $token');
+    AppLogger.debug('OneSignal: Push token: $token', tag: 'Service');
     return token;
   }
 
@@ -119,35 +116,35 @@ class OneSignalNotificationService implements OneSignalNotificationServiceBase {
   @override
   Future<void> sendTag(String key, String value) async {
     await OneSignal.User.addTagWithKey(key, value);
-    print('OneSignal: Tag sent - $key: $value');
+    AppLogger.debug('OneSignal: Tag sent - $key: $value', tag: 'Service');
   }
 
   /// Remove tag from OneSignal
   @override
   Future<void> removeTag(String key) async {
     await OneSignal.User.removeTag(key);
-    print('OneSignal: Tag removed - $key');
+    AppLogger.debug('OneSignal: Tag removed - $key', tag: 'Service');
   }
 
   /// Set external user ID
   @override
   Future<void> setExternalUserId(String userId) async {
     await OneSignal.login(userId);
-    print('OneSignal: External user ID set - $userId');
+    AppLogger.debug('OneSignal: External user ID set - $userId', tag: 'Service');
   }
 
   /// Remove external user ID
   @override
   Future<void> removeExternalUserId() async {
     await OneSignal.logout();
-    print('OneSignal: External user ID removed');
+    AppLogger.debug('OneSignal: External user ID removed', tag: 'Service');
   }
 
   /// Request notification permission
   @override
   Future<bool> requestPermission() async {
     final granted = await OneSignal.Notifications.requestPermission(true);
-    print('OneSignal: Permission request result: $granted');
+    AppLogger.debug('OneSignal: Permission request result: $granted', tag: 'Service');
     return granted;
   }
 
@@ -155,7 +152,7 @@ class OneSignalNotificationService implements OneSignalNotificationServiceBase {
   @override
   Future<bool> canRequestPermission() async {
     final canRequest = await OneSignal.Notifications.canRequest();
-    print('OneSignal: Can request permission: $canRequest');
+    AppLogger.debug('OneSignal: Can request permission: $canRequest', tag: 'Service');
     return canRequest;
   }
 
@@ -163,21 +160,21 @@ class OneSignalNotificationService implements OneSignalNotificationServiceBase {
   @override
   Future<void> optIn() async {
     await OneSignal.User.pushSubscription.optIn();
-    print('OneSignal: Opted in to push notifications');
+    AppLogger.debug('OneSignal: Opted in to push notifications', tag: 'Service');
   }
 
   /// Opt out from push notifications
   @override
   Future<void> optOut() async {
     await OneSignal.User.pushSubscription.optOut();
-    print('OneSignal: Opted out from push notifications');
+    AppLogger.debug('OneSignal: Opted out from push notifications', tag: 'Service');
   }
 
   /// Check if opted in
   @override
   Future<bool> isOptedIn() async {
     final optedIn = OneSignal.User.pushSubscription.optedIn ?? false;
-    print('OneSignal: Is opted in: $optedIn');
+    AppLogger.debug('OneSignal: Is opted in: $optedIn', tag: 'Service');
     return optedIn;
   }
 
@@ -185,7 +182,7 @@ class OneSignalNotificationService implements OneSignalNotificationServiceBase {
   @override
   Future<bool> isLocationShared() async {
     final isShared = await OneSignal.Location.isShared();
-    print('OneSignal: Location is shared: $isShared');
+    AppLogger.debug('OneSignal: Location is shared: $isShared', tag: 'Service');
     return isShared;
   }
 
@@ -193,13 +190,13 @@ class OneSignalNotificationService implements OneSignalNotificationServiceBase {
   @override
   Future<void> setLocationShared(bool shared) async {
     await OneSignal.Location.setShared(shared);
-    print('OneSignal: Location sharing set to: $shared');
+    AppLogger.debug('OneSignal: Location sharing set to: $shared', tag: 'Service');
   }
 
   /// Request location permission
   @override
   Future<void> requestLocationPermission() async {
     await OneSignal.Location.requestPermission();
-    print('OneSignal: Location permission requested');
+    AppLogger.debug('OneSignal: Location permission requested', tag: 'Service');
   }
 }

@@ -2,6 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 import '../../services/auth_session_service.dart';
+import '../../utils/app_logger.dart';
 
 /// Authentication Dio client with API token
 /// Automatically adds user authentication token to requests
@@ -14,14 +15,15 @@ class AuthDioClient {
         onRequest: (options, handler) async {
           // Add the user's access token to the request headers
           final token = await AuthSessionService.instance.accessToken;
-          print('[AUTH_DIO] Request to: ${options.uri}');
-          print('[AUTH_DIO] Token available: ${token != null}');
+          AppLogger.debug('Request to: ${options.uri}', tag: 'AuthDio');
+          AppLogger.debug('Token available: ${token != null}', tag: 'AuthDio');
           if (token != null) {
             options.headers['Authorization'] = 'Bearer $token';
-            print('[AUTH_DIO] Added Authorization header');
+            AppLogger.debug('Added Authorization header', tag: 'AuthDio');
           } else {
-            print(
-              '[AUTH_DIO] ⚠️ No token available - request will be unauthenticated',
+            AppLogger.warning(
+              'No token available - request will be unauthenticated',
+              tag: 'AuthDio',
             );
           }
           _logRequest(
@@ -37,17 +39,18 @@ class AuthDioClient {
         },
         onError: (error, handler) async {
           final requestPath = error.requestOptions.path;
-          print(
-            '[AUTH_DIO] ❌ Request to $requestPath failed: ${error.response?.statusCode}',
+          AppLogger.error(
+            'Request to $requestPath failed: ${error.response?.statusCode}',
+            tag: 'AuthDio',
           );
 
           if (error.response?.data != null) {
-            print('[AUTH_DIO] Error response: ${error.response?.data}');
+            AppLogger.debug('Error response: ${error.response?.data}', tag: 'AuthDio');
           }
 
           // Handle 401 Unauthorized errors
           if (error.response?.statusCode == 401) {
-            print('[AUTH_DIO] 401 Unauthorized for path: $requestPath');
+            AppLogger.debug('401 Unauthorized for path: $requestPath', tag: 'AuthDio');
 
             // Check if this is an auth endpoint where 401 is expected or fatal
             final authEndpoints = [
@@ -63,26 +66,27 @@ class AuthDioClient {
 
             // If it's a refresh endpoint itself that failed with 401, it's a fatal session expiry
             if (requestPath.contains('/auth/refresh')) {
-              print('[AUTH_DIO] 401 on refresh endpoint - SESSION EXPIRED');
+              AppLogger.warning('401 on refresh endpoint - SESSION EXPIRED', tag: 'AuthDio');
               await AuthSessionService.instance.setLoggedOut();
               return handler.next(error);
             }
 
             // If it's login/register, don't logout, just pass the error
             if (isAuthEndpoint) {
-              print('[AUTH_DIO] 401 on login/register - No action needed');
+              AppLogger.debug('401 on login/register - No action needed', tag: 'AuthDio');
               return handler.next(error);
             }
 
             // For non-auth endpoints, try to refresh the token
-            print('[AUTH_DIO] Attempting token refresh...');
+            AppLogger.debug('Attempting token refresh...', tag: 'AuthDio');
             try {
               final newToken = await AuthSessionService.instance
                   .refreshAccessToken();
 
               if (newToken != null) {
-                print(
-                  '[AUTH_DIO] Token refreshed successfully, retrying original request...',
+                AppLogger.debug(
+                  'Token refreshed successfully, retrying original request...',
+                  tag: 'AuthDio',
                 );
 
                 // Clone the original request with the new token
@@ -94,21 +98,24 @@ class AuthDioClient {
                   final response = await _dio.fetch(opts);
                   return handler.resolve(response);
                 } on DioException catch (retryError) {
-                  print(
-                    '[AUTH_DIO] ❌ Retry failed with error: ${retryError.message}',
+                  AppLogger.error(
+                    'Retry failed with error: ${retryError.message}',
+                    tag: 'AuthDio',
                   );
                   return handler.next(retryError);
                 }
               } else {
-                print(
-                  '[AUTH_DIO] ❌ Token refresh returned null (Unauthorized) - SESSION EXPIRED',
+                AppLogger.warning(
+                  'Token refresh returned null (Unauthorized) - SESSION EXPIRED',
+                  tag: 'AuthDio',
                 );
                 await AuthSessionService.instance.setLoggedOut();
               }
             } catch (e) {
-              print('[AUTH_DIO] ❌ Token refresh failed with exception: $e');
-              print(
-                '[AUTH_DIO] ⚠️ Network or server error - KEEPING SESSION ALIVE',
+              AppLogger.error('Token refresh failed with exception: $e', tag: 'AuthDio');
+              AppLogger.warning(
+                'Network or server error - KEEPING SESSION ALIVE',
+                tag: 'AuthDio',
               );
               // Don't call setLoggedOut() here for network errors
               // This allows the user to retry later when they have connection
@@ -144,18 +151,11 @@ class AuthDioClient {
   }
 
   void _logRequest(String method, String url, Map<String, dynamic>? headers) {
-    print('\n========== [AUTH_DIO] API REQUEST ==========');
-    print('Method: $method');
-    print('URL: $url');
-    print('Headers: $headers');
-    print('===============================================\n');
+    AppLogger.debug('\nAPI REQUEST - Method: $method, URL: $url, Headers: $headers', tag: 'AuthDio');
   }
 
   void _logResponse(int? statusCode, dynamic data) {
-    print('\n========== [AUTH_DIO] API RESPONSE ==========');
-    print('Status: $statusCode');
-    print('Data: $data');
-    print('===============================================\n');
+    AppLogger.debug('\nAPI RESPONSE - Status: $statusCode, Data: $data', tag: 'AuthDio');
   }
 
   Dio get dio => _dio;

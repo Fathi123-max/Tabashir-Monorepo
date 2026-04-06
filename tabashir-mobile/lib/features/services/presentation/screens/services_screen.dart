@@ -2,23 +2,20 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:go_router/go_router.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import 'package:tabashir/core/di/injection.dart';
 import 'package:tabashir/core/theme/app_theme.dart';
-import 'package:tabashir/core/network/models/payment/payment_intent_request.dart';
-import 'package:tabashir/core/network/models/payment/payment_intent_response.dart';
-import 'package:tabashir/core/models/stripe/stripe_enums.dart';
 import 'package:tabashir/features/home/presentation/cubit/home_cubit.dart';
 import 'package:tabashir/features/payments/presentation/cubit/payment_cubit.dart';
+import 'package:tabashir/features/payments/domain/repositories/payment_platform.dart';
 import 'package:tabashir/features/payments/presentation/screens/payment_success_screen.dart';
 import 'package:tabashir/features/profile/presentation/cubit/profile_cubit.dart';
 
 import '../cubit/services_cubit.dart';
-import '../widgets/info_banner.dart';
 import '../widgets/service_card.dart';
 import '../widgets/trust_indicators.dart';
+import 'package:tabashir/core/utils/app_logger.dart';
 
 /// Services screen that displays AI career services including:
 /// - AI Resume Optimization
@@ -75,35 +72,32 @@ class _ServicesScreenState extends State<ServicesScreen> {
     });
 
     // Set callback for successful payment (fires even if widget is disposed)
-    paymentCubit.onPaymentSuccess = (paymentIntent) async {
+    paymentCubit.onPaymentSuccess = (result) async {
+      String? txnId;
+      result.when(
+        success: (id) => txnId = id,
+        cancelled: () => txnId = null,
+        failed: (_) => txnId = null,
+      );
       if (mounted) {
-        _navigateToSuccessScreen(paymentIntent);
+        _navigateToSuccessScreen(txnId);
       }
     };
 
-    // Create payment intent
-    final request = PaymentIntentRequest(
-      amount: amount,
-      currency: 'AED',
+    // Process payment
+    await paymentCubit.processPayment(
       serviceId: serviceId,
-      serviceTitle: serviceTitle,
+      amount: amount,
     );
-
-    await paymentCubit.createPaymentIntent(request: request);
     // Note: Navigation to success screen is handled by onPaymentSuccess callback
     // Do NOT add navigation logic here
   }
 
-  void _navigateToSuccessScreen(PaymentIntentResponse? paymentIntent) {
+  void _navigateToSuccessScreen(String? transactionId) {
     // Wait for Stripe payment sheet to fully dismiss before navigating
     Future.delayed(const Duration(milliseconds: 500), () {
       if (mounted) {
-        final transactionId = paymentIntent?.data?.paymentIntentId;
-
-        print(
-          '[ServicesScreen] Navigating to PaymentSuccessScreen: '
-          'service=$_pendingServiceTitle, amount=$_pendingAmount',
-        );
+        AppLogger.debug('[ServicesScreen] Navigating to PaymentSuccessScreen: ' 'service=$_pendingServiceTitle, amount=$_pendingAmount', tag: 'Services');
 
         Navigator.of(context).pushAndRemoveUntil(
           MaterialPageRoute(
@@ -114,21 +108,19 @@ class _ServicesScreenState extends State<ServicesScreen> {
               onOkPressed: () async {
                 // Refresh profile and home data before navigating home
                 try {
-                  print('[ServicesScreen] onOkPressed: refreshing profile...');
+                  AppLogger.debug('[ServicesScreen] onOkPressed: refreshing profile...', tag: 'Services');
                   await getIt<ProfileCubit>().loadProfileData(force: true);
                   final homeCubit = getIt<HomeCubit>();
                   final email =
                       getIt<ProfileCubit>().state.profile?.email ?? '';
-                  print('[ServicesScreen] onOkPressed: email=$email');
+                  AppLogger.debug('[ServicesScreen] onOkPressed: email=$email', tag: 'Services');
                   if (email.isNotEmpty) {
-                    print('[ServicesScreen] onOkPressed: refreshing home...');
+                    AppLogger.debug('[ServicesScreen] onOkPressed: refreshing home...', tag: 'Services');
                     await homeCubit.loadAiEnhancedHomeData(email: email);
                   }
-                  print('[ServicesScreen] onOkPressed: refresh complete');
+                  AppLogger.debug('[ServicesScreen] onOkPressed: refresh complete', tag: 'Services');
                 } catch (e) {
-                  print(
-                    '[ServicesScreen] Error refreshing data on OK: $e',
-                  );
+                  AppLogger.error('[ServicesScreen] Error refreshing data on OK: $e', tag: 'Services', error: e);
                 }
               },
             ),

@@ -15,6 +15,7 @@ import 'package:tabashir/core/di/injection.dart';
 import 'package:tabashir/features/home/presentation/cubit/home_cubit.dart';
 
 import 'ai_job_apply_state.dart';
+import 'package:tabashir/core/utils/app_logger.dart';
 
 /// Unified cubit for AI job application flow
 /// Combines all functionality from AiApplyCubit, TargetRolesCubit,
@@ -163,15 +164,11 @@ class AiJobApplyCubit extends Cubit<AiJobApplyState> {
       if (selectedResume.originalUrl != null &&
           selectedResume.originalUrl!.isNotEmpty) {
         // Cloud resume - download from URL
-        print(
-          '🌐 [AI_JOB_APPLY] Downloading cloud resume from: ${selectedResume.originalUrl}',
-        );
+        AppLogger.debug('🌐 [AI_JOB_APPLY] Downloading cloud resume from: ${selectedResume.originalUrl}', tag: 'AIApply');
         fileBytes = await _repository.downloadResumeFromCloud(
           resumeUrl: selectedResume.originalUrl!,
         );
-        print(
-          '✅ [AI_JOB_APPLY] Downloaded ${fileBytes.length} bytes from cloud',
-        );
+        AppLogger.debug('✅ [AI_JOB_APPLY] Downloaded ${fileBytes.length} bytes from cloud', tag: 'AIApply');
       } else {
         // Local resume - read from file path
         final file = File(selectedResume.filePath);
@@ -202,9 +199,7 @@ class AiJobApplyCubit extends Cubit<AiJobApplyState> {
         } else {
           fileBytes = await file.readAsBytes();
         }
-        print(
-          '📁 [AI_JOB_APPLY] Read ${fileBytes.length} bytes from local file',
-        );
+        AppLogger.debug('📁 [AI_JOB_APPLY] Read ${fileBytes.length} bytes from local file', tag: 'AIApply');
       }
 
       // 3. Prepare data

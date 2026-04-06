@@ -7,6 +7,7 @@ import 'package:tabashir/core/constants/storage_keys.dart';
 import 'package:tabashir/core/network/models/auth/refresh_token_response.dart';
 import 'package:tabashir/core/network/services/auth/auth_api_service.dart';
 import 'package:tabashir/core/network/_config/api_config.dart';
+import 'package:tabashir/core/utils/app_logger.dart';
 
 /// Service to manage authentication session state
 /// Handles secure token storage and retrieval for authenticated API calls
@@ -50,7 +51,7 @@ class AuthSessionService {
     try {
       return await _secureStorage.read(key: StorageKeys.accessToken);
     } on Exception catch (e) {
-      print('[AUTH_SESSION] ❌ ERROR reading access token: $e');
+      AppLogger.error('ERROR reading access token', tag: 'AuthSession', error: e);
       return null;
     }
   }
@@ -63,7 +64,7 @@ class AuthSessionService {
       final token = await _secureStorage.read(key: StorageKeys.refreshToken);
       return token;
     } on Exception catch (e) {
-      print('[AUTH_SESSION] ❌ ERROR reading refresh token: $e');
+      AppLogger.error('ERROR reading refresh token', tag: 'AuthSession', error: e);
       return null;
     }
   }
@@ -96,13 +97,13 @@ class AuthSessionService {
         value: refreshToken,
       );
     }
-    print('[AUTH_SESSION] ✅ Tokens stored successfully');
+    AppLogger.info('Tokens stored successfully', tag: 'AuthSession');
   }
 
   /// Set user as logged out and clear all auth data
   /// Clears both secure storage (tokens) and SharedPreferences (flags)
   Future<void> setLoggedOut() async {
-    print('[AUTH_SESSION] 🔴 setLoggedOut() - Clearing all auth data');
+    AppLogger.info('setLoggedOut() - Clearing all auth data', tag: 'AuthSession');
     final prefs = await SharedPreferences.getInstance();
     await prefs.setBool(StorageKeys.isLoggedIn, false);
     _authStateController.add(false);
@@ -132,7 +133,7 @@ class AuthSessionService {
   Future<String?> refreshAccessToken() async {
     // If a refresh is already in progress, wait for it
     if (_isRefreshing) {
-      print('[AUTH_SESSION] ⏳ Refresh already in progress, waiting...');
+      AppLogger.debug('Refresh already in progress, waiting...', tag: 'AuthSession');
       return _refreshCompleter?.future;
     }
 
@@ -142,7 +143,7 @@ class AuthSessionService {
     try {
       final currentRefreshToken = await refreshToken;
       if (currentRefreshToken == null) {
-        print('[AUTH_SESSION] ❌ No refresh token available');
+        AppLogger.warning('No refresh token available', tag: 'AuthSession');
         _isRefreshing = false;
         _refreshCompleter?.complete(null);
         return null;
@@ -151,7 +152,7 @@ class AuthSessionService {
       // Create a Dio instance for the refresh request (avoid interceptors)
       final baseUrl = dotenv.env['API_BASE_URL'];
       if (baseUrl == null) {
-        print('[AUTH_SESSION] ❌ API_BASE_URL is not set');
+        AppLogger.error('API_BASE_URL is not set', tag: 'AuthSession');
         _isRefreshing = false;
         final error = Exception('API_BASE_URL is not set');
         _refreshCompleter?.completeError(error);
@@ -169,7 +170,7 @@ class AuthSessionService {
         ),
       );
 
-      print('[AUTH_SESSION] 🔄 Sending refresh request...');
+      AppLogger.debug('Sending refresh request...', tag: 'AuthSession');
       final response = await dio.post(
         '/api/v1/auth/refresh',
         data: {'refreshToken': currentRefreshToken},
@@ -185,14 +186,14 @@ class AuthSessionService {
           key: StorageKeys.accessToken,
           value: newAccessToken,
         );
-        print('[AUTH_SESSION] ✅ Successfully refreshed access token');
+        AppLogger.info('Successfully refreshed access token', tag: 'AuthSession');
 
         _isRefreshing = false;
         _refreshCompleter?.complete(newAccessToken);
         return newAccessToken;
       }
 
-      print('[AUTH_SESSION] ❌ Unexpected status code: ${response.statusCode}');
+      AppLogger.warning('Unexpected status code: ${response.statusCode}', tag: 'AuthSession');
       _isRefreshing = false;
       final error = Exception(
         'Failed to refresh token: Status ${response.statusCode}',
@@ -200,27 +201,29 @@ class AuthSessionService {
       _refreshCompleter?.completeError(error);
       throw error;
     } on DioException catch (e) {
-      print('[AUTH_SESSION] ❌ DioException during refresh: ${e.message}');
+      AppLogger.error('DioException during refresh: ${e.message}', tag: 'AuthSession', error: e);
       _isRefreshing = false;
 
       final statusCode = e.response?.statusCode;
       // 400, 401, 403, 404 all indicate the token is definitively invalid or user doesn't exist
       if (statusCode != null && statusCode >= 400 && statusCode < 500) {
-        print(
-          '[AUTH_SESSION] 🔑 Refresh token invalid, expired, or user not found ($statusCode)',
+        AppLogger.warning(
+          'Refresh token invalid, expired, or user not found ($statusCode)',
+          tag: 'AuthSession',
         );
         _refreshCompleter?.complete(null);
         return null;
       }
 
       // For network errors or 5xx server errors, throw so interceptor doesn't logout
-      print(
-        '[AUTH_SESSION] ⚠️ Network or server error during refresh. Not logging out.',
+      AppLogger.warning(
+        'Network or server error during refresh. Not logging out.',
+        tag: 'AuthSession',
       );
       _refreshCompleter?.completeError(e);
       rethrow;
     } catch (e) {
-      print('[AUTH_SESSION] ❌ Generic error during refresh: $e');
+      AppLogger.error('Generic error during refresh: $e', tag: 'AuthSession', error: e);
       _isRefreshing = false;
       _refreshCompleter?.completeError(e);
       rethrow;

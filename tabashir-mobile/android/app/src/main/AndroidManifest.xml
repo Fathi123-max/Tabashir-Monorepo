@@ -24,7 +24,8 @@
         <meta-data android:name="com.onesignal.AppId" android:value="bf2fbe39-0ab0-41e1-a9cb-1ecefe72474c"/>
 
         <!-- Stripe Publishable Key -->
-        <meta-data android:name="com.stripe.publishable_key" android:value="pk_test_51234567890abcdef..."/>
+        <!-- NOTE: Replace with production key before release -->
+        <meta-data android:name="com.stripe.publishable_key" android:value="${STRIPE_PUBLISHABLE_KEY}"/>
     </application>
     <!-- Required to query activities that can process text, see:
          https://developer.android.com/training/package-visibility and

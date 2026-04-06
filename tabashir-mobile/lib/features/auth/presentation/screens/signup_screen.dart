@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
+import 'package:intl/intl.dart';
 import 'package:tabashir/core/di/injection.dart';
 import 'package:tabashir/core/services/auth_session_service.dart';
 import 'package:tabashir/core/services/google_signin_service.dart';
@@ -76,6 +77,8 @@ class _SignupScreenState extends State<SignupScreen> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
+  final _dobController = TextEditingController();
+  DateTime? _selectedDob;
   bool _agreedToTerms = false;
   bool _obscurePassword = true;
   bool _obscureConfirmPassword = true;
@@ -86,6 +89,7 @@ class _SignupScreenState extends State<SignupScreen> {
     _emailController.dispose();
     _passwordController.dispose();
     _confirmPasswordController.dispose();
+    _dobController.dispose();
     _authCubit.close();
     super.dispose();
   }
@@ -124,10 +128,45 @@ class _SignupScreenState extends State<SignupScreen> {
     return 'Pa$letters$number$special';
   }
 
+  Future<void> _selectDateOfBirth() async {
+    final now = DateTime.now();
+    final picked = await showDatePicker(
+      context: context,
+      initialDate: now.subtract(const Duration(days: 365 * 25)),
+      firstDate: now.subtract(const Duration(days: 365 * 120)),
+      lastDate: now,
+      helpText: 'Select your date of birth'.tr(),
+    );
+
+    if (picked != null) {
+      final age = now.difference(picked).inDays ~/ 365;
+      if (age < 16) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('You must be at least 16 years old to use this app'.tr()),
+              backgroundColor: AppTheme.errorColor,
+            ),
+          );
+        }
+        return;
+      }
+
+      setState(() {
+        _selectedDob = picked;
+        _dobController.text = DateFormat('yyyy-MM-dd').format(picked);
+      });
+    }
+  }
+
   Future<void> _createAccount() async {
     if (!_formKey.currentState!.validate()) return;
     if (!_agreedToTerms) {
       _showMessage('Please agree to the terms and conditions'.tr());
+      return;
+    }
+    if (_selectedDob == null) {
+      _showMessage('Please select your date of birth'.tr());
       return;
     }
 
@@ -283,6 +322,26 @@ class _SignupScreenState extends State<SignupScreen> {
                             }
                             return null;
                           },
+                        ),
+                        SizedBox(height: AppTheme.spacingSm.h),
+                        
+                        // Date of Birth Field
+                        GestureDetector(
+                          onTap: _selectDateOfBirth,
+                          child: AbsorbPointer(
+                            child: SignupTextFieldWidget(
+                              controller: _dobController,
+                              hintText: 'Date of Birth'.tr(),
+                              keyboardType: TextInputType.datetime,
+                              suffixIcon: const Icon(Icons.calendar_today_outlined),
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return 'Please select your date of birth'.tr();
+                                }
+                                return null;
+                              },
+                            ),
+                          ),
                         ),
                         SizedBox(height: AppTheme.spacingSm.h),
                         SignupTextFieldWidget(

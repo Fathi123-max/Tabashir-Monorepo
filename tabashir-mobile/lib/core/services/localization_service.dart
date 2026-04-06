@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tabashir/core/services/ai_job_apply_config_service.dart';
+import 'package:tabashir/core/utils/app_logger.dart';
 
 /// Supported languages for the app
 enum SupportedLanguage {
@@ -27,7 +28,7 @@ class LocalizationService {
       return prefs.getString(_languageKey) ?? SupportedLanguage.english.code;
     } catch (e) {
       if (kDebugMode) {
-        print('[Localization] Error getting language: $e');
+        AppLogger.error('[Localization] Error getting language: $e', tag: 'Service', error: e);
       }
       return SupportedLanguage.english.code;
     }
@@ -39,11 +40,11 @@ class LocalizationService {
       final prefs = await SharedPreferences.getInstance();
       await prefs.setString(_languageKey, language.code);
       if (kDebugMode) {
-        print('[Localization] Language set to: ${language.displayName}');
+        AppLogger.debug('[Localization] Language set to: ${language.displayName}', tag: 'Service');
       }
     } catch (e) {
       if (kDebugMode) {
-        print('[Localization] Error setting language: $e');
+        AppLogger.error('[Localization] Error setting language: $e', tag: 'Service', error: e);
       }
     }
   }

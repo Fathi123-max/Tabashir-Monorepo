@@ -5,6 +5,7 @@ import 'package:tabashir/core/di/injection.dart';
 import 'package:tabashir/core/network/models/auth/auth_response.dart';
 import 'package:tabashir/core/network/models/auth/email_verification_response.dart';
 import 'package:tabashir/core/services/auth_session_service.dart';
+import 'package:tabashir/core/utils/app_logger.dart';
 import 'package:tabashir/features/auth/domain/repositories/auth_repository.dart';
 import 'package:tabashir/features/home/presentation/cubit/app_initialization_cubit.dart';
 
@@ -45,14 +46,16 @@ class AuthCubit extends Cubit<AuthState> {
       final refreshTokenToStore = response.refreshToken;
 
       // Debug logging to verify refresh token is received
-      print('[AUTH_CUBIT] Login response received:');
-      print(
-        '[AUTH_CUBIT] - accessToken: ${tokenToStore != null ? "present (${tokenToStore.length} chars)" : "NULL"}',
+      AppLogger.debug('Login response received:', tag: 'Auth');
+      AppLogger.debug(
+        '- accessToken: ${tokenToStore != null ? "present (${tokenToStore.length} chars)" : "NULL"}',
+        tag: 'Auth',
       );
-      print(
-        '[AUTH_CUBIT] - refreshToken: ${refreshTokenToStore != null ? "present (${refreshTokenToStore.length} chars)" : "NULL"}',
+      AppLogger.debug(
+        '- refreshToken: ${refreshTokenToStore != null ? "present (${refreshTokenToStore.length} chars)" : "NULL"}',
+        tag: 'Auth',
       );
-      print('[AUTH_CUBIT] - user: ${response.user?.email}');
+      AppLogger.debug('- user: ${response.user?.email}', tag: 'Auth');
 
       if (tokenToStore != null) {
         await AuthSessionService.instance.setLoggedIn(
@@ -60,7 +63,7 @@ class AuthCubit extends Cubit<AuthState> {
           refreshToken: refreshTokenToStore,
         );
       } else {
-        print('[AUTH_CUBIT] WARNING: No access token in response!');
+        AppLogger.warning('WARNING: No access token in response!', tag: 'Auth');
       }
 
       // Reset application initialization state on successful login
@@ -128,8 +131,8 @@ class AuthCubit extends Cubit<AuthState> {
       );
 
       // Debug: Print the full response to see the structure
-      print('DEBUG: Register response: $response');
-      print('DEBUG: Token in response.token: ${response.token}');
+      AppLogger.debug('Register response: $response', tag: 'Auth');
+      AppLogger.debug('Token in response.token: ${response.token}', tag: 'Auth');
 
       // Store the token in AuthSessionService
       // API returns token in 'accessToken' field
@@ -137,16 +140,16 @@ class AuthCubit extends Cubit<AuthState> {
       final refreshTokenToStore = response.refreshToken;
 
       if (tokenToStore != null) {
-        print('DEBUG: Storing token: $tokenToStore');
+        AppLogger.debug('Storing token: $tokenToStore', tag: 'Auth');
         await AuthSessionService.instance.setLoggedIn(
           token: tokenToStore,
           refreshToken: refreshTokenToStore,
         );
       } else {
-        print('DEBUG: WARNING - No token found in response!');
+        AppLogger.warning('WARNING - No token found in response!', tag: 'Auth');
         // If no token was returned from registration, try to log the user in
         // to obtain the necessary tokens
-        print('DEBUG: Attempting to login after registration...');
+        AppLogger.debug('Attempting to login after registration...', tag: 'Auth');
         await _attemptLoginAfterRegistration(email, password);
       }
 
@@ -299,18 +302,19 @@ class AuthCubit extends Cubit<AuthState> {
       final refreshTokenToStore = loginResponse.refreshToken;
 
       if (tokenToStore != null) {
-        print(
-          'DEBUG: Successfully obtained token after registration via login: $tokenToStore',
+        AppLogger.debug(
+          'Successfully obtained token after registration via login: $tokenToStore',
+          tag: 'Auth',
         );
         await AuthSessionService.instance.setLoggedIn(
           token: tokenToStore,
           refreshToken: refreshTokenToStore,
         );
       } else {
-        print('DEBUG: WARNING - No token obtained even after login attempt!');
+        AppLogger.warning('WARNING - No token obtained even after login attempt!', tag: 'Auth');
       }
     } catch (e) {
-      print('DEBUG: Login after registration failed: $e');
+      AppLogger.debug('Login after registration failed: $e', tag: 'Auth');
       // Don't throw the error since registration already succeeded
       // The user can try to log in manually if needed
     }

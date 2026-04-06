@@ -53,36 +53,19 @@
 	<string>908457286237-beupfsr9oo6nqbeau81rtgmvpm0f3f73.apps.googleusercontent.com</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
-	<key>NSAppleMusicUsageDescription</key>
-	<string>This app requires access to music library for notification sounds</string>
-	<key>NSBluetoothAlwaysUsageDescription</key>
-	<string>This app requires access to Bluetooth for notification features</string>
-	<key>NSBluetoothPeripheralUsageDescription</key>
-	<string>This app requires access to Bluetooth for notification features</string>
-	<key>NSCalendarsUsageDescription</key>
-	<string>This app requires access to calendars for notification scheduling</string>
 	<key>NSCameraUsageDescription</key>
-	<string>This app requires access to camera for notification features</string>
-	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
-	<string>This app requires access to location for notification features</string>
-	<key>NSLocationAlwaysUsageDescription</key>
-	<string>This app requires access to location for notification features</string>
-	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>This app requires access to location for notification features</string>
-	<key>NSMicrophoneUsageDescription</key>
-	<string>This app requires access to microphone for notification features</string>
-	<key>NSMotionUsageDescription</key>
-	<string>This app requires access to motion for notification features</string>
+	<string>Tabashir needs access to your camera to take profile photos</string>
 	<key>NSPhotoLibraryAddUsageDescription</key>
-	<string>This app requires access to photo library for notification features</string>
+	<string>Tabashir needs access to your photo library to save resume documents</string>
 	<key>NSPhotoLibraryUsageDescription</key>
-	<string>This app requires access to photo library for notification features</string>
-	<key>NSRemindersUsageDescription</key>
-	<string>This app requires access to reminders for notification features</string>
+	<string>Tabashir needs access to your photo library to select profile photos</string>
+	<key>NSUserNotificationsUsageDescription</key>
+	<string>Tabashir needs permission to send you notifications about job matches and application updates</string>
 	<key>OneSignalAppIDKey</key>
 	<string>bf2fbe39-0ab0-41e1-a9cb-1ecefe72474c</string>
-	<key>StripePublishableKey</key>
-	<string>pk_test_51234567890abcdef...</string>
+	<!-- Stripe Publishable Key - Configure in Xcode Build Settings before release -->
+	<!-- <key>StripePublishableKey</key>
+	<string>YOUR_STRIPE_PUBLISHABLE_KEY</string> -->
 	<key>UIApplicationSceneManifest</key>
 	<dict>
 		<key>UIApplicationSupportsMultipleScenes</key>

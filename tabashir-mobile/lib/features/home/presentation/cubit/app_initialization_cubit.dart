@@ -8,6 +8,7 @@ import 'package:tabashir/features/profile/domain/repositories/profile_repository
 import 'package:tabashir/features/profile/presentation/cubit/profile_cubit.dart';
 import 'package:tabashir/features/home/presentation/cubit/home_cubit.dart';
 import 'package:tabashir/features/resume/presentation/cubit/resume_vault_cubit.dart';
+import 'package:tabashir/core/utils/app_logger.dart';
 
 @lazySingleton
 class AppInitializationCubit extends Cubit<AppInitializationState> {
@@ -21,25 +22,25 @@ class AppInitializationCubit extends Cubit<AppInitializationState> {
   /// Call this once after login
   Future<void> initialize() async {
     if (state.isInitialized && state.errorMessage == null) {
-      print('[APP_INIT] Already initialized successfully, skipping');
+      AppLogger.debug('[APP_INIT] Already initialized successfully, skipping', tag: 'Home');
       return;
     }
 
-    print('[APP_INIT] Starting app initialization...');
+    AppLogger.debug('[APP_INIT] Starting app initialization...', tag: 'Home');
     if (!isClosed) {
       emit(state.copyWith(isLoading: true, errorMessage: null));
     }
 
     try {
       // 1. Load user profile
-      print('[APP_INIT] 1/2 Loading user profile...');
+      AppLogger.debug('[APP_INIT] 1/2 Loading user profile...', tag: 'Home');
       final userProfile = await _profileRepository.getUserProfile();
-      print('[APP_INIT] ✅ User profile loaded');
+      AppLogger.debug('[APP_INIT] ✅ User profile loaded', tag: 'Home');
 
       // 2. Initialize other cubits with shared data
-      print('[APP_INIT] 2/2 Initializing cubits with shared data...');
+      AppLogger.debug('[APP_INIT] 2/2 Initializing cubits with shared data...', tag: 'Home');
       await _initializeCubits(userProfile);
-      print('[APP_INIT] ✅ Cubits initialized');
+      AppLogger.debug('[APP_INIT] ✅ Cubits initialized', tag: 'Home');
 
       // Emit success state with all data
       if (!isClosed) {
@@ -52,7 +53,7 @@ class AppInitializationCubit extends Cubit<AppInitializationState> {
         );
       }
 
-      print('[APP_INIT] ✅✅ App initialization complete');
+      AppLogger.debug('[APP_INIT] ✅✅ App initialization complete', tag: 'Home');
     } catch (e) {
       // If authentication failed and logged the user out, we shouldn't show an error.
       // We just let the UI redirect to the login screen.
@@ -63,9 +64,7 @@ class AppInitializationCubit extends Cubit<AppInitializationState> {
       );
 
       if (isUnauthenticated) {
-        print(
-          '[APP_INIT] Authentication failed during initialization. User is logged out. Continuing gracefully.',
-        );
+        AppLogger.error('[APP_INIT] Authentication failed during initialization. User is logged out. Continuing gracefully.', tag: 'Home');
         if (!isClosed) {
           emit(
             state.copyWith(
@@ -78,7 +77,7 @@ class AppInitializationCubit extends Cubit<AppInitializationState> {
         return;
       }
 
-      print('[APP_INIT] ❌ Initialization failed: $e');
+      AppLogger.error('[APP_INIT] ❌ Initialization failed: $e', tag: 'Home', error: e);
       if (!isClosed) {
         emit(
           state.copyWith(
@@ -109,16 +108,16 @@ class AppInitializationCubit extends Cubit<AppInitializationState> {
         userProfile: userProfile,
       );
 
-      print('[APP_INIT] ✅ All cubits initialized with shared data');
+      AppLogger.debug('[APP_INIT] ✅ All cubits initialized with shared data', tag: 'Home');
     } catch (e) {
-      print('[APP_INIT] ⚠️ Error initializing cubits: $e');
+      AppLogger.error('[APP_INIT] ⚠️ Error initializing cubits: $e', tag: 'Home', error: e);
       // Don't fail the whole initialization if cubit init fails
     }
   }
 
   /// Reset initialization (for logout/session change)
   void reset() {
-    print('[APP_INIT] Resetting app initialization and sub-cubits...');
+    AppLogger.debug('[APP_INIT] Resetting app initialization and sub-cubits...', tag: 'Home');
 
     // Reset sub-cubits that hold session data
     try {
@@ -126,7 +125,7 @@ class AppInitializationCubit extends Cubit<AppInitializationState> {
       getIt<ResumeVaultCubit>().reset();
       getIt<ProfileCubit>().reset();
     } catch (e) {
-      print('[APP_INIT] ⚠️ Error resetting sub-cubits: $e');
+      AppLogger.error('[APP_INIT] ⚠️ Error resetting sub-cubits: $e', tag: 'Home', error: e);
     }
 
     if (!isClosed) {

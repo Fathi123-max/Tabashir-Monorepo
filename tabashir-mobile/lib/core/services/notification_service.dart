@@ -1,5 +1,6 @@
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:onesignal_flutter/onesignal_flutter.dart';
+import 'package:tabashir/core/utils/app_logger.dart';
 
 /// Service to handle notification operations using OneSignal v5
 class NotificationService {
@@ -82,9 +83,9 @@ class NotificationService {
 
       if (type == 'job_match') {
         final jobId = additionalData['job_id'] as String?;
-        print('Navigate to job: $jobId');
+        AppLogger.debug('Navigate to job: $jobId', tag: 'Service');
       } else if (type == 'message') {
-        print('Navigate to messages');
+        AppLogger.debug('Navigate to messages', tag: 'Service');
       }
     }
   }

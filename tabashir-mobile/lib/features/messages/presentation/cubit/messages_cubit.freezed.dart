@@ -15,7 +15,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$MessagesState {
 
- MessagesStatus get status; List<NotificationModel> get messages; int get unreadCount; bool get isLoading; bool get hasError; String get errorMessage;
+ MessagesStatus get status; List<NotificationModel> get messages; int get unreadCount; bool get isLoading; bool get hasError; String get errorMessage; List<String> get blockedUsers;
 /// Create a copy of MessagesState
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -28,16 +28,16 @@ $MessagesStateCopyWith<MessagesState> get copyWith => _$MessagesStateCopyWithImp
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is MessagesState&&(identical(other.status, status) || other.status == status)&&const DeepCollectionEquality().equals(other.messages, messages)&&(identical(other.unreadCount, unreadCount) || other.unreadCount == unreadCount)&&(identical(other.isLoading, isLoading) || other.isLoading == isLoading)&&(identical(other.hasError, hasError) || other.hasError == hasError)&&(identical(other.errorMessage, errorMessage) || other.errorMessage == errorMessage));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is MessagesState&&(identical(other.status, status) || other.status == status)&&const DeepCollectionEquality().equals(other.messages, messages)&&(identical(other.unreadCount, unreadCount) || other.unreadCount == unreadCount)&&(identical(other.isLoading, isLoading) || other.isLoading == isLoading)&&(identical(other.hasError, hasError) || other.hasError == hasError)&&(identical(other.errorMessage, errorMessage) || other.errorMessage == errorMessage)&&const DeepCollectionEquality().equals(other.blockedUsers, blockedUsers));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,status,const DeepCollectionEquality().hash(messages),unreadCount,isLoading,hasError,errorMessage);
+int get hashCode => Object.hash(runtimeType,status,const DeepCollectionEquality().hash(messages),unreadCount,isLoading,hasError,errorMessage,const DeepCollectionEquality().hash(blockedUsers));
 
 @override
 String toString() {
-  return 'MessagesState(status: $status, messages: $messages, unreadCount: $unreadCount, isLoading: $isLoading, hasError: $hasError, errorMessage: $errorMessage)';
+  return 'MessagesState(status: $status, messages: $messages, unreadCount: $unreadCount, isLoading: $isLoading, hasError: $hasError, errorMessage: $errorMessage, blockedUsers: $blockedUsers)';
 }
 
 
@@ -48,7 +48,7 @@ abstract mixin class $MessagesStateCopyWith<$Res>  {
   factory $MessagesStateCopyWith(MessagesState value, $Res Function(MessagesState) _then) = _$MessagesStateCopyWithImpl;
 @useResult
 $Res call({
- MessagesStatus status, List<NotificationModel> messages, int unreadCount, bool isLoading, bool hasError, String errorMessage
+ MessagesStatus status, List<NotificationModel> messages, int unreadCount, bool isLoading, bool hasError, String errorMessage, List<String> blockedUsers
 });
 
 
@@ -65,7 +65,7 @@ class _$MessagesStateCopyWithImpl<$Res>
 
 /// Create a copy of MessagesState
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? status = null,Object? messages = null,Object? unreadCount = null,Object? isLoading = null,Object? hasError = null,Object? errorMessage = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? status = null,Object? messages = null,Object? unreadCount = null,Object? isLoading = null,Object? hasError = null,Object? errorMessage = null,Object? blockedUsers = null,}) {
   return _then(_self.copyWith(
 status: null == status ? _self.status : status // ignore: cast_nullable_to_non_nullable
 as MessagesStatus,messages: null == messages ? _self.messages : messages // ignore: cast_nullable_to_non_nullable
@@ -73,7 +73,8 @@ as List<NotificationModel>,unreadCount: null == unreadCount ? _self.unreadCount 
 as int,isLoading: null == isLoading ? _self.isLoading : isLoading // ignore: cast_nullable_to_non_nullable
 as bool,hasError: null == hasError ? _self.hasError : hasError // ignore: cast_nullable_to_non_nullable
 as bool,errorMessage: null == errorMessage ? _self.errorMessage : errorMessage // ignore: cast_nullable_to_non_nullable
-as String,
+as String,blockedUsers: null == blockedUsers ? _self.blockedUsers : blockedUsers // ignore: cast_nullable_to_non_nullable
+as List<String>,
   ));
 }
 
@@ -155,10 +156,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( MessagesStatus status,  List<NotificationModel> messages,  int unreadCount,  bool isLoading,  bool hasError,  String errorMessage)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( MessagesStatus status,  List<NotificationModel> messages,  int unreadCount,  bool isLoading,  bool hasError,  String errorMessage,  List<String> blockedUsers)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _MessagesState() when $default != null:
-return $default(_that.status,_that.messages,_that.unreadCount,_that.isLoading,_that.hasError,_that.errorMessage);case _:
+return $default(_that.status,_that.messages,_that.unreadCount,_that.isLoading,_that.hasError,_that.errorMessage,_that.blockedUsers);case _:
   return orElse();
 
 }
@@ -176,10 +177,10 @@ return $default(_that.status,_that.messages,_that.unreadCount,_that.isLoading,_t
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( MessagesStatus status,  List<NotificationModel> messages,  int unreadCount,  bool isLoading,  bool hasError,  String errorMessage)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( MessagesStatus status,  List<NotificationModel> messages,  int unreadCount,  bool isLoading,  bool hasError,  String errorMessage,  List<String> blockedUsers)  $default,) {final _that = this;
 switch (_that) {
 case _MessagesState():
-return $default(_that.status,_that.messages,_that.unreadCount,_that.isLoading,_that.hasError,_that.errorMessage);}
+return $default(_that.status,_that.messages,_that.unreadCount,_that.isLoading,_that.hasError,_that.errorMessage,_that.blockedUsers);}
 }
 /// A variant of `when` that fallback to returning `null`
 ///
@@ -193,10 +194,10 @@ return $default(_that.status,_that.messages,_that.unreadCount,_that.isLoading,_t
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( MessagesStatus status,  List<NotificationModel> messages,  int unreadCount,  bool isLoading,  bool hasError,  String errorMessage)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( MessagesStatus status,  List<NotificationModel> messages,  int unreadCount,  bool isLoading,  bool hasError,  String errorMessage,  List<String> blockedUsers)?  $default,) {final _that = this;
 switch (_that) {
 case _MessagesState() when $default != null:
-return $default(_that.status,_that.messages,_that.unreadCount,_that.isLoading,_that.hasError,_that.errorMessage);case _:
+return $default(_that.status,_that.messages,_that.unreadCount,_that.isLoading,_that.hasError,_that.errorMessage,_that.blockedUsers);case _:
   return null;
 
 }
@@ -208,7 +209,7 @@ return $default(_that.status,_that.messages,_that.unreadCount,_that.isLoading,_t
 @JsonSerializable()
 
 class _MessagesState implements MessagesState {
-  const _MessagesState({this.status = MessagesStatus.initial, final  List<NotificationModel> messages = const [], this.unreadCount = 0, this.isLoading = false, this.hasError = false, this.errorMessage = ''}): _messages = messages;
+  const _MessagesState({this.status = MessagesStatus.initial, final  List<NotificationModel> messages = const [], this.unreadCount = 0, this.isLoading = false, this.hasError = false, this.errorMessage = '', final  List<String> blockedUsers = const []}): _messages = messages,_blockedUsers = blockedUsers;
   factory _MessagesState.fromJson(Map<String, dynamic> json) => _$MessagesStateFromJson(json);
 
 @override@JsonKey() final  MessagesStatus status;
@@ -223,6 +224,13 @@ class _MessagesState implements MessagesState {
 @override@JsonKey() final  bool isLoading;
 @override@JsonKey() final  bool hasError;
 @override@JsonKey() final  String errorMessage;
+ final  List<String> _blockedUsers;
+@override@JsonKey() List<String> get blockedUsers {
+  if (_blockedUsers is EqualUnmodifiableListView) return _blockedUsers;
+  // ignore: implicit_dynamic_type
+  return EqualUnmodifiableListView(_blockedUsers);
+}
+
 
 /// Create a copy of MessagesState
 /// with the given fields replaced by the non-null parameter values.
@@ -237,16 +245,16 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _MessagesState&&(identical(other.status, status) || other.status == status)&&const DeepCollectionEquality().equals(other._messages, _messages)&&(identical(other.unreadCount, unreadCount) || other.unreadCount == unreadCount)&&(identical(other.isLoading, isLoading) || other.isLoading == isLoading)&&(identical(other.hasError, hasError) || other.hasError == hasError)&&(identical(other.errorMessage, errorMessage) || other.errorMessage == errorMessage));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _MessagesState&&(identical(other.status, status) || other.status == status)&&const DeepCollectionEquality().equals(other._messages, _messages)&&(identical(other.unreadCount, unreadCount) || other.unreadCount == unreadCount)&&(identical(other.isLoading, isLoading) || other.isLoading == isLoading)&&(identical(other.hasError, hasError) || other.hasError == hasError)&&(identical(other.errorMessage, errorMessage) || other.errorMessage == errorMessage)&&const DeepCollectionEquality().equals(other._blockedUsers, _blockedUsers));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,status,const DeepCollectionEquality().hash(_messages),unreadCount,isLoading,hasError,errorMessage);
+int get hashCode => Object.hash(runtimeType,status,const DeepCollectionEquality().hash(_messages),unreadCount,isLoading,hasError,errorMessage,const DeepCollectionEquality().hash(_blockedUsers));
 
 @override
 String toString() {
-  return 'MessagesState(status: $status, messages: $messages, unreadCount: $unreadCount, isLoading: $isLoading, hasError: $hasError, errorMessage: $errorMessage)';
+  return 'MessagesState(status: $status, messages: $messages, unreadCount: $unreadCount, isLoading: $isLoading, hasError: $hasError, errorMessage: $errorMessage, blockedUsers: $blockedUsers)';
 }
 
 
@@ -257,7 +265,7 @@ abstract mixin class _$MessagesStateCopyWith<$Res> implements $MessagesStateCopy
   factory _$MessagesStateCopyWith(_MessagesState value, $Res Function(_MessagesState) _then) = __$MessagesStateCopyWithImpl;
 @override @useResult
 $Res call({
- MessagesStatus status, List<NotificationModel> messages, int unreadCount, bool isLoading, bool hasError, String errorMessage
+ MessagesStatus status, List<NotificationModel> messages, int unreadCount, bool isLoading, bool hasError, String errorMessage, List<String> blockedUsers
 });
 
 
@@ -274,7 +282,7 @@ class __$MessagesStateCopyWithImpl<$Res>
 
 /// Create a copy of MessagesState
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? status = null,Object? messages = null,Object? unreadCount = null,Object? isLoading = null,Object? hasError = null,Object? errorMessage = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? status = null,Object? messages = null,Object? unreadCount = null,Object? isLoading = null,Object? hasError = null,Object? errorMessage = null,Object? blockedUsers = null,}) {
   return _then(_MessagesState(
 status: null == status ? _self.status : status // ignore: cast_nullable_to_non_nullable
 as MessagesStatus,messages: null == messages ? _self._messages : messages // ignore: cast_nullable_to_non_nullable
@@ -282,7 +290,8 @@ as List<NotificationModel>,unreadCount: null == unreadCount ? _self.unreadCount 
 as int,isLoading: null == isLoading ? _self.isLoading : isLoading // ignore: cast_nullable_to_non_nullable
 as bool,hasError: null == hasError ? _self.hasError : hasError // ignore: cast_nullable_to_non_nullable
 as bool,errorMessage: null == errorMessage ? _self.errorMessage : errorMessage // ignore: cast_nullable_to_non_nullable
-as String,
+as String,blockedUsers: null == blockedUsers ? _self._blockedUsers : blockedUsers // ignore: cast_nullable_to_non_nullable
+as List<String>,
   ));
 }
 

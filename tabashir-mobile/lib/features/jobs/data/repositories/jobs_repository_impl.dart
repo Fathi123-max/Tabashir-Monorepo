@@ -9,6 +9,7 @@ import 'package:tabashir/core/network/models/jobs_list_response.dart';
 import 'package:tabashir/core/network/models/jobs_match_response.dart';
 import 'package:tabashir/core/network/services/job/tabashir_api_service.dart';
 import 'package:tabashir/features/jobs/domain/repositories/jobs_repository.dart';
+import 'package:tabashir/core/utils/app_logger.dart';
 
 /// Implementation of [JobsRepository]
 /// Handles job operations using [TabashirApiService]
@@ -32,35 +33,35 @@ class JobsRepositoryImpl implements JobsRepository {
     String? sort,
     String? email,
   }) async {
-    print('\n\n########## [JOBS_REPO] GET JOBS CALLED ##########');
-    print('[JOBS_REPO] Pagination params - Page: $page, Limit: $limit');
+    AppLogger.debug('\n\n########## [JOBS_REPO] GET JOBS CALLED ##########', tag: 'Jobs');
+    AppLogger.debug('[JOBS_REPO] Pagination params - Page: $page, Limit: $limit', tag: 'Jobs');
     if (email != null) {
-      print('[JOBS_REPO] User Email: $email');
+      AppLogger.debug('[JOBS_REPO] User Email: $email', tag: 'Jobs');
     }
     if (search != null && search.isNotEmpty) {
-      print('[JOBS_REPO] Search query: $search');
+      AppLogger.debug('[JOBS_REPO] Search query: $search', tag: 'Jobs');
     }
     if (locations != null && locations.isNotEmpty) {
-      print('[JOBS_REPO] Filters - Locations: $locations');
+      AppLogger.debug('[JOBS_REPO] Filters - Locations: $locations', tag: 'Jobs');
     }
     if (jobTypes != null && jobTypes.isNotEmpty) {
-      print('[JOBS_REPO] Filters - Job Types: $jobTypes');
+      AppLogger.debug('[JOBS_REPO] Filters - Job Types: $jobTypes', tag: 'Jobs');
     }
     if (experienceLevels != null && experienceLevels.isNotEmpty) {
-      print('[JOBS_REPO] Filters - Experience Levels: $experienceLevels');
+      AppLogger.debug('[JOBS_REPO] Filters - Experience Levels: $experienceLevels', tag: 'Jobs');
     }
     if (minSalary != null || maxSalary != null) {
-      print('[JOBS_REPO] Filters - Salary range: $minSalary - $maxSalary');
+      AppLogger.debug('[JOBS_REPO] Filters - Salary range: $minSalary - $maxSalary', tag: 'Jobs');
     }
     if (skills != null && skills.isNotEmpty) {
-      print('[JOBS_REPO] Filters - Skills: $skills');
+      AppLogger.debug('[JOBS_REPO] Filters - Skills: $skills', tag: 'Jobs');
     }
     if (sort != null) {
-      print('[JOBS_REPO] Sort: $sort');
+      AppLogger.debug('[JOBS_REPO] Sort: $sort', tag: 'Jobs');
     }
 
     try {
-      print('[JOBS_REPO] Calling API service...');
+      AppLogger.debug('[JOBS_REPO] Calling API service...', tag: 'Jobs');
       final response = await _tabashirApiService.getJobs(
         page: page,
         limit: limit,
@@ -75,45 +76,41 @@ class JobsRepositoryImpl implements JobsRepository {
         email: email,
       );
 
-      print('\n[JOBS_REPO] ✅ API call completed');
-      print('[JOBS_REPO] Response status: ${response.response.statusCode}');
-      print('[JOBS_REPO] Response data: ${response.data}');
+      AppLogger.debug('\n[JOBS_REPO] ✅ API call completed', tag: 'Jobs');
+      AppLogger.debug('[JOBS_REPO] Response status: ${response.response.statusCode}', tag: 'Jobs');
+      AppLogger.debug('[JOBS_REPO] Response data: ${response.data}', tag: 'Jobs');
 
       if (response.response.statusCode == 200 ||
           response.response.statusCode == 201) {
         final jobsList = response.data.jobs ?? [];
         final pagination = response.data.pagination;
 
-        print('[JOBS_REPO] ✅ Extracted ${jobsList.length} jobs from response');
+        AppLogger.debug('[JOBS_REPO] ✅ Extracted ${jobsList.length} jobs from response', tag: 'Jobs');
         if (pagination != null) {
-          print('[JOBS_REPO] Pagination info: $pagination');
+          AppLogger.debug('[JOBS_REPO] Pagination info: $pagination', tag: 'Jobs');
         }
-        print(
-          '[JOBS_REPO] First job: ${jobsList.isNotEmpty ? jobsList.first : "none"}',
-        );
-        print('########## [JOBS_REPO] SUCCESS ##########\n\n');
+        AppLogger.debug('[JOBS_REPO] First job: ${jobsList.isNotEmpty ? jobsList.first : "none"}', tag: 'Jobs');
+        AppLogger.debug('########## [JOBS_REPO] SUCCESS ##########\n\n', tag: 'Jobs');
         return jobsList;
       } else {
-        print(
-          '[JOBS_REPO] ❌ API returned error status: ${response.response.statusCode}',
-        );
+        AppLogger.error('[JOBS_REPO] ❌ API returned error status: ${response.response.statusCode}', tag: 'Jobs');
         throw Exception(
           'Failed to get jobs with status: ${response.response.statusCode}',
         );
       }
     } on DioException catch (e) {
-      print('\n[JOBS_REPO] ❌ DioException occurred');
-      print('[JOBS_REPO] Type: ${e.type}');
-      print('[JOBS_REPO] Message: ${e.message}');
+      AppLogger.error('\n[JOBS_REPO] ❌ DioException occurred', tag: 'Jobs');
+      AppLogger.debug('[JOBS_REPO] Type: ${e.type}', tag: 'Jobs');
+      AppLogger.debug('[JOBS_REPO] Message: ${e.message}', tag: 'Jobs');
       if (e.response != null) {
-        print('[JOBS_REPO] Response status: ${e.response?.statusCode}');
-        print('[JOBS_REPO] Response data: ${e.response?.data}');
+        AppLogger.debug('[JOBS_REPO] Response status: ${e.response?.statusCode}', tag: 'Jobs');
+        AppLogger.debug('[JOBS_REPO] Response data: ${e.response?.data}', tag: 'Jobs');
       }
-      print('########## [JOBS_REPO] FAILED ##########\n\n');
+      AppLogger.error('########## [JOBS_REPO] FAILED ##########\n\n', tag: 'Jobs');
       throw _handleDioError(e);
     } catch (e) {
-      print('\n[JOBS_REPO] ❌ Unexpected exception: $e');
-      print('########## [JOBS_REPO] FAILED ##########\n\n');
+      AppLogger.error('\n[JOBS_REPO] ❌ Unexpected exception: $e', tag: 'Jobs', error: e);
+      AppLogger.error('########## [JOBS_REPO] FAILED ##########\n\n', tag: 'Jobs');
       throw Exception('Failed to get jobs: $e');
     }
   }
@@ -124,21 +121,21 @@ class JobsRepositoryImpl implements JobsRepository {
     String? email,
   }) async {
     try {
-      print('[JOBS_REPO] getJobById called with jobId: $jobId, email: $email');
+      AppLogger.debug('[JOBS_REPO] getJobById called with jobId: $jobId, email: $email', tag: 'Jobs');
       final response = await _tabashirApiService.getJobById(jobId, null, email);
 
-      print('[JOBS_REPO] API response status: ${response.response.statusCode}');
-      print('[JOBS_REPO] API response data: ${response.data}');
+      AppLogger.debug('[JOBS_REPO] API response status: ${response.response.statusCode}', tag: 'Jobs');
+      AppLogger.debug('[JOBS_REPO] API response data: ${response.data}', tag: 'Jobs');
 
       if (response.response.statusCode == 200 ||
           response.response.statusCode == 201) {
         // Unwrap the job data from the API response
         final jobData = response.data.job;
         if (jobData != null) {
-          print('[JOBS_REPO] Successfully unwrapped job data: $jobData');
+          AppLogger.debug('[JOBS_REPO] Successfully unwrapped job data: $jobData', tag: 'Jobs');
           return jobData;
         } else {
-          print('[JOBS_REPO] Job data is null in response');
+          AppLogger.debug('[JOBS_REPO] Job data is null in response', tag: 'Jobs');
           throw Exception('Job not found in response');
         }
       } else {
@@ -147,10 +144,10 @@ class JobsRepositoryImpl implements JobsRepository {
         );
       }
     } on DioException catch (e) {
-      print('[JOBS_REPO] DioException: ${e.message}');
+      AppLogger.error('[JOBS_REPO] DioException: ${e.message}', tag: 'Jobs');
       throw _handleDioError(e);
     } catch (e) {
-      print('[JOBS_REPO] Exception: $e');
+      AppLogger.error('[JOBS_REPO] Exception: $e', tag: 'Jobs', error: e);
       throw Exception('Failed to get job details: $e');
     }
   }

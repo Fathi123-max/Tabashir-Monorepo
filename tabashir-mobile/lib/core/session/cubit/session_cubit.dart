@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:injectable/injectable.dart';
 import '../../services/auth_session_service.dart';
+import '../../utils/app_logger.dart';
 
 part 'session_state.dart';
 part 'session_cubit.freezed.dart';
@@ -27,7 +28,7 @@ class SessionCubit extends Cubit<SessionState> {
     _authSubscription = AuthSessionService.instance.authStateStream.listen((
       isLoggedIn,
     ) {
-      print('[SESSION_CUBIT] Auth state changed: isLoggedIn=$isLoggedIn');
+      AppLogger.debug('Auth state changed: isLoggedIn=$isLoggedIn', tag: 'Session');
       if (!isClosed) {
         if (isLoggedIn) {
           emit(const SessionState.authenticated());

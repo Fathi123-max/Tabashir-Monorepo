@@ -10,6 +10,7 @@ import 'package:tabashir/features/home/presentation/cubit/home_state.dart';
 import 'package:tabashir/features/home/presentation/widgets/home_job_card_widget.dart';
 import 'package:tabashir/features/jobs/domain/repositories/jobs_repository.dart';
 import 'package:tabashir/features/profile/presentation/cubit/profile_cubit.dart';
+import 'package:tabashir/core/utils/app_logger.dart';
 
 class HomeJobCardsHorizontalListWidget extends StatefulWidget {
   const HomeJobCardsHorizontalListWidget({super.key});
@@ -65,7 +66,7 @@ class _HomeJobCardsHorizontalListWidgetState
         _appliedJobs = ids;
       });
     } catch (e) {
-      debugPrint('[HOME_WIDGET] Failed to load applied jobs: $e');
+      AppLogger.debug('[HOME_WIDGET] Failed to load applied jobs: $e', tag: 'Home');
     } finally {
       if (mounted) {
         setState(() {

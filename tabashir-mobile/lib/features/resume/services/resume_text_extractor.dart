@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:archive/archive.dart';
 import 'package:flutter_pdf_text/flutter_pdf_text.dart';
 import 'package:xml/xml.dart';
+import 'package:tabashir/core/utils/app_logger.dart';
 
 /// Utility that extracts plain text from supported resume formats on-device.
 class ResumeTextExtractor {
@@ -28,7 +29,7 @@ class ResumeTextExtractor {
       }
     } catch (e) {
       // Intentionally swallow exceptions to allow server-side fallback later.
-      print('⚠️ [RESUME_TEXT_EXTRACTOR] Failed to extract text: $e');
+      AppLogger.error('⚠️ [RESUME_TEXT_EXTRACTOR] Failed to extract text: $e', tag: 'Resume', error: e);
     }
 
     return '';

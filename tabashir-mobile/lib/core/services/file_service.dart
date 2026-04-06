@@ -4,6 +4,7 @@ import 'dart:typed_data';
 import 'package:image_picker/image_picker.dart';
 import 'package:path/path.dart' as path;
 import 'package:path_provider/path_provider.dart';
+import 'package:tabashir/core/utils/app_logger.dart';
 
 /// Service to handle file operations
 class FileService {
@@ -29,7 +30,7 @@ class FileService {
       );
       return image;
     } catch (e) {
-      print('Error picking image: $e');
+      AppLogger.error('Error picking image: $e', tag: 'Service', error: e);
       return null;
     }
   }
@@ -49,7 +50,7 @@ class FileService {
       );
       return images.take(maxImages).toList();
     } catch (e) {
-      print('Error picking multiple images: $e');
+      AppLogger.error('Error picking multiple images: $e', tag: 'Service', error: e);
       return [];
     }
   }
@@ -68,7 +69,7 @@ class FileService {
       );
       return video;
     } catch (e) {
-      print('Error picking video: $e');
+      AppLogger.error('Error picking video: $e', tag: 'Service', error: e);
       return null;
     }
   }
@@ -83,7 +84,7 @@ class FileService {
       );
       return pickedFile;
     } catch (e) {
-      print('Error picking document: $e');
+      AppLogger.error('Error picking document: $e', tag: 'Service', error: e);
       return null;
     }
   }
@@ -105,7 +106,7 @@ class FileService {
       await file.writeAsBytes(bytes);
       return file;
     } catch (e) {
-      print('Error saving file: $e');
+      AppLogger.error('Error saving file: $e', tag: 'Service', error: e);
       return null;
     }
   }
@@ -127,7 +128,7 @@ class FileService {
       }
       return null;
     } catch (e) {
-      print('Error reading file: $e');
+      AppLogger.error('Error reading file: $e', tag: 'Service', error: e);
       return null;
     }
   }
@@ -150,7 +151,7 @@ class FileService {
       }
       return false;
     } catch (e) {
-      print('Error deleting file: $e');
+      AppLogger.error('Error deleting file: $e', tag: 'Service', error: e);
       return false;
     }
   }
@@ -172,7 +173,7 @@ class FileService {
       }
       return 0;
     } catch (e) {
-      print('Error getting file size: $e');
+      AppLogger.error('Error getting file size: $e', tag: 'Service', error: e);
       return 0;
     }
   }
@@ -191,7 +192,7 @@ class FileService {
       final file = File(filePath);
       return await file.exists();
     } catch (e) {
-      print('Error checking file existence: $e');
+      AppLogger.error('Error checking file existence: $e', tag: 'Service', error: e);
       return false;
     }
   }

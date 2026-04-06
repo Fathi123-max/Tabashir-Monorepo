@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tabashir/features/ai_job_apply/data/models/target_role_model.dart';
 import 'package:tabashir/features/ai_job_apply/data/models/location_preference_model.dart';
+import 'package:tabashir/core/utils/app_logger.dart';
 
 /// User preferences service
 /// Manages sync between user profile and AI job apply feature
@@ -24,7 +25,7 @@ class UserPreferencesService {
       await prefs.setString(_nationalityKey, nationality);
 
       if (kDebugMode) {
-        print('[UserPreferences] Nationality saved: $nationality');
+        AppLogger.debug('[UserPreferences] Nationality saved: $nationality', tag: 'Service');
       }
 
       // TODO: Sync to user profile if syncToProfile is true
@@ -34,7 +35,7 @@ class UserPreferencesService {
       }
     } catch (e) {
       if (kDebugMode) {
-        print('[UserPreferences] Error saving nationality: $e');
+        AppLogger.error('[UserPreferences] Error saving nationality: $e', tag: 'Service', error: e);
       }
     }
   }
@@ -47,7 +48,7 @@ class UserPreferencesService {
       return prefs.getString(_nationalityKey);
     } catch (e) {
       if (kDebugMode) {
-        print('[UserPreferences] Error getting nationality: $e');
+        AppLogger.error('[UserPreferences] Error getting nationality: $e', tag: 'Service', error: e);
       }
       return null;
     }
@@ -61,11 +62,11 @@ class UserPreferencesService {
       await prefs.setString(_selectedRolesKey, rolesJson.toString());
 
       if (kDebugMode) {
-        print('[UserPreferences] Saved ${roles.length} selected roles');
+        AppLogger.debug('[UserPreferences] Saved ${roles.length} selected roles', tag: 'Service');
       }
     } catch (e) {
       if (kDebugMode) {
-        print('[UserPreferences] Error saving selected roles: $e');
+        AppLogger.error('[UserPreferences] Error saving selected roles: $e', tag: 'Service', error: e);
       }
     }
   }
@@ -84,13 +85,13 @@ class UserPreferencesService {
       // Parse JSON and convert to TargetRoleModel
       // This is a simplified version - actual implementation would parse JSON properly
       if (kDebugMode) {
-        print('[UserPreferences] Loaded selected roles from cache');
+        AppLogger.debug('[UserPreferences] Loaded selected roles from cache', tag: 'Service');
       }
 
       return [];
     } catch (e) {
       if (kDebugMode) {
-        print('[UserPreferences] Error getting selected roles: $e');
+        AppLogger.error('[UserPreferences] Error getting selected roles: $e', tag: 'Service', error: e);
       }
       return [];
     }
@@ -106,11 +107,11 @@ class UserPreferencesService {
       await prefs.setString(_selectedLocationsKey, locationsJson.toString());
 
       if (kDebugMode) {
-        print('[UserPreferences] Saved ${locations.length} selected locations');
+        AppLogger.debug('[UserPreferences] Saved ${locations.length} selected locations', tag: 'Service');
       }
     } catch (e) {
       if (kDebugMode) {
-        print('[UserPreferences] Error saving selected locations: $e');
+        AppLogger.error('[UserPreferences] Error saving selected locations: $e', tag: 'Service', error: e);
       }
     }
   }
@@ -129,13 +130,13 @@ class UserPreferencesService {
       // Parse JSON and convert to LocationPreferenceModel
       // This is a simplified version - actual implementation would parse JSON properly
       if (kDebugMode) {
-        print('[UserPreferences] Loaded selected locations from cache');
+        AppLogger.debug('[UserPreferences] Loaded selected locations from cache', tag: 'Service');
       }
 
       return [];
     } catch (e) {
       if (kDebugMode) {
-        print('[UserPreferences] Error getting selected locations: $e');
+        AppLogger.error('[UserPreferences] Error getting selected locations: $e', tag: 'Service', error: e);
       }
       return [];
     }
@@ -150,11 +151,11 @@ class UserPreferencesService {
       await prefs.remove(_selectedLocationsKey);
 
       if (kDebugMode) {
-        print('[UserPreferences] All preferences cleared');
+        AppLogger.debug('[UserPreferences] All preferences cleared', tag: 'Service');
       }
     } catch (e) {
       if (kDebugMode) {
-        print('[UserPreferences] Error clearing preferences: $e');
+        AppLogger.error('[UserPreferences] Error clearing preferences: $e', tag: 'Service', error: e);
       }
     }
   }
@@ -188,7 +189,7 @@ class UserPreferencesService {
   static Future<String?> syncNationalityFromProfile() async {
     try {
       if (kDebugMode) {
-        print('[UserPreferences] Syncing nationality from profile...');
+        AppLogger.debug('[UserPreferences] Syncing nationality from profile...', tag: 'Service');
       }
 
       // TODO: Implement actual API call to fetch user profile
@@ -203,7 +204,7 @@ class UserPreferencesService {
       return null;
     } catch (e) {
       if (kDebugMode) {
-        print('[UserPreferences] Error syncing from profile: $e');
+        AppLogger.error('[UserPreferences] Error syncing from profile: $e', tag: 'Service', error: e);
       }
       return null;
     }
@@ -214,7 +215,7 @@ class UserPreferencesService {
   static Future<bool> syncNationalityToProfile(String nationality) async {
     try {
       if (kDebugMode) {
-        print('[UserPreferences] Syncing nationality to profile...');
+        AppLogger.debug('[UserPreferences] Syncing nationality to profile...', tag: 'Service');
       }
 
       // TODO: Implement actual API call to update user profile
@@ -226,7 +227,7 @@ class UserPreferencesService {
       return true;
     } catch (e) {
       if (kDebugMode) {
-        print('[UserPreferences] Error syncing to profile: $e');
+        AppLogger.error('[UserPreferences] Error syncing to profile: $e', tag: 'Service', error: e);
       }
       return false;
     }
@@ -244,14 +245,12 @@ class UserPreferencesService {
           syncToProfile: false,
         );
         if (kDebugMode) {
-          print(
-            '[UserPreferences] Initialized from profile: $profileNationality',
-          );
+          AppLogger.debug('[UserPreferences] Initialized from profile: $profileNationality', tag: 'Service');
         }
       }
     } catch (e) {
       if (kDebugMode) {
-        print('[UserPreferences] Error initializing from profile: $e');
+        AppLogger.error('[UserPreferences] Error initializing from profile: $e', tag: 'Service', error: e);
       }
     }
   }

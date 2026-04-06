@@ -14,6 +14,7 @@ import 'package:tabashir/features/jobs/presentation/widgets/job_details_widgets.
 import 'package:tabashir/features/profile/presentation/cubit/profile_cubit.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../cubit/job_details_cubit.dart';
+import 'package:tabashir/core/utils/app_logger.dart';
 
 class JobDetailScreen extends StatefulWidget {
   const JobDetailScreen({required this.jobId, super.key});
@@ -584,7 +585,7 @@ class _JobDetailScreenState extends State<JobDetailScreen> {
                   child: GestureDetector(
                     onTap: () {
                       // TODO: Open URL
-                      print('Open URL: $url');
+                      AppLogger.debug('Open URL: $url', tag: 'Jobs');
                     },
                     child: Text(
                       label,
@@ -675,23 +676,19 @@ class _JobDetailScreenState extends State<JobDetailScreen> {
         var profileState = context.read<ProfileCubit>().state;
 
         // Debug logging
-        print('[JOB_DETAILS_SCREEN] Profile status: ${profileState.status}');
-        print('[JOB_DETAILS_SCREEN] Profile data: ${profileState.profile}');
-        print('[JOB_DETAILS_SCREEN] Email: ${profileState.profile?.email}');
+        AppLogger.debug('[JOB_DETAILS_SCREEN] Profile status: ${profileState.status}', tag: 'Jobs');
+        AppLogger.debug('[JOB_DETAILS_SCREEN] Profile data: ${profileState.profile}', tag: 'Jobs');
+        AppLogger.debug('[JOB_DETAILS_SCREEN] Email: ${profileState.profile?.email}', tag: 'Jobs');
 
         // If profile is not loaded, try to load it
         if (profileState.status == ProfileStatus.initial) {
-          print('[JOB_DETAILS_SCREEN] Profile not loaded, loading now...');
+          AppLogger.debug('[JOB_DETAILS_SCREEN] Profile not loaded, loading now...', tag: 'Jobs');
           await context.read<ProfileCubit>().loadProfileData();
 
           // Get the updated state after loading
           profileState = context.read<ProfileCubit>().state;
-          print(
-            '[JOB_DETAILS_SCREEN] Updated profile status: ${profileState.status}',
-          );
-          print(
-            '[JOB_DETAILS_SCREEN] Updated profile data: ${profileState.profile}',
-          );
+          AppLogger.debug('[JOB_DETAILS_SCREEN] Updated profile status: ${profileState.status}', tag: 'Jobs');
+          AppLogger.debug('[JOB_DETAILS_SCREEN] Updated profile data: ${profileState.profile}', tag: 'Jobs');
         }
 
         if (profileState.status != ProfileStatus.success ||
@@ -720,7 +717,7 @@ class _JobDetailScreenState extends State<JobDetailScreen> {
 
         if (isPro) {
           // Pro user: Apply via API
-          print('[JOB_DETAILS_SCREEN] Pro user applying to job $jobId');
+          AppLogger.debug('[JOB_DETAILS_SCREEN] Pro user applying to job $jobId', tag: 'Jobs');
           final success = await context
               .read<JobDetailsCubit>()
               .applyToJobWithApi(jobId);
@@ -742,7 +739,7 @@ class _JobDetailScreenState extends State<JobDetailScreen> {
           }
         } else {
           // Free user: Show contact info dialog
-          print('[JOB_DETAILS_SCREEN] Free user, showing contact dialog');
+          AppLogger.debug('[JOB_DETAILS_SCREEN] Free user, showing contact dialog', tag: 'Jobs');
           if (mounted) {
             _showContactInfoDialog(context, loadedState.jobDetails);
           }

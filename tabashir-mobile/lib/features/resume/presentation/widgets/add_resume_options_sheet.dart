@@ -8,6 +8,7 @@ import 'package:go_router/go_router.dart';
 import '../../../../core/router/route_names.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../cubit/resume_vault_cubit.dart';
+import 'package:tabashir/core/utils/app_logger.dart';
 
 /// Widget for displaying add resume options bottom sheet
 class AddResumeOptionsSheet extends StatelessWidget {
@@ -125,41 +126,37 @@ class AddResumeOptionsSheet extends StatelessWidget {
   }
 
   Future<void> _uploadFromDevice(BuildContext context) async {
-    print('🟢 [ADD_RESUME_SHEET] _uploadFromDevice() called');
+    AppLogger.debug('🟢 [ADD_RESUME_SHEET] _uploadFromDevice() called', tag: 'Resume');
     try {
       final cubit = context.read<ResumeVaultCubit>();
-      print('🟢 [ADD_RESUME_SHEET] Got ResumeVaultCubit instance');
+      AppLogger.debug('🟢 [ADD_RESUME_SHEET] Got ResumeVaultCubit instance', tag: 'Resume');
 
-      print('🟢 [ADD_RESUME_SHEET] Opening file picker...');
+      AppLogger.debug('🟢 [ADD_RESUME_SHEET] Opening file picker...', tag: 'Resume');
       final result = await FilePicker.platform.pickFiles(
         type: FileType.custom,
         allowedExtensions: ['pdf', 'docx'],
       );
-      print(
-        '🟢 [ADD_RESUME_SHEET] File picker returned: ${result != null ? 'files selected' : 'user cancelled or null'}',
-      );
+      AppLogger.debug('🟢 [ADD_RESUME_SHEET] File picker returned: ${result != null ? 'files selected' : 'user cancelled or null'}', tag: 'Resume');
 
       if (result == null) {
-        print(
-          '🟢 [ADD_RESUME_SHEET] File picker returned null (user cancelled or no permission)',
-        );
+        AppLogger.debug('🟢 [ADD_RESUME_SHEET] File picker returned null (user cancelled or no permission)', tag: 'Resume');
         return;
       }
 
       if (result.files.isEmpty) {
-        print('🟢 [ADD_RESUME_SHEET] No files selected');
+        AppLogger.debug('🟢 [ADD_RESUME_SHEET] No files selected', tag: 'Resume');
         return;
       }
 
       final file = result.files.single;
-      print('🟢 [ADD_RESUME_SHEET] File details:');
-      print('🟢 [ADD_RESUME_SHEET]   - Name: ${file.name}');
-      print('🟢 [ADD_RESUME_SHEET]   - Path: ${file.path}');
-      print('🟢 [ADD_RESUME_SHEET]   - Size: ${file.size} bytes');
-      print('🟢 [ADD_RESUME_SHEET]   - Extension: ${file.extension}');
+      AppLogger.debug('🟢 [ADD_RESUME_SHEET] File details:', tag: 'Resume');
+      AppLogger.debug('🟢 [ADD_RESUME_SHEET]   - Name: ${file.name}', tag: 'Resume');
+      AppLogger.debug('🟢 [ADD_RESUME_SHEET]   - Path: ${file.path}', tag: 'Resume');
+      AppLogger.debug('🟢 [ADD_RESUME_SHEET]   - Size: ${file.size} bytes', tag: 'Resume');
+      AppLogger.debug('🟢 [ADD_RESUME_SHEET]   - Extension: ${file.extension}', tag: 'Resume');
 
       if (file.path == null) {
-        print('🟢 [ADD_RESUME_SHEET] File path is null - cannot upload');
+        AppLogger.debug('🟢 [ADD_RESUME_SHEET] File path is null - cannot upload', tag: 'Resume');
         // File path is null, nothing to upload
         return;
       }
@@ -169,35 +166,29 @@ class AddResumeOptionsSheet extends StatelessWidget {
       final fileSize = file.size;
       final fileExtension = file.extension?.toLowerCase() ?? '';
 
-      print('🟢 [ADD_RESUME_SHEET] File validation:');
-      print('🟢 [ADD_RESUME_SHEET]   - fileSize: $fileSize bytes');
-      print('🟢 [ADD_RESUME_SHEET]   - fileExtension: $fileExtension');
+      AppLogger.debug('🟢 [ADD_RESUME_SHEET] File validation:', tag: 'Resume');
+      AppLogger.debug('🟢 [ADD_RESUME_SHEET]   - fileSize: $fileSize bytes', tag: 'Resume');
+      AppLogger.debug('🟢 [ADD_RESUME_SHEET]   - fileExtension: $fileExtension', tag: 'Resume');
 
       if (fileSize > 10 * 1024 * 1024) {
-        print(
-          '🟢 [ADD_RESUME_SHEET] File too large ($fileSize bytes > 10MB)',
-        );
+        AppLogger.debug('🟢 [ADD_RESUME_SHEET] File too large ($fileSize bytes > 10MB)', tag: 'Resume');
         // File too large, nothing to upload
         return;
       }
 
-      print(
-        '🟢 [ADD_RESUME_SHEET] File validation passed. Calling cubit.uploadResume()...',
-      );
+      AppLogger.debug('🟢 [ADD_RESUME_SHEET] File validation passed. Calling cubit.uploadResume()...', tag: 'Resume');
       await cubit.uploadResume(
         fileName: fileName,
         filePath: filePath,
         fileType: fileExtension,
         fileSize: fileSize,
       );
-      print('🟢 [ADD_RESUME_SHEET] ✅ cubit.uploadResume() completed');
-      print(
-        '🟢 [ADD_RESUME_SHEET] Upload initiated - UI will update via state changes',
-      );
+      AppLogger.debug('🟢 [ADD_RESUME_SHEET] ✅ cubit.uploadResume() completed', tag: 'Resume');
+      AppLogger.debug('🟢 [ADD_RESUME_SHEET] Upload initiated - UI will update via state changes', tag: 'Resume');
       // Note: onTap handler will close the sheet after this method completes
     } catch (e, stackTrace) {
-      print('🟢 [ADD_RESUME_SHEET] ❌ Exception occurred: $e');
-      print('🟢 [ADD_RESUME_SHEET] StackTrace: $stackTrace');
+      AppLogger.error('🟢 [ADD_RESUME_SHEET] ❌ Exception occurred: $e', tag: 'Resume', error: e);
+      AppLogger.debug('🟢 [ADD_RESUME_SHEET] StackTrace: $stackTrace', tag: 'Resume');
       // Errors will be handled by the cubit's error state
       // The screen's BlocListener will show error messages
     }

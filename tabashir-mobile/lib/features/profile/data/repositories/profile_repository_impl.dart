@@ -12,6 +12,7 @@ import 'package:tabashir/core/network/services/job/tabashir_api_service.dart';
 import 'package:tabashir/core/network/services/user/user_api_service.dart';
 import 'package:tabashir/core/network/services/auth/auth_api_service.dart';
 import 'package:tabashir/features/profile/domain/repositories/profile_repository.dart';
+import 'package:tabashir/core/utils/app_logger.dart';
 
 /// Implementation of [ProfileRepository]
 /// Handles profile operations using [UserApiService] with Isar caching
@@ -31,56 +32,48 @@ class ProfileRepositoryImpl implements ProfileRepository {
 
   @override
   Future<UserProfileResponse> getUserProfile() async {
-    print('\n\n########## [PROFILE_REPO] GET USER PROFILE CALLED ##########');
+    AppLogger.debug('\n\n########## [PROFILE_REPO] GET USER PROFILE CALLED ##########', tag: 'Profile');
     try {
       // Try to load from cache first for better UX
-      print('[PROFILE_REPO] Checking Isar cache...');
+      AppLogger.debug('[PROFILE_REPO] Checking Isar cache...', tag: 'Profile');
       final cachedProfile = await _profileIsarRepository.getLatestProfile();
       if (cachedProfile != null) {
-        print('[PROFILE_REPO] ✅ Found cached profile');
+        AppLogger.debug('[PROFILE_REPO] ✅ Found cached profile', tag: 'Profile');
       } else {
-        print('[PROFILE_REPO] No cached profile found');
+        AppLogger.debug('[PROFILE_REPO] No cached profile found', tag: 'Profile');
       }
 
       // Fetch from API
-      print('[PROFILE_REPO] Calling UserApiService.getUserProfile()...');
-      print('[PROFILE_REPO] Using comprehensive unified API: /api/v1/users/me');
+      AppLogger.debug('[PROFILE_REPO] Calling UserApiService.getUserProfile()...', tag: 'Profile');
+      AppLogger.debug('[PROFILE_REPO] Using comprehensive unified API: /api/v1/users/me', tag: 'Profile');
       final response = await _userApiService.getUserProfile();
 
-      print('\n[PROFILE_REPO] ✅ API call completed');
-      print('[PROFILE_REPO] Response status: ${response.response.statusCode}');
+      AppLogger.debug('\n[PROFILE_REPO] ✅ API call completed', tag: 'Profile');
+      AppLogger.debug('[PROFILE_REPO] Response status: ${response.response.statusCode}', tag: 'Profile');
 
       if (response.response.statusCode == 200 ||
           response.response.statusCode == 201) {
-        print('[PROFILE_REPO] ✅ Comprehensive profile loaded successfully');
-        print('[PROFILE_REPO] User data: ${response.data.user.name}');
-        print('[PROFILE_REPO] User type: ${response.data.user.userType}');
-        print(
-          '[PROFILE_REPO] Total resumes: ${response.data.counts?.totalResumes ?? 0}',
-        );
-        print(
-          '[PROFILE_REPO] Has subscription: ${response.data.subscription != null}',
-        );
-        print(
-          '[PROFILE_REPO] Admin permissions: ${response.data.adminPermissions.length}',
-        );
+        AppLogger.debug('[PROFILE_REPO] ✅ Comprehensive profile loaded successfully', tag: 'Profile');
+        AppLogger.debug('[PROFILE_REPO] User data: ${response.data.user.name}', tag: 'Profile');
+        AppLogger.debug('[PROFILE_REPO] User type: ${response.data.user.userType}', tag: 'Profile');
+        AppLogger.debug('[PROFILE_REPO] Total resumes: ${response.data.counts?.totalResumes ?? 0}', tag: 'Profile');
+        AppLogger.debug('[PROFILE_REPO] Has subscription: ${response.data.subscription != null}', tag: 'Profile');
+        AppLogger.debug('[PROFILE_REPO] Admin permissions: ${response.data.adminPermissions.length}', tag: 'Profile');
 
         // Save to Isar cache
-        print('[PROFILE_REPO] Saving profile to Isar cache...');
+        AppLogger.debug('[PROFILE_REPO] Saving profile to Isar cache...', tag: 'Profile');
         await _saveToIsar(response.data);
-        print('[PROFILE_REPO] ✅ Profile saved to cache');
+        AppLogger.debug('[PROFILE_REPO] ✅ Profile saved to cache', tag: 'Profile');
 
-        print('########## [PROFILE_REPO] SUCCESS ##########\n\n');
+        AppLogger.debug('########## [PROFILE_REPO] SUCCESS ##########\n\n', tag: 'Profile');
         return response.data;
       } else {
-        print(
-          '[PROFILE_REPO] ❌ API returned error status: ${response.response.statusCode}',
-        );
+        AppLogger.error('[PROFILE_REPO] ❌ API returned error status: ${response.response.statusCode}', tag: 'Profile');
 
         // If API fails but we have cache, return cache
         if (cachedProfile != null) {
-          print('[PROFILE_REPO] Using cached profile due to API error');
-          print('########## [PROFILE_REPO] SUCCESS (CACHE) ##########\n\n');
+          AppLogger.error('[PROFILE_REPO] Using cached profile due to API error', tag: 'Profile');
+          AppLogger.debug('########## [PROFILE_REPO] SUCCESS (CACHE) ##########\n\n', tag: 'Profile');
           return _convertFromIsar(cachedProfile);
         }
 
@@ -89,36 +82,36 @@ class ProfileRepositoryImpl implements ProfileRepository {
         );
       }
     } on DioException catch (e) {
-      print('\n[PROFILE_REPO] ❌ DioException occurred');
-      print('[PROFILE_REPO] Type: ${e.type}');
-      print('[PROFILE_REPO] Message: ${e.message}');
+      AppLogger.error('\n[PROFILE_REPO] ❌ DioException occurred', tag: 'Profile');
+      AppLogger.debug('[PROFILE_REPO] Type: ${e.type}', tag: 'Profile');
+      AppLogger.debug('[PROFILE_REPO] Message: ${e.message}', tag: 'Profile');
       if (e.response != null) {
-        print('[PROFILE_REPO] Response status: ${e.response?.statusCode}');
-        print('[PROFILE_REPO] Response data: ${e.response?.data}');
+        AppLogger.debug('[PROFILE_REPO] Response status: ${e.response?.statusCode}', tag: 'Profile');
+        AppLogger.debug('[PROFILE_REPO] Response data: ${e.response?.data}', tag: 'Profile');
       }
 
       // Try to return cached profile on error
       final cachedProfile = await _profileIsarRepository.getLatestProfile();
       if (cachedProfile != null) {
-        print('[PROFILE_REPO] Returning cached profile due to error');
-        print('########## [PROFILE_REPO] SUCCESS (CACHE) ##########\n\n');
+        AppLogger.error('[PROFILE_REPO] Returning cached profile due to error', tag: 'Profile');
+        AppLogger.debug('########## [PROFILE_REPO] SUCCESS (CACHE) ##########\n\n', tag: 'Profile');
         return _convertFromIsar(cachedProfile);
       }
 
-      print('########## [PROFILE_REPO] FAILED ##########\n\n');
+      AppLogger.error('########## [PROFILE_REPO] FAILED ##########\n\n', tag: 'Profile');
       throw _handleDioError(e);
     } catch (e) {
-      print('\n[PROFILE_REPO] ❌ Unexpected exception: $e');
+      AppLogger.error('\n[PROFILE_REPO] ❌ Unexpected exception: $e', tag: 'Profile', error: e);
 
       // Try to return cached profile on error
       final cachedProfile = await _profileIsarRepository.getLatestProfile();
       if (cachedProfile != null) {
-        print('[PROFILE_REPO] Returning cached profile due to error');
-        print('########## [PROFILE_REPO] SUCCESS (CACHE) ##########\n\n');
+        AppLogger.error('[PROFILE_REPO] Returning cached profile due to error', tag: 'Profile');
+        AppLogger.debug('########## [PROFILE_REPO] SUCCESS (CACHE) ##########\n\n', tag: 'Profile');
         return _convertFromIsar(cachedProfile);
       }
 
-      print('########## [PROFILE_REPO] FAILED ##########\n\n');
+      AppLogger.error('########## [PROFILE_REPO] FAILED ##########\n\n', tag: 'Profile');
       throw Exception('Failed to get user profile: $e');
     }
   }
@@ -175,22 +168,22 @@ class ProfileRepositoryImpl implements ProfileRepository {
   Future<void> updateProfile({
     required ProfileUpdateRequest profileUpdate,
   }) async {
-    print('\n\n########## [PROFILE_REPO] UPDATE PROFILE CALLED ##########');
+    AppLogger.debug('\n\n########## [PROFILE_REPO] UPDATE PROFILE CALLED ##########', tag: 'Profile');
     try {
-      print('[PROFILE_REPO] Calling UserApiService.updateProfile()...');
-      print('[PROFILE_REPO] Data: ${profileUpdate.toJson()}');
+      AppLogger.debug('[PROFILE_REPO] Calling UserApiService.updateProfile()...', tag: 'Profile');
+      AppLogger.debug('[PROFILE_REPO] Data: ${profileUpdate.toJson()}', tag: 'Profile');
       final response = await _userApiService.updateProfile(profileUpdate);
 
-      print('\n[PROFILE_REPO] ✅ API call completed');
-      print('[PROFILE_REPO] Response status: ${response.response.statusCode}');
+      AppLogger.debug('\n[PROFILE_REPO] ✅ API call completed', tag: 'Profile');
+      AppLogger.debug('[PROFILE_REPO] Response status: ${response.response.statusCode}', tag: 'Profile');
 
       if (response.response.statusCode == 200 ||
           response.response.statusCode == 201) {
-        print('[PROFILE_REPO] ✅ Profile updated successfully');
-        print('[PROFILE_REPO] Response data: ${response.data}');
+        AppLogger.debug('[PROFILE_REPO] ✅ Profile updated successfully', tag: 'Profile');
+        AppLogger.debug('[PROFILE_REPO] Response data: ${response.data}', tag: 'Profile');
 
         // Update Isar cache with new data
-        print('[PROFILE_REPO] Updating Isar cache...');
+        AppLogger.debug('[PROFILE_REPO] Updating Isar cache...', tag: 'Profile');
         final profileIsar = ProfileIsar(
           name: profileUpdate.name,
           email: profileUpdate.email,
@@ -205,31 +198,29 @@ class ProfileRepositoryImpl implements ProfileRepository {
           updatedAt: DateTime.now(),
         );
         await _profileIsarRepository.saveProfile(profileIsar);
-        print('[PROFILE_REPO] ✅ Cache updated');
+        AppLogger.debug('[PROFILE_REPO] ✅ Cache updated', tag: 'Profile');
 
-        print('########## [PROFILE_REPO] SUCCESS ##########\n\n');
+        AppLogger.debug('########## [PROFILE_REPO] SUCCESS ##########\n\n', tag: 'Profile');
         return;
       } else {
-        print(
-          '[PROFILE_REPO] ❌ API returned error status: ${response.response.statusCode}',
-        );
+        AppLogger.error('[PROFILE_REPO] ❌ API returned error status: ${response.response.statusCode}', tag: 'Profile');
         throw Exception(
           'Failed to update profile with status: ${response.response.statusCode}',
         );
       }
     } on DioException catch (e) {
-      print('\n[PROFILE_REPO] ❌ DioException occurred');
-      print('[PROFILE_REPO] Type: ${e.type}');
-      print('[PROFILE_REPO] Message: ${e.message}');
+      AppLogger.error('\n[PROFILE_REPO] ❌ DioException occurred', tag: 'Profile');
+      AppLogger.debug('[PROFILE_REPO] Type: ${e.type}', tag: 'Profile');
+      AppLogger.debug('[PROFILE_REPO] Message: ${e.message}', tag: 'Profile');
       if (e.response != null) {
-        print('[PROFILE_REPO] Response status: ${e.response?.statusCode}');
-        print('[PROFILE_REPO] Response data: ${e.response?.data}');
+        AppLogger.debug('[PROFILE_REPO] Response status: ${e.response?.statusCode}', tag: 'Profile');
+        AppLogger.debug('[PROFILE_REPO] Response data: ${e.response?.data}', tag: 'Profile');
       }
-      print('########## [PROFILE_REPO] FAILED ##########\n\n');
+      AppLogger.error('########## [PROFILE_REPO] FAILED ##########\n\n', tag: 'Profile');
       throw _handleDioError(e);
     } catch (e) {
-      print('\n[PROFILE_REPO] ❌ Unexpected exception: $e');
-      print('########## [PROFILE_REPO] FAILED ##########\n\n');
+      AppLogger.error('\n[PROFILE_REPO] ❌ Unexpected exception: $e', tag: 'Profile', error: e);
+      AppLogger.error('########## [PROFILE_REPO] FAILED ##########\n\n', tag: 'Profile');
       throw Exception('Failed to update profile: $e');
     }
   }
@@ -243,9 +234,9 @@ class ProfileRepositoryImpl implements ProfileRepository {
     required List<String> positions,
     String? cvPath,
   }) async {
-    print('\n\n########## [PROFILE_REPO] UPDATE CLIENT CALLED ##########');
+    AppLogger.debug('\n\n########## [PROFILE_REPO] UPDATE CLIENT CALLED ##########', tag: 'Profile');
     try {
-      print('[PROFILE_REPO] Calling TabashirApiService.updateClient()...');
+      AppLogger.debug('[PROFILE_REPO] Calling TabashirApiService.updateClient()...', tag: 'Profile');
       final file = cvPath != null && cvPath.isNotEmpty
           ? await MultipartFile.fromFile(cvPath)
           : null;
@@ -259,93 +250,89 @@ class ProfileRepositoryImpl implements ProfileRepository {
         positions,
       );
 
-      print('\n[PROFILE_REPO] ✅ API call completed');
-      print('[PROFILE_REPO] Response status: ${response.response.statusCode}');
+      AppLogger.debug('\n[PROFILE_REPO] ✅ API call completed', tag: 'Profile');
+      AppLogger.debug('[PROFILE_REPO] Response status: ${response.response.statusCode}', tag: 'Profile');
 
       if (response.response.statusCode == 200 ||
           response.response.statusCode == 201) {
-        print('[PROFILE_REPO] ✅ Client updated successfully');
-        print('########## [PROFILE_REPO] SUCCESS ##########\n\n');
+        AppLogger.debug('[PROFILE_REPO] ✅ Client updated successfully', tag: 'Profile');
+        AppLogger.debug('########## [PROFILE_REPO] SUCCESS ##########\n\n', tag: 'Profile');
         return;
       } else {
-        print(
-          '[PROFILE_REPO] ❌ API returned error status: ${response.response.statusCode}',
-        );
+        AppLogger.error('[PROFILE_REPO] ❌ API returned error status: ${response.response.statusCode}', tag: 'Profile');
         throw Exception(
           'Failed to update client with status: ${response.response.statusCode}',
         );
       }
     } on DioException catch (e) {
-      print('\n[PROFILE_REPO] ❌ DioException occurred');
-      print('[PROFILE_REPO] Type: ${e.type}');
-      print('[PROFILE_REPO] Message: ${e.message}');
+      AppLogger.error('\n[PROFILE_REPO] ❌ DioException occurred', tag: 'Profile');
+      AppLogger.debug('[PROFILE_REPO] Type: ${e.type}', tag: 'Profile');
+      AppLogger.debug('[PROFILE_REPO] Message: ${e.message}', tag: 'Profile');
       if (e.response != null) {
-        print('[PROFILE_REPO] Response status: ${e.response?.statusCode}');
-        print('[PROFILE_REPO] Response data: ${e.response?.data}');
+        AppLogger.debug('[PROFILE_REPO] Response status: ${e.response?.statusCode}', tag: 'Profile');
+        AppLogger.debug('[PROFILE_REPO] Response data: ${e.response?.data}', tag: 'Profile');
       }
-      print('########## [PROFILE_REPO] FAILED ##########\n\n');
+      AppLogger.error('########## [PROFILE_REPO] FAILED ##########\n\n', tag: 'Profile');
       throw _handleDioError(e);
     } catch (e) {
-      print('\n[PROFILE_REPO] ❌ Unexpected exception: $e');
-      print('########## [PROFILE_REPO] FAILED ##########\n\n');
+      AppLogger.error('\n[PROFILE_REPO] ❌ Unexpected exception: $e', tag: 'Profile', error: e);
+      AppLogger.error('########## [PROFILE_REPO] FAILED ##########\n\n', tag: 'Profile');
       throw Exception('Failed to update client: $e');
     }
   }
 
   @override
   Future<AiClientData?> getClient() async {
-    print('\n\n########## [PROFILE_REPO] GET CLIENT CALLED ##########');
+    AppLogger.debug('\n\n########## [PROFILE_REPO] GET CLIENT CALLED ##########', tag: 'Profile');
     try {
       final response = await _tabashirApiService.getClient();
       if (response.response.statusCode == 200) {
-        print('[PROFILE_REPO] ✅ Client data fetched');
+        AppLogger.debug('[PROFILE_REPO] ✅ Client data fetched', tag: 'Profile');
         return response.data.data;
       } else if (response.response.statusCode == 404) {
-        print('[PROFILE_REPO] Client profile not found in AI DB');
+        AppLogger.debug('[PROFILE_REPO] Client profile not found in AI DB', tag: 'Profile');
         return null;
       } else {
         throw Exception('Unexpected status: ${response.response.statusCode}');
       }
     } on DioException catch (e) {
-      print('[PROFILE_REPO] ❌ DioException: ${e.message}');
+      AppLogger.error('[PROFILE_REPO] ❌ DioException: ${e.message}', tag: 'Profile');
       return null; // Non-fatal - AI profile may not exist yet
     } catch (e) {
-      print('[PROFILE_REPO] ❌ Error fetching client: $e');
+      AppLogger.error('[PROFILE_REPO] ❌ Error fetching client: $e', tag: 'Profile', error: e);
       return null;
     }
   }
 
   @override
   Future<void> deleteAccount() async {
-    print('\n\n########## [PROFILE_REPO] DELETE ACCOUNT CALLED ##########');
+    AppLogger.debug('\n\n########## [PROFILE_REPO] DELETE ACCOUNT CALLED ##########', tag: 'Profile');
     try {
-      print('[PROFILE_REPO] Calling AuthApiService.deleteAccount()...');
+      AppLogger.debug('[PROFILE_REPO] Calling AuthApiService.deleteAccount()...', tag: 'Profile');
       await _authApiService.deleteAccount();
 
-      print('\n[PROFILE_REPO] ✅ API call completed');
+      AppLogger.debug('\n[PROFILE_REPO] ✅ API call completed', tag: 'Profile');
 
       // Clear local cache
-      print('[PROFILE_REPO] Clearing local profile cache...');
+      AppLogger.debug('[PROFILE_REPO] Clearing local profile cache...', tag: 'Profile');
       await _profileIsarRepository.clearAllProfiles();
-      print('[PROFILE_REPO] ✅ Cache cleared');
+      AppLogger.debug('[PROFILE_REPO] ✅ Cache cleared', tag: 'Profile');
 
-      print('########## [PROFILE_REPO] SUCCESS ##########\n\n');
+      AppLogger.debug('########## [PROFILE_REPO] SUCCESS ##########\n\n', tag: 'Profile');
       return;
     } on DioException catch (e) {
-      print('\n[PROFILE_REPO] ❌ DioException occurred during account deletion');
-      print('[PROFILE_REPO] Type: ${e.type}');
-      print('[PROFILE_REPO] Message: ${e.message}');
+      AppLogger.error('\n[PROFILE_REPO] ❌ DioException occurred during account deletion', tag: 'Profile');
+      AppLogger.debug('[PROFILE_REPO] Type: ${e.type}', tag: 'Profile');
+      AppLogger.debug('[PROFILE_REPO] Message: ${e.message}', tag: 'Profile');
       if (e.response != null) {
-        print('[PROFILE_REPO] Response status: ${e.response?.statusCode}');
-        print('[PROFILE_REPO] Response data: ${e.response?.data}');
+        AppLogger.debug('[PROFILE_REPO] Response status: ${e.response?.statusCode}', tag: 'Profile');
+        AppLogger.debug('[PROFILE_REPO] Response data: ${e.response?.data}', tag: 'Profile');
       }
-      print('########## [PROFILE_REPO] FAILED ##########\n\n');
+      AppLogger.error('########## [PROFILE_REPO] FAILED ##########\n\n', tag: 'Profile');
       throw _handleDioError(e);
     } catch (e) {
-      print(
-        '\n[PROFILE_REPO] ❌ Unexpected exception during account deletion: $e',
-      );
-      print('########## [PROFILE_REPO] FAILED ##########\n\n');
+      AppLogger.error('\n[PROFILE_REPO] ❌ Unexpected exception during account deletion: $e', tag: 'Profile', error: e);
+      AppLogger.error('########## [PROFILE_REPO] FAILED ##########\n\n', tag: 'Profile');
       throw Exception('Failed to delete account: $e');
     }
   }

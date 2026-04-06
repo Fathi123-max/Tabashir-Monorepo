@@ -11,6 +11,7 @@ import 'package:tabashir/core/network/models/raw_cv_input.dart';
 import 'package:tabashir/core/network/services/job/tabashir_api_service.dart';
 import 'package:tabashir/features/resume/services/resume_parsing_service.dart';
 import 'package:tabashir/features/resume/services/resume_text_extractor.dart';
+import 'package:tabashir/core/utils/app_logger.dart';
 
 /// Implementation of ResumeParsingService
 /// Uses TabashirApiService to parse CV files and text
@@ -30,7 +31,7 @@ class ResumeParsingServiceImpl implements ResumeParsingService {
     String fileName,
   ) async {
     try {
-      print('🔧 [RESUME_PARSING] Parsing file: $fileName');
+      AppLogger.debug('🔧 [RESUME_PARSING] Parsing file: $fileName', tag: 'Resume');
 
       // Check file type by extension
       final isPdf = fileName.toLowerCase().endsWith('.pdf');
@@ -40,7 +41,7 @@ class ResumeParsingServiceImpl implements ResumeParsingService {
 
       // For text files, parse as text
       if (isText) {
-        print('🔧 [RESUME_PARSING] Text file detected - parsing as text');
+        AppLogger.debug('🔧 [RESUME_PARSING] Text file detected - parsing as text', tag: 'Resume');
         final fileBytes = await file.readAsBytes();
         final fileContent = utf8.decode(fileBytes);
         return await _parseResumeContent(fileContent);
@@ -48,35 +49,25 @@ class ResumeParsingServiceImpl implements ResumeParsingService {
 
       // For binary files (PDF, DOC, DOCX), prefer client-side extraction first
       if (isPdf || isDoc || isDocx) {
-        print(
-          '🔧 [RESUME_PARSING] Binary file detected - attempting local extraction',
-        );
+        AppLogger.debug('🔧 [RESUME_PARSING] Binary file detected - attempting local extraction', tag: 'Resume');
         final extractedText = await ResumeTextExtractor.extractText(file);
         if (extractedText.isNotEmpty) {
-          print(
-            '🟢 [RESUME_PARSING] Local extraction successful, sending raw text',
-          );
+          AppLogger.debug('🟢 [RESUME_PARSING] Local extraction successful, sending raw text', tag: 'Resume');
           return await _parseResumeContent(extractedText);
         }
 
-        print(
-          '⚠️ [RESUME_PARSING] Local extraction returned empty text - falling back to backend parsing',
-        );
+        AppLogger.debug('⚠️ [RESUME_PARSING] Local extraction returned empty text - falling back to backend parsing', tag: 'Resume');
         return await _parseResumeFromFile(file);
       }
 
       // For unknown file types, return empty data
-      print(
-        '⚠️ [RESUME_PARSING] Unknown file type - returning empty parsed data',
-      );
+      AppLogger.debug('⚠️ [RESUME_PARSING] Unknown file type - returning empty parsed data', tag: 'Resume');
       return _getEmptyParsedData();
     } catch (e) {
       // If parsing fails, return empty data instead of throwing
       // This allows the file upload to proceed even if parsing fails
-      print('⚠️ [RESUME_PARSING] Failed to parse resume file: $e');
-      print(
-        '⚠️ [RESUME_PARSING] Returning empty parsed data (file will still be uploaded)',
-      );
+      AppLogger.error('⚠️ [RESUME_PARSING] Failed to parse resume file: $e', tag: 'Resume', error: e);
+      AppLogger.debug('⚠️ [RESUME_PARSING] Returning empty parsed data (file will still be uploaded)', tag: 'Resume');
       return _getEmptyParsedData();
     }
   }
@@ -109,17 +100,12 @@ class ResumeParsingServiceImpl implements ResumeParsingService {
 
       // Log full response for debugging
       final responseJson = jsonEncode(response.data);
-      print('🔍 [RESUME_PARSING] START FULL RESPONSE');
+      AppLogger.debug('🔍 [RESUME_PARSING] START FULL RESPONSE', tag: 'Resume');
       // Print in chunks of 800 characters to avoid console truncation
       for (var i = 0; i < responseJson.length; i += 800) {
-        print(
-          responseJson.substring(
-            i,
-            i + 800 > responseJson.length ? responseJson.length : i + 800,
-          ),
-        );
+        AppLogger.debug(responseJson.substring( i, i + 800 > responseJson.length ? responseJson.length : i + 800, ), tag: 'Resume');
       }
-      print('🔍 [RESUME_PARSING] END FULL RESPONSE');
+      AppLogger.debug('🔍 [RESUME_PARSING] END FULL RESPONSE', tag: 'Resume');
 
       dev.log(
         'Full response from format-cv-object: $responseJson',
@@ -179,7 +165,7 @@ class ResumeParsingServiceImpl implements ResumeParsingService {
           bytes: Uint8List.fromList(bytes),
         );
 
-        print('✅ [RESUME_PARSING] Successfully formatted CV: $fileName');
+        AppLogger.debug('✅ [RESUME_PARSING] Successfully formatted CV: $fileName', tag: 'Resume');
         return _getEmptyParsedData(parsed: true);
       } else {
         throw Exception(
@@ -189,10 +175,8 @@ class ResumeParsingServiceImpl implements ResumeParsingService {
     } catch (e) {
       // If parsing fails, return empty data instead of throwing
       // This allows the file upload to proceed even if parsing fails
-      print('⚠️ [RESUME_PARSING] Failed to parse binary file: $e');
-      print(
-        '⚠️ [RESUME_PARSING] Returning empty parsed data (file will still be uploaded)',
-      );
+      AppLogger.error('⚠️ [RESUME_PARSING] Failed to parse binary file: $e', tag: 'Resume', error: e);
+      AppLogger.debug('⚠️ [RESUME_PARSING] Returning empty parsed data (file will still be uploaded)', tag: 'Resume');
       return _getEmptyParsedData();
     }
   }

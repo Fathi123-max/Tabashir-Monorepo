@@ -12,6 +12,7 @@ import '../../../../core/theme/app_theme.dart';
 import '../cubit/profile_cubit.dart';
 import '../widgets/reactive_dropdown_search.dart';
 import '../widgets/reactive_gender_dropdown.dart';
+import 'package:tabashir/core/utils/app_logger.dart';
 
 // FormBuilder instance for creating forms
 final fb = FormBuilder();
@@ -87,7 +88,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                   await cubit.updateProfile(_form!);
                                   if (mounted) Navigator.of(context).pop();
                                 } catch (e) {
-                                  debugPrint('Profile update error: $e');
+                                  AppLogger.debug('Profile update error: $e', tag: 'Profile');
                                 } finally {
                                   if (mounted) {
                                     setState(() => _isUpdating = false);

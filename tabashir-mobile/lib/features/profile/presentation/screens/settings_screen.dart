@@ -1,14 +1,18 @@
 import 'package:easy_localization/easy_localization.dart';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import 'package:tabashir/core/constants/storage_keys.dart';
+import 'package:tabashir/core/di/injection.dart';
 import 'package:tabashir/core/theme/app_theme.dart';
 import 'package:tabashir/core/theme/theme_manager.dart';
 import 'package:tabashir/core/router/route_names.dart';
+import 'package:tabashir/features/profile/presentation/cubit/profile_cubit.dart';
 import 'package:tabashir/features/profile/presentation/widgets/menu_tile.dart';
 import 'package:tabashir/core/services/notification_service.dart';
 
@@ -97,87 +101,41 @@ class _SettingsScreenState extends State<SettingsScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Notifications Section
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: AppTheme.spacingMd.w),
-              child: Text(
-                'Notifications'.tr(),
-                style: theme.textTheme.titleLarge?.copyWith(
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ),
-            SizedBox(height: AppTheme.spacingMd.h),
+            // Notifications Section - Hidden
+            // Padding(
+            //   padding: EdgeInsets.symmetric(horizontal: AppTheme.spacingMd.w),
+            //   child: Text(
+            //     'Notifications'.tr(),
+            //     style: theme.textTheme.titleLarge?.copyWith(
+            //       fontWeight: FontWeight.bold,
+            //     ),
+            //   ),
+            // ),
+            // SizedBox(height: AppTheme.spacingMd.h),
 
-            MenuTile(
-              icon: Icons.notifications_outlined,
-              text: 'Push Notifications'.tr(),
-              trailing: Switch(
-                value: _pushNotificationsEnabled,
-                onChanged: (value) async {
-                  setState(() {
-                    _pushNotificationsEnabled = value;
-                  });
-                  await _savePushNotificationPreference(value);
-                },
-                activeThumbColor: AppTheme.primaryColor,
-              ),
-              onTap: () async {
-                setState(() {
-                  _pushNotificationsEnabled = !_pushNotificationsEnabled;
-                });
-                await _savePushNotificationPreference(
-                  _pushNotificationsEnabled,
-                );
-              },
-            ),
-            SizedBox(height: AppTheme.spacingSm.h),
-
-            // Hidden: Email Notifications
             // MenuTile(
-            //   icon: Icons.email_outlined,
-            //   text: 'Email Notifications'.tr(),
+            //   icon: Icons.notifications_outlined,
+            //   text: 'Push Notifications'.tr(),
             //   trailing: Switch(
-            //     value: _emailNotificationsEnabled,
+            //     value: _pushNotificationsEnabled,
             //     onChanged: (value) async {
             //       setState(() {
-            //         _emailNotificationsEnabled = value;
+            //         _pushNotificationsEnabled = value;
             //       });
-            //       await _saveEmailNotificationPreference(value);
+            //       await _savePushNotificationPreference(value);
             //     },
             //     activeThumbColor: AppTheme.primaryColor,
             //   ),
             //   onTap: () async {
             //     setState(() {
-            //       _emailNotificationsEnabled = !_emailNotificationsEnabled;
+            //       _pushNotificationsEnabled = !_pushNotificationsEnabled;
             //     });
-            //     await _saveEmailNotificationPreference(_emailNotificationsEnabled);
+            //     await _savePushNotificationPreference(
+            //       _pushNotificationsEnabled,
+            //     );
             //   },
             // ),
             // SizedBox(height: AppTheme.spacingSm.h),
-
-            // Hidden: SMS Notifications
-            // MenuTile(
-            //   icon: Icons.message_outlined,
-            //   text: 'SMS Notifications'.tr(),
-            //   trailing: Switch(
-            //     value: _smsNotificationsEnabled,
-            //     onChanged: (value) async {
-            //       setState(() {
-            //         _smsNotificationsEnabled = value;
-            //       });
-            //       await _saveSMSNotificationPreference(value);
-            //     },
-            //     activeThumbColor: AppTheme.primaryColor,
-            //   ),
-            //   onTap: () async {
-            //     setState(() {
-            //       _smsNotificationsEnabled = !_smsNotificationsEnabled;
-            //     });
-            //     await _saveSMSNotificationPreference(_smsNotificationsEnabled);
-            //   },
-            // ),
-            SizedBox(height: AppTheme.spacingLg.h),
 
             // Appearance Section
             Padding(
@@ -313,8 +271,22 @@ class _SettingsScreenState extends State<SettingsScreen> {
             MenuTile(
               icon: Icons.privacy_tip_outlined,
               text: 'Privacy Policy'.tr(),
-              onTap: () {
-                _showComingSoonDialog('Privacy Policy'.tr());
+              onTap: () async {
+                final uri = Uri.parse(
+                  'https://www.tabashir.ae/en/privacy-policy',
+                );
+                if (await canLaunchUrl(uri)) {
+                  await launchUrl(uri, mode: LaunchMode.externalApplication);
+                } else {
+                  if (mounted) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text('Could not open Privacy Policy'.tr()),
+                        backgroundColor: AppTheme.errorColor,
+                      ),
+                    );
+                  }
+                }
               },
             ),
             SizedBox(height: AppTheme.spacingSm.h),
@@ -322,19 +294,55 @@ class _SettingsScreenState extends State<SettingsScreen> {
             MenuTile(
               icon: Icons.description_outlined,
               text: 'Terms of Service'.tr(),
-              onTap: () {
-                _showComingSoonDialog('Terms of Service'.tr());
+              onTap: () async {
+                final uri = Uri.parse(
+                  'https://www.tabashir.ae/en/terms-and-condition',
+                );
+                if (await canLaunchUrl(uri)) {
+                  await launchUrl(uri, mode: LaunchMode.externalApplication);
+                } else {
+                  if (mounted) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text(
+                          'Could not open Terms of Service'.tr(),
+                        ),
+                        backgroundColor: AppTheme.errorColor,
+                      ),
+                    );
+                  }
+                }
               },
             ),
             SizedBox(height: AppTheme.spacingSm.h),
 
+            // Contact Support
             MenuTile(
-              icon: Icons.cleaning_services_outlined,
-              text: 'Clear Cache'.tr(),
-              onTap: _showClearCacheDialog,
+              icon: Icons.support_agent_outlined,
+              text: 'Contact Support'.tr(),
+              onTap: () async {
+                final uri = Uri.parse(
+                  'mailto:support@tabashir.com?subject=Tabashir%20Support%20Request',
+                );
+                if (await canLaunchUrl(uri)) {
+                  await launchUrl(uri, mode: LaunchMode.externalApplication);
+                } else {
+                  if (mounted) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text(
+                          'Support email: support@tabashir.com'.tr(),
+                        ),
+                        backgroundColor: AppTheme.warningColor,
+                      ),
+                    );
+                  }
+                }
+              },
             ),
             SizedBox(height: AppTheme.spacingSm.h),
 
+            // Delete Account
             MenuTile(
               icon: Icons.delete_forever,
               text: 'Delete Account'.tr(),
@@ -362,22 +370,24 @@ class _SettingsScreenState extends State<SettingsScreen> {
             ),
             SizedBox(height: AppTheme.spacingSm.h),
 
-            MenuTile(
-              icon: Icons.star_outline,
-              text: 'Rate the App'.tr(),
-              onTap: () {
-                _showComingSoonDialog('Rate the App'.tr());
-              },
-            ),
-            SizedBox(height: AppTheme.spacingSm.h),
+            // Rate the App - Hidden
+            // MenuTile(
+            //   icon: Icons.star_outline,
+            //   text: 'Rate the App'.tr(),
+            //   onTap: () {
+            //     _showComingSoonDialog('Rate the App'.tr());
+            //   },
+            // ),
+            // SizedBox(height: AppTheme.spacingSm.h),
 
-            MenuTile(
-              icon: Icons.share_outlined,
-              text: 'Share with Friends'.tr(),
-              onTap: () {
-                _showComingSoonDialog('Share with Friends'.tr());
-              },
-            ),
+            // Share with Friends - Hidden
+            // MenuTile(
+            //   icon: Icons.share_outlined,
+            //   text: 'Share with Friends'.tr(),
+            //   onTap: () {
+            //     _showComingSoonDialog('Share with Friends'.tr());
+            //   },
+            // ),
             SizedBox(
               height: kBottomNavigationBarHeight + AppTheme.spacingLg.h,
             ),
@@ -471,6 +481,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
   }
 
   void _showDeleteAccountDialog() {
+    final profileCubit = getIt<ProfileCubit>();
+    
     showDialog<void>(
       context: context,
       builder: (context) => AlertDialog(
@@ -490,16 +502,46 @@ class _SettingsScreenState extends State<SettingsScreen> {
             child: Text('Cancel'.tr()),
           ),
           ElevatedButton(
-            onPressed: () {
+            onPressed: () async {
               Navigator.pop(context);
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text(
-                    'Please contact support to delete your account'.tr(),
-                  ),
-                  backgroundColor: AppTheme.warningColor,
+              
+              // Show loading
+              showDialog<void>(
+                context: context,
+                barrierDismissible: false,
+                builder: (context) => const Center(
+                  child: CircularProgressIndicator(),
                 ),
               );
+              
+              try {
+                await profileCubit.deleteAccount();
+                
+                if (mounted) {
+                  Navigator.pop(context); // Close loading
+                  
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text('Account deleted successfully'.tr()),
+                      backgroundColor: AppTheme.successColor,
+                    ),
+                  );
+                  
+                  // Navigate to login/logout
+                  context.go('/${RouteNames.login}');
+                }
+              } catch (e) {
+                if (mounted) {
+                  Navigator.pop(context); // Close loading
+                  
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text('Failed to delete account: $e'.tr()),
+                      backgroundColor: AppTheme.errorColor,
+                    ),
+                  );
+                }
+              }
             },
             style: ElevatedButton.styleFrom(
               backgroundColor: AppTheme.errorColor,

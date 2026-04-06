@@ -14,10 +14,10 @@ import 'steps/education_step.dart';
 import 'steps/skills_step.dart';
 import 'steps/template_selection_step.dart';
 import '../../../../core/network/models/ai_resume/resume_models.dart';
-import '../../../../core/network/models/payment/payment_intent_request.dart';
 import '../../../../core/di/injection.dart';
 import '../../../../core/models/stripe/stripe_enums.dart';
 import '../../../payments/presentation/cubit/payment_cubit.dart';
+import '../../../payments/domain/repositories/payment_platform.dart';
 
 class AiResumeBuilderScreen extends StatelessWidget {
   const AiResumeBuilderScreen({super.key});
@@ -83,32 +83,6 @@ class AiResumeBuilderView extends StatelessWidget {
                   backgroundColor: AppTheme.errorColor,
                 ),
               );
-            }
-
-            if (state.paymentSheetInitialized &&
-                state.status == PaymentStatus.success &&
-                !state.paymentSuccessful) {
-              // Payment sheet is ready, open it
-              context.read<PaymentCubit>().processPaymentSheet();
-            }
-
-            if (state.paymentSuccessful) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text('Payment Successful! Generating CV...'.tr()),
-                  backgroundColor: Colors.green,
-                ),
-              );
-              // Proceed to generate CV with payment confirmation
-              final paymentIntentId =
-                  state.paymentIntent?.data?.paymentIntentId;
-              if (paymentIntentId != null) {
-                context.read<AiResumeBuilderCubit>().generateAndSave(
-                  paymentIntentId: paymentIntentId,
-                );
-              }
-              // Reset payment state for next time
-              context.read<PaymentCubit>().reset();
             }
           },
         ),
@@ -296,12 +270,23 @@ class AiResumeBuilderView extends StatelessWidget {
               Navigator.pop(context);
 
               // Trigger Payment Flow
-              context.read<PaymentCubit>().createPaymentIntent(
-                request: const PaymentIntentRequest(
-                  amount: 40,
-                  serviceId: 'ai-resume-optimization',
-                  currency: 'aed',
-                ),
+              context.read<PaymentCubit>().onPaymentSuccess = (result) async {
+                String? txnId;
+                result.when(
+                  success: (id) => txnId = id,
+                  cancelled: () => txnId = null,
+                  failed: (_) => txnId = null,
+                );
+                if (txnId != null) {
+                  context.read<AiResumeBuilderCubit>().generateAndSave(
+                    paymentIntentId: txnId,
+                  );
+                }
+                context.read<PaymentCubit>().reset();
+              };
+              context.read<PaymentCubit>().processPayment(
+                serviceId: 'ai-resume-optimization',
+                amount: 40,
               );
             },
             child: Text('Pay & Generate'.tr()),

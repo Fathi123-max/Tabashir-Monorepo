@@ -204,4 +204,91 @@ class MessagesRepositoryImpl implements MessagesRepository {
       throw Exception('Failed to delete message: $e');
     }
   }
+
+  @override
+  Future<void> reportUser({
+    required String reportedUserId,
+    required String reason,
+    String? messageId,
+  }) async {
+    try {
+      // Store report locally for offline support
+      // In production, this should call backend API
+      final prefs = _isarService.prefs;
+      final reportsJson = prefs.getString('user_reports') ?? '[]';
+      final reportsList = jsonDecode(reportsJson) as List<dynamic>;
+      
+      final report = {
+        'reportedUserId': reportedUserId,
+        'reason': reason,
+        'messageId': messageId,
+        'timestamp': DateTime.now().toIso8601String(),
+      };
+      
+      reportsList.add(report);
+      await prefs.setString('user_reports', jsonEncode(reportsList));
+    } catch (e) {
+      throw Exception('Failed to report user: $e');
+    }
+  }
+
+  @override
+  Future<void> blockUser({
+    required String blockedUserId,
+  }) async {
+    try {
+      final prefs = _isarService.prefs;
+      final blockedJson = prefs.getString('blocked_users') ?? '[]';
+      final blockedList = jsonDecode(blockedJson) as List<dynamic>;
+      
+      if (!blockedList.contains(blockedUserId)) {
+        blockedList.add(blockedUserId);
+        await prefs.setString('blocked_users', jsonEncode(blockedList));
+      }
+    } catch (e) {
+      throw Exception('Failed to block user: $e');
+    }
+  }
+
+  @override
+  Future<void> unblockUser({
+    required String blockedUserId,
+  }) async {
+    try {
+      final prefs = _isarService.prefs;
+      final blockedJson = prefs.getString('blocked_users') ?? '[]';
+      final blockedList = jsonDecode(blockedJson) as List<dynamic>;
+      
+      blockedList.remove(blockedUserId);
+      await prefs.setString('blocked_users', jsonEncode(blockedList));
+    } catch (e) {
+      throw Exception('Failed to unblock user: $e');
+    }
+  }
+
+  @override
+  Future<bool> isUserBlocked({
+    required String userId,
+  }) async {
+    try {
+      final prefs = _isarService.prefs;
+      final blockedJson = prefs.getString('blocked_users') ?? '[]';
+      final blockedList = jsonDecode(blockedJson) as List<dynamic>;
+      return blockedList.contains(userId);
+    } catch (e) {
+      throw Exception('Failed to check blocked user: $e');
+    }
+  }
+
+  @override
+  Future<List<String>> getBlockedUsers() async {
+    try {
+      final prefs = _isarService.prefs;
+      final blockedJson = prefs.getString('blocked_users') ?? '[]';
+      final blockedList = jsonDecode(blockedJson) as List<dynamic>;
+      return blockedList.cast<String>();
+    } catch (e) {
+      throw Exception('Failed to get blocked users: $e');
+    }
+  }
 }

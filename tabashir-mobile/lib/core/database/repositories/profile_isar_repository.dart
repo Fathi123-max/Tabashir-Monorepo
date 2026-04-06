@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:injectable/injectable.dart';
 import 'package:tabashir/core/database/models/profile_isar.dart';
 import 'package:tabashir/core/services/isar_service.dart';
+import 'package:tabashir/core/utils/app_logger.dart';
 
 /// Repository for managing profile data in SharedPreferences
 /// Provides caching functionality for offline access
@@ -36,7 +37,7 @@ class ProfileIsarRepository {
 
       return profile;
     } catch (e) {
-      print('[ProfileIsarRepository] Error parsing cached profile: $e');
+      AppLogger.error('[ProfileIsarRepository] Error parsing cached profile: $e', tag: 'Database', error: e);
       return null;
     }
   }

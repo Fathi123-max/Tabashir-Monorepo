@@ -8,6 +8,7 @@ import 'package:tabashir/core/network/services/job/tabashir_api_service.dart';
 import 'package:tabashir/core/services/job_match_service.dart';
 import '../data/models/job_details.dart';
 import '../domain/repositories/jobs_repository.dart';
+import 'package:tabashir/core/utils/app_logger.dart';
 
 /// Service class for managing job details operations.
 /// Provides methods to fetch job details, apply to jobs, save jobs, and share job information.
@@ -25,10 +26,8 @@ class JobDetailsService {
     CandidateProfileData? userProfile,
     String? userEmail,
   }) async {
-    print('[JOB_DETAILS_SERVICE] Fetching job details for jobId: $jobId');
-    print(
-      '[JOB_DETAILS_SERVICE] Correlation: userProfile = ${userProfile != null}, userEmail = $userEmail',
-    );
+    AppLogger.debug('[JOB_DETAILS_SERVICE] Fetching job details for jobId: $jobId', tag: 'Jobs');
+    AppLogger.debug('[JOB_DETAILS_SERVICE] Correlation: userProfile = ${userProfile != null}, userEmail = $userEmail', tag: 'Jobs');
 
     try {
       // Fetch job details from API, passing userEmail for backend matching
@@ -37,12 +36,12 @@ class JobDetailsService {
         email: userEmail,
       );
 
-      print('[JOB_DETAILS_SERVICE] Received API response: $jobDetailsResponse');
+      AppLogger.debug('[JOB_DETAILS_SERVICE] Received API response: $jobDetailsResponse', tag: 'Jobs');
 
       // Map API response to UI model with user profile for match calculation
       return _mapApiResponseToJobDetails(jobDetailsResponse, userProfile);
     } catch (e) {
-      print('[JOB_DETAILS_SERVICE] Error fetching job details: $e');
+      AppLogger.error('[JOB_DETAILS_SERVICE] Error fetching job details: $e', tag: 'Jobs', error: e);
       rethrow;
     }
   }
@@ -180,7 +179,7 @@ class JobDetailsService {
     String? gender,
     MultipartFile? resumeFile,
   }) async {
-    print('[JOB_DETAILS_SERVICE] Applying to job $jobId via API for $email');
+    AppLogger.debug('[JOB_DETAILS_SERVICE] Applying to job $jobId via API for $email', tag: 'Jobs');
 
     try {
       // Pass a placeholder file if no resume provided - backend uses DB resume
@@ -194,10 +193,10 @@ class JobDetailsService {
         gender ?? '',
       );
 
-      print('[JOB_DETAILS_SERVICE] Apply API response: ${response.data}');
+      AppLogger.debug('[JOB_DETAILS_SERVICE] Apply API response: ${response.data}', tag: 'Jobs');
       return response.data;
     } catch (e) {
-      print('[JOB_DETAILS_SERVICE] Error applying to job: $e');
+      AppLogger.error('[JOB_DETAILS_SERVICE] Error applying to job: $e', tag: 'Jobs', error: e);
       rethrow;
     }
   }

@@ -8,6 +8,7 @@ import 'package:tabashir/core/network/models/auth/register_request.dart';
 import 'package:tabashir/core/network/models/auth/email_verification_response.dart';
 import 'package:tabashir/core/network/services/auth/auth_api_service.dart';
 import 'package:tabashir/core/network/services/auth/email_api_service.dart';
+import 'package:tabashir/core/utils/app_logger.dart';
 import 'package:tabashir/features/auth/domain/repositories/auth_repository.dart';
 
 /// Implementation of [AuthRepository]
@@ -35,13 +36,15 @@ class AuthRepositoryImpl implements AuthRepository {
       );
 
       // Debug: Log the raw response
-      print('[AUTH_REPO] Raw response data: ${response.response.data}');
-      print('[AUTH_REPO] Parsed AuthResponse: ${response.data}');
-      print(
-        '[AUTH_REPO] - accessToken in response.data: ${response.data.accessToken != null ? "present" : "NULL"}',
+      AppLogger.debug('Raw response data: ${response.response.data}', tag: 'Auth');
+      AppLogger.debug('Parsed AuthResponse: ${response.data}', tag: 'Auth');
+      AppLogger.debug(
+        '- accessToken in response.data: ${response.data.accessToken != null ? "present" : "NULL"}',
+        tag: 'Auth',
       );
-      print(
-        '[AUTH_REPO] - refreshToken in response.data: ${response.data.refreshToken != null ? "present" : "NULL"}',
+      AppLogger.debug(
+        '- refreshToken in response.data: ${response.data.refreshToken != null ? "present" : "NULL"}',
+        tag: 'Auth',
       );
 
       if (response.response.statusCode == 200 ||

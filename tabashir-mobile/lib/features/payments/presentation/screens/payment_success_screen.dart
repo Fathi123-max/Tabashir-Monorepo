@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:tabashir/core/theme/app_theme.dart';
+import 'package:tabashir/core/utils/app_logger.dart';
 
 /// Success screen displayed after successful payment
 class PaymentSuccessScreen extends StatelessWidget {
@@ -131,11 +132,11 @@ class PaymentSuccessScreen extends StatelessWidget {
                 width: double.infinity,
                 child: ElevatedButton(
                   onPressed: () async {
-                    print('[PaymentSuccessScreen] OK button pressed');
+                    AppLogger.debug('[PaymentSuccessScreen] OK button pressed', tag: 'Payments');
                     if (onOkPressed != null) {
                       await onOkPressed!();
                     }
-                    print('[PaymentSuccessScreen] Popping back to home');
+                    AppLogger.debug('[PaymentSuccessScreen] Popping back to home', tag: 'Payments');
                     if (context.mounted) {
                       // Since we pushed with Navigator, we pop with Navigator
                       Navigator.of(context).popUntil((route) => route.isFirst);

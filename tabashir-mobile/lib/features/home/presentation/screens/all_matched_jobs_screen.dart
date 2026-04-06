@@ -8,6 +8,7 @@ import 'package:tabashir/core/theme/app_theme.dart';
 import 'package:tabashir/features/home/presentation/cubit/home_cubit.dart';
 import 'package:tabashir/features/home/presentation/cubit/home_state.dart';
 import 'package:tabashir/features/jobs/presentation/widgets/job_card.dart';
+import 'package:tabashir/core/utils/app_logger.dart';
 
 /// Screen displaying all AI-matched jobs for the user with infinite scroll
 class AllMatchedJobsScreen extends StatefulWidget {
@@ -80,13 +81,11 @@ class _AllMatchedJobsContent extends StatelessWidget {
           final isLoadingMore = state.isLoadingMoreMatched;
           final hasMore = state.matchedJobsHasMore;
 
-          print('[ALL_MATCHED_SCREEN] Building screen');
-          print(
-            '[ALL_MATCHED_SCREEN] All matched jobs count: ${allMatchedJobs.length}',
-          );
-          print('[ALL_MATCHED_SCREEN] Is loading: $isLoading');
-          print('[ALL_MATCHED_SCREEN] Is loading more: $isLoadingMore');
-          print('[ALL_MATCHED_SCREEN] Has more: $hasMore');
+          AppLogger.debug('[ALL_MATCHED_SCREEN] Building screen', tag: 'Home');
+          AppLogger.debug('[ALL_MATCHED_SCREEN] All matched jobs count: ${allMatchedJobs.length}', tag: 'Home');
+          AppLogger.debug('[ALL_MATCHED_SCREEN] Is loading: $isLoading', tag: 'Home');
+          AppLogger.debug('[ALL_MATCHED_SCREEN] Is loading more: $isLoadingMore', tag: 'Home');
+          AppLogger.debug('[ALL_MATCHED_SCREEN] Has more: $hasMore', tag: 'Home');
 
           if (isLoading && allMatchedJobs.isEmpty) {
             return const Center(
@@ -164,9 +163,7 @@ class _AllMatchedJobsContent extends StatelessWidget {
                         pathParameters: {'jobId': job.id},
                       );
                     } else {
-                      print(
-                        '[ALL_MATCHED_SCREEN] Job ID is null or empty for job: ${job.title}',
-                      );
+                      AppLogger.debug('[ALL_MATCHED_SCREEN] Job ID is null or empty for job: ${job.title}', tag: 'Home');
                     }
                   },
                   child: JobCard(

@@ -1,5 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:tabashir/core/utils/app_logger.dart';
 import 'package:tabashir/features/messages/domain/repositories/messages_repository.dart';
 import 'package:tabashir/features/notifications/data/models/notification_model.dart';
 
@@ -143,5 +144,82 @@ class MessagesCubit extends Cubit<MessagesState> {
   /// Refresh messages and unread count
   Future<void> refresh({required String userId}) async {
     await loadMessages(userId: userId);
+  }
+
+  /// Report a user for inappropriate content
+  Future<void> reportUser({
+    required String reportedUserId,
+    required String reason,
+    String? messageId,
+  }) async {
+    try {
+      await _repository.reportUser(
+        reportedUserId: reportedUserId,
+        reason: reason,
+        messageId: messageId,
+      );
+    } catch (e) {
+      emit(
+        state.copyWith(
+          hasError: true,
+          errorMessage: 'Failed to report user: $e',
+        ),
+      );
+    }
+  }
+
+  /// Block a user
+  Future<void> blockUser({required String blockedUserId}) async {
+    try {
+      await _repository.blockUser(blockedUserId: blockedUserId);
+      emit(
+        state.copyWith(
+          blockedUsers: [...state.blockedUsers, blockedUserId],
+        ),
+      );
+    } catch (e) {
+      emit(
+        state.copyWith(
+          hasError: true,
+          errorMessage: 'Failed to block user: $e',
+        ),
+      );
+    }
+  }
+
+  /// Unblock a user
+  Future<void> unblockUser({required String blockedUserId}) async {
+    try {
+      await _repository.unblockUser(blockedUserId: blockedUserId);
+      emit(
+        state.copyWith(
+          blockedUsers: state.blockedUsers
+              .where((id) => id != blockedUserId)
+              .toList(),
+        ),
+      );
+    } catch (e) {
+      emit(
+        state.copyWith(
+          hasError: true,
+          errorMessage: 'Failed to unblock user: $e',
+        ),
+      );
+    }
+  }
+
+  /// Load blocked users list
+  Future<void> loadBlockedUsers() async {
+    try {
+      final blockedUsers = await _repository.getBlockedUsers();
+      emit(state.copyWith(blockedUsers: blockedUsers));
+    } catch (e) {
+      AppLogger.error('Failed to load blocked users: $e', tag: 'Messages');
+    }
+  }
+
+  /// Check if a user is blocked
+  bool isUserBlocked(String userId) {
+    return state.blockedUsers.contains(userId);
   }
 }

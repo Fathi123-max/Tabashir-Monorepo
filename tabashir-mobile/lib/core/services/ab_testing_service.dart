@@ -1,6 +1,7 @@
 import 'dart:math';
 import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:tabashir/core/utils/app_logger.dart';
 import 'ai_job_apply_config_service.dart';
 
 /// A/B Test configuration
@@ -52,11 +53,11 @@ class ABTestingService {
       await prefs.setString(_testConfigKey, configJson);
 
       if (kDebugMode) {
-        print('[ABTesting] Registered test: ${config.testName}');
+        AppLogger.debug('[ABTesting] Registered test: ${config.testName}', tag: 'Service');
       }
     } catch (e) {
       if (kDebugMode) {
-        print('[ABTesting] Error registering test: $e');
+        AppLogger.error('[ABTesting] Error registering test: $e', tag: 'Service', error: e);
       }
     }
   }
@@ -99,15 +100,13 @@ class ABTestingService {
       await prefs.setString(variantKey, assignedVariant);
 
       if (kDebugMode) {
-        print(
-          '[ABTesting] Assigned variant $assignedVariant for test $testName',
-        );
+        AppLogger.debug('[ABTesting] Assigned variant $assignedVariant for test $testName', tag: 'Service');
       }
 
       return assignedVariant;
     } catch (e) {
       if (kDebugMode) {
-        print('[ABTesting] Error getting variant: $e');
+        AppLogger.error('[ABTesting] Error getting variant: $e', tag: 'Service', error: e);
       }
       return 'A'; // Default to variant A on error
     }
@@ -221,13 +220,11 @@ class ABTestingService {
       await prefs.setInt(conversionKey, currentCount + 1);
 
       if (kDebugMode) {
-        print(
-          '[ABTracking] Conversion tracked for $testName ($variant): ${currentCount + 1}',
-        );
+        AppLogger.debug('[ABTracking] Conversion tracked for $testName ($variant): ${currentCount + 1}', tag: 'Service');
       }
     } catch (e) {
       if (kDebugMode) {
-        print('[ABTracking] Error tracking conversion: $e');
+        AppLogger.error('[ABTracking] Error tracking conversion: $e', tag: 'Service', error: e);
       }
     }
   }
@@ -249,7 +246,7 @@ class ABTestingService {
       };
     } catch (e) {
       if (kDebugMode) {
-        print('[ABTracking] Error getting conversion rate: $e');
+        AppLogger.error('[ABTracking] Error getting conversion rate: $e', tag: 'Service', error: e);
       }
       return {'A': 0.0, 'B': 0.0};
     }
@@ -270,7 +267,7 @@ class ABTestingService {
       return _getDefaultTests();
     } catch (e) {
       if (kDebugMode) {
-        print('[ABTesting] Error getting active tests: $e');
+        AppLogger.error('[ABTesting] Error getting active tests: $e', tag: 'Service', error: e);
       }
       return _getDefaultTests();
     }
@@ -320,11 +317,11 @@ class ABTestingService {
       }
 
       if (kDebugMode) {
-        print('[ABTesting] All test data cleared');
+        AppLogger.debug('[ABTesting] All test data cleared', tag: 'Service');
       }
     } catch (e) {
       if (kDebugMode) {
-        print('[ABTesting] Error clearing tests: $e');
+        AppLogger.error('[ABTesting] Error clearing tests: $e', tag: 'Service', error: e);
       }
     }
   }
@@ -364,11 +361,11 @@ class ABTestingService {
       await prefs.setString(variantKey, variant);
 
       if (kDebugMode) {
-        print('[ABTesting] Forced variant $variant for test $testName');
+        AppLogger.debug('[ABTesting] Forced variant $variant for test $testName', tag: 'Service');
       }
     } catch (e) {
       if (kDebugMode) {
-        print('[ABTesting] Error forcing variant: $e');
+        AppLogger.error('[ABTesting] Error forcing variant: $e', tag: 'Service', error: e);
       }
     }
   }

@@ -8,6 +8,7 @@ import 'package:tabashir/core/network/models/applied_jobs_response.dart';
 import 'package:tabashir/core/theme/app_theme.dart';
 import 'package:tabashir/features/home/presentation/cubit/home_cubit.dart';
 import 'package:tabashir/features/home/presentation/cubit/home_state.dart';
+import 'package:tabashir/core/utils/app_logger.dart';
 
 /// Screen displaying all job applications submitted by the user with infinite scroll
 class ApplicationsListScreen extends StatefulWidget {
@@ -71,13 +72,11 @@ class _ApplicationsListContent extends StatelessWidget {
           final isLoadingMore = state.isLoadingMoreApplied;
           final hasMore = state.appliedJobsHasMore;
 
-          print('[APPLICATIONS_SCREEN] Building screen');
-          print('[APPLICATIONS_SCREEN] Total applications: $totalCount');
-          print(
-            '[APPLICATIONS_SCREEN] Applied jobs count: ${appliedJobs.length}',
-          );
-          print('[APPLICATIONS_SCREEN] Is loading more: $isLoadingMore');
-          print('[APPLICATIONS_SCREEN] Has more: $hasMore');
+          AppLogger.debug('[APPLICATIONS_SCREEN] Building screen', tag: 'Applications');
+          AppLogger.debug('[APPLICATIONS_SCREEN] Total applications: $totalCount', tag: 'Applications');
+          AppLogger.debug('[APPLICATIONS_SCREEN] Applied jobs count: ${appliedJobs.length}', tag: 'Applications');
+          AppLogger.debug('[APPLICATIONS_SCREEN] Is loading more: $isLoadingMore', tag: 'Applications');
+          AppLogger.debug('[APPLICATIONS_SCREEN] Has more: $hasMore', tag: 'Applications');
 
           if (appliedJobs.isEmpty && !isLoadingMore) {
             return _buildEmptyState(theme, context);
