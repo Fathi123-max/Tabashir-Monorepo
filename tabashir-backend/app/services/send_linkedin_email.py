@@ -1,11 +1,12 @@
 import smtplib
+import os
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 
 SMTP_SERVER = "smtp.hostinger.com"
 SMTP_PORT = 465
 EMAIL_ADDRESS = "application@tabashirai.com"
-EMAIL_PASSWORD = "Tabashir@uae2024#*"
+EMAIL_PASSWORD = os.getenv('EMAIL_PASSWORD')
 
 EMAIL_SUBJECT = "Next Step in Your Career Starts Now | خطوتك التالية في المسار المهني تبدأ الآن"
 EMAIL_BODY_TEMPLATE = """\
