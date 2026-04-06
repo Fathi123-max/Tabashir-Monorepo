@@ -46,7 +46,7 @@ class ApplePaymentPlatform implements PaymentPlatform {
         case PurchaseStatus.restored:
           // 4. Verify with backend
           final transactionId = purchase.purchaseID ??
-              'fallback_${purchase.transactionDate?.millisecondsSinceEpoch ?? DateTime.now().millisecondsSinceEpoch}_'
+              'fallback_${DateTime.now().millisecondsSinceEpoch}_'
                   '${DateTime.now().microsecondsSinceEpoch}';
           final verification = await _appleService.verifyReceipt(
             transactionId: transactionId,
