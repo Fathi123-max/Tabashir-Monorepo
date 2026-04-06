@@ -14,7 +14,7 @@ class PaymentFulfillmentService:
     Replaces the inline logic previously in StripeWebhook._handle_payment_success.
     """
 
-    def fulfill(self, service_id, user_id, amount, receipt_data=None):
+    def fulfill(self, service_id, user_id, amount, receipt_data=None, resume_id=None):
         """
         Route to the correct service handler based on product/service ID.
 
@@ -23,8 +23,9 @@ class PaymentFulfillmentService:
             user_id: User who made the purchase
             amount: Payment amount in AED
             receipt_data: Optional receipt metadata from the payment provider
+            resume_id: Optional resume ID for ai-resume-optimization
         """
-        handler = self._get_handler(service_id, user_id, amount)
+        handler = self._get_handler(service_id, user_id, amount, resume_id)
         if handler:
             try:
                 handler()
@@ -35,12 +36,12 @@ class PaymentFulfillmentService:
         else:
             logger.warning(f'No fulfillment handler for service: {service_id}')
 
-    def _get_handler(self, service_id, user_id, amount):
+    def _get_handler(self, service_id, user_id, amount, resume_id=None):
         """Return the handler function for the given service_id."""
         handlers = {
             'ai-job-apply-basic': lambda: self._activate_job_apply(user_id, 100),
             'ai-job-apply-premium': lambda: self._activate_job_apply(user_id, 200),
-            'ai-resume-optimization': lambda: self._update_ai_resume(user_id, amount),
+            'ai-resume-optimization': lambda: self._update_ai_resume(user_id, amount, resume_id),
             'linkedin-optimization': lambda: self._create_linkedin_subscription(user_id),
             'ai-linkedin-enhancement': lambda: self._send_linkedin_email(user_id),
             'interview-training': lambda: self._log_interview_training(user_id),
@@ -125,13 +126,22 @@ class PaymentFulfillmentService:
             logger.error(f'CV formatting failed for {email}: {str(cv_error)}')
             logger.warning(f'Job credits already added, but CV formatting skipped')
 
-    def _update_ai_resume(self, user_id, amount):
-        """Mark AI resume as paid for a user. Called without resumeId -- updates latest."""
-        execute_query(
-            'UPDATE "AiResume" SET "paymentStatus" = true, "paymentAmount" = %s, "paymentDate" = %s, status = %s WHERE "userId" = %s',
-            (amount, datetime.now(), 'COMPLETED', user_id),
-            commit=True
-        )
+    def _update_ai_resume(self, user_id, amount, resume_id=None):
+        """Mark a specific AI resume as paid. Falls back to most recent unpaid if no resume_id."""
+        if resume_id:
+            execute_query(
+                'UPDATE "AiResume" SET "paymentStatus" = true, "paymentAmount" = %s, "paymentDate" = %s, status = %s WHERE id = %s AND "userId" = %s',
+                (amount, datetime.now(), 'COMPLETED', resume_id, user_id),
+                commit=True
+            )
+        else:
+            # Fallback: update the most recent unpaid resume for this user
+            execute_query(
+                """UPDATE "AiResume" SET "paymentStatus" = true, "paymentAmount" = %s, "paymentDate" = %s, status = %s
+                WHERE id = (SELECT id FROM "AiResume" WHERE "userId" = %s AND "paymentStatus" = false ORDER BY "createdAt" DESC LIMIT 1)""",
+                (amount, datetime.now(), 'COMPLETED', user_id),
+                commit=True
+            )
 
     def _create_linkedin_subscription(self, user_id):
         """Create a 30-day LinkedIn Optimization subscription for a user."""

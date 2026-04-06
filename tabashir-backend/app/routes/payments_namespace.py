@@ -271,7 +271,7 @@ class VerifyAppleReceipt(Resource):
 
             # Fulfill the purchase, then mark as COMPLETED
             try:
-                fulfillment_service.fulfill(product_id, user_id, price, receipt_data)
+                fulfillment_service.fulfill(product_id, user_id, price, receipt_data, resume_id=resume_id)
                 execute_query(
                     'UPDATE "Payment" SET status = %s, "updatedAt" = %s WHERE "transactionId" = %s',
                     ('COMPLETED', datetime.now(), transaction_id),
