@@ -29,12 +29,24 @@ class PaymentCubit extends Cubit<PaymentState> {
   /// Set this before calling processPayment to handle navigation.
   Future<void> Function(PaymentResult)? onPaymentSuccess;
 
+  /// Guard flag to prevent concurrent payment attempts.
+  bool _isProcessing = false;
+
   /// Process a payment — works for both Stripe (Android) and Apple IAP (iOS).
   Future<void> processPayment({
     required String serviceId,
     required double amount,
     String? resumeId,
   }) async {
+    if (_isProcessing) {
+      emit(state.copyWith(
+        status: PaymentStatus.failed,
+        errorMessage: 'Payment already in progress',
+      ));
+      return;
+    }
+    _isProcessing = true;
+
     final userId = _currentUserId;
 
     emit(state.copyWith(
@@ -60,6 +72,8 @@ class PaymentCubit extends Cubit<PaymentState> {
         status: PaymentStatus.failed,
         errorMessage: e.toString(),
       ));
+    } finally {
+      _isProcessing = false;
     }
   }
 
