@@ -133,7 +133,7 @@ class _HomeScreenState extends State<HomeScreen> {
             children: [
               Container(
                 height: 70.h,
-                child: AppLogo(),
+                child: AppLogo(width: 180.w, showText: false),
               ),
               _buildNotificationButton(context, theme),
             ],
