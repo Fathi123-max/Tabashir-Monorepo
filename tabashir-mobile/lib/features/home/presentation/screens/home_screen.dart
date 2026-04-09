@@ -80,7 +80,7 @@ class _HomeScreenState extends State<HomeScreen> {
     return locations.isEmpty ? ['your area'.tr()] : locations.toList();
   }
 
-  /// Home Header - Enhanced UI/UX Design
+  /// Home Header - Premium Editorial Design
   Widget _buildHomeHeader(
     BuildContext context,
     ThemeData theme,
@@ -119,66 +119,85 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
         borderRadius: BorderRadius.circular(AppTheme.radiusLarge.r),
       ),
-      child: Row(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          AppLogo(height: 40.h, showText: false),
-          SizedBox(width: AppTheme.spacingMd.w),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'hi_greeting'.tr(args: [userName!]),
-                  style: theme.textTheme.displayMedium?.copyWith(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 28.sp,
-                    letterSpacing: 0.5,
-                  ),
-                ),
-                SizedBox(height: AppTheme.spacingXs.h),
-                Row(
+          // Top row: Logo (left) + Notification button (right)
+          Row(
+            children: [
+              AppLogo(height: 48.h, showText: false),
+              const Spacer(),
+              _buildNotificationButton(context, theme),
+            ],
+          ),
+          SizedBox(height: AppTheme.spacingMd.h),
+          // Greeting row
+          Row(
+            children: [
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    if (isPro) ...[
-                      Container(
-                        padding: EdgeInsets.symmetric(
-                          horizontal: 8.w,
-                          vertical: 2.h,
-                        ),
-                        decoration: BoxDecoration(
-                          gradient: AppTheme.goldGradient,
-                          borderRadius: BorderRadius.circular(
-                            AppTheme.radiusFull.r,
-                          ),
-                        ),
-                        child: Text(
-                          'PRO',
-                          style: TextStyle(
-                            fontSize: 10.sp,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.white,
-                          ),
-                        ),
-                      ),
-                      SizedBox(width: AppTheme.spacingSm.w),
-                    ],
-                    Expanded(
-                      child: Text(
-                        isPro
-                            ? 'Premium Member'
-                            : 'Welcome back! Ready to find your dream job?',
-                        style: theme.textTheme.bodyMedium?.copyWith(
-                          color: theme.colorScheme.onSurfaceVariant,
-                          fontSize: 14.sp,
-                        ),
+                    Text(
+                      'hi_greeting'.tr(args: [userName!]),
+                      style: theme.textTheme.displayMedium?.copyWith(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 26.sp,
+                        letterSpacing: 0.5,
                       ),
                     ),
-                    // Notification Button - Better Aligned
-                    SizedBox(width: AppTheme.spacingSm.w),
-                    _buildNotificationButton(context, theme),
+                    SizedBox(height: AppTheme.spacingXs.h),
+                    Row(
+                      children: [
+                        if (isPro) ...[
+                          Container(
+                            padding: EdgeInsets.symmetric(
+                              horizontal: 10.w,
+                              vertical: 4.h,
+                            ),
+                            decoration: BoxDecoration(
+                              gradient: AppTheme.goldGradient,
+                              borderRadius: BorderRadius.circular(
+                                AppTheme.radiusFull.r,
+                              ),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: AppTheme.goldColor.withOpacity(0.3),
+                                  blurRadius: 8,
+                                  offset: const Offset(0, 2),
+                                ),
+                              ],
+                            ),
+                            child: Text(
+                              'PRO',
+                              style: TextStyle(
+                                fontSize: 11.sp,
+                                fontWeight: FontWeight.w700,
+                                color: Colors.white,
+                                letterSpacing: 0.5.sp,
+                              ),
+                            ),
+                          ),
+                          SizedBox(width: AppTheme.spacingSm.w),
+                        ],
+                        Expanded(
+                          child: Text(
+                            isPro
+                                ? 'Premium Member'
+                                : 'Welcome back! Ready to find your dream job?',
+                            style: theme.textTheme.bodyMedium?.copyWith(
+                              color: theme.colorScheme.onSurfaceVariant,
+                              fontSize: 13.sp,
+                              height: 1.3,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
                   ],
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
         ],
       ),
