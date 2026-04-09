@@ -101,7 +101,12 @@ class _HomeScreenState extends State<HomeScreen> {
         AppTheme.spacingMd.w,
         0,
       ),
-      padding: EdgeInsets.all(AppTheme.spacingMd.w),
+      padding: EdgeInsets.only(
+        top: 0,
+        left: AppTheme.spacingMd.w,
+        right: AppTheme.spacingMd.w,
+        bottom: AppTheme.spacingMd.w,
+      ),
       decoration: BoxDecoration(
         gradient: LinearGradient(
           begin: Alignment.topLeft,
@@ -124,13 +129,19 @@ class _HomeScreenState extends State<HomeScreen> {
         children: [
           // Top row: Logo (left) + Notification button (right)
           Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              AppLogo(height: 90.h, showText: false),
-              const Spacer(),
+              Expanded(
+                child: Container(
+                  height: 80.h,
+                  alignment: Alignment.centerLeft,
+                  child: AppLogo(width: 200.w, showText: false),
+                ),
+              ),
               _buildNotificationButton(context, theme),
             ],
           ),
-          SizedBox(height: AppTheme.spacingSm.h),
+          SizedBox(height: 8.h),
           // Greeting row
           Row(
             children: [
