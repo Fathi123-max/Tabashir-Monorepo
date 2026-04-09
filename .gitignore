@@ -2,3 +2,4 @@ docs/
 test/
 database_migration_plan/
 tabashir-frontend/
+.worktrees/

@@ -55,6 +55,8 @@
 	<true/>
 	<key>NSCameraUsageDescription</key>
 	<string>Tabashir needs access to your camera to take profile photos</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>Tabashir uses your location to recommend nearby job opportunities</string>
 	<key>NSPhotoLibraryAddUsageDescription</key>
 	<string>Tabashir needs access to your photo library to save resume documents</string>
 	<key>NSPhotoLibraryUsageDescription</key>
