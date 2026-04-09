@@ -131,10 +131,7 @@ class _HomeScreenState extends State<HomeScreen> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Container(
-                height: 70.h,
-                child: AppLogo(width: 180.w, showText: false),
-              ),
+              AppLogo(width: 160.w, height: 70.h, showText: false),
               _buildNotificationButton(context, theme),
             ],
           ),

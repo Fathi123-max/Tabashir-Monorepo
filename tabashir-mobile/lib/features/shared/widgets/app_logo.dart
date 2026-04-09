@@ -39,6 +39,7 @@ class AppLogo extends StatelessWidget {
           logoPath,
           width: width,
           height: height,
+          fit: BoxFit.contain,
         ),
         if (showText) ...[
           SizedBox(height: 8.h),
