@@ -1,6 +1,8 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
+import '../../../../features/shared/widgets/app_logo.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -42,11 +44,7 @@ class _SplashScreenState extends State<SplashScreen>
   }
 
   Future<void> _navigate() async {
-    // Simulate a small delay for the splash screen animations
     await Future.delayed(const Duration(seconds: 2));
-
-    // Let the router's redirect logic handle navigation
-    // The router will check authentication and redirect appropriately
     context.go('/');
   }
 
@@ -58,14 +56,12 @@ class _SplashScreenState extends State<SplashScreen>
 
   @override
   Widget build(BuildContext context) => Scaffold(
-    backgroundColor: const Color(
-      0xFFFFFFFF,
-    ), // background-light: '#ffffff'.tr()
+    backgroundColor: Theme.of(context).scaffoldBackgroundColor,
     body: Container(
       width: double.infinity,
       height: double.infinity,
-      decoration: const BoxDecoration(
-        color: Color(0xFFFFFFFF), // background-light: '#ffffff'.tr()
+      decoration: BoxDecoration(
+        color: Theme.of(context).scaffoldBackgroundColor,
       ),
       child: Center(
         child: AnimatedBuilder(
@@ -75,17 +71,18 @@ class _SplashScreenState extends State<SplashScreen>
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                // Main title with gradient
-                _buildTitle(),
+                FadeTransition(
+                  opacity: _fadeAnimation,
+                  child: AppLogo(width: 200.w, showText: true),
+                ),
                 const SizedBox(height: 12),
-                // Subtitle text
                 FadeTransition(
                   opacity: _fadeAnimation,
                   child: Text(
                     'Your AI job assistant for the Middle East'.tr(),
-                    style: const TextStyle(
-                      color: Color(0xFF6B7280), // text color from HTML
-                      fontSize: 16,
+                    style: TextStyle(
+                      color: const Color(0xFF6B7280),
+                      fontSize: 16.sp,
                       fontWeight: FontWeight.normal,
                     ),
                   ),
@@ -94,24 +91,6 @@ class _SplashScreenState extends State<SplashScreen>
             ),
           ),
         ),
-      ),
-    ),
-  );
-
-  Widget _buildTitle() => ShaderMask(
-    blendMode: BlendMode.srcIn,
-    shaderCallback: (bounds) => const LinearGradient(
-      colors: [
-        Color(0xFF042052), // gradient-start: '#042052'.tr()
-        Color(0xFF0D57E1), // gradient-end: '#0D57E1'.tr()
-      ],
-    ).createShader(bounds),
-    child: Text(
-      'Tabashir'.tr(),
-      style: const TextStyle(
-        fontSize: 28,
-        fontWeight: FontWeight.bold,
-        color: Colors.white,
       ),
     ),
   );
