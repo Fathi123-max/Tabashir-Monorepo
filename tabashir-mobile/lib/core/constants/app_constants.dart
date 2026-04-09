@@ -31,8 +31,6 @@ class AppConstants {
   static const String requiredFieldError = 'This field is required';
 
   /// Assets paths
-  static const String logoAssetPath = 'assets/images/logo.png';
-  static const String splashAssetPath = 'assets/images/splash.png';
   static const String userPlaceholderAsset =
       'assets/images/user_placeholder.png';
   static const String companyPlaceholderAsset =
