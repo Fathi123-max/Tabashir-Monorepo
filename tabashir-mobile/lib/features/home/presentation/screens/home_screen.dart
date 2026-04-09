@@ -1,5 +1,4 @@
 import 'package:easy_localization/easy_localization.dart';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -17,6 +16,7 @@ import 'package:tabashir/features/home/presentation/screens/all_matched_jobs_scr
 import 'package:tabashir/features/jobs/presentation/cubit/jobs_cubit.dart';
 import 'package:tabashir/shared/widgets/cv_required_blur.dart';
 import 'package:tabashir/features/resume/presentation/cubit/resume_vault_cubit.dart';
+import '../../../shared/widgets/app_logo.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({
@@ -121,29 +121,7 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
       child: Row(
         children: [
-          // Gradient Icon Container
-          Container(
-            padding: EdgeInsets.all(AppTheme.spacingSm.w),
-            decoration: BoxDecoration(
-              gradient: isPro
-                  ? AppTheme.goldGradient
-                  : AppTheme.primaryGradient,
-              borderRadius: BorderRadius.circular(AppTheme.radiusMedium.r),
-              boxShadow: [
-                BoxShadow(
-                  color: (isPro ? AppTheme.goldColor : AppTheme.primaryColor)
-                      .withOpacity(0.3),
-                  blurRadius: 12,
-                  offset: const Offset(0, 4),
-                ),
-              ],
-            ),
-            child: Icon(
-              isPro ? Icons.workspace_premium_rounded : Icons.home_rounded,
-              size: 24.sp,
-              color: Colors.white,
-            ),
-          ),
+          AppLogo(height: 40.h, showText: false),
           SizedBox(width: AppTheme.spacingMd.w),
           Expanded(
             child: Column(
