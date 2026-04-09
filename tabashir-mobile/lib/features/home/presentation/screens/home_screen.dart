@@ -125,7 +125,7 @@ class _HomeScreenState extends State<HomeScreen> {
           // Top row: Logo (left) + Notification button (right)
           Row(
             children: [
-              AppLogo(height: 48.h, showText: false),
+              AppLogo(height: 64.h, showText: false),
               const Spacer(),
               _buildNotificationButton(context, theme),
             ],
