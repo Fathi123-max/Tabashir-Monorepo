@@ -1,0 +1,6 @@
+{"type":"server-started","port":55767,"host":"127.0.0.1","url_host":"localhost","url":"http://localhost:55767","screen_dir":"/Users/Apple/Documents/tabashir/.superpowers/brainstorm/28703-1775830213/content","state_dir":"/Users/Apple/Documents/tabashir/.superpowers/brainstorm/28703-1775830213/state"}
+{"type":"screen-added","file":"/Users/Apple/Documents/tabashir/.superpowers/brainstorm/28703-1775830213/content/current-state.html"}
+{"type":"screen-added","file":"/Users/Apple/Documents/tabashir/.superpowers/brainstorm/28703-1775830213/content/color-confirm.html"}
+{"type":"screen-added","file":"/Users/Apple/Documents/tabashir/.superpowers/brainstorm/28703-1775830213/content/approaches.html"}
+{"type":"screen-added","file":"/Users/Apple/Documents/tabashir/.superpowers/brainstorm/28703-1775830213/content/design.html"}
+{"type":"server-stopped","reason":"idle timeout"}

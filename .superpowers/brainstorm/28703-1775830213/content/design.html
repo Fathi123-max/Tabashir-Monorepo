@@ -1,0 +1,140 @@
+<h2>App Icon Design — Final Design</h2>
+<p class="subtitle">Automated icon generation for iOS & Android using flutter_launcher_icons</p>
+
+<div class="section">
+  <h3>Architecture</h3>
+  <div class="mockup">
+    <div class="mockup-header">Icon Generation Pipeline</div>
+    <div class="mockup-body" style="padding:20px;font-family:monospace;font-size:14px;line-height:2;">
+      <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;justify-content:center;">
+        <div style="background:#e8f4f8;padding:12px 20px;border-radius:8px;text-align:center;">
+          <div style="font-size:24px;">🖼️</div>
+          <div><strong>Source Images</strong></div>
+          <div style="font-size:11px;color:#666;">logo_light.png</div>
+          <div style="font-size:11px;color:#666;">logo_dark.png</div>
+        </div>
+        <div style="font-size:24px;">→</div>
+        <div style="background:#f0e8f8;padding:12px 20px;border-radius:8px;text-align:center;">
+          <div style="font-size:24px;">🔧</div>
+          <div><strong>flutter_launcher_icons</strong></div>
+          <div style="font-size:11px;color:#666;">pubspec.yaml config</div>
+        </div>
+        <div style="font-size:24px;">→</div>
+        <div style="background:#f8f0e8;padding:12px 20px;border-radius:8px;text-align:center;">
+          <div style="font-size:24px;">📱</div>
+          <div><strong>iOS</strong></div>
+          <div style="font-size:11px;color:#666;">AppIcon.appiconset/</div>
+          <div style="font-size:11px;color:#666;">17 sizes</div>
+        </div>
+        <div style="font-size:24px;">→</div>
+        <div style="background:#e8f8f0;padding:12px 20px;border-radius:8px;text-align:center;">
+          <div style="font-size:24px;">🤖</div>
+          <div><strong>Android</strong></div>
+          <div style="font-size:11px;color:#666;">mipmap-*/ (legacy)</div>
+          <div style="font-size:11px;color:#666;">adaptive icon (xml)</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="section">
+  <h3>Configuration Structure</h3>
+  <p class="subtitle">Two separate icon configs — one for light logo, one for dark</p>
+  <table style="width:100%;border-collapse:collapse;font-size:14px;">
+    <thead>
+      <tr style="border-bottom:2px solid #ddd;">
+        <th style="text-align:left;padding:8px;">Platform</th>
+        <th style="text-align:left;padding:8px;">Source</th>
+        <th style="text-align:left;padding:8px;">Background</th>
+        <th style="text-align:left;padding:8px;">Notes</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr style="border-bottom:1px solid #eee;">
+        <td style="padding:8px;"><strong>iOS</strong></td>
+        <td style="padding:8px;">logo_light.png</td>
+        <td style="padding:8px;"><code style="background:#e8f4f8;padding:2px 6px;border-radius:4px;">#0F4C81</code></td>
+        <td style="padding:8px;">Single set, navy background</td>
+      </tr>
+      <tr style="border-bottom:1px solid #eee;">
+        <td style="padding:8px;"><strong>Android (legacy)</strong></td>
+        <td style="padding:8px;">logo_light.png</td>
+        <td style="padding:8px;"><code style="background:#e8f4f8;padding:2px 6px;border-radius:4px;">#0F4C81</code></td>
+        <td style="padding:8px;">mipmap-* PNGs</td>
+      </tr>
+      <tr>
+        <td style="padding:8px;"><strong>Android (adaptive)</strong></td>
+        <td style="padding:8px;">logo_light.png</td>
+        <td style="padding:8px;"><code style="background:#e8f4f8;padding:2px 6px;border-radius:4px;">#0F4C81</code></td>
+        <td style="padding:8px;">Foreground + background XML</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<div class="section">
+  <h3>Key Details</h3>
+  <ul style="list-style:none;padding:0;">
+    <li class="section" style="margin-top:16px;">
+      <span class="label">Dev Dependency</span>
+      <p>Add <code>flutter_launcher_icons: ^0.13.1</code> to <code>dev_dependencies</code></p>
+    </li>
+    <li class="section" style="margin-top:16px;">
+      <span class="label">Config Block</span>
+      <p>Add <code>flutter_launcher_icons:</code> section to pubspec.yaml with platform-specific configs</p>
+    </li>
+    <li class="section" style="margin-top:16px;">
+      <span class="label">Command</span>
+      <p><code>dart run flutter_launcher_icons</code> — generates all icons from source</p>
+    </li>
+    <li class="section" style="margin-top:16px;">
+      <span class="label">Android Adaptive</span>
+      <p>Foreground = logo with transparent background. Background = solid <code>#0F4C81</code></p>
+    </li>
+    <li class="section" style="margin-top:16px;">
+      <span class="label">Git</span>
+      <p>Generated icons stay git-ignored. Source logos and pubspec config are committed.</p>
+    </li>
+  </ul>
+</div>
+
+<div class="section">
+  <h3>File Changes Summary</h3>
+  <table style="width:100%;border-collapse:collapse;font-size:14px;">
+    <thead>
+      <tr style="border-bottom:2px solid #ddd;">
+        <th style="text-align:left;padding:8px;">File</th>
+        <th style="text-align:left;padding:8px;">Action</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr style="border-bottom:1px solid #eee;">
+        <td style="padding:8px;"><code>tabashir-mobile/pubspec.yaml</code></td>
+        <td style="padding:8px;">Add dev dependency + flutter_launcher_icons config</td>
+      </tr>
+      <tr style="border-bottom:1px solid #eee;">
+        <td style="padding:8px;"><code>tabashir-mobile/assets/images/ic_launcher_foreground.png</code></td>
+        <td style="padding:8px;">New: cropped logo for Android adaptive icon foreground</td>
+      </tr>
+      <tr style="border-bottom:1px solid #eee;">
+        <td style="padding:8px;"><code>tabashir-mobile/assets/images/ic_launcher_background.xml</code></td>
+        <td style="padding:8px;">New: navy background color for Android adaptive icon</td>
+      </tr>
+      <tr style="border-bottom:1px solid #eee;">
+        <td style="padding:8px;"><code>tabashir-mobile/ios/Runner/Assets.xcassets/AppIcon.appiconset/*</code></td>
+        <td style="padding:8px;">Regenerated (git-ignored)</td>
+      </tr>
+      <tr>
+        <td style="padding:8px;"><code>tabashir-mobile/android/app/src/main/res/mipmap-*/ic_launcher.png</code></td>
+        <td style="padding:8px;">Regenerated (git-ignored)</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<div class="section" style="margin-top:32px;padding:16px;background:#f8f9fa;border-radius:8px;">
+  <h3>Ready for Your Approval</h3>
+  <p>This design uses <code>flutter_launcher_icons</code> to automate icon generation from your existing logos. Navy background <code>#0F4C81</code> with the light logo as primary. Both iOS and Android (including adaptive) will be generated from a single config.</p>
+  <p><strong>Does this look right?</strong> Any changes before I write the spec?</p>
+</div>

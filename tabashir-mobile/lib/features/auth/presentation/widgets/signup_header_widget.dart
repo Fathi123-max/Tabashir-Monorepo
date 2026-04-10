@@ -11,7 +11,7 @@ class SignupHeaderWidget extends StatelessWidget {
 
     return Column(
       children: [
-        AppLogo(width: 160.w, showText: true),
+        AppLogo(width: 200.w, showText: false),
         SizedBox(height: 16.h),
         Text(
           'Create your account — your AI job assistant awaits.',

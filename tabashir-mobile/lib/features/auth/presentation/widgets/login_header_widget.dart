@@ -11,7 +11,7 @@ class LoginHeaderWidget extends StatelessWidget {
 
     return Column(
       children: [
-        AppLogo(width: 160.w, showText: true),
+        AppLogo(width: 160.w, showText: false),
         SizedBox(height: 16.h),
         Text(
           'Welcome back! Sign in to your AI job assistant.',

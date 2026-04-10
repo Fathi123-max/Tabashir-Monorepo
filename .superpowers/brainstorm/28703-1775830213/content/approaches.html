@@ -1,0 +1,60 @@
+<h2>Approaches for App Icon Generation</h2>
+<p class="subtitle">Three ways to automate icon generation from your logos</p>
+
+<div class="cards">
+  <div class="card" data-choice="flutter-launcher-icons" onclick="toggleSelect(this)">
+    <div class="card-image" style="background:#e8f4f8;padding:20px;display:flex;align-items:center;justify-content:center;">
+      <div style="text-align:center;font-family:monospace;">
+        <div style="font-size:48px;">🔧</div>
+        <div style="margin-top:8px;">pubspec.yaml config</div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>A) flutter_launcher_icons (Recommended)</h3>
+      <p>Single config in pubspec.yaml generates both iOS and Android icons. Simple, battle-tested, Dart-native.</p>
+      <div class="pros-cons">
+        <div class="pros"><h4>Pros</h4><ul><li>One config for both platforms</li><li>Supports adaptive icons</li><li>No external dependencies</li><li>Integrates with Flutter tooling</li></ul></div>
+        <div class="cons"><h4>Cons</h4><ul><li>Limited customization vs manual</li><li>Can't fine-tune individual sizes</li></ul></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card" data-choice="app-icon-generator" onclick="toggleSelect(this)">
+    <div class="card-image" style="background:#f0e8f8;padding:20px;display:flex;align-items:center;justify-content:center;">
+      <div style="text-align:center;font-family:monospace;">
+        <div style="font-size:48px;">⚙️</div>
+        <div style="margin-top:8px;">npm/python script</div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>B) External Icon Generator Script</h3>
+      <p>Use a dedicated tool like <code>app-icon-generator</code> or ImageMagick-based script in your CI/CD.</p>
+      <div class="pros-cons">
+        <div class="pros"><h4>Pros</h4><ul><li>Maximum control over output</li><li>Platform-specific tweaks</li></ul></div>
+        <div class="cons"><h4>Cons</h4><ul><li>Extra dependency to manage</li><li>More complex setup</li><li>Not integrated with Flutter</li></ul></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card" data-choice="manual-with-tooling" onclick="toggleSelect(this)">
+    <div class="card-image" style="background:#f8f0e8;padding:20px;display:flex;align-items:center;justify-content:center;">
+      <div style="text-align:center;font-family:monospace;">
+        <div style="font-size:48px;">📁</div>
+        <div style="margin-top:8px;">direct file replacement</div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>C) Manual + Documentation Only</h3>
+      <p>Generate icons once with any tool, commit them, and document the process for future updates.</p>
+      <div class="pros-cons">
+        <div class="pros"><h4>Pros</h4><ul><li>Maximum control</li><li>No tooling to maintain</li></ul></div>
+        <div class="cons"><h4>Cons</h4><ul><li>Hard to iterate</li><li>Easy to lose track of source</li><li>No regeneration capability</li></ul></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="section" style="margin-top:24px;">
+  <h3>My Recommendation</h3>
+  <p><strong>Option A — flutter_launcher_icons</strong> is the best fit. It's the standard Flutter way, supports adaptive Android icons natively, and gives you a single config block to update if you ever want to change the icon. It's simple, reliable, and well-documented.</p>
+</div>
