@@ -101,9 +101,11 @@ class _HomeScreenState extends State<HomeScreen> {
         AppTheme.spacingMd.w,
         0,
       ),
-      padding: EdgeInsets.symmetric(
-        horizontal: AppTheme.spacingMd.w,
-        vertical: AppTheme.spacingMd.h * 0.6, // Tighter vertical padding
+      padding: EdgeInsets.fromLTRB(
+        AppTheme.spacingMd.w,
+        0,
+        AppTheme.spacingMd.w,
+        AppTheme.spacingMd.h,
       ),
       decoration: BoxDecoration(
         gradient: LinearGradient(
@@ -128,7 +130,7 @@ class _HomeScreenState extends State<HomeScreen> {
           // Row 1: Logo (left) + Notification button (right)
           Row(
             children: [
-              // Enlarged logo using Transform.scale to make it visually bigger 
+              // Enlarged logo using Transform.scale to make it visually bigger
               // without expanding the actual layout constraints of the hero card.
               Expanded(
                 child: Align(
@@ -138,7 +140,8 @@ class _HomeScreenState extends State<HomeScreen> {
                     alignment: Alignment.centerLeft,
                     child: AppLogo(
                       showText: false,
-                      height: 46.h, // Locks the hero card's layout to be extremely compact
+                      height: 80
+                          .h, // Locks the hero card's layout to be extremely compact
                       alignment: Alignment.centerLeft,
                       fit: BoxFit.contain,
                     ),
@@ -220,8 +223,8 @@ class _HomeScreenState extends State<HomeScreen> {
     ThemeData theme,
   ) {
     // TODO: Get actual notification count from backend/state
-    final notificationCount = 0; // Replace with actual count
-    final hasNotifications = notificationCount > 0;
+    const notificationCount = 0; // Replace with actual count
+    const hasNotifications = notificationCount > 0;
 
     return Container(
       margin: EdgeInsets.only(top: 2.h),
@@ -535,34 +538,34 @@ class _HomeScreenState extends State<HomeScreen> {
                                 SizedBox(height: AppTheme.spacingLg.h),
 
                                 // Pro Quick Actions - Premium AI tools (Pro users only)
-                                BlocBuilder<ProfileCubit, ProfileState>(
-                                  builder: (context, profileState) {
-                                    final plan =
-                                        profileState
-                                            .profile
-                                            ?.subscriptionPlan ??
-                                        '';
-                                    final userType = state.user is UserData
-                                        ? (state.user as UserData).userType ??
-                                              ''
-                                        : '';
-                                    final isPro =
-                                        plan.toUpperCase().contains('PRO') ||
-                                        userType.toUpperCase().contains('PRO');
+                                // BlocBuilder<ProfileCubit, ProfileState>(
+                                //   builder: (context, profileState) {
+                                //     // final plan =
+                                //     //     profileState
+                                //     //         .profile
+                                //     //         ?.subscriptionPlan ??
+                                //     //     '';
+                                //     // final userType = state.user is UserData
+                                //     //     ? (state.user as UserData).userType ??
+                                //     //           ''
+                                //     //     : '';
+                                //     // final isPro =
+                                //     //     plan.toUpperCase().contains('PRO') ||
+                                //     //     userType.toUpperCase().contains('PRO');
 
-                                    if (isPro) {
-                                      return Column(
-                                        children: [
-                                          const ProQuickActionsWidget(),
-                                          SizedBox(
-                                            height: AppTheme.spacingLg.h,
-                                          ),
-                                        ],
-                                      );
-                                    }
-                                    return const SizedBox.shrink();
-                                  },
-                                ),
+                                //     // if (isPro) {
+                                //     //   return Column(
+                                //     //     children: [
+                                //     //       const ProQuickActionsWidget(),
+                                //     //       SizedBox(
+                                //     //         height: AppTheme.spacingLg.h,
+                                //     //       ),
+                                //     //     ],
+                                //     //   );
+                                //     // }
+                                //     // return const SizedBox.shrink();
+                                //   },
+                                // ),
 
                                 // Stats Cards Section - MOVED UP (Before Matched Jobs)
                                 _buildSection(
