@@ -80,7 +80,7 @@ class _HomeScreenState extends State<HomeScreen> {
     return locations.isEmpty ? ['your area'.tr()] : locations.toList();
   }
 
-  /// Home Header - Premium Editorial Design
+  /// Home Header - Brand-First Stacked Layout
   Widget _buildHomeHeader(
     BuildContext context,
     ThemeData theme,
@@ -101,12 +101,7 @@ class _HomeScreenState extends State<HomeScreen> {
         AppTheme.spacingMd.w,
         0,
       ),
-      padding: EdgeInsets.only(
-        top: 0,
-        left: AppTheme.spacingMd.w,
-        right: AppTheme.spacingMd.w,
-        bottom: AppTheme.spacingMd.w,
-      ),
+      padding: EdgeInsets.all(AppTheme.spacingMd.w),
       decoration: BoxDecoration(
         gradient: LinearGradient(
           begin: Alignment.topLeft,
@@ -116,7 +111,7 @@ class _HomeScreenState extends State<HomeScreen> {
               AppTheme.goldColor.withOpacity(0.15),
               AppTheme.purpleColor.withOpacity(0.08),
             ] else ...[
-              AppTheme.primaryColor.withOpacity(0.1),
+              AppTheme.primaryColor.withOpacity(0.10),
               AppTheme.primaryColor.withOpacity(0.05),
             ],
             theme.scaffoldBackgroundColor,
@@ -127,79 +122,73 @@ class _HomeScreenState extends State<HomeScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Top row: Logo (left) + Notification button (right)
+          // Row 1: Logo (left) + Notification button (right)
           Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              const AppLogo(showText: false),
+              ConstrainedBox(
+                constraints: BoxConstraints(maxWidth: 240.w),
+                child: const AppLogo(showText: false),
+              ),
+              const Spacer(),
               _buildNotificationButton(context, theme),
             ],
           ),
           SizedBox(height: 8.h),
-          // Greeting row
+          // Row 2+3: Greeting + Subtitle
+          Text(
+            'hi_greeting'.tr(args: [userName!]),
+            style: theme.textTheme.displayMedium?.copyWith(
+              fontWeight: FontWeight.bold,
+              fontSize: 24.sp,
+              letterSpacing: 0.3,
+            ),
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+          ),
+          SizedBox(height: 4.h),
           Row(
             children: [
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'hi_greeting'.tr(args: [userName!]),
-                      style: theme.textTheme.displayMedium?.copyWith(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 26.sp,
-                        letterSpacing: 0.5,
+              if (isPro) ...[
+                Container(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: 10.w,
+                    vertical: 4.h,
+                  ),
+                  decoration: BoxDecoration(
+                    gradient: AppTheme.goldGradient,
+                    borderRadius: BorderRadius.circular(
+                      AppTheme.radiusFull.r,
+                    ),
+                    boxShadow: [
+                      BoxShadow(
+                        color: AppTheme.goldColor.withOpacity(0.3),
+                        blurRadius: 8,
+                        offset: const Offset(0, 2),
                       ),
+                    ],
+                  ),
+                  child: Text(
+                    'PRO',
+                    style: TextStyle(
+                      fontSize: 11.sp,
+                      fontWeight: FontWeight.w600,
+                      color: Colors.white,
+                      letterSpacing: 0.5.sp,
                     ),
-                    SizedBox(height: AppTheme.spacingXs.h),
-                    Row(
-                      children: [
-                        if (isPro) ...[
-                          Container(
-                            padding: EdgeInsets.symmetric(
-                              horizontal: 10.w,
-                              vertical: 4.h,
-                            ),
-                            decoration: BoxDecoration(
-                              gradient: AppTheme.goldGradient,
-                              borderRadius: BorderRadius.circular(
-                                AppTheme.radiusFull.r,
-                              ),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: AppTheme.goldColor.withOpacity(0.3),
-                                  blurRadius: 8,
-                                  offset: const Offset(0, 2),
-                                ),
-                              ],
-                            ),
-                            child: Text(
-                              'PRO',
-                              style: TextStyle(
-                                fontSize: 11.sp,
-                                fontWeight: FontWeight.w700,
-                                color: Colors.white,
-                                letterSpacing: 0.5.sp,
-                              ),
-                            ),
-                          ),
-                          SizedBox(width: AppTheme.spacingSm.w),
-                        ],
-                        Expanded(
-                          child: Text(
-                            isPro
-                                ? 'Premium Member'
-                                : 'Welcome back! Ready to find your dream job?',
-                            style: theme.textTheme.bodyMedium?.copyWith(
-                              color: theme.colorScheme.onSurfaceVariant,
-                              fontSize: 13.sp,
-                              height: 1.3,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
+                  ),
+                ),
+                SizedBox(width: 4.w),
+              ],
+              Expanded(
+                child: Text(
+                  isPro
+                      ? 'Premium Member'
+                      : 'Welcome back! Ready to find your dream job?',
+                  style: theme.textTheme.bodyMedium?.copyWith(
+                    color: theme.colorScheme.onSurfaceVariant,
+                    fontSize: 13.sp,
+                    height: 1.3,
+                  ),
                 ),
               ),
             ],
