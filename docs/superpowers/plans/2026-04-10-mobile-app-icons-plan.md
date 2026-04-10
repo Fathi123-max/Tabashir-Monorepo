@@ -118,56 +118,14 @@ git commit -m "feat(android): add adaptive icon background color resource"
 
 ---
 
-### Task 3: Create Android adaptive icon XML files
-
-**Files:**
-- Create: `tabashir-mobile/android/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml`
-- Create: `tabashir-mobile/android/app/src/main/res/mipmap-anydpi-v26/ic_launcher_round.xml`
-
-- [ ] **Step 1: Create the standard adaptive icon XML**
-
-Create `tabashir-mobile/android/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml`:
-
-```xml
-<?xml version="1.0" encoding="utf-8"?>
-<adaptive-icon xmlns:android="http://schemas.android.com/apk/res/android">
-    <background android:drawable="@color/ic_launcher_background"/>
-    <foreground android:drawable="@mipmap/ic_launcher"/>
-</adaptive-icon>
-```
-
-This tells Android to use the navy background (`@color/ic_launcher_background`) behind the generated foreground icon (`@mipmap/ic_launcher`). The `flutter_launcher_icons` tool generates the foreground image from `logo_light.png` into the mipmap resource.
-
-- [ ] **Step 2: Create the round variant adaptive icon XML**
-
-Create `tabashir-mobile/android/app/src/main/res/mipmap-anydpi-v26/ic_launcher_round.xml`:
-
-```xml
-<?xml version="1.0" encoding="utf-8"?>
-<adaptive-icon xmlns:android="http://schemas.android.com/apk/res/android">
-    <background android:drawable="@color/ic_launcher_background"/>
-    <foreground android:drawable="@mipmap/ic_launcher"/>
-</adaptive-icon>
-```
-
-The round variant is used by launchers that display icons in a perfect circle (e.g., Samsung One UI).
-
-- [ ] **Step 3: Commit**
-
-```bash
-cd /Users/Apple/Documents/tabashir/tabashir-mobile
-git add android/app/src/main/res/mipmap-anydpi-v26/
-git commit -m "feat(android): add adaptive icon XML definitions"
-```
-
----
-
-### Task 4: Generate all app icons
+### Task 3: Generate all app icons
 
 **Files:**
 - Modified (regenerated): `tabashir-mobile/ios/Runner/Assets.xcassets/AppIcon.appiconset/*.png`
 - Modified (regenerated): `tabashir-mobile/android/app/src/main/res/mipmap-*/ic_launcher.png`
 - Modified (created): `tabashir-mobile/android/app/src/main/res/mipmap-*/ic_launcher_foreground.png`
+- Modified (created): `tabashir-mobile/android/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml`
+- Modified (created): `tabashir-mobile/android/app/src/main/res/mipmap-anydpi-v26/ic_launcher_round.xml`
 
 - [ ] **Step 1: Run flutter_launcher_icons to generate all icons**
 
@@ -215,9 +173,31 @@ Expected output showing files in:
 - `mipmap-xxxhdpi/ic_launcher.png` (192x192)
 - Also: `ic_launcher_foreground.png` files in each density bucket for adaptive icons
 
-- [ ] **Step 4: Verify the adaptive icon XMLs reference the correct resources**
+- [ ] **Step 4: Create Android adaptive icon XML files (post-generation)**
 
-The `mipmap-anydpi-v26/ic_launcher.xml` and `ic_launcher_round.xml` files from Task 3 should reference `@mipmap/ic_launcher` for the foreground and `@color/ic_launcher_background` for the background. No changes needed if Task 3 was correct — `flutter_launcher_icons` generates the actual image resources that these XMLs point to.
+Note: `flutter_launcher_icons` may create its own adaptive icon XMLs, but we need to ensure they reference the correct resources. Check and if needed, overwrite:
+
+Verify or create `tabashir-mobile/android/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml`:
+
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<adaptive-icon xmlns:android="http://schemas.android.com/apk/res/android">
+    <background android:drawable="@color/ic_launcher_background"/>
+    <foreground android:drawable="@mipmap/ic_launcher"/>
+</adaptive-icon>
+```
+
+Verify or create `tabashir-mobile/android/app/src/main/res/mipmap-anydpi-v26/ic_launcher_round.xml`:
+
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<adaptive-icon xmlns:android="http://schemas.android.com/apk/res/android">
+    <background android:drawable="@color/ic_launcher_background"/>
+    <foreground android:drawable="@mipmap/ic_launcher"/>
+</adaptive-icon>
+```
+
+If the tool already created these files with correct content, no overwrite needed. If it created different versions (e.g., using `@drawable` instead of `@mipmap`), overwrite with the above.
 
 - [ ] **Step 5: Run Flutter analyze to ensure no issues**
 
@@ -248,13 +228,22 @@ git status
 
 You should see the generated icon PNGs as "ignored" (not shown in status). This is correct — they are generated on-demand and don't need to be committed.
 
-- [ ] **Step 8: Final commit (config only, no icons needed since they're git-ignored)**
+- [ ] **Step 5: Commit the configuration files**
 
-All necessary changes are already committed from Tasks 1-3. No additional commit needed since the generated icons are git-ignored by design.
+The adaptive icon XML files were created/verified in Step 4. Commit them along with the background color resource:
+
+```bash
+cd /Users/Apple/Documents/tabashir/tabashir-mobile
+git add android/app/src/main/res/values/ic_launcher_background.xml
+git add android/app/src/main/res/mipmap-anydpi-v26/
+git commit -m "feat(android): add adaptive icon resources"
+```
+
+Note: Generated icon PNGs are git-ignored per the spec. Only the config files and XML resources are committed.
 
 ---
 
-### Task 5: Verify on device/simulator
+### Task 4: Verify on device/simulator
 
 **Files:**
 - No file changes — manual verification step.
