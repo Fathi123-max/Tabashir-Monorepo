@@ -104,6 +104,7 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
   change_app_package_name: ^1.5.0
+  flutter_launcher_icons: ^0.14.4
 
 flutter:
   uses-material-design: true
@@ -111,3 +112,13 @@ flutter:
     - assets/images/
     - assets/translations/
     - .env
+
+flutter_launcher_icons:
+  android: true
+  ios: true
+  image_path: "assets/images/logo_light.png"
+  background_color: "#0F4C81"
+  adaptive_icon_background: "#0F4C81"
+  adaptive_icon_foreground_image: "assets/images/logo_light.png"
+  min_sdk_android: 21
+  remove_alpha_ios: true
