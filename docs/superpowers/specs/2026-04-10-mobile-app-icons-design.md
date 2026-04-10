@@ -49,14 +49,14 @@ Automate app icon generation for iOS and Android (including adaptive icons) usin
 ```
 logo_light.png ──┐
                  ├──► flutter_launcher_icons ──► iOS AppIcon.appiconset/ (17 sizes)
-logo_dark.png ───┤                              (git-ignored)
+                 │                              (git-ignored)
                  │
                  ├──► Android mipmap-*/ (5 densities)
                  │  (git-ignored)
                  │
                  └──► Android adaptive icon:
-                      ├── ic_launcher_foreground.png
-                      └── ic_launcher_background.xml
+                      ├── ic_launcher_foreground (from image_path)
+                      └── ic_launcher_background.xml (#0F4C81)
 ```
 
 ## File Changes
@@ -64,7 +64,6 @@ logo_dark.png ───┤                              (git-ignored)
 | File | Action | Notes |
 |------|--------|-------|
 | `tabashir-mobile/pubspec.yaml` | Modified | Add `flutter_launcher_icons` to `dev_dependencies` and add `flutter_launcher_icons:` config block |
-| `tabashir-mobile/assets/images/ic_launcher_foreground.png` | Created | Cropped/optimized logo for Android adaptive icon foreground (if needed as separate source) |
 | `tabashir-mobile/android/app/src/main/res/values/ic_launcher_background.xml` | Created | Defines `@color/ic_launcher_background` as `#0F4C81` |
 | `tabashir-mobile/android/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml` | Created | Adaptive icon XML referencing foreground + background |
 | `tabashir-mobile/android/app/src/main/res/mipmap-anydpi-v26/ic_launcher_round.xml` | Created | Round variant of adaptive icon |
