@@ -97,11 +97,14 @@ class _HomeScreenState extends State<HomeScreen> {
     return Container(
       margin: EdgeInsets.fromLTRB(
         AppTheme.spacingMd.w,
-        AppTheme.spacingMd.h,
+        AppTheme.spacingLg.h, // Align exactly with JobsScreen header top margin
         AppTheme.spacingMd.w,
         0,
       ),
-      padding: EdgeInsets.all(AppTheme.spacingMd.w),
+      padding: EdgeInsets.symmetric(
+        horizontal: AppTheme.spacingMd.w,
+        vertical: AppTheme.spacingMd.h * 0.6, // Tighter vertical padding
+      ),
       decoration: BoxDecoration(
         gradient: LinearGradient(
           begin: Alignment.topLeft,
@@ -125,15 +128,28 @@ class _HomeScreenState extends State<HomeScreen> {
           // Row 1: Logo (left) + Notification button (right)
           Row(
             children: [
-              ConstrainedBox(
-                constraints: BoxConstraints(maxWidth: 240.w),
-                child: const AppLogo(showText: false),
+              // Enlarged logo using Transform.scale to make it visually bigger 
+              // without expanding the actual layout constraints of the hero card.
+              Expanded(
+                child: Align(
+                  alignment: Alignment.centerLeft,
+                  child: Transform.scale(
+                    scale: 1.4, // 40% visual size increase
+                    alignment: Alignment.centerLeft,
+                    child: AppLogo(
+                      showText: false,
+                      height: 46.h, // Locks the hero card's layout to be extremely compact
+                      alignment: Alignment.centerLeft,
+                      fit: BoxFit.contain,
+                    ),
+                  ),
+                ),
               ),
-              const Spacer(),
+              SizedBox(width: 8.w),
               _buildNotificationButton(context, theme),
             ],
           ),
-          SizedBox(height: 8.h),
+          SizedBox(height: 2.h), // Minimum gap
           // Row 2+3: Greeting + Subtitle
           Text(
             'hi_greeting'.tr(args: [userName!]),

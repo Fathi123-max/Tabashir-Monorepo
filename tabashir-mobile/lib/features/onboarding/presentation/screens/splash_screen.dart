@@ -15,37 +15,56 @@ class _SplashScreenState extends State<SplashScreen>
     with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<double> _fadeAnimation;
+  late Animation<double> _scaleAnimation;
+  late Animation<double> _pageFadeAnimation;
 
   @override
   void initState() {
     super.initState();
     _initAnimations();
-    _navigate();
   }
 
   void _initAnimations() {
     _controller = AnimationController(
-      duration: const Duration(milliseconds: 2000),
+      // Standard professional duration
+      duration: const Duration(milliseconds: 2200),
       vsync: this,
     );
 
-    _fadeAnimation =
-        Tween<double>(
-          begin: 0,
-          end: 1,
-        ).animate(
-          CurvedAnimation(
-            parent: _controller,
-            curve: const Interval(0.5, 1, curve: Curves.easeOut),
-          ),
-        );
+    // Smooth fade out exactly before navigating
+    _pageFadeAnimation = Tween<double>(begin: 1.0, end: 0.0).animate(
+      CurvedAnimation(
+        parent: _controller,
+        curve: const Interval(0.85, 1.0, curve: Curves.easeInOut),
+      ),
+    );
+
+    // Clean fade in for content
+    _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(
+        parent: _controller,
+        curve: const Interval(0.1, 0.6, curve: Curves.easeOut),
+      ),
+    );
+
+    // Very subtle, professional scale in
+    _scaleAnimation = Tween<double>(begin: 0.95, end: 1.0).animate(
+      CurvedAnimation(
+        parent: _controller,
+        curve: const Interval(0.1, 0.7, curve: Curves.easeOutCubic),
+      ),
+    );
+
+    // Navigate smoothly upon completion
+    _controller.addStatusListener((status) {
+      if (status == AnimationStatus.completed) {
+        if (mounted) {
+          context.go('/');
+        }
+      }
+    });
 
     _controller.forward();
-  }
-
-  Future<void> _navigate() async {
-    await Future.delayed(const Duration(seconds: 2));
-    context.go('/');
   }
 
   @override
@@ -55,43 +74,44 @@ class _SplashScreenState extends State<SplashScreen>
   }
 
   @override
-  Widget build(BuildContext context) => Scaffold(
-    backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-    body: Container(
-      width: double.infinity,
-      height: double.infinity,
-      decoration: BoxDecoration(
-        color: Theme.of(context).scaffoldBackgroundColor,
-      ),
-      child: Center(
-        child: AnimatedBuilder(
-          animation: _controller,
-          builder: (context, child) => Container(
-            padding: const EdgeInsets.all(16),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                FadeTransition(
-                  opacity: _fadeAnimation,
-                  child: AppLogo(width: 200.w, showText: true),
-                ),
-                const SizedBox(height: 12),
-                FadeTransition(
-                  opacity: _fadeAnimation,
-                  child: Text(
-                    'Your AI job assistant for the Middle East'.tr(),
-                    style: TextStyle(
-                      color: const Color(0xFF6B7280),
-                      fontSize: 16.sp,
-                      fontWeight: FontWeight.normal,
-                    ),
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+      body: SizedBox(
+        width: double.infinity,
+        height: double.infinity,
+        child: Center(
+          child: AnimatedBuilder(
+            animation: _controller,
+            builder: (context, child) => FadeTransition(
+              opacity: _pageFadeAnimation,
+              child: FadeTransition(
+                opacity: _fadeAnimation,
+                child: ScaleTransition(
+                  scale: _scaleAnimation,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      AppLogo(width: 200.w, showText: false),
+                      SizedBox(height: 24.h),
+                      Text(
+                        'Your AI job assistant for the Middle East'.tr(),
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          color: Theme.of(context).textTheme.bodyMedium?.color?.withOpacity(0.6) ?? const Color(0xFF6B7280),
+                          fontSize: 15.sp,
+                          fontWeight: FontWeight.w400,
+                          letterSpacing: 0.3,
+                        ),
+                      ),
+                    ],
                   ),
                 ),
-              ],
+              ),
             ),
           ),
         ),
       ),
-    ),
-  );
+    );
+  }
 }

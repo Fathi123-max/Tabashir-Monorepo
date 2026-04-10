@@ -8,12 +8,15 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 /// In dark mode, displays [assets/images/logo_dark.png] (white with gold accent).
 class AppLogo extends StatelessWidget {
   /// Creates an [AppLogo] widget.
-  const AppLogo({
-    super.key,
-    this.width,
-    this.height,
-    this.showText = false,
-  });
+  /// If true, displays "TABASHIR" text below the logo.
+  /// Default is false.
+  final bool showText;
+
+  /// Alignment of the logo within its box.
+  final AlignmentGeometry alignment;
+
+  /// How the logo is inscribed into the space.
+  final BoxFit fit;
 
   /// Optional width for the logo image. Defaults to intrinsic image width.
   final double? width;
@@ -21,9 +24,14 @@ class AppLogo extends StatelessWidget {
   /// Optional height for the logo image. Defaults to intrinsic image height.
   final double? height;
 
-  /// If true, displays "TABASHIR" text below the logo.
-  /// Default is false.
-  final bool showText;
+  const AppLogo({
+    super.key,
+    this.width,
+    this.height,
+    this.showText = false,
+    this.alignment = Alignment.center,
+    this.fit = BoxFit.scaleDown,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -40,7 +48,8 @@ class AppLogo extends StatelessWidget {
           height: height ?? 100.h,
           child: Image.asset(
             logoPath,
-            fit: BoxFit.scaleDown,
+            fit: fit,
+            alignment: alignment,
           ),
         ),
         if (showText) ...[

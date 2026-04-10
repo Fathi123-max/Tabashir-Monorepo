@@ -293,9 +293,8 @@ class HomeAISettingsWidget extends StatelessWidget {
       width: double.infinity,
       child: ElevatedButton(
         onPressed: () {
-          // Navigate to AI job apply plans page
-          // TODO: Replace with actual route to subscription plans
-          context.pushNamed('ai-job-apply-screen');
+          // Navigate to services page
+          context.pushNamed('services-screen');
         },
         style: ElevatedButton.styleFrom(
           backgroundColor: AppTheme.primaryBlue,
