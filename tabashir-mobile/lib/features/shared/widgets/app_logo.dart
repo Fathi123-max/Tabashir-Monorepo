@@ -35,11 +35,13 @@ class AppLogo extends StatelessWidget {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        Image.asset(
-          logoPath,
-          width: width,
-          height: height,
-          fit: BoxFit.contain,
+        SizedBox(
+          width: width ?? 280.w,
+          height: height ?? 100.h,
+          child: Image.asset(
+            logoPath,
+            fit: BoxFit.scaleDown,
+          ),
         ),
         if (showText) ...[
           SizedBox(height: 8.h),
