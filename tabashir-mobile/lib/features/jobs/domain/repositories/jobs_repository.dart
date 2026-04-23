@@ -31,6 +31,7 @@ abstract class JobsRepository {
     List<String>? skills,
     String? sort,
     String? email,
+    String? lang,
   });
 
   /// Get job details by job ID

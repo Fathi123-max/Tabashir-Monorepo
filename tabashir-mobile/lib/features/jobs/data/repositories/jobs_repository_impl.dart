@@ -32,6 +32,7 @@ class JobsRepositoryImpl implements JobsRepository {
     List<String>? skills,
     String? sort,
     String? email,
+    String? lang,
   }) async {
     AppLogger.debug('\n\n########## [JOBS_REPO] GET JOBS CALLED ##########', tag: 'Jobs');
     AppLogger.debug('[JOBS_REPO] Pagination params - Page: $page, Limit: $limit', tag: 'Jobs');
@@ -66,14 +67,15 @@ class JobsRepositoryImpl implements JobsRepository {
         page: page,
         limit: limit,
         search: search,
+        sort: sort,
+        lang: lang,
+        email: email,
         locations: locations,
         jobTypes: jobTypes,
         experienceLevels: experienceLevels,
         minSalary: minSalary,
         maxSalary: maxSalary,
         skills: skills,
-        sort: sort,
-        email: email,
       );
 
       AppLogger.debug('\n[JOBS_REPO] ✅ API call completed', tag: 'Jobs');

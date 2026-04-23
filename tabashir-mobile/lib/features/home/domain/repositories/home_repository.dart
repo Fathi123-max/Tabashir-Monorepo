@@ -149,7 +149,9 @@ abstract class HomeRepository {
   /// Get AI matched jobs
   Future<List<JobRecommendation>> getMatchedJobs({
     required String email,
+    int page = 1,
     int limit = 10,
+    String? lang,
   });
 
   /// Get job counts grouped by city

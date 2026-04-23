@@ -57,6 +57,7 @@ class JobsCubit extends Cubit<JobsState> {
   void initializeState({
     String? initialCity,
     String? email,
+    String? lang,
     bool forceReload = false,
   }) {
     if (_isInitialized && !forceReload) {
@@ -88,7 +89,7 @@ class JobsCubit extends Cubit<JobsState> {
       );
     }
 
-    loadJobs(email: email);
+    loadJobs(email: email, lang: lang);
   }
 
   // Filter options
@@ -126,6 +127,7 @@ class JobsCubit extends Cubit<JobsState> {
     int page = 0,
     int limit = 20,
     String? email,
+    String? lang,
   }) async {
     try {
       AppLogger.debug('[JOBS_CUBIT] loadJobs() called - Page: $page, Limit: $limit, Email: ${email ?? "from profile"}', tag: 'Jobs');
@@ -182,6 +184,7 @@ class JobsCubit extends Cubit<JobsState> {
         maxSalary: maxSalary,
         sort: sort,
         email: userEmail,
+        lang: lang,
       );
 
       AppLogger.debug('[JOBS_CUBIT] API response received - ${jobs.length} jobs', tag: 'Jobs');

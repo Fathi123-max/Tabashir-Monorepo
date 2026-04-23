@@ -20,7 +20,7 @@ class AppInitializationCubit extends Cubit<AppInitializationState> {
 
   /// Initialize the entire app by loading all required data
   /// Call this once after login
-  Future<void> initialize() async {
+  Future<void> initialize({String? lang}) async {
     if (state.isInitialized && state.errorMessage == null) {
       AppLogger.debug('[APP_INIT] Already initialized successfully, skipping', tag: 'Home');
       return;
@@ -39,7 +39,7 @@ class AppInitializationCubit extends Cubit<AppInitializationState> {
 
       // 2. Initialize other cubits with shared data
       AppLogger.debug('[APP_INIT] 2/2 Initializing cubits with shared data...', tag: 'Home');
-      await _initializeCubits(userProfile);
+      await _initializeCubits(userProfile, lang: lang);
       AppLogger.debug('[APP_INIT] ✅ Cubits initialized', tag: 'Home');
 
       // Emit success state with all data
@@ -91,8 +91,9 @@ class AppInitializationCubit extends Cubit<AppInitializationState> {
 
   /// Initialize other cubits with shared data to prevent duplicate API calls
   Future<void> _initializeCubits(
-    UserProfileResponse userProfile,
-  ) async {
+    UserProfileResponse userProfile, {
+    String? lang,
+  }) async {
     try {
       // Initialize ProfileCubit with user profile data
       final profileCubit = getIt<ProfileCubit>();
@@ -106,6 +107,7 @@ class AppInitializationCubit extends Cubit<AppInitializationState> {
       final homeCubit = getIt<HomeCubit>();
       homeCubit.initializeWithData(
         userProfile: userProfile,
+        lang: lang,
       );
 
       AppLogger.debug('[APP_INIT] ✅ All cubits initialized with shared data', tag: 'Home');

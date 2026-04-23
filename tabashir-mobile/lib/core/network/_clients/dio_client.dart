@@ -1,9 +1,11 @@
 import 'package:dio/dio.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:tabashir/core/network/interceptors/language_interceptor.dart';
 
 class DioClient {
   DioClient() {
     _dio = Dio(_getDefaultOptions());
+    _dio.interceptors.add(LanguageInterceptor());
     _dio.interceptors.add(LogInterceptor());
   }
   late Dio _dio;

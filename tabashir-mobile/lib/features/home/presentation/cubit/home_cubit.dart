@@ -30,16 +30,18 @@ class HomeCubit extends Cubit<HomeState> {
   /// Refresh home data (pull to refresh)
   Future<void> refreshHomeData({
     CandidateProfileData? userProfile,
+    String? lang,
   }) async {
     AppLogger.debug('[HOME_CUBIT] Refreshing home data...', tag: 'Home');
     // Use email from state user if userProfile email not available
     final email = state.user?.email ?? '';
-    await loadAiEnhancedHomeData(email: email);
+    await loadAiEnhancedHomeData(email: email, lang: lang);
   }
 
   /// Load new Native AI enhanced home screen data
   Future<void> loadAiEnhancedHomeData({
     required String email,
+    String? lang,
   }) async {
     AppLogger.debug('[HOME_CUBIT] Loading AI enhanced home data...', tag: 'Home');
     if (isClosed) return;
@@ -51,7 +53,7 @@ class HomeCubit extends Cubit<HomeState> {
           await Future.wait([
             _homeRepository.getClientProfile(),
             _homeRepository.getAppliedJobsCount(email: email),
-            _homeRepository.getMatchedJobs(email: email),
+            _homeRepository.getMatchedJobs(email: email, lang: lang),
             _homeRepository.getJobsCountByCity(),
             _homeRepository.getLatestJobs(),
           ]).catchError((Object error) {
@@ -154,6 +156,7 @@ class HomeCubit extends Cubit<HomeState> {
   /// Load all matched jobs (no limit) for the "All Matched Jobs" screen
   Future<void> loadAllMatchedJobs({
     required String email,
+    String? lang,
   }) async {
     AppLogger.debug('[HOME_CUBIT] Loading all matched jobs (no limit)...', tag: 'Home');
     if (isClosed) return;
@@ -164,6 +167,7 @@ class HomeCubit extends Cubit<HomeState> {
       final allMatchedJobs = await _homeRepository.getMatchedJobs(
         email: email,
         limit: 100,
+        lang: lang,
       );
 
       AppLogger.debug('[HOME_CUBIT] Loaded ${allMatchedJobs.length} all matched jobs', tag: 'Home');
@@ -282,7 +286,7 @@ class HomeCubit extends Cubit<HomeState> {
   }
 
   /// Load more matched jobs for pagination (appends to existing list)
-  Future<void> loadMoreMatchedJobs() async {
+  Future<void> loadMoreMatchedJobs({String? lang}) async {
     final currentState = state;
     final currentPage = currentState.matchedJobsPage;
     final hasMore = currentState.matchedJobsHasMore;
@@ -304,7 +308,9 @@ class HomeCubit extends Cubit<HomeState> {
       final nextPage = currentPage + 1;
       final newMatchedJobs = await _homeRepository.getMatchedJobs(
         email: currentState.user?.email ?? '',
+        page: nextPage,
         limit: currentState.matchedJobsLimit,
+        lang: lang,
       );
 
       AppLogger.debug('[HOME_CUBIT] Loaded ${newMatchedJobs.length} more matched jobs', tag: 'Home');
@@ -353,6 +359,7 @@ class HomeCubit extends Cubit<HomeState> {
   /// Initialize HomeCubit with user profile data
   Future<void> initializeWithData({
     required UserProfileResponse userProfile,
+    String? lang,
   }) async {
     if (isClosed) return;
 
@@ -386,7 +393,10 @@ class HomeCubit extends Cubit<HomeState> {
 
     // Load AI enhanced home data if email is available
     if (userProfile.user.email != null) {
-      await loadAiEnhancedHomeData(email: userProfile.user.email!);
+      await loadAiEnhancedHomeData(
+        email: userProfile.user.email!,
+        lang: lang,
+      );
     }
   }
 

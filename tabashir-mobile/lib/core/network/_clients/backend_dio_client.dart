@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:tabashir/core/network/interceptors/language_interceptor.dart';
 import 'package:tabashir/core/services/auth_session_service.dart';
 import 'package:tabashir/core/utils/app_logger.dart';
 
@@ -9,6 +10,7 @@ import 'package:tabashir/core/utils/app_logger.dart';
 class BackendDioClient {
   BackendDioClient() {
     _dio = Dio(_getDefaultOptions());
+    _dio.interceptors.add(LanguageInterceptor());
     _dio.interceptors.add(LogInterceptor());
     _dio.interceptors.add(
       InterceptorsWrapper(

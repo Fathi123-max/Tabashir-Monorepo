@@ -2655,6 +2655,7 @@ class MatchedJobs(Resource):
         'email': 'User email to match jobs against their profile',
         'limit': 'Number of jobs per page (default 15)',
         'page': 'Page number (default 0)',
+        'lang': 'Language: en (default) | ar',
     })
     def get(self):
         """
@@ -2665,8 +2666,13 @@ class MatchedJobs(Resource):
         try:
             args = request.args
             email = args.get('email')
+            language = args.get('lang', 'en').strip().lower()
+
             if not email:
                 return {"success": False, "message": "Email is required"}, 400
+
+            if language not in ['en', 'ar']:
+                language = 'en'
 
             # Ensure user exists in AI DB before matching
             ensure_user_in_ai_db(email)
@@ -2693,9 +2699,45 @@ class MatchedJobs(Resource):
             filter_term = user_profile["positions"].split(",")[0].strip().lower() if user_profile["positions"] else ""
             search_filter = f"%{filter_term}%"
 
+            # Build SELECT fields based on language
+            if language == 'ar':
+                select_fields = """
+                    id, entity, nationality, gender,
+                    COALESCE(job_title_ar, job_title) as job_title,
+                    COALESCE(job_description_ar, job_description) as job_description,
+                    COALESCE(academic_qualification_ar, academic_qualification) as academic_qualification,
+                    COALESCE(experience_ar, experience) as experience,
+                    COALESCE(languages_ar, languages) as languages,
+                    COALESCE(salary_ar, salary) as salary,
+                    COALESCE(vacancy_city_ar, vacancy_city) as vacancy_city,
+                    COALESCE(working_hours_ar, working_hours) as working_hours,
+                    COALESCE(working_days_ar, working_days) as working_days,
+                    application_email, job_date, phone, source, apply_url,
+                    COALESCE(company_name_ar, company_name) as entity,
+                    COALESCE(company_name_ar, company_name) as company_name,
+                    website_url, job_type, translation_status
+                """
+            else:
+                select_fields = """
+                    id, entity, nationality, gender,
+                    job_title,
+                    job_description,
+                    academic_qualification,
+                    experience,
+                    languages,
+                    salary,
+                    vacancy_city,
+                    working_hours,
+                    working_days,
+                    application_email, job_date, phone, source, apply_url,
+                    company_name,
+                    entity,
+                    website_url, job_type, translation_status
+                """
+
             # Fetch recent jobs excluding already applied ones with light filtering
-            cursor.execute("""
-               SELECT *
+            cursor.execute(f"""
+               SELECT {select_fields}
                FROM jobs
                WHERE id::text NOT IN (
                     SELECT job_id FROM rankings WHERE client_id = (
@@ -2721,33 +2763,63 @@ class MatchedJobs(Resource):
                     if isinstance(val, datetime):
                         job[key] = val.isoformat()
                 jobs.append(job)
-            print(f"Filter term for semantic match: '{filter_term}'")
-            print(f"Filtered Jobs Before Scoring: {len(jobs)}")
 
             # Score and rank jobs
             for job in jobs:
-                # Standardize aliases for mobile model compatibility
-                job['entity'] = job.get('company_name', '')
-                job['job_title'] = job.get('job_title', '') or job.get('title', '')
-                job['vacancy_city'] = job.get('vacancy_city', '') or job.get('location', '')
+                # Standardize field names for logic
+                current_title = job.get('job_title', '')
+                current_desc = job.get('job_description', '')
+                current_city = job.get('vacancy_city', '')
                 
-                title_score = title_position_match(job['job_title'], user_profile['positions'])
-                skill_score = calculate_skills_match(job['job_description'], user_profile['skills'])
-                location_score = semantic_location_match(job['vacancy_city'], user_profile['location'])
+                title_score = title_position_match(current_title, user_profile['positions'])
+                skill_score = calculate_skills_match(current_desc, user_profile['skills'])
+                location_score = semantic_location_match(current_city, user_profile['location'])
 
                 final_score = round((0.4 * title_score + 0.4 * skill_score + 0.2 * location_score), 3)
                 job['match_percentage'] = str(round(final_score * 100, 2))  # percentage as string
 
             sorted_matches = sorted(jobs, key=lambda x: (-float(x['match_percentage']), x['id']))
             total_matches = len(sorted_matches)
-
-            print(f"Total Matches After Scoring: {total_matches}")
-            if total_matches > 0:
-                print("Top 5 Matches:")
-                for i, match in enumerate(sorted_matches[:5]):
-                    print(f" {i+1}. Job ID: {match['id']}, Title: '{match['job_title']}', Score: {match['match_percentage']}%")
-
             paginated = sorted_matches[offset:offset + limit]
+
+            # On-demand translation for current page (Arabic only)
+            if language == 'ar' and paginated:
+                try:
+                    ids_to_translate = [j['id'] for j in paginated if (j.get('translation_status') or '').lower() != 'completed']
+                    if ids_to_translate:
+                        from app.services.job_translation_worker import translate_job_now
+                        for jid in ids_to_translate:
+                            try:
+                                translate_job_now(jid)
+                            except Exception:
+                                pass
+
+                        # Re-fetch translated jobs and merge
+                        placeholders = ','.join(['%s'] * len(ids_to_translate))
+                        refetch_query = f"""
+                            SELECT {select_fields}
+                            FROM jobs
+                            WHERE id IN ({placeholders})
+                        """
+                        cursor.execute(refetch_query, tuple(ids_to_translate))
+                        refetch_columns = [desc[0] for desc in cursor.description]
+                        refetched = [dict(zip(refetch_columns, r)) for r in cursor.fetchall()]
+                        id_to_job = {j['id']: j for j in refetched}
+                        for idx, job in enumerate(paginated):
+                            updated = id_to_job.get(job['id'])
+                            if updated:
+                                # Preserve match percentage
+                                score = job['match_percentage']
+                                paginated[idx] = updated
+                                paginated[idx]['match_percentage'] = score
+                except Exception:
+                    pass
+
+            # Clean up job_description for response
+            for job in paginated:
+                if 'job_description' in job:
+                    del job['job_description']
+
 
             return {
                 "success": True,

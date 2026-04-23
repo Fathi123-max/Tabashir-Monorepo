@@ -141,6 +141,7 @@ abstract class TabashirApiService {
     @Query('email') String email,
     @Query('limit') int? limit,
     @Query('page') int? page,
+    @Query('lang') String? lang,
   );
 
   /// Get jobs monthly count

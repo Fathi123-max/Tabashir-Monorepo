@@ -339,13 +339,15 @@ class HomeRepositoryImpl implements HomeRepository {
   @override
   Future<List<JobRecommendation>> getMatchedJobs({
     required String email,
+    int page = 1,
     int limit = 10,
+    String? lang,
   }) async {
     try {
       AppLogger.debug('[HOME_REPO] Fetching matched jobs for email: $email', tag: 'Home');
-      AppLogger.debug('[HOME_REPO] API params: email=$email, limit=$limit, page=1', tag: 'Home');
+      AppLogger.debug('[HOME_REPO] API params: email=$email, limit=$limit, page=$page, lang=$lang', tag: 'Home');
 
-      final response = await _tabashirApiService.getJobMatches(email, limit, 1);
+      final response = await _tabashirApiService.getJobMatches(email, limit, page, lang);
       final jobs = response.data.matchedJobs;
 
       AppLogger.debug('[HOME_REPO] API response received', tag: 'Home');

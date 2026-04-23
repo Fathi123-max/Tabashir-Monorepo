@@ -31,8 +31,9 @@ class _AllMatchedJobsScreenState extends State<AllMatchedJobsScreen> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final cubit = context.read<HomeCubit>();
       final email = cubit.state.user?.email ?? '';
+      final lang = context.locale.languageCode;
       if (email.isNotEmpty && cubit.state.matchedJobsList.isEmpty) {
-        cubit.loadAllMatchedJobs(email: email);
+        cubit.loadAllMatchedJobs(email: email, lang: lang);
       }
     });
   }
@@ -48,7 +49,8 @@ class _AllMatchedJobsScreenState extends State<AllMatchedJobsScreen> {
     if (_scrollController.position.pixels >=
         _scrollController.position.maxScrollExtent * 0.8) {
       // When user scrolls to 80% of max scroll, load more jobs
-      context.read<HomeCubit>().loadMoreMatchedJobs();
+      final lang = context.locale.languageCode;
+      context.read<HomeCubit>().loadMoreMatchedJobs(lang: lang);
     }
   }
 
@@ -101,8 +103,9 @@ class _AllMatchedJobsContent extends StatelessWidget {
             onRefresh: () async {
               final cubit = context.read<HomeCubit>();
               final email = cubit.state.user?.email ?? '';
+              final lang = context.locale.languageCode;
               if (email.isNotEmpty) {
-                await cubit.loadAllMatchedJobs(email: email);
+                await cubit.loadAllMatchedJobs(email: email, lang: lang);
               }
             },
             child: ListView.builder(

@@ -112,9 +112,11 @@ class _JobsViewState extends State<JobsView> {
     if (mounted) {
       // Pass email directly to ensure it's used for matching
       // Force reload to ensure jobs are loaded with email for matching
-      AppLogger.debug('[JOBS_SCREEN] Calling initializeState with email: $email (force reload)', tag: 'Jobs');
+      final lang = context.locale.languageCode;
+      AppLogger.debug('[JOBS_SCREEN] Calling initializeState with email: $email, lang: $lang (force reload)', tag: 'Jobs');
       context.read<JobsCubit>().initializeState(
         email: email,
+        lang: lang,
         forceReload: true,
       );
     } else {
@@ -534,6 +536,7 @@ class _JobsViewState extends State<JobsView> {
       },
       color: AppTheme.primaryColor,
       child: ListView.builder(
+        controller: _scrollController,
         physics: const AlwaysScrollableScrollPhysics(),
         padding: EdgeInsets.symmetric(horizontal: AppTheme.spacingMd.w),
         itemCount: jobs.length + (isLoadingMore ? 1 : 0),

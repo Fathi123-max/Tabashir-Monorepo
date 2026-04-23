@@ -164,6 +164,7 @@ import '../services/file_service.dart' as _i367;
 import '../services/google_signin_service.dart' as _i699;
 import '../services/isar_service.dart' as _i792;
 import '../services/job_match_service.dart' as _i403;
+import '../services/language_service.dart' as _i819;
 import '../services/local_storage_service.dart' as _i527;
 import '../services/notification_service.dart' as _i941;
 import '../services/onesignal_notification_service.dart' as _i469;
@@ -251,6 +252,7 @@ extension GetItInjectableX on _i174.GetIt {
     gh.lazySingleton<_i821.PaymentPlatform>(
       () => registerModule.paymentPlatform,
     );
+    gh.lazySingleton<_i819.LanguageService>(() => _i819.LanguageService());
     gh.lazySingleton<_i763.SessionCubit>(() => _i763.SessionCubit());
     gh.lazySingleton<_i9.HomeCubit>(() => _i9.HomeCubit());
     gh.singleton<_i469.OneSignalNotificationServiceBase>(

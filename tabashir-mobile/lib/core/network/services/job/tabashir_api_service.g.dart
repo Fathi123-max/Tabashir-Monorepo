@@ -469,12 +469,14 @@ class _TabashirApiService implements TabashirApiService {
     String email,
     int? limit,
     int? page,
+    String? lang,
   ) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{
       r'email': email,
       r'limit': limit,
       r'page': page,
+      r'lang': lang,
     };
     queryParameters.removeWhere((k, v) => v == null);
     final _headers = <String, dynamic>{};
