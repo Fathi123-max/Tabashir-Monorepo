@@ -39,6 +39,30 @@ def get_ai_db_connection():
         raise ValueError("Failed to connect to the AI database")
 
 
+_column_cache = {}
+
+def get_table_columns(table_name, conn_type='main'):
+    if table_name in _column_cache:
+        return _column_cache[table_name]
+    
+    conn = get_db_connection() if conn_type == 'main' else get_ai_db_connection()
+    # Ensure we use a standard cursor to get column names as tuples (indexable)
+    # even if get_db_connection sets a RealDictCursor factory
+    import psycopg2.extensions
+    cursor = conn.cursor(cursor_factory=psycopg2.extensions.cursor)
+    try:
+        cursor.execute("""
+            SELECT column_name 
+            FROM information_schema.columns 
+            WHERE table_name = %s
+        """, (table_name,))
+        columns = [row[0] for row in cursor.fetchall()]
+        _column_cache[table_name] = columns
+        return columns
+    finally:
+        cursor.close()
+        conn.close()
+
 
 def execute_ai_query(query, params=None, fetch_one=False, fetch_all=False, commit=False):
     """Execute a query on the AI database."""
