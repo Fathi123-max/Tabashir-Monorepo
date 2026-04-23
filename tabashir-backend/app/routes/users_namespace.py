@@ -2,7 +2,7 @@ import uuid
 from flask_restx import Namespace, Resource, fields
 from flask import request
 from http import HTTPStatus
-from app.database.db import execute_query
+from app.database.db import execute_query, get_table_columns
 from app.routes.middleware import jwt_required
 from app.services.job_apply.process_cv import get_client_data
 from app.services.profile_sync_service import ProfileSyncService
@@ -34,11 +34,14 @@ class Profile(Resource):
         """Get user profile"""
         user_id = request.user_id
 
+        columns = get_table_columns('CandidateProfile', 'main')
+        location_field = 'cp.location' if 'location' in columns else "NULL as location"
+
         user = execute_query(
-            """SELECT u.id, u.email, u.name, u.image, u."userType", u."createdAt",
+            f"""SELECT u.id, u.email, u.name, u.image, u."userType", u."createdAt",
                       cp.id as profile_id, cp.phone, cp.nationality, cp.gender, cp.languages, cp.age,
                       cp."profilePicture", cp."jobType", cp.skills, cp.experience,
-                      cp.education, cp.degree, cp.location, cp.linkedin,
+                      cp.education, cp.degree, {location_field}, cp.linkedin,
                       cp."onboardingCompleted"
                FROM users u
                LEFT JOIN "Candidate" c ON c."userId" = u.id
@@ -204,11 +207,14 @@ class MobileMe(Resource):
         """Get the mobile user profile (includes subscription & counts)"""
         user_id = request.user_id
 
+        columns = get_table_columns('CandidateProfile', 'main')
+        location_field = 'cp.location' if 'location' in columns else "NULL as location"
+
         user = execute_query(
-            """SELECT u.id, u.email, u.name, u.image, u."userType",
+            f"""SELECT u.id, u.email, u.name, u.image, u."userType",
                       cp.id as profile_id, cp.phone, cp.nationality, cp.gender, cp.languages, cp.age,
                       cp."profilePicture", cp."jobType", cp.skills, cp.experience,
-                      cp.education, cp.degree, cp.location, cp.linkedin, cp."onboardingCompleted"
+                      cp.education, cp.degree, {location_field}, cp.linkedin, cp."onboardingCompleted"
                FROM users u
                LEFT JOIN "Candidate" c ON c."userId" = u.id
                LEFT JOIN "CandidateProfile" cp ON cp."candidateId" = c.id
@@ -223,10 +229,10 @@ class MobileMe(Resource):
             _ensure_candidate_exists(user_id)
             # Re-fetch after creation
             user = execute_query(
-                """SELECT u.id, u.email, u.name, u.image, u."userType",
+                f"""SELECT u.id, u.email, u.name, u.image, u."userType",
                           cp.id as profile_id, cp.phone, cp.nationality, cp.gender, cp.languages, cp.age,
                           cp."profilePicture", cp."jobType", cp.skills, cp.experience,
-                          cp.education, cp.degree, cp.location, cp.linkedin, cp."onboardingCompleted"
+                          cp.education, cp.degree, {location_field}, cp.linkedin, cp."onboardingCompleted"
                    FROM users u
                    LEFT JOIN "Candidate" c ON c."userId" = u.id
                    LEFT JOIN "CandidateProfile" cp ON cp."candidateId" = c.id
@@ -241,10 +247,10 @@ class MobileMe(Resource):
             ProfileSyncService.sync_from_user_id(user_id)
             # Re-fetch after sync
             user = execute_query(
-                """SELECT u.id, u.email, u.name, u.image, u."userType",
+                f"""SELECT u.id, u.email, u.name, u.image, u."userType",
                           cp.id as profile_id, cp.phone, cp.nationality, cp.gender, cp.languages, cp.age,
                           cp."profilePicture", cp."jobType", cp.skills, cp.experience,
-                          cp.education, cp.degree, cp.location, cp.linkedin, cp."onboardingCompleted"
+                          cp.education, cp.degree, {location_field}, cp.linkedin, cp."onboardingCompleted"
                    FROM users u
                    LEFT JOIN "Candidate" c ON c."userId" = u.id
                    LEFT JOIN "CandidateProfile" cp ON cp."candidateId" = c.id
