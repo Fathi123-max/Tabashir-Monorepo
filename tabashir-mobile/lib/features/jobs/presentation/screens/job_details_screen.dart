@@ -212,7 +212,10 @@ class _JobDetailScreenState extends State<JobDetailScreen> {
       ),
     ),
     JobDetailsLoaded(:final jobDetails) => SingleChildScrollView(
-      padding: EdgeInsets.symmetric(horizontal: AppTheme.spacingMd.w, vertical: AppTheme.spacingMd.h),
+      padding: EdgeInsets.symmetric(
+        horizontal: AppTheme.spacingMd.w,
+        vertical: AppTheme.spacingMd.h,
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -259,356 +262,370 @@ class _JobDetailScreenState extends State<JobDetailScreen> {
     JobDetailsState() => throw UnimplementedError(),
   };
 
-  Widget _buildJobDetailsSections(JobDetails jobDetails) => Column(
-    children: [
-      // Employment Type, Experience Level, Working Hours
-      if (jobDetails.employmentType != null ||
-          jobDetails.experienceLevel != null ||
-          jobDetails.workingHours != null ||
-          jobDetails.workingDays != null) ...[
-        Container(
-          width: double.infinity,
-          padding: EdgeInsets.all(AppTheme.spacingMd.w),
-          decoration: BoxDecoration(
-            color: AppTheme.primaryColor.withOpacity(0.05),
-            borderRadius: BorderRadius.circular(AppTheme.radiusMedium.r),
-            border: Border.all(
-              color: AppTheme.primaryColor.withOpacity(0.15),
+  Widget _buildJobDetailsSections(JobDetails jobDetails) {
+    final theme = Theme.of(context);
+    return Column(
+      children: [
+        // Employment Type, Experience Level, Working Hours
+        if (jobDetails.employmentType != null ||
+            jobDetails.experienceLevel != null ||
+            jobDetails.workingHours != null ||
+            jobDetails.workingDays != null) ...[
+          Container(
+            width: double.infinity,
+            padding: EdgeInsets.all(AppTheme.spacingMd.w),
+            decoration: BoxDecoration(
+              color: theme.colorScheme.primary.withOpacity(0.05),
+              borderRadius: BorderRadius.circular(AppTheme.radiusMedium.r),
+              border: Border.all(
+                color: theme.colorScheme.primary.withOpacity(0.15),
+              ),
             ),
-          ),
-          child: Wrap(
-            spacing: AppTheme.spacingSm.w,
-            runSpacing: AppTheme.spacingSm.h,
-            children: [
-              if (jobDetails.employmentType != null)
-                _buildInfoChip(
-                  icon: Icons.work_outline_rounded,
-                  label: jobDetails.employmentType!,
-                ),
-              if (jobDetails.experienceLevel != null)
-                _buildInfoChip(
-                  icon: Icons.trending_up_rounded,
-                  label: jobDetails.experienceLevel!,
-                ),
-              if (jobDetails.workingHours != null)
-                _buildInfoChip(
-                  icon: Icons.schedule_rounded,
-                  label: jobDetails.workingHours!,
-                ),
-              if (jobDetails.workingDays != null)
-                _buildInfoChip(
-                  icon: Icons.calendar_today_rounded,
-                  label: jobDetails.workingDays!,
-                ),
-            ],
-          ),
-        ),
-        SizedBox(height: AppTheme.spacingMd.h),
-      ],
-
-      // Skills Section
-      if (jobDetails.skills.isNotEmpty) ...[
-        Container(
-          width: double.infinity,
-          padding: EdgeInsets.all(AppTheme.spacingMd.w),
-          decoration: BoxDecoration(
-            color: AppTheme.zinc50,
-            borderRadius: BorderRadius.circular(AppTheme.radiusMedium.r),
-            border: Border.all(
-              color: AppTheme.zinc200!,
-            ),
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                children: [
-                  Icon(
-                    Icons.psychology_rounded,
-                    size: 20.sp,
-                    color: AppTheme.primaryColor,
+            child: Wrap(
+              spacing: AppTheme.spacingSm.w,
+              runSpacing: AppTheme.spacingSm.h,
+              children: [
+                if (jobDetails.employmentType != null)
+                  _buildInfoChip(
+                    icon: Icons.work_outline_rounded,
+                    label: jobDetails.employmentType!,
                   ),
-                  SizedBox(width: AppTheme.spacingSm.w),
-                  Text(
-                    'Required Skills',
-                    style: TextStyle(
-                      fontSize: 16.sp,
-                      fontWeight: FontWeight.bold,
-                      color: AppTheme.zinc900,
+                if (jobDetails.experienceLevel != null)
+                  _buildInfoChip(
+                    icon: Icons.trending_up_rounded,
+                    label: jobDetails.experienceLevel!,
+                  ),
+                if (jobDetails.workingHours != null)
+                  _buildInfoChip(
+                    icon: Icons.schedule_rounded,
+                    label: jobDetails.workingHours!,
+                  ),
+                if (jobDetails.workingDays != null)
+                  _buildInfoChip(
+                    icon: Icons.calendar_today_rounded,
+                    label: jobDetails.workingDays!,
+                  ),
+              ],
+            ),
+          ),
+          SizedBox(height: AppTheme.spacingMd.h),
+        ],
+
+        // Skills Section
+        if (jobDetails.skills.isNotEmpty) ...[
+          Container(
+            width: double.infinity,
+            padding: EdgeInsets.all(AppTheme.spacingMd.w),
+            decoration: BoxDecoration(
+              color: theme.colorScheme.surfaceContainerHighest.withOpacity(0.3),
+              borderRadius: BorderRadius.circular(AppTheme.radiusMedium.r),
+              border: Border.all(
+                color: theme.colorScheme.outline.withOpacity(0.2),
+              ),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Icon(
+                      Icons.psychology_rounded,
+                      size: 20.sp,
+                      color: AppTheme.primaryColor,
                     ),
-                  ),
-                ],
-              ),
-              SizedBox(height: AppTheme.spacingMd.h),
-              Wrap(
-                spacing: AppTheme.spacingSm.w,
-                runSpacing: AppTheme.spacingSm.h,
-                children: jobDetails.skills
-                    .map(
-                      (skill) => Container(
-                        padding: EdgeInsets.symmetric(
-                          horizontal: AppTheme.spacingMd.w,
-                          vertical: AppTheme.spacingXs.h,
-                        ),
-                        decoration: BoxDecoration(
-                          color: AppTheme.primaryColor.withOpacity(0.08),
-                          borderRadius: BorderRadius.circular(AppTheme.radiusFull.r),
-                          border: Border.all(
-                            color: AppTheme.primaryColor.withOpacity(0.2),
-                          ),
-                        ),
-                        child: Text(
-                          skill,
-                          style: TextStyle(
-                            fontSize: 12.sp,
-                            fontWeight: FontWeight.w600,
-                            color: AppTheme.primaryColor,
-                          ),
-                        ),
+                    SizedBox(width: AppTheme.spacingSm.w),
+                    Text(
+                      'Required Skills'.tr(),
+                      style: TextStyle(
+                        fontSize: 16.sp,
+                        fontWeight: FontWeight.bold,
+                        color: theme.colorScheme.onSurface,
                       ),
-                    )
-                    .toList(),
-              ),
-            ],
-          ),
-        ),
-        SizedBox(height: AppTheme.spacingMd.h),
-      ],
-
-      // About the Role
-      ExpandableSection(
-        title: 'About the Role'.tr(),
-        initiallyExpanded: false,
-        content: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            BulletPointWidget(
-              text: jobDetails.description,
+                    ),
+                  ],
+                ),
+                SizedBox(height: AppTheme.spacingMd.h),
+                Wrap(
+                  spacing: AppTheme.spacingSm.w,
+                  runSpacing: AppTheme.spacingSm.h,
+                  children: jobDetails.skills
+                      .map(
+                        (skill) => Container(
+                          padding: EdgeInsets.symmetric(
+                            horizontal: AppTheme.spacingMd.w,
+                            vertical: AppTheme.spacingXs.h,
+                          ),
+                          decoration: BoxDecoration(
+                            color: AppTheme.primaryColor.withOpacity(0.08),
+                            borderRadius: BorderRadius.circular(
+                              AppTheme.radiusFull.r,
+                            ),
+                            border: Border.all(
+                              color: AppTheme.primaryColor.withOpacity(0.2),
+                            ),
+                          ),
+                          child: Text(
+                            skill,
+                            style: TextStyle(
+                              fontSize: 12.sp,
+                              fontWeight: FontWeight.w600,
+                              color: theme.colorScheme.primary,
+                            ),
+                          ),
+                        ),
+                      )
+                      .toList(),
+                ),
+              ],
             ),
-          ],
-        ),
-      ),
+          ),
+          SizedBox(height: AppTheme.spacingMd.h),
+        ],
 
-      // Requirements
-      if (jobDetails.requirements.isNotEmpty) ...[
+        // About the Role
         ExpandableSection(
-          title: 'Requirements'.tr(),
+          title: 'About the Role'.tr(),
           initiallyExpanded: false,
           content: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
-            children: jobDetails.requirements
-                .map(
-                  (req) => req.contains('Proficiency'.tr())
-                      ? BulletPointWithBadgeWidget(text: req)
-                      : BulletPointWidget(text: req),
-                )
-                .toList(),
+            children: [
+              BulletPointWidget(
+                text: jobDetails.description,
+              ),
+            ],
           ),
         ),
-      ],
 
-      // Contact Information
-      if (jobDetails.phone != null ||
-          jobDetails.applicationEmail != null ||
-          jobDetails.applyUrl != null) ...[
-        Container(
-          width: double.infinity,
-          padding: EdgeInsets.all(AppTheme.spacingMd.w),
-          decoration: BoxDecoration(
-            color: AppTheme.zinc50,
-            borderRadius: BorderRadius.circular(AppTheme.radiusMedium.r),
-            border: Border.all(
-              color: AppTheme.zinc200!,
+        // Requirements
+        if (jobDetails.requirements.isNotEmpty) ...[
+          ExpandableSection(
+            title: 'Requirements'.tr(),
+            initiallyExpanded: false,
+            content: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: jobDetails.requirements
+                  .map(
+                    (req) => req.contains('Proficiency'.tr())
+                        ? BulletPointWithBadgeWidget(text: req)
+                        : BulletPointWidget(text: req),
+                  )
+                  .toList(),
             ),
           ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                children: [
-                  Icon(
-                    Icons.contact_mail_rounded,
-                    size: 20.sp,
-                    color: AppTheme.primaryColor,
-                  ),
-                  SizedBox(width: AppTheme.spacingSm.w),
-                  Text(
-                    'Contact Information',
-                    style: TextStyle(
-                      fontSize: 16.sp,
-                      fontWeight: FontWeight.bold,
-                      color: AppTheme.zinc900,
+        ],
+
+        // Contact Information
+        if (jobDetails.phone != null ||
+            jobDetails.applicationEmail != null ||
+            jobDetails.applyUrl != null) ...[
+          Container(
+            width: double.infinity,
+            padding: EdgeInsets.all(AppTheme.spacingMd.w),
+            decoration: BoxDecoration(
+              color: theme.colorScheme.surfaceContainerHighest.withOpacity(0.3),
+              borderRadius: BorderRadius.circular(AppTheme.radiusMedium.r),
+              border: Border.all(
+                color: theme.colorScheme.outline.withOpacity(0.2),
+              ),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Icon(
+                      Icons.contact_mail_rounded,
+                      size: 20.sp,
+                      color: AppTheme.primaryColor,
                     ),
+                    SizedBox(width: AppTheme.spacingSm.w),
+                    Text(
+                      'Contact Information'.tr(),
+                      style: TextStyle(
+                        fontSize: 16.sp,
+                        fontWeight: FontWeight.bold,
+                        color: theme.colorScheme.onSurface,
+                      ),
+                    ),
+                  ],
+                ),
+                SizedBox(height: AppTheme.spacingMd.h),
+                if (jobDetails.phone != null) ...[
+                  _buildContactRow(
+                    icon: Icons.phone_rounded,
+                    label: jobDetails.phone!,
+                  ),
+                  SizedBox(height: AppTheme.spacingSm.h),
+                ],
+                if (jobDetails.applicationEmail != null) ...[
+                  _buildContactRow(
+                    icon: Icons.email_rounded,
+                    label: jobDetails.applicationEmail!,
+                  ),
+                  SizedBox(height: AppTheme.spacingSm.h),
+                ],
+                if (jobDetails.applyUrl != null) ...[
+                  _buildContactRow(
+                    icon: Icons.link_rounded,
+                    label: 'Apply Online',
+                    isLink: true,
+                    url: jobDetails.applyUrl!,
                   ),
                 ],
-              ),
-              SizedBox(height: AppTheme.spacingMd.h),
-              if (jobDetails.phone != null) ...[
-                _buildContactRow(
-                  icon: Icons.phone_rounded,
-                  label: jobDetails.phone!,
-                ),
-                SizedBox(height: AppTheme.spacingSm.h),
               ],
-              if (jobDetails.applicationEmail != null) ...[
-                _buildContactRow(
-                  icon: Icons.email_rounded,
-                  label: jobDetails.applicationEmail!,
-                ),
-                SizedBox(height: AppTheme.spacingSm.h),
-              ],
-              if (jobDetails.applyUrl != null) ...[
-                _buildContactRow(
-                  icon: Icons.link_rounded,
-                  label: 'Apply Online',
-                  isLink: true,
-                  url: jobDetails.applyUrl!,
-                ),
-              ],
-            ],
-          ),
-        ),
-        SizedBox(height: AppTheme.spacingMd.h),
-      ],
-
-      // Posted Date & Source
-      if (jobDetails.postedDate != null || jobDetails.source != null) ...[
-        Container(
-          width: double.infinity,
-          padding: EdgeInsets.all(AppTheme.spacingMd.w),
-          decoration: BoxDecoration(
-            color: AppTheme.zinc50,
-            borderRadius: BorderRadius.circular(AppTheme.radiusMedium.r),
-            border: Border.all(
-              color: AppTheme.zinc200!,
             ),
           ),
-          child: Wrap(
-            spacing: AppTheme.spacingMd.w,
-            runSpacing: AppTheme.spacingSm.h,
-            children: [
-              if (jobDetails.postedDate != null)
-                Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Icon(
-                      Icons.access_time_rounded,
-                      size: 16.sp,
-                      color: AppTheme.zinc400,
-                    ),
-                    SizedBox(width: 4.w),
-                    Text(
-                      'Posted ${_formatPostedDate(jobDetails.postedDate!)}',
-                      style: TextStyle(
-                        fontSize: 13.sp,
-                        color: AppTheme.zinc500,
+          SizedBox(height: AppTheme.spacingMd.h),
+        ],
+
+        // Posted Date & Source
+        if (jobDetails.postedDate != null || jobDetails.source != null) ...[
+          Container(
+            width: double.infinity,
+            padding: EdgeInsets.all(AppTheme.spacingMd.w),
+            decoration: BoxDecoration(
+              color: theme.colorScheme.surfaceContainerHighest.withOpacity(0.3),
+              borderRadius: BorderRadius.circular(AppTheme.radiusMedium.r),
+              border: Border.all(
+                color: theme.colorScheme.outline.withOpacity(0.2),
+              ),
+            ),
+            child: Wrap(
+              spacing: AppTheme.spacingMd.w,
+              runSpacing: AppTheme.spacingSm.h,
+              children: [
+                if (jobDetails.postedDate != null)
+                  Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(
+                        Icons.access_time_rounded,
+                        size: 16.sp,
+                        color: theme.colorScheme.onSurfaceVariant,
                       ),
-                    ),
-                  ],
-                ),
-              if (jobDetails.source != null)
-                Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Icon(
-                      Icons.source_rounded,
-                      size: 16.sp,
-                      color: AppTheme.zinc400,
-                    ),
-                    SizedBox(width: 4.w),
-                    Text(
-                      'Source: ${jobDetails.source!}',
-                      style: TextStyle(
-                        fontSize: 13.sp,
-                        color: AppTheme.zinc500,
+                      SizedBox(width: 4.w),
+                      Text(
+                        'Posted ${_formatPostedDate(jobDetails.postedDate!)}',
+                        style: TextStyle(
+                          fontSize: 13.sp,
+                          color: theme.colorScheme.onSurfaceVariant,
+                        ),
                       ),
-                    ),
-                  ],
-                ),
-            ],
+                    ],
+                  ),
+                if (jobDetails.source != null)
+                  Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(
+                        Icons.source_rounded,
+                        size: 16.sp,
+                        color: theme.colorScheme.onSurfaceVariant,
+                      ),
+                      SizedBox(width: 4.w),
+                      Flexible(
+                        child: Text(
+                          'Source: ${jobDetails.source!}',
+                          style: TextStyle(
+                            fontSize: 13.sp,
+                            color: theme.colorScheme.onSurfaceVariant,
+                          ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                    ],
+                  ),
+              ],
+            ),
           ),
-        ),
+        ],
       ],
-    ],
-  );
+    );
+  }
 
   Widget _buildInfoChip({
     required IconData icon,
     required String label,
-  }) =>
-      Container(
-        padding: EdgeInsets.symmetric(
-          horizontal: AppTheme.spacingSm.w,
-          vertical: AppTheme.spacingXs.h,
-        ),
-        decoration: BoxDecoration(
-          color: AppTheme.zinc100,
-          borderRadius: BorderRadius.circular(AppTheme.radiusSmall.r),
-        ),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(
-              icon,
-              size: 14.sp,
-              color: AppTheme.zinc600,
-            ),
-            SizedBox(width: 4.w),
-            Text(
+  }) {
+    final theme = Theme.of(context);
+    return Container(
+      padding: EdgeInsets.symmetric(
+        horizontal: AppTheme.spacingSm.w,
+        vertical: AppTheme.spacingXs.h,
+      ),
+      decoration: BoxDecoration(
+        color: theme.colorScheme.surfaceContainerHighest.withOpacity(0.5),
+        borderRadius: BorderRadius.circular(AppTheme.radiusSmall.r),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(
+            icon,
+            size: 14.sp,
+            color: Theme.of(context).colorScheme.onSurfaceVariant,
+          ),
+          SizedBox(width: 4.w),
+          Flexible(
+            child: Text(
               label,
               style: TextStyle(
                 fontSize: 12.sp,
-                color: AppTheme.zinc700,
+                color: Theme.of(context).colorScheme.onSurface,
                 fontWeight: FontWeight.w500,
               ),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
             ),
-          ],
-        ),
-      );
+          ),
+        ],
+      ),
+    );
+  }
 
   Widget _buildContactRow({
     required IconData icon,
     required String label,
     bool isLink = false,
     String? url,
-  }) =>
-      Row(
-        children: [
-          Icon(
-            icon,
-            size: 18.sp,
-            color: AppTheme.primaryColor,
-          ),
-          SizedBox(width: 8.w),
-          isLink
-              ? Expanded(
-                  child: GestureDetector(
-                    onTap: () {
-                      // TODO: Open URL
-                      AppLogger.debug('Open URL: $url', tag: 'Jobs');
-                    },
-                    child: Text(
-                      label,
-                      style: TextStyle(
-                        fontSize: 14.sp,
-                        color: AppTheme.primaryColor,
-                        fontWeight: FontWeight.w600,
-                        decoration: TextDecoration.underline,
-                      ),
-                    ),
-                  ),
-                )
-              : Expanded(
-                  child: Text(
-                    label,
-                    style: TextStyle(
-                      fontSize: 14.sp,
-                      color: AppTheme.zinc700,
-                    ),
+  }) => Row(
+    children: [
+      Icon(
+        icon,
+        size: 18.sp,
+        color: AppTheme.primaryColor,
+      ),
+      SizedBox(width: 8.w),
+      isLink
+          ? Expanded(
+              child: GestureDetector(
+                onTap: () {
+                  // TODO: Open URL
+                  AppLogger.debug('Open URL: $url', tag: 'Jobs');
+                },
+                child: Text(
+                  label,
+                  style: TextStyle(
+                    fontSize: 14.sp,
+                    color: AppTheme.primaryColor,
+                    fontWeight: FontWeight.w600,
+                    decoration: TextDecoration.underline,
                   ),
                 ),
-        ],
-      );
+              ),
+            )
+          : Expanded(
+              child: Text(
+                label,
+                style: TextStyle(
+                  fontSize: 14.sp,
+                  color: Theme.of(context).colorScheme.onSurface,
+                ),
+              ),
+            ),
+    ],
+  );
 
   String _formatPostedDate(String dateStr) {
     try {
@@ -676,19 +693,37 @@ class _JobDetailScreenState extends State<JobDetailScreen> {
         var profileState = context.read<ProfileCubit>().state;
 
         // Debug logging
-        AppLogger.debug('[JOB_DETAILS_SCREEN] Profile status: ${profileState.status}', tag: 'Jobs');
-        AppLogger.debug('[JOB_DETAILS_SCREEN] Profile data: ${profileState.profile}', tag: 'Jobs');
-        AppLogger.debug('[JOB_DETAILS_SCREEN] Email: ${profileState.profile?.email}', tag: 'Jobs');
+        AppLogger.debug(
+          '[JOB_DETAILS_SCREEN] Profile status: ${profileState.status}',
+          tag: 'Jobs',
+        );
+        AppLogger.debug(
+          '[JOB_DETAILS_SCREEN] Profile data: ${profileState.profile}',
+          tag: 'Jobs',
+        );
+        AppLogger.debug(
+          '[JOB_DETAILS_SCREEN] Email: ${profileState.profile?.email}',
+          tag: 'Jobs',
+        );
 
         // If profile is not loaded, try to load it
         if (profileState.status == ProfileStatus.initial) {
-          AppLogger.debug('[JOB_DETAILS_SCREEN] Profile not loaded, loading now...', tag: 'Jobs');
+          AppLogger.debug(
+            '[JOB_DETAILS_SCREEN] Profile not loaded, loading now...',
+            tag: 'Jobs',
+          );
           await context.read<ProfileCubit>().loadProfileData();
 
           // Get the updated state after loading
           profileState = context.read<ProfileCubit>().state;
-          AppLogger.debug('[JOB_DETAILS_SCREEN] Updated profile status: ${profileState.status}', tag: 'Jobs');
-          AppLogger.debug('[JOB_DETAILS_SCREEN] Updated profile data: ${profileState.profile}', tag: 'Jobs');
+          AppLogger.debug(
+            '[JOB_DETAILS_SCREEN] Updated profile status: ${profileState.status}',
+            tag: 'Jobs',
+          );
+          AppLogger.debug(
+            '[JOB_DETAILS_SCREEN] Updated profile data: ${profileState.profile}',
+            tag: 'Jobs',
+          );
         }
 
         if (profileState.status != ProfileStatus.success ||
@@ -712,12 +747,16 @@ class _JobDetailScreenState extends State<JobDetailScreen> {
         // Use profile.subscriptionPlan which comes from UserProfileResponse.subscription.plan
         final profile = profileState.profile!;
         final subscriptionPlan = profile.subscriptionPlan ?? '';
-        final isPro = subscriptionPlan.toUpperCase().contains('PRO') ||
-                      profile.userType?.toUpperCase() == 'PRO';
+        final isPro =
+            subscriptionPlan.toUpperCase().contains('PRO') ||
+            profile.userType?.toUpperCase() == 'PRO';
 
         if (isPro) {
           // Pro user: Apply via API
-          AppLogger.debug('[JOB_DETAILS_SCREEN] Pro user applying to job $jobId', tag: 'Jobs');
+          AppLogger.debug(
+            '[JOB_DETAILS_SCREEN] Pro user applying to job $jobId',
+            tag: 'Jobs',
+          );
           final success = await context
               .read<JobDetailsCubit>()
               .applyToJobWithApi(jobId);
@@ -732,14 +771,19 @@ class _JobDetailScreenState extends State<JobDetailScreen> {
           } else if (mounted) {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
-                content: Text('Failed to submit application. Please try again.'.tr()),
+                content: Text(
+                  'Failed to submit application. Please try again.'.tr(),
+                ),
                 backgroundColor: Colors.red,
               ),
             );
           }
         } else {
           // Free user: Show contact info dialog
-          AppLogger.debug('[JOB_DETAILS_SCREEN] Free user, showing contact dialog', tag: 'Jobs');
+          AppLogger.debug(
+            '[JOB_DETAILS_SCREEN] Free user, showing contact dialog',
+            tag: 'Jobs',
+          );
           if (mounted) {
             _showContactInfoDialog(context, loadedState.jobDetails);
           }
@@ -753,12 +797,14 @@ class _JobDetailScreenState extends State<JobDetailScreen> {
     }
   }
 
-  /// Shows contact information dialog for free users
   void _showContactInfoDialog(BuildContext context, JobDetails jobDetails) {
+    final theme = Theme.of(context);
     final hasPhone = jobDetails.phone != null && jobDetails.phone!.isNotEmpty;
-    final hasEmail = jobDetails.applicationEmail != null &&
+    final hasEmail =
+        jobDetails.applicationEmail != null &&
         jobDetails.applicationEmail!.isNotEmpty;
-    final hasUrl = jobDetails.applyUrl != null && jobDetails.applyUrl!.isNotEmpty;
+    final hasUrl =
+        jobDetails.applyUrl != null && jobDetails.applyUrl!.isNotEmpty;
 
     showDialog<void>(
       context: context,
@@ -780,7 +826,7 @@ class _JobDetailScreenState extends State<JobDetailScreen> {
                 style: TextStyle(
                   fontSize: 18.sp,
                   fontWeight: FontWeight.bold,
-                  color: AppTheme.zinc900,
+                  color: theme.colorScheme.onSurface,
                 ),
               ),
             ),
@@ -791,10 +837,11 @@ class _JobDetailScreenState extends State<JobDetailScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Upgrade to Pro to apply directly, or contact the employer using the options below:',
+              'Upgrade to Pro to apply directly, or contact the employer using the options below:'
+                  .tr(),
               style: TextStyle(
                 fontSize: 14.sp,
-                color: AppTheme.zinc600,
+                color: theme.colorScheme.onSurfaceVariant,
               ),
             ),
             SizedBox(height: AppTheme.spacingMd.h),
@@ -806,17 +853,17 @@ class _JobDetailScreenState extends State<JobDetailScreen> {
                   size: 20.sp,
                 ),
                 title: Text(
-                  'Call',
+                  'Call'.tr(),
                   style: TextStyle(
                     fontSize: 14.sp,
-                    color: AppTheme.zinc900,
+                    color: theme.colorScheme.onSurface,
                   ),
                 ),
                 subtitle: Text(
                   jobDetails.phone!,
                   style: TextStyle(
                     fontSize: 12.sp,
-                    color: AppTheme.zinc500,
+                    color: theme.colorScheme.onSurfaceVariant,
                   ),
                 ),
                 onTap: () async {
@@ -834,17 +881,17 @@ class _JobDetailScreenState extends State<JobDetailScreen> {
                   size: 20.sp,
                 ),
                 title: Text(
-                  'Email',
+                  'Email'.tr(),
                   style: TextStyle(
                     fontSize: 14.sp,
-                    color: AppTheme.zinc900,
+                    color: theme.colorScheme.onSurface,
                   ),
                 ),
                 subtitle: Text(
                   jobDetails.applicationEmail!,
                   style: TextStyle(
                     fontSize: 12.sp,
-                    color: AppTheme.zinc500,
+                    color: theme.colorScheme.onSurfaceVariant,
                   ),
                 ),
                 onTap: () async {
@@ -864,17 +911,17 @@ class _JobDetailScreenState extends State<JobDetailScreen> {
                   size: 20.sp,
                 ),
                 title: Text(
-                  'Apply Online',
+                  'Apply Online'.tr(),
                   style: TextStyle(
                     fontSize: 14.sp,
-                    color: AppTheme.zinc900,
+                    color: theme.colorScheme.onSurface,
                   ),
                 ),
                 subtitle: Text(
                   'Open application website',
                   style: TextStyle(
                     fontSize: 12.sp,
-                    color: AppTheme.zinc500,
+                    color: theme.colorScheme.onSurfaceVariant,
                   ),
                 ),
                 onTap: () async {
@@ -886,10 +933,10 @@ class _JobDetailScreenState extends State<JobDetailScreen> {
               ),
             if (!hasPhone && !hasEmail && !hasUrl)
               Text(
-                'No contact information available.',
+                'No contact information available.'.tr(),
                 style: TextStyle(
                   fontSize: 14.sp,
-                  color: AppTheme.zinc500,
+                  color: theme.colorScheme.onSurfaceVariant,
                 ),
               ),
           ],
@@ -901,7 +948,7 @@ class _JobDetailScreenState extends State<JobDetailScreen> {
               'Close',
               style: TextStyle(
                 fontSize: 14.sp,
-                color: AppTheme.zinc600,
+                color: theme.colorScheme.primary,
               ),
             ),
           ),

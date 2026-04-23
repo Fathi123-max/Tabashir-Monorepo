@@ -143,7 +143,7 @@ class JobTitleSection extends StatelessWidget {
               fontSize: 24.sp,
               fontWeight: FontWeight.w800,
               letterSpacing: -0.5,
-              color: AppTheme.zinc900,
+              color: theme.colorScheme.onSurface,
             ),
           ),
           SizedBox(height: AppTheme.spacingSm.h),
@@ -175,12 +175,16 @@ class JobTitleSection extends StatelessWidget {
                   color: AppTheme.primaryColor,
                 ),
                 SizedBox(width: 6.w),
-                Text(
-                  company,
-                  style: theme.textTheme.titleMedium?.copyWith(
-                    fontSize: 15.sp,
-                    fontWeight: FontWeight.w700,
-                    color: AppTheme.primaryColor,
+                Flexible(
+                  child: Text(
+                    company,
+                    style: theme.textTheme.titleMedium?.copyWith(
+                      fontSize: 15.sp,
+                      fontWeight: FontWeight.w700,
+                      color: AppTheme.primaryColor,
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                   ),
                 ),
               ],
@@ -196,10 +200,10 @@ class JobTitleSection extends StatelessWidget {
               _buildInfoChip(
                 icon: Icons.location_on_rounded,
                 label: location,
-                color: AppTheme.zinc600,
-                bgColor: AppTheme.zinc100,
+                color: theme.colorScheme.onSurfaceVariant,
+                bgColor: theme.colorScheme.surfaceContainerHighest.withOpacity(0.5),
               ),
-              _buildMatchChip(percentage: matchPercentage),
+              _buildMatchChip(percentage: matchPercentage, context: context),
               _buildInfoChip(
                 icon: Icons.attach_money_rounded,
                 label: salary,
@@ -255,7 +259,8 @@ class JobTitleSection extends StatelessWidget {
         ),
       );
 
-  Widget _buildMatchChip({required String percentage}) {
+  Widget _buildMatchChip({required String percentage, required BuildContext context}) {
+    final theme = Theme.of(context);
     final matchValue = int.tryParse(percentage.replaceAll('%', '')) ?? 0;
     final matchColor = matchValue >= 80
         ? AppTheme.successColor
@@ -296,12 +301,16 @@ class JobTitleSection extends StatelessWidget {
             color: matchColor,
           ),
           SizedBox(width: 4.w),
-          Text(
-            '$percentage Match',
-            style: TextStyle(
-              fontSize: 12.sp,
-              fontWeight: FontWeight.w700,
-              color: matchColor,
+          Flexible(
+            child: Text(
+              percentage.contains('Match'.tr()) ? percentage : '$percentage ${'Match'.tr()}',
+              style: TextStyle(
+                fontSize: 12.sp,
+                fontWeight: FontWeight.w700,
+                color: matchColor,
+              ),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
             ),
           ),
         ],
@@ -323,10 +332,10 @@ class JobMatchAlert extends StatelessWidget {
     margin: EdgeInsets.symmetric(horizontal: AppTheme.spacingMd.w),
     padding: EdgeInsets.all(AppTheme.spacingMd.w),
     decoration: BoxDecoration(
-      color: AppTheme.primaryColor.withOpacity(0.08),
+      color: Theme.of(context).colorScheme.primary.withOpacity(0.08),
       borderRadius: BorderRadius.circular(AppTheme.radiusMedium.r),
       border: Border.all(
-        color: AppTheme.primaryColor.withOpacity(0.15),
+        color: Theme.of(context).colorScheme.primary.withOpacity(0.15),
       ),
     ),
     child: Row(
@@ -335,12 +344,12 @@ class JobMatchAlert extends StatelessWidget {
         Container(
           padding: EdgeInsets.all(AppTheme.spacingXs.w),
           decoration: BoxDecoration(
-            color: AppTheme.primaryColor.withOpacity(0.15),
+            color: Theme.of(context).colorScheme.primary.withOpacity(0.15),
             borderRadius: BorderRadius.circular(AppTheme.radiusSmall.r),
           ),
           child: Icon(
             Icons.auto_awesome_rounded,
-            color: AppTheme.primaryColor,
+            color: Theme.of(context).colorScheme.primary,
             size: 20.sp,
           ),
         ),
@@ -547,11 +556,15 @@ class _ExpandableSectionState extends State<ExpandableSection> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(
-                  widget.title,
-                  style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                    fontWeight: FontWeight.bold,
-                    color: Theme.of(context).textTheme.headlineSmall?.color,
+                Expanded(
+                  child: Text(
+                    widget.title,
+                    style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                      fontWeight: FontWeight.bold,
+                      color: Theme.of(context).textTheme.headlineSmall?.color,
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                   ),
                 ),
                 AnimatedRotation(
@@ -771,12 +784,16 @@ class SimilarOpportunitiesWidget extends StatelessWidget {
                               color: AppTheme.successColor,
                             ),
                             SizedBox(width: 2.w),
-                            Text(
-                              '${job['match'] ?? ''} ${'Match'.tr()}',
-                              style: theme.textTheme.bodySmall?.copyWith(
-                                color: AppTheme.successColor,
-                                fontWeight: FontWeight.w600,
-                                fontSize: 10.sp,
+                            Flexible(
+                              child: Text(
+                                '${job['match'] ?? ''} ${'Match'.tr()}',
+                                style: theme.textTheme.bodySmall?.copyWith(
+                                  color: AppTheme.successColor,
+                                  fontWeight: FontWeight.w600,
+                                  fontSize: 10.sp,
+                                ),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
                               ),
                             ),
                           ],
@@ -942,10 +959,10 @@ class JobDetailsFooter extends StatelessWidget {
               decoration: BoxDecoration(
                 color: Theme.of(
                   context,
-                ).colorScheme.surfaceContainerHighest.withOpacity(0.3),
+                ).colorScheme.surfaceContainerHighest.withOpacity(0.5),
                 borderRadius: BorderRadius.circular(AppTheme.radiusMedium.r),
                 border: Border.all(
-                  color: Theme.of(context).colorScheme.outline.withOpacity(0.2),
+                  color: Theme.of(context).colorScheme.outline.withOpacity(0.4),
                 ),
               ),
               child: Center(

@@ -136,11 +136,15 @@ class JobCard extends StatelessWidget {
                   color: theme.colorScheme.onSurfaceVariant.withOpacity(0.7),
                 ),
                 SizedBox(width: 4.w),
-                Text(
-                  salary,
-                  style: theme.textTheme.bodyMedium?.copyWith(
-                    color: theme.colorScheme.onSurfaceVariant,
-                    fontWeight: FontWeight.w500,
+                Expanded(
+                  child: Text(
+                    salary,
+                    style: theme.textTheme.bodyMedium?.copyWith(
+                      color: theme.colorScheme.onSurfaceVariant,
+                      fontWeight: FontWeight.w500,
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                   ),
                 ),
               ],
