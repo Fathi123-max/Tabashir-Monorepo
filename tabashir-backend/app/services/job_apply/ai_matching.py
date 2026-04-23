@@ -29,7 +29,7 @@ def ensure_user_in_ai_db(email):
         
     # 3. Provision in AI DB
     execute_ai_query(
-        "INSERT INTO clients (email, name, created_at) VALUES (%s, %s, NOW())",
+        "INSERT INTO clients (email, name, date_in) VALUES (%s, %s, NOW())",
         (email, user['name']),
         commit=True
     )

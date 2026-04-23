@@ -16,7 +16,7 @@ from pathlib import Path
 import psycopg2
 
 from app.config import Config
-from app.database.db import execute_query, execute_ai_query, get_ai_db_connection
+from app.database.db import execute_query, execute_ai_query, get_ai_db_connection, get_table_columns
 from app.routes.middleware import jwt_required
 from app.utils.file_utils import allowed_file
 from app.models.cv_models import (
@@ -1915,8 +1915,10 @@ class Jobs(Resource):
                             print(f"[JOBS_NS] Saved jobs count: {len(saved_job_ids)}")
 
                         # 2. Fetch Profile for Matching
+                        cols = get_table_columns('CandidateProfile', 'main')
+                        loc_field = 'cp.location' if 'location' in cols else "NULL as location"
                         profile = execute_query(
-                            '''SELECT cp."jobType", cp.skills, cp.location
+                            f'''SELECT cp."jobType", cp.skills, {loc_field}
                                FROM "Candidate" c
                                JOIN "CandidateProfile" cp ON cp."candidateId" = c.id
                                WHERE c."userId" = %s''',
@@ -2249,8 +2251,10 @@ class JobById(Resource):
             if email:
                 try:
                     # Fetch profile from main DB instead of AI DB
-                    profile_row = execute_query("""
-                        SELECT cp."jobType", cp.skills, cp.location 
+                    cols = get_table_columns('CandidateProfile', 'main')
+                    loc_field = 'cp.location' if 'location' in cols else "NULL as location"
+                    profile_row = execute_query(f"""
+                        SELECT cp."jobType", cp.skills, {loc_field} 
                         FROM "CandidateProfile" cp
                         JOIN "Candidate" c ON cp."candidateId" = c.id
                         JOIN users u ON c."userId" = u.id

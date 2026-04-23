@@ -36,12 +36,13 @@ class Profile(Resource):
 
         columns = get_table_columns('CandidateProfile', 'main')
         location_field = 'cp.location' if 'location' in columns else "NULL as location"
+        linkedin_field = 'cp.linkedin' if 'linkedin' in columns else "NULL as linkedin"
 
         user = execute_query(
             f"""SELECT u.id, u.email, u.name, u.image, u."userType", u."createdAt",
                       cp.id as profile_id, cp.phone, cp.nationality, cp.gender, cp.languages, cp.age,
                       cp."profilePicture", cp."jobType", cp.skills, cp.experience,
-                      cp.education, cp.degree, {location_field}, cp.linkedin,
+                      cp.education, cp.degree, {location_field}, {linkedin_field},
                       cp."onboardingCompleted"
                FROM users u
                LEFT JOIN "Candidate" c ON c."userId" = u.id
@@ -209,12 +210,13 @@ class MobileMe(Resource):
 
         columns = get_table_columns('CandidateProfile', 'main')
         location_field = 'cp.location' if 'location' in columns else "NULL as location"
+        linkedin_field = 'cp.linkedin' if 'linkedin' in columns else "NULL as linkedin"
 
         user = execute_query(
             f"""SELECT u.id, u.email, u.name, u.image, u."userType",
                       cp.id as profile_id, cp.phone, cp.nationality, cp.gender, cp.languages, cp.age,
                       cp."profilePicture", cp."jobType", cp.skills, cp.experience,
-                      cp.education, cp.degree, {location_field}, cp.linkedin, cp."onboardingCompleted"
+                      cp.education, cp.degree, {location_field}, {linkedin_field}, cp."onboardingCompleted"
                FROM users u
                LEFT JOIN "Candidate" c ON c."userId" = u.id
                LEFT JOIN "CandidateProfile" cp ON cp."candidateId" = c.id
@@ -232,7 +234,7 @@ class MobileMe(Resource):
                 f"""SELECT u.id, u.email, u.name, u.image, u."userType",
                           cp.id as profile_id, cp.phone, cp.nationality, cp.gender, cp.languages, cp.age,
                           cp."profilePicture", cp."jobType", cp.skills, cp.experience,
-                          cp.education, cp.degree, {location_field}, cp.linkedin, cp."onboardingCompleted"
+                          cp.education, cp.degree, {location_field}, {linkedin_field}, cp."onboardingCompleted"
                    FROM users u
                    LEFT JOIN "Candidate" c ON c."userId" = u.id
                    LEFT JOIN "CandidateProfile" cp ON cp."candidateId" = c.id
@@ -250,7 +252,7 @@ class MobileMe(Resource):
                 f"""SELECT u.id, u.email, u.name, u.image, u."userType",
                           cp.id as profile_id, cp.phone, cp.nationality, cp.gender, cp.languages, cp.age,
                           cp."profilePicture", cp."jobType", cp.skills, cp.experience,
-                          cp.education, cp.degree, {location_field}, cp.linkedin, cp."onboardingCompleted"
+                          cp.education, cp.degree, {location_field}, {linkedin_field}, cp."onboardingCompleted"
                    FROM users u
                    LEFT JOIN "Candidate" c ON c."userId" = u.id
                    LEFT JOIN "CandidateProfile" cp ON cp."candidateId" = c.id
