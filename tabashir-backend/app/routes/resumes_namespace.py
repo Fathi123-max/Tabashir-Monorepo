@@ -2654,7 +2654,7 @@ class MatchedJobs(Resource):
     @resumes_ns.doc(params={
         'email': 'User email to match jobs against their profile',
         'limit': 'Number of jobs per page (default 15)',
-        'page': 'Page number (default 1)',
+        'page': 'Page number (default 0)',
     })
     def get(self):
         """
@@ -2672,8 +2672,10 @@ class MatchedJobs(Resource):
             ensure_user_in_ai_db(email)
 
             limit = int(args.get('limit', 15))
-            page = int(args.get('page', 1))
-            offset = (page - 1) * limit
+            _page = args.get('page', '0')
+            page = int(_page) if _page.isdigit() else 0
+            if page < 0: page = 0
+            offset = page * limit
 
             # Fetch user profile
             cursor.execute("SELECT positions, skills, location FROM clients WHERE email = %s", (email,))
@@ -2751,10 +2753,10 @@ class MatchedJobs(Resource):
                 "success": True,
                 "matched_jobs": paginated,
                 "pagination": {
-                    "total_jobs": total_matches,
+                    "total": total_matches,
                     "page": page,
                     "limit": limit,
-                    "total_pages": ceil(total_matches / limit)
+                    "pages": ceil(total_matches / limit)
                 }
             }, 200
 
