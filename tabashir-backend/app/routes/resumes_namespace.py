@@ -1611,7 +1611,7 @@ class Jobs(Resource):
         'attendance': 'Match keyword in description (remote, hybrid, onsite)',
         'sort': 'Sort options: job_date_desc | job_date_asc | salary_desc | salary_asc',
         'limit': 'Number of jobs per page (default 15)',
-        'page': 'Page number (default 1)',
+        'page': 'Page number (0-indexed, default 0)',
         'lang': 'Language: en (default) | ar',
     })
     def get(self):
@@ -1650,11 +1650,12 @@ class Jobs(Resource):
 
             sort = args.get('sort', 'job_date_desc')
             language = args.get('lang', 'en').strip().lower()
-            _limit = args.get('limit', '')
-            _page = args.get('page', '')
+            _limit = args.get('limit', '15')
+            _page = args.get('page', '0')
             limit = int(_limit) if (_limit.isdigit() and int(_limit) > 0) else 15
-            page = int(_page) if _page.isdigit() and int(_page) > 0 else 1
-            offset = (page - 1) * limit
+            page = int(_page) if _page.isdigit() else 0
+            if page < 0: page = 0
+            offset = page * limit
             
             # Validate language parameter
             if language not in ['en', 'ar']:
