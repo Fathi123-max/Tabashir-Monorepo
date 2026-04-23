@@ -37,7 +37,8 @@ from app.services.job_apply import (
 )
 from app.services.send_linkedin_email import send_email
 from app.services.job_apply.ai_matching import (
-    title_position_match, calculate_skills_match, semantic_location_match
+    title_position_match, calculate_skills_match, semantic_location_match,
+    ensure_user_in_ai_db
 )
 
 resumes_ns = Namespace('resumes', description='Resume Management and AI Processing')
@@ -1664,6 +1665,9 @@ class Jobs(Resource):
             params = []
             where_clauses.append("NULLIF(job_date, 'Nan')::date >= (CURRENT_DATE - INTERVAL '2 months')")
 
+            if email:
+                ensure_user_in_ai_db(email)
+
             client_id = None
             if email:
                 cursor.execute("SELECT id FROM clients WHERE email = %s", (email,))
@@ -2658,6 +2662,9 @@ class MatchedJobs(Resource):
             email = args.get('email')
             if not email:
                 return {"success": False, "message": "Email is required"}, 400
+
+            # Ensure user exists in AI DB before matching
+            ensure_user_in_ai_db(email)
 
             limit = int(args.get('limit', 15))
             page = int(args.get('page', 1))

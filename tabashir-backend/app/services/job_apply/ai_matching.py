@@ -6,10 +6,34 @@ import numpy as np
 import spacy
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
+from app.database.db import execute_query, execute_ai_query
 
 # Set up logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
+
+def ensure_user_in_ai_db(email):
+    """
+    Ensures that a user with the given email exists in the AI database.
+    If not, it attempts to sync them from the main database.
+    """
+    # 1. Check AI DB
+    client = execute_ai_query("SELECT id FROM clients WHERE email = %s", (email,), fetch_one=True)
+    if client:
+        return True
+        
+    # 2. Fallback to Main DB
+    user = execute_query('SELECT id, name FROM users WHERE email = %s', (email,), fetch_one=True)
+    if not user:
+        return False
+        
+    # 3. Provision in AI DB
+    execute_ai_query(
+        "INSERT INTO clients (email, name, created_at) VALUES (%s, %s, NOW())",
+        (email, user['name']),
+        commit=True
+    )
+    return True
 
 # Load spaCy model
 try:
