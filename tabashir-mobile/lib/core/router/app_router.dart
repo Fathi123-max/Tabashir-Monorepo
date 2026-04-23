@@ -35,6 +35,7 @@ import 'package:tabashir/features/resume/presentation/screens/resume_import_scre
 import 'package:tabashir/features/resume/presentation/screens/resume_preview_screen.dart';
 import 'package:tabashir/features/resume/presentation/screens/resume_vault_screen.dart';
 import 'package:tabashir/features/resume/presentation/cubit/resume_import_cubit.dart';
+import 'package:tabashir/features/payments/presentation/screens/subscriptions_screen.dart';
 
 import 'route_names.dart';
 
@@ -286,8 +287,7 @@ final GoRouter appRouter = GoRouter(
     GoRoute(
       path: RouteNames.subscriptions,
       name: 'subscriptions-screen',
-      builder: (context, state) =>
-          const MainAppShell(), // Replace with actual subscriptions screen
+      builder: (context, state) => const SubscriptionsScreen(),
     ),
     GoRoute(
       path: RouteNames.payment,
