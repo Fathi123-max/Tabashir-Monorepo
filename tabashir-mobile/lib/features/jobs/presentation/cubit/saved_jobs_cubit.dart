@@ -35,6 +35,7 @@ class SavedJobsCubit extends Cubit<SavedJobsState> {
 
   /// Initialize the saved jobs screen with only saved jobs
   Future<void> initializeSavedJobs(JobsCubit jobsCubit) async {
+    emit(const SavedJobsState.loading());
     // Ensure we have the latest saved IDs
     await loadSavedIds();
 

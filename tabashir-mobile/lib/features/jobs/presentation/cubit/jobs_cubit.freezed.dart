@@ -55,11 +55,13 @@ extension JobsStatePatterns on JobsState {
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeMap<TResult extends Object?>({TResult Function( JobsStateInitial value)?  initial,TResult Function( JobsStateLoaded value)?  loaded,required TResult orElse(),}){
+@optionalTypeArgs TResult maybeMap<TResult extends Object?>({TResult Function( JobsStateInitial value)?  initial,TResult Function( JobsStateLoading value)?  loading,TResult Function( JobsStateError value)?  error,TResult Function( JobsStateLoaded value)?  loaded,required TResult orElse(),}){
 final _that = this;
 switch (_that) {
 case JobsStateInitial() when initial != null:
-return initial(_that);case JobsStateLoaded() when loaded != null:
+return initial(_that);case JobsStateLoading() when loading != null:
+return loading(_that);case JobsStateError() when error != null:
+return error(_that);case JobsStateLoaded() when loaded != null:
 return loaded(_that);case _:
   return orElse();
 
@@ -78,11 +80,13 @@ return loaded(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult map<TResult extends Object?>({required TResult Function( JobsStateInitial value)  initial,required TResult Function( JobsStateLoaded value)  loaded,}){
+@optionalTypeArgs TResult map<TResult extends Object?>({required TResult Function( JobsStateInitial value)  initial,required TResult Function( JobsStateLoading value)  loading,required TResult Function( JobsStateError value)  error,required TResult Function( JobsStateLoaded value)  loaded,}){
 final _that = this;
 switch (_that) {
 case JobsStateInitial():
-return initial(_that);case JobsStateLoaded():
+return initial(_that);case JobsStateLoading():
+return loading(_that);case JobsStateError():
+return error(_that);case JobsStateLoaded():
 return loaded(_that);case _:
   throw StateError('Unexpected subclass');
 
@@ -100,11 +104,13 @@ return loaded(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>({TResult? Function( JobsStateInitial value)?  initial,TResult? Function( JobsStateLoaded value)?  loaded,}){
+@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>({TResult? Function( JobsStateInitial value)?  initial,TResult? Function( JobsStateLoading value)?  loading,TResult? Function( JobsStateError value)?  error,TResult? Function( JobsStateLoaded value)?  loaded,}){
 final _that = this;
 switch (_that) {
 case JobsStateInitial() when initial != null:
-return initial(_that);case JobsStateLoaded() when loaded != null:
+return initial(_that);case JobsStateLoading() when loading != null:
+return loading(_that);case JobsStateError() when error != null:
+return error(_that);case JobsStateLoaded() when loaded != null:
 return loaded(_that);case _:
   return null;
 
@@ -122,10 +128,12 @@ return loaded(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function()?  initial,TResult Function( String selectedSort,  bool isGridView,  String searchQuery,  String cardStyle,  List<JobUI> jobs,  List<String> selectedLocations,  List<String> selectedJobTypes,  List<String> selectedExperienceLevels,  int minSalary,  int maxSalary,  Set<String> savedJobs,  int currentPage,  int totalJobs,  int itemsPerPage,  bool hasMoreData,  bool isLoadingMore)?  loaded,required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function()?  initial,TResult Function()?  loading,TResult Function( String message)?  error,TResult Function( String selectedSort,  bool isGridView,  String searchQuery,  String cardStyle,  List<JobUI> jobs,  List<String> selectedLocations,  List<String> selectedJobTypes,  List<String> selectedExperienceLevels,  int minSalary,  int maxSalary,  Set<String> savedJobs,  int currentPage,  int totalJobs,  int itemsPerPage,  bool hasMoreData,  bool isLoadingMore)?  loaded,required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case JobsStateInitial() when initial != null:
-return initial();case JobsStateLoaded() when loaded != null:
+return initial();case JobsStateLoading() when loading != null:
+return loading();case JobsStateError() when error != null:
+return error(_that.message);case JobsStateLoaded() when loaded != null:
 return loaded(_that.selectedSort,_that.isGridView,_that.searchQuery,_that.cardStyle,_that.jobs,_that.selectedLocations,_that.selectedJobTypes,_that.selectedExperienceLevels,_that.minSalary,_that.maxSalary,_that.savedJobs,_that.currentPage,_that.totalJobs,_that.itemsPerPage,_that.hasMoreData,_that.isLoadingMore);case _:
   return orElse();
 
@@ -144,10 +152,12 @@ return loaded(_that.selectedSort,_that.isGridView,_that.searchQuery,_that.cardSt
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function()  initial,required TResult Function( String selectedSort,  bool isGridView,  String searchQuery,  String cardStyle,  List<JobUI> jobs,  List<String> selectedLocations,  List<String> selectedJobTypes,  List<String> selectedExperienceLevels,  int minSalary,  int maxSalary,  Set<String> savedJobs,  int currentPage,  int totalJobs,  int itemsPerPage,  bool hasMoreData,  bool isLoadingMore)  loaded,}) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function()  initial,required TResult Function()  loading,required TResult Function( String message)  error,required TResult Function( String selectedSort,  bool isGridView,  String searchQuery,  String cardStyle,  List<JobUI> jobs,  List<String> selectedLocations,  List<String> selectedJobTypes,  List<String> selectedExperienceLevels,  int minSalary,  int maxSalary,  Set<String> savedJobs,  int currentPage,  int totalJobs,  int itemsPerPage,  bool hasMoreData,  bool isLoadingMore)  loaded,}) {final _that = this;
 switch (_that) {
 case JobsStateInitial():
-return initial();case JobsStateLoaded():
+return initial();case JobsStateLoading():
+return loading();case JobsStateError():
+return error(_that.message);case JobsStateLoaded():
 return loaded(_that.selectedSort,_that.isGridView,_that.searchQuery,_that.cardStyle,_that.jobs,_that.selectedLocations,_that.selectedJobTypes,_that.selectedExperienceLevels,_that.minSalary,_that.maxSalary,_that.savedJobs,_that.currentPage,_that.totalJobs,_that.itemsPerPage,_that.hasMoreData,_that.isLoadingMore);case _:
   throw StateError('Unexpected subclass');
 
@@ -165,10 +175,12 @@ return loaded(_that.selectedSort,_that.isGridView,_that.searchQuery,_that.cardSt
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function()?  initial,TResult? Function( String selectedSort,  bool isGridView,  String searchQuery,  String cardStyle,  List<JobUI> jobs,  List<String> selectedLocations,  List<String> selectedJobTypes,  List<String> selectedExperienceLevels,  int minSalary,  int maxSalary,  Set<String> savedJobs,  int currentPage,  int totalJobs,  int itemsPerPage,  bool hasMoreData,  bool isLoadingMore)?  loaded,}) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function()?  initial,TResult? Function()?  loading,TResult? Function( String message)?  error,TResult? Function( String selectedSort,  bool isGridView,  String searchQuery,  String cardStyle,  List<JobUI> jobs,  List<String> selectedLocations,  List<String> selectedJobTypes,  List<String> selectedExperienceLevels,  int minSalary,  int maxSalary,  Set<String> savedJobs,  int currentPage,  int totalJobs,  int itemsPerPage,  bool hasMoreData,  bool isLoadingMore)?  loaded,}) {final _that = this;
 switch (_that) {
 case JobsStateInitial() when initial != null:
-return initial();case JobsStateLoaded() when loaded != null:
+return initial();case JobsStateLoading() when loading != null:
+return loading();case JobsStateError() when error != null:
+return error(_that.message);case JobsStateLoaded() when loaded != null:
 return loaded(_that.selectedSort,_that.isGridView,_that.searchQuery,_that.cardStyle,_that.jobs,_that.selectedLocations,_that.selectedJobTypes,_that.selectedExperienceLevels,_that.minSalary,_that.maxSalary,_that.savedJobs,_that.currentPage,_that.totalJobs,_that.itemsPerPage,_that.hasMoreData,_that.isLoadingMore);case _:
   return null;
 
@@ -208,6 +220,104 @@ String toString() {
 
 
 
+
+/// @nodoc
+
+
+class JobsStateLoading implements JobsState {
+  const JobsStateLoading();
+  
+
+
+
+
+
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is JobsStateLoading);
+}
+
+
+@override
+int get hashCode => runtimeType.hashCode;
+
+@override
+String toString() {
+  return 'JobsState.loading()';
+}
+
+
+}
+
+
+
+
+/// @nodoc
+
+
+class JobsStateError implements JobsState {
+  const JobsStateError(this.message);
+  
+
+ final  String message;
+
+/// Create a copy of JobsState
+/// with the given fields replaced by the non-null parameter values.
+@JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+$JobsStateErrorCopyWith<JobsStateError> get copyWith => _$JobsStateErrorCopyWithImpl<JobsStateError>(this, _$identity);
+
+
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is JobsStateError&&(identical(other.message, message) || other.message == message));
+}
+
+
+@override
+int get hashCode => Object.hash(runtimeType,message);
+
+@override
+String toString() {
+  return 'JobsState.error(message: $message)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class $JobsStateErrorCopyWith<$Res> implements $JobsStateCopyWith<$Res> {
+  factory $JobsStateErrorCopyWith(JobsStateError value, $Res Function(JobsStateError) _then) = _$JobsStateErrorCopyWithImpl;
+@useResult
+$Res call({
+ String message
+});
+
+
+
+
+}
+/// @nodoc
+class _$JobsStateErrorCopyWithImpl<$Res>
+    implements $JobsStateErrorCopyWith<$Res> {
+  _$JobsStateErrorCopyWithImpl(this._self, this._then);
+
+  final JobsStateError _self;
+  final $Res Function(JobsStateError) _then;
+
+/// Create a copy of JobsState
+/// with the given fields replaced by the non-null parameter values.
+@pragma('vm:prefer-inline') $Res call({Object? message = null,}) {
+  return _then(JobsStateError(
+null == message ? _self.message : message // ignore: cast_nullable_to_non_nullable
+as String,
+  ));
+}
+
+
+}
 
 /// @nodoc
 

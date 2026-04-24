@@ -80,7 +80,7 @@ class SavedJobsView extends StatelessWidget {
           cardStyle = state.cardStyle;
           isGridView = state.isGridView;
           searchQuery = state.searchQuery;
-        } else if (state is SavedJobsStateInitial ||
+        } else if (state is SavedJobsStateInitial || state is SavedJobsStateLoading ||
             state is SavedJobsStateLoading) {
           return const Scaffold(
             body: Center(child: CircularProgressIndicator()),

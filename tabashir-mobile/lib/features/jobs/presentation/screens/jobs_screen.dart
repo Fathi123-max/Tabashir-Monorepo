@@ -283,6 +283,53 @@ class _JobsViewState extends State<JobsView> {
   );
 
   Widget _buildContent(BuildContext context, JobsState state) {
+    // Handle Loading state
+    if (state is JobsStateLoading) {
+      return Scaffold(
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+        body: SafeArea(
+          child: Column(
+            children: [
+              _buildHeader(context, Theme.of(context)),
+              _buildSearchBar(context, Theme.of(context), hasActiveFilters: false, activeFilterCount: 0),
+              const Expanded(child: Center(child: CircularProgressIndicator())),
+            ],
+          ),
+        ),
+      );
+    }
+
+    // Handle Error state
+    if (state is JobsStateError) {
+      return Scaffold(
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+        body: SafeArea(
+          child: Column(
+            children: [
+              _buildHeader(context, Theme.of(context)),
+              _buildSearchBar(context, Theme.of(context), hasActiveFilters: false, activeFilterCount: 0),
+              Expanded(
+                child: Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Icon(Icons.error_outline, color: Colors.red, size: 60),
+                      const SizedBox(height: 16),
+                      Text("Something went wrong"),
+                      const SizedBox(height: 16),
+                      ElevatedButton(
+                        onPressed: () => context.read<JobsCubit>().loadJobs(),
+                        child: const Text("Retry"),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
+    }
     // Extract state data with defaults
 
     var jobs = <JobUI>[];

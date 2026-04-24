@@ -90,6 +90,23 @@ def extract_job_title(description: str) -> str:
         logger.error(f"Error extracting job title: {e}")
         return description[:50].strip()
 
+# Simple cache for spaCy documents to avoid redundant processing
+_nlp_cache = {}
+
+def get_nlp_doc(text: str):
+    """Get or create a spaCy doc with caching"""
+    if not text or nlp is None:
+        return None
+    
+    # Use first 5000 chars as cache key
+    cache_key = text[:5000]
+    if cache_key not in _nlp_cache:
+        # Keep cache size manageable
+        if len(_nlp_cache) > 100:
+            _nlp_cache.clear()
+        _nlp_cache[cache_key] = nlp(cache_key)
+    return _nlp_cache[cache_key]
+
 def calculate_skills_match(job_text: str, candidate_skills: str) -> float:
     """Calculate skills match score using NLP"""
     try:
@@ -109,14 +126,15 @@ def calculate_skills_match(job_text: str, candidate_skills: str) -> float:
             
         # Enhance with spaCy similarity if available
         if nlp is not None:
-            doc1 = nlp(job_text[:5000])  # Limit text size for performance
-            doc2 = nlp(candidate_skills[:5000])
-            spacy_similarity = doc1.similarity(doc2)
+            doc1 = get_nlp_doc(job_text)
+            doc2 = get_nlp_doc(candidate_skills)
             
-            # Combine TF-IDF and spaCy similarity
-            combined_score = (similarity + spacy_similarity) / 2
-            logger.info(f"Skills match score: {combined_score:.2f}")
-            return combined_score
+            if doc1 and doc2:
+                spacy_similarity = doc1.similarity(doc2)
+                # Combine TF-IDF and spaCy similarity
+                combined_score = (similarity + spacy_similarity) / 2
+                logger.info(f"Skills match score: {combined_score:.2f}")
+                return combined_score
         
         logger.info(f"Skills match score (TF-IDF only): {similarity:.2f}")
         return similarity

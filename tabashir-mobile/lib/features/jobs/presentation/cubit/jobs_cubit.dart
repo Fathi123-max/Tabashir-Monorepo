@@ -133,6 +133,11 @@ class JobsCubit extends Cubit<JobsState> {
       AppLogger.debug('[JOBS_CUBIT] loadJobs() called - Page: $page, Limit: $limit, Email: ${email ?? "from profile"}', tag: 'Jobs');
       AppLogger.debug('[JOBS_CUBIT] Current state: $state', tag: 'Jobs');
 
+      // Emit loading state for initial page load
+      if (page == 0) {
+        emit(const JobsState.loading());
+      }
+
       // Get current filters from state
       String? search;
       List<String>? locations;
@@ -260,6 +265,11 @@ class JobsCubit extends Cubit<JobsState> {
       AppLogger.error('[JOBS_CUBIT]', tag: 'Jobs', error: e, stackTrace: stackTrace);
       AppLogger.debug('[JOBS_CUBIT] Current state: $state', tag: 'Jobs');
 
+      // Emit loading state for initial page load
+      if (page == 0) {
+        emit(const JobsState.loading());
+      }
+
       // Emit state with isLoadingMore reset to false
       if (state is JobsStateLoaded) {
         emit(
@@ -268,7 +278,7 @@ class JobsCubit extends Cubit<JobsState> {
           ),
         );
       } else {
-        emit(const JobsState.initial());
+        emit(JobsState.error(e.toString()));
       }
     }
   }

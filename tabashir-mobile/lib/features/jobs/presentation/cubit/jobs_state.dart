@@ -3,6 +3,8 @@ part of 'jobs_cubit.dart';
 @freezed
 class JobsState with _$JobsState {
   const factory JobsState.initial() = JobsStateInitial;
+  const factory JobsState.loading() = JobsStateLoading;
+  const factory JobsState.error(String message) = JobsStateError;
 
   const factory JobsState.loaded({
     @Default('Relevance') String selectedSort,
