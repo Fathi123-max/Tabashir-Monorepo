@@ -126,8 +126,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
           if (state.profile != null) {
             if (_form == null) {
               _form = cubit.getEditForm(state.profile!);
-            } else {
-              _updateFormWithProfile(_form!, state.profile!);
             }
           }
 
