@@ -44,8 +44,8 @@ class HomeAISettingsWidget extends StatelessWidget {
                     AppTheme.primaryBlue.withOpacity(0.05),
                   ]
                 : [
-                    AppTheme.zinc100!.withOpacity(0.5),
-                    AppTheme.zinc50!.withOpacity(0.8),
+                    AppTheme.zinc100.withOpacity(0.5),
+                    AppTheme.zinc50.withOpacity(0.8),
                   ],
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
@@ -56,7 +56,7 @@ class HomeAISettingsWidget extends StatelessWidget {
                 ? AppTheme.primaryBlue.withOpacity(0.3)
                 : isLowBalance
                 ? Colors.orange.withOpacity(0.3)
-                : AppTheme.zinc200!.withOpacity(0.5),
+                : AppTheme.zinc200.withOpacity(0.5),
             width: 1.5,
           ),
           boxShadow: [
@@ -258,8 +258,7 @@ class HomeAISettingsWidget extends StatelessWidget {
         color: AppTheme.zinc50,
         borderRadius: BorderRadius.circular(AppTheme.radiusLarge.r),
         border: Border.all(
-          color: AppTheme.zinc200!,
-          width: 1,
+          color: AppTheme.zinc200,
         ),
       ),
       child: Column(

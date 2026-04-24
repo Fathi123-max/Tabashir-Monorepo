@@ -385,7 +385,6 @@ class _JobDetailScreenState extends State<JobDetailScreen> {
         // About the Role
         ExpandableSection(
           title: 'About the Role'.tr(),
-          initiallyExpanded: false,
           content: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -400,7 +399,6 @@ class _JobDetailScreenState extends State<JobDetailScreen> {
         if (jobDetails.requirements.isNotEmpty) ...[
           ExpandableSection(
             title: 'Requirements'.tr(),
-            initiallyExpanded: false,
             content: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: jobDetails.requirements
@@ -469,7 +467,7 @@ class _JobDetailScreenState extends State<JobDetailScreen> {
                     icon: Icons.link_rounded,
                     label: 'Apply Online',
                     isLink: true,
-                    url: jobDetails.applyUrl!,
+                    url: jobDetails.applyUrl,
                   ),
                 ],
               ],
@@ -597,8 +595,7 @@ class _JobDetailScreenState extends State<JobDetailScreen> {
         color: AppTheme.primaryColor,
       ),
       SizedBox(width: 8.w),
-      isLink
-          ? Expanded(
+      if (isLink) Expanded(
               child: GestureDetector(
                 onTap: () {
                   // TODO: Open URL
@@ -614,8 +611,7 @@ class _JobDetailScreenState extends State<JobDetailScreen> {
                   ),
                 ),
               ),
-            )
-          : Expanded(
+            ) else Expanded(
               child: Text(
                 label,
                 style: TextStyle(
@@ -808,7 +804,7 @@ class _JobDetailScreenState extends State<JobDetailScreen> {
 
     showDialog<void>(
       context: context,
-      builder: (BuildContext context) => AlertDialog(
+      builder: (context) => AlertDialog(
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(AppTheme.radiusMedium.r),
         ),

@@ -1,0 +1,62 @@
+
+<div class="section">
+    <h2>Performance Fix: Solving the 12-Second Hang</h2>
+    <p class="subtitle">We need to move from "Slow Per-Request Matching" to "Fast Pre-Calculated Results"</p>
+</div>
+
+<div class="options">
+    <div class="option" data-choice="a" onclick="toggleSelect(this)">
+        <div class="letter">A</div>
+        <div class="content">
+            <h3>Async Ranking & Caching</h3>
+            <p><b>The Fast Fix:</b> Matching runs in the background. The API just reads the scores from the database.</p>
+            <ul class="pros-cons">
+                <li class="pros">🚀 Instant API responses</li>
+                <li class="pros">✅ No new tools needed</li>
+                <li class="cons">⚠️ Short delay for new users</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="option" data-choice="b" onclick="toggleSelect(this)">
+        <div class="letter">B</div>
+        <div class="content">
+            <h3>Vector Search (PGVector)</h3>
+            <p><b>The Modern Fix:</b> Convert jobs/profiles to math vectors. Database finds matches in milliseconds.</p>
+            <ul class="pros-cons">
+                <li class="pros">🏎️ Extremely fast (even with 1M+ jobs)</li>
+                <li class="pros">🧠 High semantic accuracy</li>
+                <li class="cons">⚠️ Needs DB extension installation</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="option" data-choice="c" onclick="toggleSelect(this)">
+        <div class="letter">C</div>
+        <div class="content">
+            <h3>Optimized NLP + Redis Caching</h3>
+            <p><b>The Precision Fix:</b> Keep real-time matching but cache every calculation in memory.</p>
+            <ul class="pros-cons">
+                <li class="pros">⚡ Repeat searches are instant</li>
+                <li class="pros">🛠️ Easier to debug scoring</li>
+                <li class="cons">⚠️ First search is still slow</li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<div class="section">
+    <h3>Why is it slow right now?</h3>
+    <div class="mockup">
+        <div class="mockup-header">Current Flow (Synchronous)</div>
+        <div class="mockup-body">
+            <ol>
+                <li>User asks for jobs.</li>
+                <li>Backend loads 1000+ jobs from DB.</li>
+                <li><b>FOR EACH JOB:</b> Run expensive AI/NLP math (Slow!).</li>
+                <li>Wait 12 seconds...</li>
+                <li>Finally show result to user.</li>
+            </ol>
+        </div>
+    </div>
+</div>

@@ -184,7 +184,7 @@ class JobDetailsCubit extends Cubit<JobDetailsState> {
       return response.success;
     } catch (e) {
       AppLogger.error('[JOB_DETAILS_CUBIT] Error applying to job: $e', tag: 'Jobs', error: e);
-      emit(JobDetailsState.error('Failed to apply: ${e.toString()}'));
+      emit(JobDetailsState.error('Failed to apply: $e'));
       return false;
     }
   }

@@ -7,6 +7,15 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 /// In light mode, displays [assets/images/logo_light.png] (blue gradient).
 /// In dark mode, displays [assets/images/logo_dark.png] (white with gold accent).
 class AppLogo extends StatelessWidget {
+
+  const AppLogo({
+    super.key,
+    this.width,
+    this.height,
+    this.showText = false,
+    this.alignment = Alignment.center,
+    this.fit = BoxFit.scaleDown,
+  });
   /// Creates an [AppLogo] widget.
   /// If true, displays "TABASHIR" text below the logo.
   /// Default is false.
@@ -23,15 +32,6 @@ class AppLogo extends StatelessWidget {
 
   /// Optional height for the logo image. Defaults to intrinsic image height.
   final double? height;
-
-  const AppLogo({
-    super.key,
-    this.width,
-    this.height,
-    this.showText = false,
-    this.alignment = Alignment.center,
-    this.fit = BoxFit.scaleDown,
-  });
 
   @override
   Widget build(BuildContext context) {

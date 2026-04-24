@@ -139,7 +139,6 @@ class _HomeScreenState extends State<HomeScreen> {
                     scale: 1.4, // 40% visual size increase
                     alignment: Alignment.centerLeft,
                     child: AppLogo(
-                      showText: false,
                       height: 80
                           .h, // Locks the hero card's layout to be extremely compact
                       alignment: Alignment.centerLeft,
@@ -155,7 +154,7 @@ class _HomeScreenState extends State<HomeScreen> {
           SizedBox(height: 2.h), // Minimum gap
           // Row 2+3: Greeting + Subtitle
           Text(
-            'hi_greeting'.tr(args: [userName!]),
+            'hi_greeting'.tr(args: [userName]),
             style: theme.textTheme.displayMedium?.copyWith(
               fontWeight: FontWeight.bold,
               fontSize: 24.sp,
@@ -243,7 +242,6 @@ class _HomeScreenState extends State<HomeScreen> {
               borderRadius: BorderRadius.circular(AppTheme.radiusMedium.r),
               border: Border.all(
                 color: theme.colorScheme.outlineVariant.withOpacity(0.5),
-                width: 1,
               ),
             ),
             child: Stack(

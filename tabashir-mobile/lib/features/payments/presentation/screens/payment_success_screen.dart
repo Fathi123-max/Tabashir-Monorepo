@@ -101,7 +101,7 @@ class PaymentSuccessScreen extends StatelessWidget {
                 Container(
                   padding: EdgeInsets.all(AppTheme.spacingMd.w),
                   decoration: BoxDecoration(
-                    color: theme.colorScheme.surfaceVariant.withOpacity(0.5),
+                    color: theme.colorScheme.surfaceContainerHighest.withOpacity(0.5),
                     borderRadius: BorderRadius.circular(AppTheme.radiusMedium.r),
                   ),
                   child: Column(
@@ -170,8 +170,7 @@ class PaymentSuccessScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildSuccessAnimation() {
-    return Container(
+  Widget _buildSuccessAnimation() => Container(
       width: 120.w,
       height: 120.h,
       decoration: BoxDecoration(
@@ -191,14 +190,12 @@ class PaymentSuccessScreen extends StatelessWidget {
         color: Colors.white,
       ),
     );
-  }
 
-  Widget _buildWhatsNextSection(ThemeData theme) {
-    return Container(
+  Widget _buildWhatsNextSection(ThemeData theme) => Container(
       width: double.infinity,
       padding: EdgeInsets.all(AppTheme.spacingLg.w),
       decoration: BoxDecoration(
-        color: theme.colorScheme.surfaceVariant.withOpacity(0.3),
+        color: theme.colorScheme.surfaceContainerHighest.withOpacity(0.3),
         borderRadius: BorderRadius.circular(AppTheme.radiusLarge.r),
         border: Border.all(
           color: AppTheme.primaryColor.withOpacity(0.1),
@@ -216,7 +213,7 @@ class PaymentSuccessScreen extends StatelessWidget {
               ),
               SizedBox(width: AppTheme.spacingSm.w),
               Text(
-                'What\'s Next?',
+                "What's Next?",
                 style: theme.textTheme.titleMedium?.copyWith(
                   fontSize: 18.sp,
                   fontWeight: FontWeight.bold,
@@ -248,15 +245,13 @@ class PaymentSuccessScreen extends StatelessWidget {
         ],
       ),
     );
-  }
 
   Widget _buildFeatureItem({
     required IconData icon,
     required String title,
     required String description,
     required ThemeData theme,
-  }) {
-    return Row(
+  }) => Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Container(
@@ -296,5 +291,4 @@ class PaymentSuccessScreen extends StatelessWidget {
         ),
       ],
     );
-  }
 }

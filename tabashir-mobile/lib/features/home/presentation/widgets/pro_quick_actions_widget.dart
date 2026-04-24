@@ -50,7 +50,7 @@ class ProQuickActionsWidget extends StatelessWidget {
             SizedBox(width: AppTheme.spacingSm.w),
             Transform.scale(
               scale: 0.6,
-              child: ProBadgeWidget(
+              child: const ProBadgeWidget(
                 size: ProBadgeSize.small,
                 showTooltip: false,
               ),
@@ -141,7 +141,7 @@ class _ProActionCardState extends State<_ProActionCard>
       duration: const Duration(milliseconds: 150),
       vsync: this,
     );
-    _scaleAnimation = Tween<double>(begin: 1.0, end: 0.95).animate(
+    _scaleAnimation = Tween<double>(begin: 1, end: 0.95).animate(
       CurvedAnimation(parent: _controller, curve: Curves.easeInOut),
     );
   }

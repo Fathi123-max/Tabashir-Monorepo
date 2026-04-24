@@ -680,7 +680,6 @@ class _JobsViewState extends State<JobsView> {
                       color: hasActiveFilters
                           ? AppTheme.primaryColor.withOpacity(0.3)
                           : theme.colorScheme.outline.withOpacity(0.15),
-                      width: 1,
                     ),
                   ),
                   child: IconButton(

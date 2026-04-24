@@ -64,8 +64,8 @@ class PaymentCubit extends Cubit<PaymentState> {
 
       result.when(
         success: (transactionId) => _handlePaymentSuccess(result),
-        cancelled: () => _handlePaymentCancelled(),
-        failed: (message) => _handlePaymentFailed(message),
+        cancelled: _handlePaymentCancelled,
+        failed: _handlePaymentFailed,
       );
     } on Exception catch (e) {
       emit(state.copyWith(

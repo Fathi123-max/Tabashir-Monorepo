@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import '../../../../features/shared/widgets/app_logo.dart';
+import '../../../shared/widgets/app_logo.dart';
 
 class SignupHeaderWidget extends StatelessWidget {
   const SignupHeaderWidget({super.key});
@@ -11,7 +11,7 @@ class SignupHeaderWidget extends StatelessWidget {
 
     return Column(
       children: [
-        AppLogo(width: 200.w, showText: false),
+        AppLogo(width: 200.w),
         SizedBox(height: 16.h),
         Text(
           'Create your account — your AI job assistant awaits.',

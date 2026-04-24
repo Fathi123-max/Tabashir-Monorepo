@@ -2,7 +2,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
-import '../../../../features/shared/widgets/app_logo.dart';
+import '../../../shared/widgets/app_logo.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -32,15 +32,15 @@ class _SplashScreenState extends State<SplashScreen>
     );
 
     // Smooth fade out exactly before navigating
-    _pageFadeAnimation = Tween<double>(begin: 1.0, end: 0.0).animate(
+    _pageFadeAnimation = Tween<double>(begin: 1, end: 0).animate(
       CurvedAnimation(
         parent: _controller,
-        curve: const Interval(0.85, 1.0, curve: Curves.easeInOut),
+        curve: const Interval(0.85, 1, curve: Curves.easeInOut),
       ),
     );
 
     // Clean fade in for content
-    _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+    _fadeAnimation = Tween<double>(begin: 0, end: 1).animate(
       CurvedAnimation(
         parent: _controller,
         curve: const Interval(0.1, 0.6, curve: Curves.easeOut),
@@ -48,7 +48,7 @@ class _SplashScreenState extends State<SplashScreen>
     );
 
     // Very subtle, professional scale in
-    _scaleAnimation = Tween<double>(begin: 0.95, end: 1.0).animate(
+    _scaleAnimation = Tween<double>(begin: 0.95, end: 1).animate(
       CurvedAnimation(
         parent: _controller,
         curve: const Interval(0.1, 0.7, curve: Curves.easeOutCubic),
@@ -91,7 +91,7 @@ class _SplashScreenState extends State<SplashScreen>
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    AppLogo(width: 250.w, height: 200.h, showText: false),
+                    AppLogo(width: 250.w, height: 200.h),
                     SizedBox(height: 24.h),
                     Text(
                       'Your AI job assistant for the Middle East'.tr(),

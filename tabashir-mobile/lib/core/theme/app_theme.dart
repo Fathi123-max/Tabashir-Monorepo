@@ -829,12 +829,10 @@ class AppTheme {
   );
 
   static LinearGradient shimmerGradient = LinearGradient(
-    begin: Alignment.centerLeft,
-    end: Alignment.centerRight,
     colors: [
-      Colors.white.withOpacity(0.0),
+      Colors.white.withOpacity(0),
       Colors.white.withOpacity(0.8),
-      Colors.white.withOpacity(0.0),
+      Colors.white.withOpacity(0),
     ],
   );
 

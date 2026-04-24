@@ -1,4 +1,6 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
+import '../../data/repositories/apple_payment_platform.dart' show ApplePaymentPlatform;
+import '../../data/repositories/stripe_payment_platform.dart' show StripePaymentPlatform;
 
 part 'payment_platform.freezed.dart';
 

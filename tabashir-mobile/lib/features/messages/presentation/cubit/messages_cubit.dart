@@ -219,7 +219,5 @@ class MessagesCubit extends Cubit<MessagesState> {
   }
 
   /// Check if a user is blocked
-  bool isUserBlocked(String userId) {
-    return state.blockedUsers.contains(userId);
-  }
+  bool isUserBlocked(String userId) => state.blockedUsers.contains(userId);
 }

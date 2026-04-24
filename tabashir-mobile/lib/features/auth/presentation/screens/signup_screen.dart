@@ -235,8 +235,9 @@ class _SignupScreenState extends State<SignupScreen> {
                                 Future.delayed(
                                   const Duration(milliseconds: 150),
                                   () {
-                                    if (mounted)
+                                    if (mounted) {
                                       context.go(RouteNames.onboardingWizard);
+                                    }
                                   },
                                 );
                               }
@@ -256,8 +257,9 @@ class _SignupScreenState extends State<SignupScreen> {
                                 Future.delayed(
                                   const Duration(milliseconds: 150),
                                   () {
-                                    if (mounted)
+                                    if (mounted) {
                                       context.go(RouteNames.onboardingWizard);
+                                    }
                                   },
                                 );
                               }

@@ -105,7 +105,7 @@ class ProHeaderWidget extends StatelessWidget {
                           child: CachedNetworkImage(
                             imageUrl: profilePictureUrl ?? defaultAvatarUrl,
                             fit: BoxFit.cover,
-                            placeholder: (context, url) => Container(
+                            placeholder: (context, url) => ColoredBox(
                               color: Colors.grey.shade300,
                               child: Icon(
                                 Icons.person,
@@ -113,7 +113,7 @@ class ProHeaderWidget extends StatelessWidget {
                                 color: Colors.white,
                               ),
                             ),
-                            errorWidget: (context, url, error) => Container(
+                            errorWidget: (context, url, error) => ColoredBox(
                               color: Colors.grey.shade300,
                               child: Icon(
                                 Icons.person,
@@ -132,7 +132,7 @@ class ProHeaderWidget extends StatelessWidget {
                         bottom: 0,
                         child: Transform.scale(
                           scale: 0.5,
-                          child: ProBadgeWidget(
+                          child: const ProBadgeWidget(
                             size: ProBadgeSize.small,
                             showTooltip: false,
                           ),
@@ -162,7 +162,7 @@ class ProHeaderWidget extends StatelessWidget {
                           // Small Pro badge for text line
                           Transform.scale(
                             scale: 0.6,
-                            child: ProBadgeWidget(
+                            child: const ProBadgeWidget(
                               size: ProBadgeSize.small,
                               showTooltip: false,
                             ),

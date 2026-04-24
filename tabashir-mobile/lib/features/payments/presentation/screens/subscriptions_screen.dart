@@ -239,8 +239,7 @@ class _SubscriptionsScreenState extends State<SubscriptionsScreen> {
     required List<String> features,
     required VoidCallback onTap,
     bool isCurrentPlan = false,
-  }) {
-    return GestureDetector(
+  }) => GestureDetector(
       onTap: isCurrentPlan ? null : onTap,
       child: Container(
         padding: EdgeInsets.all(AppTheme.spacingMd.w),
@@ -325,10 +324,8 @@ class _SubscriptionsScreenState extends State<SubscriptionsScreen> {
         ),
       ),
     );
-  }
 
-  Widget _buildRestorePurchasesButton(ThemeData theme) {
-    return OutlinedButton.icon(
+  Widget _buildRestorePurchasesButton(ThemeData theme) => OutlinedButton.icon(
       onPressed: _isRestoring ? null : _restorePurchases,
       icon: _isRestoring
           ? SizedBox(
@@ -345,7 +342,6 @@ class _SubscriptionsScreenState extends State<SubscriptionsScreen> {
         padding: EdgeInsets.symmetric(vertical: AppTheme.spacingMd.h),
       ),
     );
-  }
 
   void _handleUpgradeToPro() {
     // Trigger payment through PaymentCubit
