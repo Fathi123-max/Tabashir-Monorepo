@@ -1,7 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:injectable/injectable.dart';
-import 'package:tabashir/core/database/models/profile_isar.dart';
-import 'package:tabashir/core/database/repositories/profile_isar_repository.dart';
+import 'package:tabashir/core/database/models/local_profile.dart';
+import 'package:tabashir/core/database/repositories/local_profile_repository.dart';
 import 'package:tabashir/core/network/models/user/user_profile_response.dart';
 import 'package:tabashir/core/network/models/candidate/personal_info_request.dart';
 import 'package:tabashir/core/network/models/candidate/professional_info_request.dart';
@@ -15,19 +15,19 @@ import 'package:tabashir/features/profile/domain/repositories/profile_repository
 import 'package:tabashir/core/utils/app_logger.dart';
 
 /// Implementation of [ProfileRepository]
-/// Handles profile operations using [UserApiService] with Isar caching
+/// Handles profile operations using [UserApiService] with local caching
 @Injectable(as: ProfileRepository)
 class ProfileRepositoryImpl implements ProfileRepository {
   ProfileRepositoryImpl(
     this._userApiService,
     this._authApiService,
-    this._profileIsarRepository,
+    this._localProfileRepository,
     this._tabashirApiService,
   );
 
   final UserApiService _userApiService;
   final AuthApiService _authApiService;
-  final ProfileIsarRepository _profileIsarRepository;
+  final LocalProfileRepository _localProfileRepository;
   final TabashirApiService _tabashirApiService;
 
   @override
@@ -35,8 +35,8 @@ class ProfileRepositoryImpl implements ProfileRepository {
     AppLogger.debug('\n\n########## [PROFILE_REPO] GET USER PROFILE CALLED ##########', tag: 'Profile');
     try {
       // Try to load from cache first for better UX
-      AppLogger.debug('[PROFILE_REPO] Checking Isar cache...', tag: 'Profile');
-      final cachedProfile = await _profileIsarRepository.getLatestProfile();
+      AppLogger.debug('[PROFILE_REPO] Checking local cache...', tag: 'Profile');
+      final cachedProfile = await _localProfileRepository.getLatestProfile();
       if (cachedProfile != null) {
         AppLogger.debug('[PROFILE_REPO] ✅ Found cached profile', tag: 'Profile');
       } else {
@@ -60,9 +60,9 @@ class ProfileRepositoryImpl implements ProfileRepository {
         AppLogger.debug('[PROFILE_REPO] Has subscription: ${response.data.subscription != null}', tag: 'Profile');
         AppLogger.debug('[PROFILE_REPO] Admin permissions: ${response.data.adminPermissions.length}', tag: 'Profile');
 
-        // Save to Isar cache
-        AppLogger.debug('[PROFILE_REPO] Saving profile to Isar cache...', tag: 'Profile');
-        await _saveToIsar(response.data);
+        // Save to local cache
+        AppLogger.debug('[PROFILE_REPO] Saving profile to local cache...', tag: 'Profile');
+        await _saveToLocal(response.data);
         AppLogger.debug('[PROFILE_REPO] ✅ Profile saved to cache', tag: 'Profile');
 
         AppLogger.debug('########## [PROFILE_REPO] SUCCESS ##########\n\n', tag: 'Profile');
@@ -74,7 +74,7 @@ class ProfileRepositoryImpl implements ProfileRepository {
         if (cachedProfile != null) {
           AppLogger.error('[PROFILE_REPO] Using cached profile due to API error', tag: 'Profile');
           AppLogger.debug('########## [PROFILE_REPO] SUCCESS (CACHE) ##########\n\n', tag: 'Profile');
-          return _convertFromIsar(cachedProfile);
+          return _convertFromLocal(cachedProfile);
         }
 
         throw Exception(
@@ -91,11 +91,11 @@ class ProfileRepositoryImpl implements ProfileRepository {
       }
 
       // Try to return cached profile on error
-      final cachedProfile = await _profileIsarRepository.getLatestProfile();
+      final cachedProfile = await _localProfileRepository.getLatestProfile();
       if (cachedProfile != null) {
         AppLogger.error('[PROFILE_REPO] Returning cached profile due to error', tag: 'Profile');
         AppLogger.debug('########## [PROFILE_REPO] SUCCESS (CACHE) ##########\n\n', tag: 'Profile');
-        return _convertFromIsar(cachedProfile);
+        return _convertFromLocal(cachedProfile);
       }
 
       AppLogger.error('########## [PROFILE_REPO] FAILED ##########\n\n', tag: 'Profile');
@@ -104,11 +104,11 @@ class ProfileRepositoryImpl implements ProfileRepository {
       AppLogger.error('\n[PROFILE_REPO] ❌ Unexpected exception: $e', tag: 'Profile', error: e);
 
       // Try to return cached profile on error
-      final cachedProfile = await _profileIsarRepository.getLatestProfile();
+      final cachedProfile = await _localProfileRepository.getLatestProfile();
       if (cachedProfile != null) {
         AppLogger.error('[PROFILE_REPO] Returning cached profile due to error', tag: 'Profile');
         AppLogger.debug('########## [PROFILE_REPO] SUCCESS (CACHE) ##########\n\n', tag: 'Profile');
-        return _convertFromIsar(cachedProfile);
+        return _convertFromLocal(cachedProfile);
       }
 
       AppLogger.error('########## [PROFILE_REPO] FAILED ##########\n\n', tag: 'Profile');
@@ -182,9 +182,9 @@ class ProfileRepositoryImpl implements ProfileRepository {
         AppLogger.debug('[PROFILE_REPO] ✅ Profile updated successfully', tag: 'Profile');
         AppLogger.debug('[PROFILE_REPO] Response data: ${response.data}', tag: 'Profile');
 
-        // Update Isar cache with new data
-        AppLogger.debug('[PROFILE_REPO] Updating Isar cache...', tag: 'Profile');
-        final profileIsar = ProfileIsar(
+        // Update local cache with new data
+        AppLogger.debug('[PROFILE_REPO] Updating local cache...', tag: 'Profile');
+        final localProfile = LocalProfile(
           name: profileUpdate.name,
           email: profileUpdate.email,
           phone: profileUpdate.phone,
@@ -197,7 +197,7 @@ class ProfileRepositoryImpl implements ProfileRepository {
           linkedin: profileUpdate.linkedin,
           updatedAt: DateTime.now(),
         );
-        await _profileIsarRepository.saveProfile(profileIsar);
+        await _localProfileRepository.saveProfile(localProfile);
         AppLogger.debug('[PROFILE_REPO] ✅ Cache updated', tag: 'Profile');
 
         AppLogger.debug('########## [PROFILE_REPO] SUCCESS ##########\n\n', tag: 'Profile');
@@ -315,7 +315,7 @@ class ProfileRepositoryImpl implements ProfileRepository {
 
       // Clear local cache
       AppLogger.debug('[PROFILE_REPO] Clearing local profile cache...', tag: 'Profile');
-      await _profileIsarRepository.clearAllProfiles();
+      await _localProfileRepository.clearAllProfiles();
       AppLogger.debug('[PROFILE_REPO] ✅ Cache cleared', tag: 'Profile');
 
       AppLogger.debug('########## [PROFILE_REPO] SUCCESS ##########\n\n', tag: 'Profile');
@@ -337,12 +337,12 @@ class ProfileRepositoryImpl implements ProfileRepository {
     }
   }
 
-  /// Save UserProfileResponse to Isar
-  Future<void> _saveToIsar(UserProfileResponse response) async {
+  /// Save UserProfileResponse to local
+  Future<void> _saveToLocal(UserProfileResponse response) async {
     final user = response.user;
     final candidateProfile = response.candidateProfile;
 
-    final profileIsar = ProfileIsar(
+    final localProfile = LocalProfile(
       name: user.name,
       email: user.email,
       phone: candidateProfile?.phone,
@@ -358,12 +358,12 @@ class ProfileRepositoryImpl implements ProfileRepository {
       updatedAt: DateTime.now(),
     );
 
-    await _profileIsarRepository.saveProfile(profileIsar);
+    await _localProfileRepository.saveProfile(localProfile);
   }
 
-  /// Convert ProfileIsar back to UserProfileResponse
+  /// Convert LocalProfile back to UserProfileResponse
   /// Note: This creates a simplified response with minimal data
-  UserProfileResponse _convertFromIsar(ProfileIsar profile) {
+  UserProfileResponse _convertFromLocal(LocalProfile profile) {
     // Create minimal UserProfileResponse from cached data
     // This is used as a fallback when API is unavailable
     final user = UserData(

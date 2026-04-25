@@ -3,17 +3,17 @@ import 'dart:io';
 
 import 'package:path_provider/path_provider.dart';
 import 'package:tabashir/core/database/models/local_resume.dart';
-import 'package:tabashir/core/services/isar_service.dart';
+import 'package:tabashir/core/services/local_persistence_service.dart';
 
 /// Repository for managing local resumes stored in SharedPreferences
 class LocalResumeRepository {
-  LocalResumeRepository(this._isarService);
+  LocalResumeRepository(this._persistenceService);
 
-  final IsarService _isarService;
+  final LocalPersistenceService _persistenceService;
 
   /// Get all local resumes
   Future<List<LocalResume>> getAllResumes() async {
-    final prefs = _isarService.prefs;
+    final prefs = _persistenceService.prefs;
     final resumesJson = prefs.getStringList('local_resumes') ?? <String>[];
 
     return resumesJson
@@ -59,7 +59,7 @@ class LocalResumeRepository {
       isDefault: isFirstResume,
     );
 
-    final prefs = _isarService.prefs;
+    final prefs = _persistenceService.prefs;
     final resumesJson = prefs.getStringList('local_resumes') ?? <String>[]
       ..add(jsonEncode(resume.toJson()));
     await prefs.setStringList('local_resumes', resumesJson);
@@ -111,7 +111,7 @@ class LocalResumeRepository {
     }
 
     // Delete from storage
-    final prefs = _isarService.prefs;
+    final prefs = _persistenceService.prefs;
     final resumesJson = prefs.getStringList('local_resumes') ?? <String>[]
       ..removeWhere((jsonStr) {
         final resumeData = jsonDecode(jsonStr) as Map<String, dynamic>;
@@ -126,7 +126,7 @@ class LocalResumeRepository {
   /// If setDefault is true, makes this the only default resume
   /// If setDefault is false, removes default status
   Future<void> setDefaultResume(String id, {bool setDefault = true}) async {
-    final prefs = _isarService.prefs;
+    final prefs = _persistenceService.prefs;
     final resumesJson = prefs.getStringList('local_resumes') ?? <String>[];
 
     final updatedResumes = resumesJson.map((jsonStr) {
@@ -181,7 +181,7 @@ class LocalResumeRepository {
       createdAt: DateTime.now(),
     );
 
-    final prefs = _isarService.prefs;
+    final prefs = _persistenceService.prefs;
     final resumesJson = prefs.getStringList('local_resumes') ?? <String>[]
       ..add(jsonEncode(copy.toJson()));
     await prefs.setStringList('local_resumes', resumesJson);
@@ -192,7 +192,7 @@ class LocalResumeRepository {
   /// Rename a resume
   /// Returns the updated LocalResume
   Future<LocalResume> renameResume(String id, String newName) async {
-    final prefs = _isarService.prefs;
+    final prefs = _persistenceService.prefs;
     final resumesJson = prefs.getStringList('local_resumes') ?? <String>[]
       ..removeWhere((jsonStr) {
         final resumeData = jsonDecode(jsonStr) as Map<String, dynamic>;
@@ -235,7 +235,7 @@ class LocalResumeRepository {
     }
 
     // Clear storage
-    final prefs = _isarService.prefs;
+    final prefs = _persistenceService.prefs;
     await prefs.remove('local_resumes');
   }
 

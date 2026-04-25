@@ -1,16 +1,16 @@
 import 'dart:convert';
 
 import 'package:injectable/injectable.dart';
-import 'package:tabashir/core/services/isar_service.dart';
+import 'package:tabashir/core/services/local_persistence_service.dart';
 import 'package:tabashir/features/recruiter/data/models/recruiter_model.dart';
 import 'package:tabashir/features/recruiter/domain/repositories/recruiter_repository.dart';
 
 /// Implementation of RecruiterRepository
 @Injectable(as: RecruiterRepository)
 class RecruiterRepositoryImpl implements RecruiterRepository {
-  RecruiterRepositoryImpl(this._isarService);
+  RecruiterRepositoryImpl(this._persistenceService);
 
-  final IsarService _isarService;
+  final LocalPersistenceService _persistenceService;
   static const String _recruitersKey = 'recruiters_data';
   static const String _jobsKey = 'jobs_data';
   static const String _applicationsKey = 'applications_data';
@@ -20,7 +20,7 @@ class RecruiterRepositoryImpl implements RecruiterRepository {
     required String recruiterId,
   }) async {
     try {
-      final jsonString = _isarService.prefs.getString('recruiter_$recruiterId');
+      final jsonString = _persistenceService.prefs.getString('recruiter_$recruiterId');
       if (jsonString == null) {
         throw Exception('Recruiter profile not found');
       }
@@ -37,7 +37,7 @@ class RecruiterRepositoryImpl implements RecruiterRepository {
   }) async {
     try {
       final jsonString = jsonEncode(profile.toJson());
-      await _isarService.prefs.setString('recruiter_${profile.id}', jsonString);
+      await _persistenceService.prefs.setString('recruiter_${profile.id}', jsonString);
       return profile;
     } catch (e) {
       throw Exception('Failed to create recruiter profile: $e');
@@ -51,7 +51,7 @@ class RecruiterRepositoryImpl implements RecruiterRepository {
   }) async {
     try {
       final jsonString = jsonEncode(profile.toJson());
-      await _isarService.prefs.setString('recruiter_$recruiterId', jsonString);
+      await _persistenceService.prefs.setString('recruiter_$recruiterId', jsonString);
       return profile;
     } catch (e) {
       throw Exception('Failed to update recruiter profile: $e');
@@ -63,7 +63,7 @@ class RecruiterRepositoryImpl implements RecruiterRepository {
     required String recruiterId,
   }) async {
     try {
-      await _isarService.prefs.remove('recruiter_$recruiterId');
+      await _persistenceService.prefs.remove('recruiter_$recruiterId');
     } catch (e) {
       throw Exception('Failed to delete recruiter profile: $e');
     }
@@ -75,7 +75,7 @@ class RecruiterRepositoryImpl implements RecruiterRepository {
   }) async {
     try {
       final jsonString = jsonEncode(jobPosting.toJson());
-      await _isarService.prefs.setString('job_${jobPosting.id}', jsonString);
+      await _persistenceService.prefs.setString('job_${jobPosting.id}', jsonString);
       return jobPosting;
     } catch (e) {
       throw Exception('Failed to create job posting: $e');
@@ -89,7 +89,7 @@ class RecruiterRepositoryImpl implements RecruiterRepository {
   }) async {
     try {
       final jsonString = jsonEncode(jobPosting.toJson());
-      await _isarService.prefs.setString('job_$jobId', jsonString);
+      await _persistenceService.prefs.setString('job_$jobId', jsonString);
       return jobPosting;
     } catch (e) {
       throw Exception('Failed to update job posting: $e');
@@ -101,7 +101,7 @@ class RecruiterRepositoryImpl implements RecruiterRepository {
     required String jobId,
   }) async {
     try {
-      await _isarService.prefs.remove('job_$jobId');
+      await _persistenceService.prefs.remove('job_$jobId');
     } catch (e) {
       throw Exception('Failed to delete job posting: $e');
     }
@@ -114,7 +114,7 @@ class RecruiterRepositoryImpl implements RecruiterRepository {
   }) async {
     try {
       final jobs = <JobPosting>[];
-      final prefs = _isarService.prefs;
+      final prefs = _persistenceService.prefs;
 
       for (final key in prefs.getKeys()) {
         if (key.startsWith('job_')) {
@@ -141,7 +141,7 @@ class RecruiterRepositoryImpl implements RecruiterRepository {
     required String jobId,
   }) async {
     try {
-      final jsonString = _isarService.prefs.getString('job_$jobId');
+      final jsonString = _persistenceService.prefs.getString('job_$jobId');
       if (jsonString == null) {
         throw Exception('Job posting not found');
       }
@@ -158,7 +158,7 @@ class RecruiterRepositoryImpl implements RecruiterRepository {
   }) async {
     try {
       final applications = <JobApplication>[];
-      final prefs = _isarService.prefs;
+      final prefs = _persistenceService.prefs;
 
       for (final key in prefs.getKeys()) {
         if (key.startsWith('application_')) {
@@ -188,7 +188,7 @@ class RecruiterRepositoryImpl implements RecruiterRepository {
     String? notes,
   }) async {
     try {
-      final jsonString = _isarService.prefs.getString(
+      final jsonString = _persistenceService.prefs.getString(
         'application_$applicationId',
       );
       if (jsonString == null) {
@@ -204,7 +204,7 @@ class RecruiterRepositoryImpl implements RecruiterRepository {
       );
 
       final updatedJsonString = jsonEncode(updatedApplication.toJson());
-      await _isarService.prefs.setString(
+      await _persistenceService.prefs.setString(
         'application_$applicationId',
         updatedJsonString,
       );
@@ -219,7 +219,7 @@ class RecruiterRepositoryImpl implements RecruiterRepository {
     required String note,
   }) async {
     try {
-      final jsonString = _isarService.prefs.getString(
+      final jsonString = _persistenceService.prefs.getString(
         'application_$applicationId',
       );
       if (jsonString == null) {
@@ -237,7 +237,7 @@ class RecruiterRepositoryImpl implements RecruiterRepository {
       final updatedApplication = application.copyWith(notes: updatedNote);
 
       final updatedJsonString = jsonEncode(updatedApplication.toJson());
-      await _isarService.prefs.setString(
+      await _persistenceService.prefs.setString(
         'application_$applicationId',
         updatedJsonString,
       );
@@ -253,7 +253,7 @@ class RecruiterRepositoryImpl implements RecruiterRepository {
   }) async {
     try {
       final applications = <JobApplication>[];
-      final prefs = _isarService.prefs;
+      final prefs = _persistenceService.prefs;
 
       for (final key in prefs.getKeys()) {
         if (key.startsWith('application_')) {

@@ -1,13 +1,13 @@
 import 'package:json_annotation/json_annotation.dart';
 
-part 'profile_isar.g.dart';
+part 'local_profile.g.dart';
 
 /// Model for storing user profile data in SharedPreferences
 /// This provides offline caching of profile information
 @JsonSerializable()
-class ProfileIsar {
+class LocalProfile {
   /// Constructor
-  ProfileIsar({
+  LocalProfile({
     this.name,
     this.email,
     this.phone,
@@ -24,8 +24,8 @@ class ProfileIsar {
   });
 
   /// Create from JSON
-  factory ProfileIsar.fromJson(Map<String, dynamic> json) =>
-      _$ProfileIsarFromJson(json);
+  factory LocalProfile.fromJson(Map<String, dynamic> json) =>
+      _$LocalProfileFromJson(json);
 
   /// User's full name
   String? name;
@@ -67,5 +67,5 @@ class ProfileIsar {
   DateTime? updatedAt;
 
   /// Convert to JSON
-  Map<String, dynamic> toJson() => _$ProfileIsarToJson(this);
+  Map<String, dynamic> toJson() => _$LocalProfileToJson(this);
 }

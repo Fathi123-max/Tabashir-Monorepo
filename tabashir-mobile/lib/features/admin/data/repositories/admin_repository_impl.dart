@@ -1,23 +1,23 @@
 import 'dart:convert';
 
 import 'package:injectable/injectable.dart';
-import 'package:tabashir/core/services/isar_service.dart';
+import 'package:tabashir/core/services/local_persistence_service.dart';
 import 'package:tabashir/features/admin/domain/repositories/admin_repository.dart';
 
 /// Implementation of [AdminRepository]
-/// Handles admin operations using [IsarService] for local storage
+/// Handles admin operations using [LocalPersistenceService] for local storage
 @Injectable(as: AdminRepository)
 class AdminRepositoryImpl implements AdminRepository {
-  AdminRepositoryImpl(this._isarService);
+  AdminRepositoryImpl(this._persistenceService);
 
-  final IsarService _isarService;
+  final LocalPersistenceService _persistenceService;
 
   @override
   Future<AdminUser> getAdminProfile({
     required String adminId,
   }) async {
     try {
-      final prefs = _isarService.prefs;
+      final prefs = _persistenceService.prefs;
       final profileJson = prefs.getString('admin_profile_$adminId');
       if (profileJson == null || profileJson.isEmpty) {
         throw Exception('Admin profile not found');
@@ -33,7 +33,7 @@ class AdminRepositoryImpl implements AdminRepository {
   @override
   Future<AdminStats> getDashboardStats() async {
     try {
-      final prefs = _isarService.prefs;
+      final prefs = _persistenceService.prefs;
       final statsJson = prefs.getString('admin_dashboard_stats');
       if (statsJson == null || statsJson.isEmpty) {
         // Return default stats
@@ -59,7 +59,7 @@ class AdminRepositoryImpl implements AdminRepository {
     String? role,
   }) async {
     try {
-      final prefs = _isarService.prefs;
+      final prefs = _persistenceService.prefs;
       final usersJson = prefs.getString('all_users_list');
       if (usersJson == null || usersJson.isEmpty) {
         return <Map<String, dynamic>>[];
@@ -96,7 +96,7 @@ class AdminRepositoryImpl implements AdminRepository {
     String? status,
   }) async {
     try {
-      final prefs = _isarService.prefs;
+      final prefs = _persistenceService.prefs;
       final jobsJson = prefs.getString('all_jobs_list');
       if (jobsJson == null || jobsJson.isEmpty) {
         return <Map<String, dynamic>>[];
@@ -133,7 +133,7 @@ class AdminRepositoryImpl implements AdminRepository {
     String? status,
   }) async {
     try {
-      final prefs = _isarService.prefs;
+      final prefs = _persistenceService.prefs;
       final applicationsJson = prefs.getString('all_applications_list');
       if (applicationsJson == null || applicationsJson.isEmpty) {
         return <Map<String, dynamic>>[];
@@ -171,7 +171,7 @@ class AdminRepositoryImpl implements AdminRepository {
     required bool isActive,
   }) async {
     try {
-      final prefs = _isarService.prefs;
+      final prefs = _persistenceService.prefs;
       final usersJson = prefs.getString('all_users_list');
       if (usersJson == null || usersJson.isEmpty) {
         return;
@@ -196,7 +196,7 @@ class AdminRepositoryImpl implements AdminRepository {
     required String userId,
   }) async {
     try {
-      final prefs = _isarService.prefs;
+      final prefs = _persistenceService.prefs;
       final usersJson = prefs.getString('all_users_list');
       if (usersJson == null || usersJson.isEmpty) {
         return;
@@ -221,7 +221,7 @@ class AdminRepositoryImpl implements AdminRepository {
     required String status,
   }) async {
     try {
-      final prefs = _isarService.prefs;
+      final prefs = _persistenceService.prefs;
       final jobsJson = prefs.getString('all_jobs_list');
       if (jobsJson == null || jobsJson.isEmpty) {
         return;
@@ -246,7 +246,7 @@ class AdminRepositoryImpl implements AdminRepository {
     required String jobId,
   }) async {
     try {
-      final prefs = _isarService.prefs;
+      final prefs = _persistenceService.prefs;
       final jobsJson = prefs.getString('all_jobs_list');
       if (jobsJson == null || jobsJson.isEmpty) {
         return;
@@ -271,7 +271,7 @@ class AdminRepositoryImpl implements AdminRepository {
     String? level,
   }) async {
     try {
-      final prefs = _isarService.prefs;
+      final prefs = _persistenceService.prefs;
       final logsJson = prefs.getString('system_logs');
       if (logsJson == null || logsJson.isEmpty) {
         return <Map<String, dynamic>>[];
@@ -309,7 +309,7 @@ class AdminRepositoryImpl implements AdminRepository {
     required String timeframe,
   }) async {
     try {
-      final prefs = _isarService.prefs;
+      final prefs = _persistenceService.prefs;
       final analyticsJson = prefs.getString('analytics_$timeframe');
       if (analyticsJson == null || analyticsJson.isEmpty) {
         return <String, dynamic>{

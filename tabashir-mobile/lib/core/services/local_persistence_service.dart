@@ -5,10 +5,10 @@ import 'package:tabashir/core/network/services/job/saved_jobs_api_service.dart';
 import 'package:tabashir/core/utils/app_logger.dart';
 
 /// Service for managing saved jobs using SharedPreferences
-class IsarService {
-  factory IsarService() => _instance;
-  IsarService._internal();
-  static final IsarService _instance = IsarService._internal();
+class LocalPersistenceService {
+  factory LocalPersistenceService() => _instance;
+  LocalPersistenceService._internal();
+  static final LocalPersistenceService _instance = LocalPersistenceService._internal();
 
   SharedPreferences? _prefs;
 

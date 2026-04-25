@@ -1,12 +1,12 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'profile_isar.dart';
+part of 'local_profile.dart';
 
 // **************************************************************************
 // JsonSerializableGenerator
 // **************************************************************************
 
-ProfileIsar _$ProfileIsarFromJson(Map<String, dynamic> json) => ProfileIsar(
+LocalProfile _$LocalProfileFromJson(Map<String, dynamic> json) => LocalProfile(
   name: json['name'] as String?,
   email: json['email'] as String?,
   phone: json['phone'] as String?,
@@ -24,7 +24,7 @@ ProfileIsar _$ProfileIsarFromJson(Map<String, dynamic> json) => ProfileIsar(
       : DateTime.parse(json['updatedAt'] as String),
 );
 
-Map<String, dynamic> _$ProfileIsarToJson(ProfileIsar instance) =>
+Map<String, dynamic> _$LocalProfileToJson(LocalProfile instance) =>
     <String, dynamic>{
       'name': instance.name,
       'email': instance.email,

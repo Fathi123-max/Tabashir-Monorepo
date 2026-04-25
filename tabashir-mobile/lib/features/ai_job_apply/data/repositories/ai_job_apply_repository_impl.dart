@@ -5,7 +5,7 @@ import 'package:dio/dio.dart';
 import 'package:injectable/injectable.dart';
 import 'package:tabashir/core/network/models/jobs_match_response.dart';
 import 'package:tabashir/core/network/services/job/tabashir_api_service.dart';
-import 'package:tabashir/core/services/isar_service.dart';
+import 'package:tabashir/core/services/local_persistence_service.dart';
 import 'package:tabashir/features/ai_job_apply/data/models/location_preference_model.dart';
 import 'package:tabashir/features/ai_job_apply/data/models/personal_details_model.dart';
 import 'package:tabashir/features/ai_job_apply/data/models/resume_selection_model.dart';
@@ -14,16 +14,16 @@ import 'package:tabashir/features/ai_job_apply/data/models/review_model.dart';
 import 'package:tabashir/features/ai_job_apply/domain/repositories/ai_job_apply_repository.dart';
 
 /// Implementation of [AiJobApplyRepository]
-/// Handles AI job application operations using [TabashirApiService] and [IsarService]
+/// Handles AI job application operations using [TabashirApiService] and [LocalPersistenceService]
 @Injectable(as: AiJobApplyRepository)
 class AiJobApplyRepositoryImpl implements AiJobApplyRepository {
   AiJobApplyRepositoryImpl(
     this._tabashirApiService,
-    this._isarService,
+    this._persistenceService,
   );
 
   final TabashirApiService _tabashirApiService;
-  final IsarService _isarService;
+  final LocalPersistenceService _persistenceService;
 
   @override
   Future<JobsMatchResponse> applyToJobs({
@@ -115,7 +115,7 @@ class AiJobApplyRepositoryImpl implements AiJobApplyRepository {
     required String userId,
   }) async {
     try {
-      final prefs = _isarService.prefs;
+      final prefs = _persistenceService.prefs;
       final resumesJson = prefs.getString('ai_resumes_$userId');
       if (resumesJson == null || resumesJson.isEmpty) {
         return <ResumeSelectionModel>[];
@@ -139,7 +139,7 @@ class AiJobApplyRepositoryImpl implements AiJobApplyRepository {
     required ResumeSelectionModel resume,
   }) async {
     try {
-      final prefs = _isarService.prefs;
+      final prefs = _persistenceService.prefs;
       final resumesJson = prefs.getString('ai_resumes_$userId');
       final resumes = <ResumeSelectionModel>[];
 
@@ -175,7 +175,7 @@ class AiJobApplyRepositoryImpl implements AiJobApplyRepository {
     required String userId,
   }) async {
     try {
-      final prefs = _isarService.prefs;
+      final prefs = _persistenceService.prefs;
       final preferencesJson = prefs.getString('location_preferences_$userId');
       if (preferencesJson == null || preferencesJson.isEmpty) {
         return <LocationPreferenceModel>[];
@@ -199,7 +199,7 @@ class AiJobApplyRepositoryImpl implements AiJobApplyRepository {
     required List<LocationPreferenceModel> preferences,
   }) async {
     try {
-      final prefs = _isarService.prefs;
+      final prefs = _persistenceService.prefs;
       final preferencesJson = jsonEncode(
         preferences.map((p) => p.toJson()).toList(),
       );
@@ -214,7 +214,7 @@ class AiJobApplyRepositoryImpl implements AiJobApplyRepository {
     required String userId,
   }) async {
     try {
-      final prefs = _isarService.prefs;
+      final prefs = _persistenceService.prefs;
       final detailsJson = prefs.getString('personal_details_$userId');
       if (detailsJson == null || detailsJson.isEmpty) {
         throw Exception('Personal details not found');
@@ -233,7 +233,7 @@ class AiJobApplyRepositoryImpl implements AiJobApplyRepository {
     required PersonalDetailsModel details,
   }) async {
     try {
-      final prefs = _isarService.prefs;
+      final prefs = _persistenceService.prefs;
       final detailsJson = jsonEncode(details.toJson());
       await prefs.setString('personal_details_$userId', detailsJson);
     } catch (e) {
@@ -246,7 +246,7 @@ class AiJobApplyRepositoryImpl implements AiJobApplyRepository {
     required String userId,
   }) async {
     try {
-      final prefs = _isarService.prefs;
+      final prefs = _persistenceService.prefs;
       final rolesJson = prefs.getString('target_roles_$userId');
       if (rolesJson == null || rolesJson.isEmpty) {
         return <TargetRoleModel>[];
@@ -267,7 +267,7 @@ class AiJobApplyRepositoryImpl implements AiJobApplyRepository {
     required List<TargetRoleModel> roles,
   }) async {
     try {
-      final prefs = _isarService.prefs;
+      final prefs = _persistenceService.prefs;
       final rolesJson = jsonEncode(roles.map((r) => r.toJson()).toList());
       await prefs.setString('target_roles_$userId', rolesJson);
     } catch (e) {
@@ -280,7 +280,7 @@ class AiJobApplyRepositoryImpl implements AiJobApplyRepository {
     required ReviewModel review,
   }) async {
     try {
-      final prefs = _isarService.prefs;
+      final prefs = _persistenceService.prefs;
       final reviewsJson = prefs.getString('ai_job_reviews');
       final reviews = <ReviewModel>[];
 
@@ -307,7 +307,7 @@ class AiJobApplyRepositoryImpl implements AiJobApplyRepository {
     required String resumeId,
   }) async {
     try {
-      final prefs = _isarService.prefs;
+      final prefs = _persistenceService.prefs;
       final resumesJson = prefs.getString('ai_resumes_$userId');
       if (resumesJson == null || resumesJson.isEmpty) {
         return;

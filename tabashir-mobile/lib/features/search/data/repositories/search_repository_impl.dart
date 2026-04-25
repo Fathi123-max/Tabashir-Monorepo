@@ -1,16 +1,16 @@
 import 'dart:convert';
 
 import 'package:injectable/injectable.dart';
-import 'package:tabashir/core/services/isar_service.dart';
+import 'package:tabashir/core/services/local_persistence_service.dart';
 import 'package:tabashir/features/search/data/models/search_model.dart';
 import 'package:tabashir/features/search/domain/repositories/search_repository.dart';
 
 /// Implementation of SearchRepository
 @Injectable(as: SearchRepository)
 class SearchRepositoryImpl implements SearchRepository {
-  SearchRepositoryImpl(this._isarService);
+  SearchRepositoryImpl(this._persistenceService);
 
-  final IsarService _isarService;
+  final LocalPersistenceService _persistenceService;
   static const String _searchHistoryKey = 'search_history_data';
   static const String _savedFiltersKey = 'search_saved_filters';
 
@@ -110,7 +110,7 @@ class SearchRepositoryImpl implements SearchRepository {
     required SearchResultType type,
   }) async {
     try {
-      final jsonString = _isarService.prefs.getString(_searchHistoryKey);
+      final jsonString = _persistenceService.prefs.getString(_searchHistoryKey);
       final history = jsonString != null
           ? (jsonDecode(jsonString) as List<dynamic>)
                 .map((e) => SearchHistory.fromJson(e as Map<String, dynamic>))
@@ -131,7 +131,7 @@ class SearchRepositoryImpl implements SearchRepository {
       final updatedJsonString = jsonEncode(
         limitedHistory.map((e) => e.toJson()).toList(),
       );
-      await _isarService.prefs.setString(_searchHistoryKey, updatedJsonString);
+      await _persistenceService.prefs.setString(_searchHistoryKey, updatedJsonString);
     } catch (e) {
       throw Exception('Failed to save to history: $e');
     }
@@ -142,7 +142,7 @@ class SearchRepositoryImpl implements SearchRepository {
     int limit = 10,
   }) async {
     try {
-      final jsonString = _isarService.prefs.getString(_searchHistoryKey);
+      final jsonString = _persistenceService.prefs.getString(_searchHistoryKey);
       if (jsonString == null) {
         return [];
       }
@@ -160,7 +160,7 @@ class SearchRepositoryImpl implements SearchRepository {
   @override
   Future<void> clearSearchHistory() async {
     try {
-      await _isarService.prefs.remove(_searchHistoryKey);
+      await _persistenceService.prefs.remove(_searchHistoryKey);
     } catch (e) {
       throw Exception('Failed to clear search history: $e');
     }
@@ -209,7 +209,7 @@ class SearchRepositoryImpl implements SearchRepository {
   Future<void> saveSearchFilters(SearchFilters filters) async {
     try {
       final jsonString = jsonEncode(filters.toJson());
-      await _isarService.prefs.setString(_savedFiltersKey, jsonString);
+      await _persistenceService.prefs.setString(_savedFiltersKey, jsonString);
     } catch (e) {
       throw Exception('Failed to save search filters: $e');
     }
@@ -218,7 +218,7 @@ class SearchRepositoryImpl implements SearchRepository {
   @override
   Future<SearchFilters?> getSavedSearchFilters() async {
     try {
-      final jsonString = _isarService.prefs.getString(_savedFiltersKey);
+      final jsonString = _persistenceService.prefs.getString(_savedFiltersKey);
       if (jsonString == null) {
         return null;
       }

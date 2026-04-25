@@ -12,10 +12,10 @@ import '../../features/payments/data/repositories/stripe_payment_platform.dart';
 import '../../features/payments/domain/repositories/payment_platform.dart';
 import '../../features/payments/domain/repositories/payment_repository.dart';
 
+import '../database/repositories/local_profile_repository.dart';
 import '../database/repositories/local_resume_repository.dart';
-import '../database/repositories/profile_isar_repository.dart';
 import '../services/applied_jobs_storage.dart';
-import '../services/isar_service.dart';
+import '../services/local_persistence_service.dart';
 import '../services/local_storage_service.dart';
 
 import '../network/_clients/auth_dio_client.dart';
@@ -78,15 +78,15 @@ abstract class RegisterModule {
   // It requires JobsRepository which will be injected automatically
 
   @lazySingleton
-  IsarService get isarService => IsarService();
+  LocalPersistenceService get persistenceService => LocalPersistenceService();
 
   @lazySingleton
   LocalResumeRepository get localResumeRepository =>
-      LocalResumeRepository(isarService);
+      LocalResumeRepository(persistenceService);
 
   @lazySingleton
-  ProfileIsarRepository get profileIsarRepository =>
-      ProfileIsarRepository(isarService);
+  LocalProfileRepository get localProfileRepository =>
+      LocalProfileRepository(persistenceService);
 
   @lazySingleton
   DioClient get dioClient => DioClient();

@@ -1,24 +1,24 @@
 import 'dart:convert';
 
 import 'package:injectable/injectable.dart';
-import 'package:tabashir/core/services/isar_service.dart';
+import 'package:tabashir/core/services/local_persistence_service.dart';
 import 'package:tabashir/features/notifications/data/models/notification_model.dart';
 import 'package:tabashir/features/messages/domain/repositories/messages_repository.dart';
 
 /// Implementation of [MessagesRepository]
-/// Handles message operations using [IsarService] for local storage
+/// Handles message operations using [LocalPersistenceService] for local storage
 @Injectable(as: MessagesRepository)
 class MessagesRepositoryImpl implements MessagesRepository {
-  MessagesRepositoryImpl(this._isarService);
+  MessagesRepositoryImpl(this._persistenceService);
 
-  final IsarService _isarService;
+  final LocalPersistenceService _persistenceService;
 
   @override
   Future<List<NotificationModel>> getMessages({
     required String userId,
   }) async {
     try {
-      final prefs = _isarService.prefs;
+      final prefs = _persistenceService.prefs;
       final messagesJson = prefs.getString('messages_$userId');
       if (messagesJson == null || messagesJson.isEmpty) {
         return <NotificationModel>[];
@@ -45,7 +45,7 @@ class MessagesRepositoryImpl implements MessagesRepository {
     required String userId,
   }) async {
     try {
-      final prefs = _isarService.prefs;
+      final prefs = _persistenceService.prefs;
       final messagesJson = prefs.getString('messages_$userId');
       if (messagesJson == null || messagesJson.isEmpty) {
         return 0;
@@ -70,7 +70,7 @@ class MessagesRepositoryImpl implements MessagesRepository {
   }) async {
     try {
       // Get all user messages to find and update the specific message
-      final prefs = _isarService.prefs;
+      final prefs = _persistenceService.prefs;
       final allKeys = prefs.getKeys().where(
         (key) => key.startsWith('messages_'),
       );
@@ -110,7 +110,7 @@ class MessagesRepositoryImpl implements MessagesRepository {
     required String userId,
   }) async {
     try {
-      final prefs = _isarService.prefs;
+      final prefs = _persistenceService.prefs;
       final messagesJson = prefs.getString('messages_$userId');
       if (messagesJson == null || messagesJson.isEmpty) {
         return;
@@ -141,7 +141,7 @@ class MessagesRepositoryImpl implements MessagesRepository {
     required NotificationModel message,
   }) async {
     try {
-      final prefs = _isarService.prefs;
+      final prefs = _persistenceService.prefs;
       final userId = message.senderId ?? 'unknown';
       final messagesJson = prefs.getString('messages_$userId');
       final messages = <NotificationModel>[];
@@ -170,7 +170,7 @@ class MessagesRepositoryImpl implements MessagesRepository {
     required String messageId,
   }) async {
     try {
-      final prefs = _isarService.prefs;
+      final prefs = _persistenceService.prefs;
       final allKeys = prefs.getKeys().where(
         (key) => key.startsWith('messages_'),
       );
@@ -214,7 +214,7 @@ class MessagesRepositoryImpl implements MessagesRepository {
     try {
       // Store report locally for offline support
       // In production, this should call backend API
-      final prefs = _isarService.prefs;
+      final prefs = _persistenceService.prefs;
       final reportsJson = prefs.getString('user_reports') ?? '[]';
       final reportsList = jsonDecode(reportsJson) as List<dynamic>;
       
@@ -237,7 +237,7 @@ class MessagesRepositoryImpl implements MessagesRepository {
     required String blockedUserId,
   }) async {
     try {
-      final prefs = _isarService.prefs;
+      final prefs = _persistenceService.prefs;
       final blockedJson = prefs.getString('blocked_users') ?? '[]';
       final blockedList = jsonDecode(blockedJson) as List<dynamic>;
       
@@ -255,7 +255,7 @@ class MessagesRepositoryImpl implements MessagesRepository {
     required String blockedUserId,
   }) async {
     try {
-      final prefs = _isarService.prefs;
+      final prefs = _persistenceService.prefs;
       final blockedJson = prefs.getString('blocked_users') ?? '[]';
       final blockedList = jsonDecode(blockedJson) as List<dynamic>;
       
@@ -271,7 +271,7 @@ class MessagesRepositoryImpl implements MessagesRepository {
     required String userId,
   }) async {
     try {
-      final prefs = _isarService.prefs;
+      final prefs = _persistenceService.prefs;
       final blockedJson = prefs.getString('blocked_users') ?? '[]';
       final blockedList = jsonDecode(blockedJson) as List<dynamic>;
       return blockedList.contains(userId);
@@ -283,7 +283,7 @@ class MessagesRepositoryImpl implements MessagesRepository {
   @override
   Future<List<String>> getBlockedUsers() async {
     try {
-      final prefs = _isarService.prefs;
+      final prefs = _persistenceService.prefs;
       final blockedJson = prefs.getString('blocked_users') ?? '[]';
       final blockedList = jsonDecode(blockedJson) as List<dynamic>;
       return blockedList.cast<String>();

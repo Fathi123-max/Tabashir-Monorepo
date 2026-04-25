@@ -61,7 +61,7 @@ void main() async {
 /// widget of the app, which is an [EasyLocalization] widget.
 ///
 /// The main function is asynchronous, and it waits for the dependencies to be
-/// initialized, the Isar database to be initialized, and the user's saved
+/// initialized, the local database to be initialized, and the user's saved
 /// preferences to be loaded.
 ///
 /// The main function returns nothing.

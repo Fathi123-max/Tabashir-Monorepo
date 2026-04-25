@@ -59,6 +59,6 @@ class AppConstants {
   /// Google Sign-In Configuration
   static const String googleSignInServerClientId = String.fromEnvironment(
     'GOOGLE_SIGN_IN_SERVER_CLIENT_ID',
-    defaultValue: 'CHANGE_ME_WEB_CLIENT_ID.apps.googleusercontent.com',
+    defaultValue: '908457286237-sl5h3g85uf350uje8k39f55t6ankopjc.apps.googleusercontent.com',
   );
 }

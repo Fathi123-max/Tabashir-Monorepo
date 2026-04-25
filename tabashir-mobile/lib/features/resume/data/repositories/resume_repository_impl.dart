@@ -1,7 +1,7 @@
 import 'dart:convert';
 
 import 'package:injectable/injectable.dart';
-import 'package:tabashir/core/services/isar_service.dart';
+import 'package:tabashir/core/services/local_persistence_service.dart';
 import 'package:tabashir/features/resume/data/models/resume_model.dart';
 import 'package:tabashir/features/resume/domain/repositories/resume_repository.dart';
 
@@ -10,10 +10,10 @@ import 'package:tabashir/features/resume/domain/repositories/resume_repository.d
 @Injectable(as: ResumeRepository)
 class ResumeRepositoryImpl implements ResumeRepository {
   ResumeRepositoryImpl(
-    this._isarService,
+    this._persistenceService,
   );
 
-  final IsarService _isarService;
+  final LocalPersistenceService _persistenceService;
   static const String _resumesKey = 'resumes_data';
 
   @override
@@ -21,7 +21,7 @@ class ResumeRepositoryImpl implements ResumeRepository {
     required String resumeId,
   }) async {
     try {
-      final jsonString = _isarService.prefs.getString('resume_$resumeId');
+      final jsonString = _persistenceService.prefs.getString('resume_$resumeId');
       if (jsonString == null) {
         throw Exception('Resume not found');
       }
@@ -38,7 +38,7 @@ class ResumeRepositoryImpl implements ResumeRepository {
   }) async {
     try {
       final resumes = <Resume>[];
-      final prefs = _isarService.prefs;
+      final prefs = _persistenceService.prefs;
 
       for (final key in prefs.getKeys()) {
         if (key.startsWith('resume_')) {
@@ -65,7 +65,7 @@ class ResumeRepositoryImpl implements ResumeRepository {
   }) async {
     try {
       final jsonString = jsonEncode(resume.toJson());
-      await _isarService.prefs.setString('resume_${resume.id}', jsonString);
+      await _persistenceService.prefs.setString('resume_${resume.id}', jsonString);
       return resume;
     } catch (e) {
       throw Exception('Failed to create resume: $e');
@@ -79,7 +79,7 @@ class ResumeRepositoryImpl implements ResumeRepository {
   }) async {
     try {
       final jsonString = jsonEncode(resume.toJson());
-      await _isarService.prefs.setString('resume_$resumeId', jsonString);
+      await _persistenceService.prefs.setString('resume_$resumeId', jsonString);
       return resume;
     } catch (e) {
       throw Exception('Failed to update resume: $e');
@@ -91,7 +91,7 @@ class ResumeRepositoryImpl implements ResumeRepository {
     required String resumeId,
   }) async {
     try {
-      await _isarService.prefs.remove('resume_$resumeId');
+      await _persistenceService.prefs.remove('resume_$resumeId');
     } catch (e) {
       throw Exception('Failed to delete resume: $e');
     }
@@ -111,7 +111,7 @@ class ResumeRepositoryImpl implements ResumeRepository {
       );
 
       final jsonString = jsonEncode(duplicatedResume.toJson());
-      await _isarService.prefs.setString(
+      await _persistenceService.prefs.setString(
         'resume_${duplicatedResume.id}',
         jsonString,
       );

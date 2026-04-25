@@ -2,19 +2,19 @@ import 'dart:convert';
 
 import 'package:injectable/injectable.dart';
 import 'package:tabashir/core/network/models/applied_jobs_response.dart';
-import 'package:tabashir/core/services/isar_service.dart';
+import 'package:tabashir/core/services/local_persistence_service.dart';
 import 'package:tabashir/features/home/domain/repositories/home_repository.dart';
 import 'package:tabashir/core/network/services/job/tabashir_api_service.dart';
 import 'package:tabashir/core/network/models/email_model.dart';
 import 'package:tabashir/core/utils/app_logger.dart';
 
 /// Implementation of [HomeRepository]
-/// Handles home dashboard operations using [IsarService] for local storage
+/// Handles home dashboard operations using [LocalPersistenceService] for local storage
 @Injectable(as: HomeRepository)
 class HomeRepositoryImpl implements HomeRepository {
-  HomeRepositoryImpl(this._isarService, this._tabashirApiService);
+  HomeRepositoryImpl(this._persistenceService, this._tabashirApiService);
 
-  final IsarService _isarService;
+  final LocalPersistenceService _persistenceService;
   final TabashirApiService _tabashirApiService;
 
   @override
@@ -22,7 +22,7 @@ class HomeRepositoryImpl implements HomeRepository {
     required String userId,
   }) async {
     try {
-      final prefs = _isarService.prefs;
+      final prefs = _persistenceService.prefs;
       final dashboardJson = prefs.getString('dashboard_data_$userId');
       if (dashboardJson == null || dashboardJson.isEmpty) {
         // Return default dashboard data
@@ -45,7 +45,7 @@ class HomeRepositoryImpl implements HomeRepository {
     required String userId,
   }) async {
     try {
-      final prefs = _isarService.prefs;
+      final prefs = _persistenceService.prefs;
       final actionsJson = prefs.getString('quick_actions_$userId');
       if (actionsJson == null || actionsJson.isEmpty) {
         // Return default quick actions
@@ -92,7 +92,7 @@ class HomeRepositoryImpl implements HomeRepository {
     int limit = 10,
   }) async {
     try {
-      final prefs = _isarService.prefs;
+      final prefs = _persistenceService.prefs;
       final activitiesJson = prefs.getString('recent_activities_$userId');
       if (activitiesJson == null || activitiesJson.isEmpty) {
         return <RecentActivity>[];
@@ -123,7 +123,7 @@ class HomeRepositoryImpl implements HomeRepository {
     int limit = 5,
   }) async {
     try {
-      final prefs = _isarService.prefs;
+      final prefs = _persistenceService.prefs;
       final recommendationsJson = prefs.getString(
         'job_recommendations_$userId',
       );
@@ -161,7 +161,7 @@ class HomeRepositoryImpl implements HomeRepository {
     required RecentActivity activity,
   }) async {
     try {
-      final prefs = _isarService.prefs;
+      final prefs = _persistenceService.prefs;
       final activitiesJson = prefs.getString('recent_activities_$userId');
       final activities = <RecentActivity>[];
 
@@ -199,7 +199,7 @@ class HomeRepositoryImpl implements HomeRepository {
     required String userId,
   }) async {
     try {
-      final prefs = _isarService.prefs;
+      final prefs = _persistenceService.prefs;
       await prefs.remove('recent_activities_$userId');
     } catch (e) {
       throw Exception('Failed to clear activities: $e');
@@ -214,7 +214,7 @@ class HomeRepositoryImpl implements HomeRepository {
     int? profileViews,
   }) async {
     try {
-      final prefs = _isarService.prefs;
+      final prefs = _persistenceService.prefs;
       final dashboardJson = prefs.getString('dashboard_data_$userId');
 
       if (dashboardJson == null || dashboardJson.isEmpty) {
@@ -249,7 +249,7 @@ class HomeRepositoryImpl implements HomeRepository {
     int limit = 20,
   }) async {
     try {
-      final prefs = _isarService.prefs;
+      final prefs = _persistenceService.prefs;
       final jobsJson = prefs.getString('all_jobs_list');
       if (jobsJson == null || jobsJson.isEmpty) {
         return <Map<String, dynamic>>[];

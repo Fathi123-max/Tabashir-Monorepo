@@ -5,7 +5,7 @@ import 'package:injectable/injectable.dart';
 
 import 'package:tabashir/core/network/models/job_details_response.dart';
 import 'package:tabashir/core/services/applied_jobs_storage.dart';
-import 'package:tabashir/core/services/isar_service.dart';
+import 'package:tabashir/core/services/local_persistence_service.dart';
 import 'package:tabashir/features/jobs/domain/models/job_ui_model.dart';
 import 'package:tabashir/features/jobs/domain/repositories/jobs_repository.dart';
 import 'package:tabashir/features/profile/presentation/cubit/profile_cubit.dart';

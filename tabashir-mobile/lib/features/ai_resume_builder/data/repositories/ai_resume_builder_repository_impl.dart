@@ -4,7 +4,7 @@ import 'package:injectable/injectable.dart';
 import 'package:tabashir/core/network/models/ai_resume/create_ai_resume_request.dart';
 import 'package:tabashir/core/network/models/ai_resume/create_ai_resume_response.dart';
 import 'package:tabashir/core/network/services/ai_resume/ai_resume_api_service.dart';
-import 'package:tabashir/core/services/isar_service.dart';
+import 'package:tabashir/core/services/local_persistence_service.dart';
 import 'package:tabashir/core/network/models/ai_resume/resume_models.dart';
 import 'package:tabashir/features/ai_resume_builder/domain/repositories/ai_resume_builder_repository.dart';
 
@@ -12,11 +12,11 @@ import 'package:tabashir/features/ai_resume_builder/domain/repositories/ai_resum
 @Injectable(as: AiResumeBuilderRepository)
 class AiResumeBuilderRepositoryImpl implements AiResumeBuilderRepository {
   AiResumeBuilderRepositoryImpl(
-    this._isarService,
+    this._persistenceService,
     this._aiResumeApiService,
   );
 
-  final IsarService _isarService;
+  final LocalPersistenceService _persistenceService;
   final AiResumeApiService _aiResumeApiService;
   static const String _resumeDataKey = 'ai_resume_builder_resume_data';
 
@@ -24,7 +24,7 @@ class AiResumeBuilderRepositoryImpl implements AiResumeBuilderRepository {
   Future<void> saveResumeData(ResumeData resumeData) async {
     try {
       final jsonString = jsonEncode(resumeData.toJson());
-      await _isarService.prefs.setString(_resumeDataKey, jsonString);
+      await _persistenceService.prefs.setString(_resumeDataKey, jsonString);
     } catch (e) {
       throw Exception('Failed to save resume data: $e');
     }
@@ -33,7 +33,7 @@ class AiResumeBuilderRepositoryImpl implements AiResumeBuilderRepository {
   @override
   Future<ResumeData?> getResumeData() async {
     try {
-      final jsonString = _isarService.prefs.getString(_resumeDataKey);
+      final jsonString = _persistenceService.prefs.getString(_resumeDataKey);
       if (jsonString == null) {
         return null;
       }
@@ -258,7 +258,7 @@ class AiResumeBuilderRepositoryImpl implements AiResumeBuilderRepository {
   @override
   Future<void> clearResumeData() async {
     try {
-      await _isarService.prefs.remove(_resumeDataKey);
+      await _persistenceService.prefs.remove(_resumeDataKey);
     } catch (e) {
       throw Exception('Failed to clear resume data: $e');
     }

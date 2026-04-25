@@ -1,3 +1,4 @@
+import 'package:tabashir/core/constants/app_constants.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:onesignal_flutter/onesignal_flutter.dart';
 import 'package:tabashir/core/utils/app_logger.dart';
@@ -22,9 +23,7 @@ class NotificationService {
 
   /// Initialize OneSignal SDK using v5 API
   Future<void> _initOneSignal() async {
-    // TODO: Replace with your actual OneSignal App ID
-    // Get it from: https://onesignal.com > Your App > Settings > Keys & IDs
-    const appId = 'YOUR_ONESIGNAL_APP_ID';
+    const appId = AppConstants.oneSignalAppId;
 
     OneSignal.Debug.setLogLevel(OSLogLevel.verbose);
     OneSignal.initialize(appId);

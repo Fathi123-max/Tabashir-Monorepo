@@ -1,14 +1,14 @@
 import 'package:injectable/injectable.dart';
-import 'package:tabashir/core/services/isar_service.dart';
+import 'package:tabashir/core/services/local_persistence_service.dart';
 import 'package:tabashir/features/onboarding/models/onboarding_page_model.dart';
 import 'package:tabashir/features/onboarding/domain/repositories/onboarding_repository.dart';
 
 /// Implementation of OnboardingRepository
 @Injectable(as: OnboardingRepository)
 class OnboardingRepositoryImpl implements OnboardingRepository {
-  OnboardingRepositoryImpl(this._isarService);
+  OnboardingRepositoryImpl(this._persistenceService);
 
-  final IsarService _isarService;
+  final LocalPersistenceService _persistenceService;
   static const String _onboardingCompletedKey = 'has_completed_onboarding';
   static const String _currentPageIndexKey = 'onboarding_current_page';
 
@@ -50,7 +50,7 @@ class OnboardingRepositoryImpl implements OnboardingRepository {
   @override
   Future<bool> isOnboardingCompleted() async {
     try {
-      final value = _isarService.prefs.getString(_onboardingCompletedKey);
+      final value = _persistenceService.prefs.getString(_onboardingCompletedKey);
       return value == 'true';
     } catch (e) {
       return false;
@@ -60,9 +60,9 @@ class OnboardingRepositoryImpl implements OnboardingRepository {
   @override
   Future<void> completeOnboarding() async {
     try {
-      await _isarService.prefs.setString(_onboardingCompletedKey, 'true');
+      await _persistenceService.prefs.setString(_onboardingCompletedKey, 'true');
       // Reset current page index when onboarding is completed
-      await _isarService.prefs.remove(_currentPageIndexKey);
+      await _persistenceService.prefs.remove(_currentPageIndexKey);
     } catch (e) {
       throw Exception('Failed to complete onboarding: $e');
     }
@@ -71,8 +71,8 @@ class OnboardingRepositoryImpl implements OnboardingRepository {
   @override
   Future<void> resetOnboarding() async {
     try {
-      await _isarService.prefs.remove(_onboardingCompletedKey);
-      await _isarService.prefs.remove(_currentPageIndexKey);
+      await _persistenceService.prefs.remove(_onboardingCompletedKey);
+      await _persistenceService.prefs.remove(_currentPageIndexKey);
     } catch (e) {
       throw Exception('Failed to reset onboarding: $e');
     }
@@ -81,7 +81,7 @@ class OnboardingRepositoryImpl implements OnboardingRepository {
   @override
   Future<int> getCurrentPageIndex() async {
     try {
-      final value = _isarService.prefs.getString(_currentPageIndexKey);
+      final value = _persistenceService.prefs.getString(_currentPageIndexKey);
       if (value == null) {
         return 0;
       }
@@ -94,7 +94,7 @@ class OnboardingRepositoryImpl implements OnboardingRepository {
   @override
   Future<void> setCurrentPageIndex(int index) async {
     try {
-      await _isarService.prefs.setString(
+      await _persistenceService.prefs.setString(
         _currentPageIndexKey,
         index.toString(),
       );

@@ -1,16 +1,16 @@
 import 'dart:convert';
 
 import 'package:injectable/injectable.dart';
-import 'package:tabashir/core/services/isar_service.dart';
+import 'package:tabashir/core/services/local_persistence_service.dart';
 import 'package:tabashir/features/company/data/models/company_model.dart';
 import 'package:tabashir/features/company/domain/repositories/company_repository.dart';
 
 /// Implementation of CompanyRepository
 @Injectable(as: CompanyRepository)
 class CompanyRepositoryImpl implements CompanyRepository {
-  CompanyRepositoryImpl(this._isarService);
+  CompanyRepositoryImpl(this._persistenceService);
 
-  final IsarService _isarService;
+  final LocalPersistenceService _persistenceService;
   static const String _companiesKey = 'companies_data';
   static const String _reviewsKey = 'reviews_data';
 
@@ -19,7 +19,7 @@ class CompanyRepositoryImpl implements CompanyRepository {
     required String companyId,
   }) async {
     try {
-      final jsonString = _isarService.prefs.getString('company_$companyId');
+      final jsonString = _persistenceService.prefs.getString('company_$companyId');
       if (jsonString == null) {
         throw Exception('Company profile not found');
       }
@@ -36,7 +36,7 @@ class CompanyRepositoryImpl implements CompanyRepository {
   }) async {
     try {
       final jsonString = jsonEncode(profile.toJson());
-      await _isarService.prefs.setString('company_${profile.id}', jsonString);
+      await _persistenceService.prefs.setString('company_${profile.id}', jsonString);
       return profile;
     } catch (e) {
       throw Exception('Failed to create company profile: $e');
@@ -50,7 +50,7 @@ class CompanyRepositoryImpl implements CompanyRepository {
   }) async {
     try {
       final jsonString = jsonEncode(profile.toJson());
-      await _isarService.prefs.setString('company_$companyId', jsonString);
+      await _persistenceService.prefs.setString('company_$companyId', jsonString);
       return profile;
     } catch (e) {
       throw Exception('Failed to update company profile: $e');
@@ -62,7 +62,7 @@ class CompanyRepositoryImpl implements CompanyRepository {
     required String companyId,
   }) async {
     try {
-      await _isarService.prefs.remove('company_$companyId');
+      await _persistenceService.prefs.remove('company_$companyId');
     } catch (e) {
       throw Exception('Failed to delete company profile: $e');
     }
@@ -76,7 +76,7 @@ class CompanyRepositoryImpl implements CompanyRepository {
   }) async {
     try {
       final companies = <CompanyProfile>[];
-      final prefs = _isarService.prefs;
+      final prefs = _persistenceService.prefs;
 
       for (final key in prefs.getKeys()) {
         if (key.startsWith('company_')) {
@@ -108,7 +108,7 @@ class CompanyRepositoryImpl implements CompanyRepository {
   }) async {
     try {
       final companies = <CompanyProfile>[];
-      final prefs = _isarService.prefs;
+      final prefs = _persistenceService.prefs;
 
       for (final key in prefs.getKeys()) {
         if (key.startsWith('company_')) {
@@ -140,7 +140,7 @@ class CompanyRepositoryImpl implements CompanyRepository {
   }) async {
     try {
       final reviews = <CompanyReview>[];
-      final prefs = _isarService.prefs;
+      final prefs = _persistenceService.prefs;
 
       for (final key in prefs.getKeys()) {
         if (key.startsWith('review_')) {
@@ -169,7 +169,7 @@ class CompanyRepositoryImpl implements CompanyRepository {
   }) async {
     try {
       final jsonString = jsonEncode(review.toJson());
-      await _isarService.prefs.setString('review_${review.id}', jsonString);
+      await _persistenceService.prefs.setString('review_${review.id}', jsonString);
       return review;
     } catch (e) {
       throw Exception('Failed to create review: $e');
@@ -183,7 +183,7 @@ class CompanyRepositoryImpl implements CompanyRepository {
   }) async {
     try {
       final jsonString = jsonEncode(review.toJson());
-      await _isarService.prefs.setString('review_$reviewId', jsonString);
+      await _persistenceService.prefs.setString('review_$reviewId', jsonString);
       return review;
     } catch (e) {
       throw Exception('Failed to update review: $e');
@@ -195,7 +195,7 @@ class CompanyRepositoryImpl implements CompanyRepository {
     required String reviewId,
   }) async {
     try {
-      await _isarService.prefs.remove('review_$reviewId');
+      await _persistenceService.prefs.remove('review_$reviewId');
     } catch (e) {
       throw Exception('Failed to delete review: $e');
     }
@@ -237,7 +237,7 @@ class CompanyRepositoryImpl implements CompanyRepository {
   }) async {
     try {
       final companies = <CompanyProfile>[];
-      final prefs = _isarService.prefs;
+      final prefs = _persistenceService.prefs;
 
       for (final key in prefs.getKeys()) {
         if (key.startsWith('company_')) {
@@ -267,7 +267,7 @@ class CompanyRepositoryImpl implements CompanyRepository {
   }) async {
     try {
       final companies = <CompanyProfile>[];
-      final prefs = _isarService.prefs;
+      final prefs = _persistenceService.prefs;
 
       for (final key in prefs.getKeys()) {
         if (key.startsWith('company_')) {

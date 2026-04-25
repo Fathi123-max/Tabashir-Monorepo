@@ -1,21 +1,21 @@
 import 'dart:convert';
 
 import 'package:injectable/injectable.dart';
-import 'package:tabashir/core/services/isar_service.dart';
+import 'package:tabashir/core/services/local_persistence_service.dart';
 import 'package:tabashir/features/services/domain/repositories/services_repository.dart';
 
 /// Implementation of [ServicesRepository]
-/// Handles services operations using [IsarService] for local storage
+/// Handles services operations using [LocalPersistenceService] for local storage
 @Injectable(as: ServicesRepository)
 class ServicesRepositoryImpl implements ServicesRepository {
-  ServicesRepositoryImpl(this._isarService);
+  ServicesRepositoryImpl(this._persistenceService);
 
-  final IsarService _isarService;
+  final LocalPersistenceService _persistenceService;
 
   @override
   Future<List<Service>> getAllServices() async {
     try {
-      final prefs = _isarService.prefs;
+      final prefs = _persistenceService.prefs;
       final servicesJson = prefs.getString('all_services');
       if (servicesJson == null || servicesJson.isEmpty) {
         return <Service>[];
@@ -66,7 +66,7 @@ class ServicesRepositoryImpl implements ServicesRepository {
     String? status,
   }) async {
     try {
-      final prefs = _isarService.prefs;
+      final prefs = _persistenceService.prefs;
       final bookingsJson = prefs.getString('service_bookings_$userId');
       if (bookingsJson == null || bookingsJson.isEmpty) {
         return <ServiceBooking>[];
@@ -115,7 +115,7 @@ class ServicesRepositoryImpl implements ServicesRepository {
       );
 
       // Save booking
-      final prefs = _isarService.prefs;
+      final prefs = _persistenceService.prefs;
       final bookingsJson = prefs.getString('service_bookings_$userId');
       final bookings = <ServiceBooking>[];
 
@@ -144,7 +144,7 @@ class ServicesRepositoryImpl implements ServicesRepository {
     required String status,
   }) async {
     try {
-      final prefs = _isarService.prefs;
+      final prefs = _persistenceService.prefs;
       final allKeys = prefs.getKeys().where(
         (key) => key.startsWith('service_bookings_'),
       );
@@ -193,7 +193,7 @@ class ServicesRepositoryImpl implements ServicesRepository {
     required String bookingId,
   }) async {
     try {
-      final prefs = _isarService.prefs;
+      final prefs = _persistenceService.prefs;
       final allKeys = prefs.getKeys().where(
         (key) => key.startsWith('service_bookings_'),
       );

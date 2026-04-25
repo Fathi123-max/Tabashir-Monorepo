@@ -22,7 +22,7 @@ class LocalStorageService {
     // Initialize shared preferences
     _sharedPrefs = await SharedPreferences.getInstance();
 
-    // Note: Isar database initialization removed - currently using SharedPreferences via IsarService
+    // Note: local database initialization removed - currently using SharedPreferences via LocalPersistenceService
 
     _isInitialized = true;
   }

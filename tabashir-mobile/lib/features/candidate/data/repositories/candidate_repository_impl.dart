@@ -1,23 +1,23 @@
 import 'dart:convert';
 
 import 'package:injectable/injectable.dart';
-import 'package:tabashir/core/services/isar_service.dart';
+import 'package:tabashir/core/services/local_persistence_service.dart';
 import 'package:tabashir/features/candidate/domain/repositories/candidate_repository.dart';
 
 /// Implementation of [CandidateRepository]
-/// Handles candidate operations using [IsarService] for local storage
+/// Handles candidate operations using [LocalPersistenceService] for local storage
 @Injectable(as: CandidateRepository)
 class CandidateRepositoryImpl implements CandidateRepository {
-  CandidateRepositoryImpl(this._isarService);
+  CandidateRepositoryImpl(this._persistenceService);
 
-  final IsarService _isarService;
+  final LocalPersistenceService _persistenceService;
 
   @override
   Future<CandidateProfile> getCandidateProfile({
     required String candidateId,
   }) async {
     try {
-      final prefs = _isarService.prefs;
+      final prefs = _persistenceService.prefs;
       final profileJson = prefs.getString('candidate_profile_$candidateId');
       if (profileJson == null || profileJson.isEmpty) {
         throw Exception('Candidate profile not found');
@@ -35,7 +35,7 @@ class CandidateRepositoryImpl implements CandidateRepository {
     required CandidateProfile profile,
   }) async {
     try {
-      final prefs = _isarService.prefs;
+      final prefs = _persistenceService.prefs;
       final profileJson = jsonEncode(profile.toJson());
       await prefs.setString('candidate_profile_${profile.id}', profileJson);
 
@@ -67,7 +67,7 @@ class CandidateRepositoryImpl implements CandidateRepository {
     required CandidateProfile profile,
   }) async {
     try {
-      final prefs = _isarService.prefs;
+      final prefs = _persistenceService.prefs;
       final profileJson = jsonEncode(profile.toJson());
       await prefs.setString('candidate_profile_$candidateId', profileJson);
       return profile;
@@ -81,7 +81,7 @@ class CandidateRepositoryImpl implements CandidateRepository {
     required String candidateId,
   }) async {
     try {
-      final prefs = _isarService.prefs;
+      final prefs = _persistenceService.prefs;
       await prefs.remove('candidate_profile_$candidateId');
 
       // Remove from all candidates list
@@ -101,7 +101,7 @@ class CandidateRepositoryImpl implements CandidateRepository {
   @override
   Future<List<CandidateProfile>> getAllCandidates() async {
     try {
-      final prefs = _isarService.prefs;
+      final prefs = _persistenceService.prefs;
       final allCandidatesJson = prefs.getString('all_candidates');
       if (allCandidatesJson == null || allCandidatesJson.isEmpty) {
         return <CandidateProfile>[];

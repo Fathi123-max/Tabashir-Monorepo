@@ -24,9 +24,6 @@ dependencies:
   get_it: ^8.2.0
   injectable: ^2.3.2
 
-  # Database
-  isar: ^3.1.0+1
-  isar_flutter_libs: ^3.1.0+1 # contains Isar Core
 
   # Storage
   flutter_secure_storage: ^9.2.2

@@ -14,7 +14,7 @@ import 'package:tabashir/core/services/local_storage_service.dart';
 import 'package:tabashir/core/services/notification_service.dart';
 import 'package:tabashir/core/services/onesignal_notification_service.dart';
 
-import 'package:tabashir/core/services/isar_service.dart';
+import 'package:tabashir/core/services/local_persistence_service.dart';
 
 // AppBootstrap handles all the initialization logic for the application
 class AppBootstrap {
@@ -25,8 +25,8 @@ class AppBootstrap {
     // Initialize dependency injection
     configureDependencies();
 
-    // Initialize Isar database
-    await getIt<IsarService>().init();
+    // Initialize local persistence service
+    await getIt<LocalPersistenceService>().init();
 
     // Initialize LocalStorageService
     await LocalStorageService.instance.init();
