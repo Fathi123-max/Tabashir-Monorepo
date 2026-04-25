@@ -11,6 +11,7 @@ users_ns = Namespace('user', description='User Profile Endpoints')
 
 update_profile_model = users_ns.model('UpdateProfile', {
     'name': fields.String(description='Full name'),
+    'email': fields.String(description='Email address'),
     'phone': fields.String(description='Phone number'),
     'nationality': fields.String(description='Nationality'),
     'gender': fields.String(description='Gender'),
@@ -21,6 +22,8 @@ update_profile_model = users_ns.model('UpdateProfile', {
     'experience': fields.String(description='Experience'),
     'education': fields.String(description='Education'),
     'degree': fields.String(description='Degree'),
+    'location': fields.String(description='Location'),
+    'linkedin': fields.String(description='LinkedIn URL'),
 })
 
 @users_ns.route('/profile')
@@ -100,10 +103,34 @@ class Profile(Resource):
         if not data:
             return {"error": "Request body required"}, HTTPStatus.BAD_REQUEST
 
+        user_updates = []
+        user_values = []
+        
         if data.get('name'):
+            user_updates.append('name = %s')
+            user_values.append(data['name'])
+            
+        if data.get('email'):
+            # Check if email is already in use by another user
+            existing = execute_query(
+                'SELECT id FROM users WHERE email = %s AND id != %s',
+                (data['email'], user_id),
+                fetch_one=True
+            )
+            if existing:
+                return {"error": "Email already in use by another account"}, HTTPStatus.BAD_REQUEST
+                
+            user_updates.append('email = %s')
+            user_values.append(data['email'])
+            
+        if user_updates:
+            user_updates.append('"updatedAt" = NOW()')
+            user_values.append(user_id)
+            set_clause = ', '.join(user_updates)
+            
             execute_query(
-                'UPDATE users SET name = %s, "updatedAt" = NOW() WHERE id = %s',
-                (data['name'], user_id),
+                f'UPDATE users SET {set_clause} WHERE id = %s',
+                user_values,
                 commit=True
             )
 
@@ -128,7 +155,7 @@ class Profile(Resource):
         if 'jobTitle' in data_mapped:
             data_mapped['jobType'] = data_mapped.pop('jobTitle')
 
-        profile_fields = ['phone', 'nationality', 'gender', 'jobType', 'experience', 'education', 'degree', 'age', 'skills', 'languages']
+        profile_fields = ['phone', 'nationality', 'gender', 'jobType', 'experience', 'education', 'degree', 'age', 'skills', 'languages', 'location', 'linkedin']
         profile_data = {k: data_mapped[k] for k in profile_fields if k in data_mapped}
 
         if profile_data:

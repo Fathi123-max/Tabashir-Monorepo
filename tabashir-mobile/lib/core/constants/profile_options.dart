@@ -100,3 +100,14 @@ const List<String> genderOptions = [
   'Non-binary',
   'Prefer not to say',
 ];
+
+/// List of location options
+const List<String> locationOptions = [
+  'Dubai',
+  'Abu Dhabi',
+  'Sharjah',
+  'Ajman',
+  'Ras Al Khaimah',
+  'Fujairah',
+  'Umm Al Quwain',
+];

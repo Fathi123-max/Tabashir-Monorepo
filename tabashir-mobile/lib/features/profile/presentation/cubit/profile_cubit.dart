@@ -438,8 +438,14 @@ class ProfileCubit extends Cubit<ProfileState> {
     }
 
     return FormGroup({
-      'name': FormControl<String>(value: cleanValue(profile.name)),
-      'email': FormControl<String>(value: cleanValue(profile.email)),
+      'name': FormControl<String>(
+        value: cleanValue(profile.name),
+        validators: [Validators.required],
+      ),
+      'email': FormControl<String>(
+        value: cleanValue(profile.email),
+        validators: [Validators.required, Validators.email],
+      ),
       'nationality': FormControl<String>(
         value: cleanValue(profile.nationality),
       ),

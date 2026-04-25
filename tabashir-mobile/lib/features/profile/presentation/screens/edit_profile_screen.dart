@@ -12,6 +12,7 @@ import '../../../../core/theme/app_theme.dart';
 import '../cubit/profile_cubit.dart';
 import '../widgets/reactive_dropdown_search.dart';
 import '../widgets/reactive_gender_dropdown.dart';
+import '../widgets/reactive_multi_dropdown_search.dart';
 import 'package:tabashir/core/utils/app_logger.dart';
 
 // FormBuilder instance for creating forms
@@ -166,18 +167,24 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                       SizedBox(height: AppTheme.spacingMd.h),
                       ReactiveTextField<String>(
                         formControlName: 'email',
+                        readOnly: true,
                         decoration: _buildInputDecoration(
                           theme,
                           'Email'.tr(),
                           Icons.email_outlined,
+                        ).copyWith(
+                          suffixIcon: Icon(
+                            Icons.lock_outline,
+                            size: 18.sp,
+                            color: theme.colorScheme.onSurface.withValues(alpha: 0.3),
+                          ),
+                          helperText: 'Email address cannot be changed'.tr(),
+                          helperStyle: TextStyle(
+                            fontSize: 11.sp,
+                            color: theme.colorScheme.onSurface.withValues(alpha: 0.4),
+                          ),
                         ),
                         keyboardType: TextInputType.emailAddress,
-                        validationMessages: {
-                          ValidationMessage.required: (_) =>
-                              'Email is required'.tr(),
-                          ValidationMessage.email: (_) =>
-                              'Invalid email format'.tr(),
-                        },
                       ),
                       SizedBox(height: AppTheme.spacingMd.h),
                       ReactiveDropdownSearch<String>(
@@ -216,11 +223,15 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                   _buildSectionCard(
                     theme,
                     children: [
-                      ReactiveTextField<String>(
+                      ReactiveMultiDropdownSearch<String>(
                         formControlName: 'location',
+                        items: locationOptions,
+                        itemAsString: (item) => item,
+                        labelText: 'Target Locations'.tr(),
+                        hintText: 'Select your target locations'.tr(),
                         decoration: _buildInputDecoration(
                           theme,
-                          'Target Locations (e.g. Dubai, London)'.tr(),
+                          'Target Locations'.tr(),
                           Icons.location_on_outlined,
                         ),
                       ),
@@ -442,8 +453,11 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
 
   /// Create a basic form with empty/default values
   FormGroup _createBasicForm() => fb.group(<String, Object>{
-    'name': FormControl<String>(value: ''),
-    'email': FormControl<String>(value: ''),
+    'name': FormControl<String>(value: '', validators: [Validators.required]),
+    'email': FormControl<String>(
+      value: '',
+      validators: [Validators.required, Validators.email],
+    ),
     'nationality': FormControl<String>(value: ''),
     'gender': FormControl<String>(value: ''),
     'location': FormControl<String>(value: ''),
