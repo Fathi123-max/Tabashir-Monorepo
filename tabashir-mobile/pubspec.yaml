@@ -114,8 +114,8 @@ flutter_launcher_icons:
   android: true
   ios: true
   image_path: "assets/images/logo_light.png"
-  background_color: "#0F4C81"
-  adaptive_icon_background: "#0F4C81"
-  adaptive_icon_foreground_image: "assets/images/logo_light.png"
+  background_color: "#FFFFFF"
+  adaptive_icon_background: "#FFFFFF"
+  adaptive_icon_foreground: "assets/images/logo_light.png"
   min_sdk_android: 21
   remove_alpha_ios: true
