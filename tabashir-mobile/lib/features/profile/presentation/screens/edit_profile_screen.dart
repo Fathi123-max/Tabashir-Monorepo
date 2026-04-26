@@ -8,6 +8,7 @@ import 'package:reactive_forms/reactive_forms.dart';
 import 'package:file_picker/file_picker.dart';
 
 import '../../../../core/constants/profile_options.dart';
+import '../../../../core/constants/countries.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../cubit/profile_cubit.dart';
 import '../widgets/reactive_dropdown_search.dart';
@@ -477,7 +478,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   void _updateFormWithProfile(FormGroup form, ProfileData profile) {
     form.control('name').value = _cleanValue(profile.name);
     form.control('email').value = _cleanValue(profile.email);
-    form.control('nationality').value = _cleanValue(profile.nationality);
+    form.control('nationality').value = _cleanValue(
+        worldCountries[profile.nationality.toLowerCase()] ?? profile.nationality);
     form.control('gender').value = _cleanValue(profile.gender);
     form.control('location').value = _cleanValue(profile.location);
     form.control('jobTitle').value = _cleanValue(profile.jobTitle);

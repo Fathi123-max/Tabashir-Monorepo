@@ -8,6 +8,7 @@ import 'package:tabashir/core/di/injection.dart';
 import 'package:tabashir/core/services/auth_session_service.dart';
 import 'package:tabashir/core/theme/app_theme.dart';
 import 'package:tabashir/core/router/route_names.dart';
+import 'package:tabashir/core/constants/countries.dart';
 
 import '../cubit/profile_cubit.dart';
 import '../widgets/profile_card.dart';
@@ -271,7 +272,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         icon: Icons.public_outlined,
                         text: state.profile!.nationality.isEmpty
                             ? 'Not specified'.tr()
-                            : state.profile!.nationality,
+                            : (worldCountries[state.profile!.nationality.toLowerCase()] ?? state.profile!.nationality),
                       ),
                       SizedBox(height: AppTheme.spacingSm.h),
                       InfoItem(
