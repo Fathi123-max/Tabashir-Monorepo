@@ -1677,8 +1677,46 @@ class Jobs(Resource):
                     client_id = str(client_row[0])
             
             # Emirates city filter (default) - works for both languages
-            # Only apply if no explicit location filters are provided
-            if not location and not locations:
+            # Only apply if no explicit location filters (cities) are provided
+            is_city_filtered = False
+            
+            # Location filter - single and list
+            if location:
+                if language == 'ar':
+                    where_clauses.append("LOWER(COALESCE(vacancy_city_ar, vacancy_city)) = LOWER(%s)")
+                else:
+                    where_clauses.append("LOWER(vacancy_city) = LOWER(%s)")
+                params.append(location)
+                is_city_filtered = True
+            
+            if locations:
+                # Separate cities from work modes (sometimes sent in locations list from mobile)
+                work_modes = ['remote', 'on-site', 'hybrid', 'onsite']
+                actual_cities = [l for l in locations if l.lower() not in work_modes]
+                detected_work_modes = [l for l in locations if l.lower() in work_modes]
+                
+                if actual_cities:
+                    placeholders = ', '.join(['LOWER(%s)'] * len(actual_cities))
+                    if language == 'ar':
+                        where_clauses.append(f"LOWER(COALESCE(vacancy_city_ar, vacancy_city)) IN ({placeholders})")
+                    else:
+                        where_clauses.append(f"LOWER(vacancy_city) IN ({placeholders})")
+                    params.extend(actual_cities)
+                    is_city_filtered = True
+                
+                if detected_work_modes:
+                    mode_clauses = []
+                    for mode in detected_work_modes:
+                        search_mode = mode.lower().replace('on-site', 'onsite')
+                        if language == 'ar':
+                            mode_clauses.append("LOWER(COALESCE(job_description_ar, job_description)) LIKE %s")
+                        else:
+                            mode_clauses.append("LOWER(job_description) LIKE %s")
+                        params.append(f"%{search_mode}%")
+                    where_clauses.append("(" + " OR ".join(mode_clauses) + ")")
+
+            # Apply default Emirates filter if NO cities are filtered
+            if not is_city_filtered:
                 emirates = [
                     'abu dhabi', 'dubai', 'sharjah', 'ajman',
                     'umm al quwain', 'ras al khaimah', 'fujairah'
@@ -1701,52 +1739,61 @@ class Jobs(Resource):
                     where_clauses.append("(LOWER(job_title) ILIKE %s OR LOWER(job_description) ILIKE %s)")
                 params.extend([f"%{search.lower()}%"] * 2)
 
-            # Location filter - single and list
-            if location:
-                if language == 'ar':
-                    where_clauses.append("LOWER(COALESCE(vacancy_city_ar, vacancy_city)) = LOWER(%s)")
-                else:
-                    where_clauses.append("LOWER(vacancy_city) = LOWER(%s)")
-                params.append(location)
-            elif locations:
-                placeholders = ', '.join(['LOWER(%s)'] * len(locations))
-                if language == 'ar':
-                    where_clauses.append(f"LOWER(COALESCE(vacancy_city_ar, vacancy_city)) IN ({placeholders})")
-                else:
-                    where_clauses.append(f"LOWER(vacancy_city) IN ({placeholders})")
-                params.extend(locations)
-
-            # Experience filter - single and list
+            # Experience filter
             if experience:
                 if language == 'ar':
                     where_clauses.append("LOWER(COALESCE(experience_ar, experience)) = LOWER(%s)")
                 else:
                     where_clauses.append("LOWER(experience) = LOWER(%s)")
                 params.append(experience)
-            elif experience_levels:
-                placeholders = ', '.join(['LOWER(%s)'] * len(experience_levels))
-                if language == 'ar':
-                    where_clauses.append(f"LOWER(COALESCE(experience_ar, experience)) IN ({placeholders})")
-                else:
-                    where_clauses.append(f"LOWER(experience) IN ({placeholders})")
-                params.extend(experience_levels)
+            
+            if experience_levels:
+                level_clauses = []
+                # Map common UI levels to DB keywords
+                level_map = {
+                    'entry-level': ['entry', 'junior', 'graduate', 'without', 'fresh', '0-1'],
+                    'mid-level': ['mid', 'intermediate', 'middle', '2-5'],
+                    'senior': ['senior', '5+', 'expert', 'lead'],
+                    'lead': ['lead', 'manager', 'head', 'director']
+                }
+                
+                for level in experience_levels:
+                    l_lower = level.lower()
+                    keywords = level_map.get(l_lower, [l_lower])
+                    
+                    for kw in keywords:
+                        if language == 'ar':
+                            level_clauses.append("LOWER(COALESCE(experience_ar, experience)) LIKE %s")
+                        else:
+                            level_clauses.append("LOWER(experience) LIKE %s")
+                        params.append(f"%{kw}%")
+                
+                if level_clauses:
+                    where_clauses.append("(" + " OR ".join(level_clauses) + ")")
 
             # Job Type / Attendance filter
+            type_where_clauses = []
+            
             if attendance:
+                search_mode = attendance.lower().replace('on-site', 'onsite')
                 if language == 'ar':
-                    where_clauses.append("LOWER(COALESCE(job_description_ar, job_description)) LIKE %s")
+                    type_where_clauses.append("LOWER(COALESCE(job_description_ar, job_description)) LIKE %s")
                 else:
-                    where_clauses.append("LOWER(job_description) LIKE %s")
-                params.append(f"%{attendance}%")
-            elif job_types:
-                type_clauses = []
+                    type_where_clauses.append("LOWER(job_description) LIKE %s")
+                params.append(f"%{search_mode}%")
+                
+            if job_types:
                 for jtype in job_types:
+                    j_lower = jtype.lower()
+                    # Check both job_type column AND description for robustness
                     if language == 'ar':
-                        type_clauses.append("LOWER(COALESCE(job_description_ar, job_description)) LIKE %s")
+                        type_where_clauses.append("(LOWER(COALESCE(job_type, '')) = %s OR LOWER(COALESCE(job_description_ar, job_description)) LIKE %s)")
                     else:
-                        type_clauses.append("LOWER(job_description) LIKE %s")
-                    params.append(f"%{jtype.lower()}%")
-                where_clauses.append("(" + " OR ".join(type_clauses) + ")")
+                        type_where_clauses.append("(LOWER(COALESCE(job_type, '')) = %s OR LOWER(job_description) LIKE %s)")
+                    params.extend([j_lower, f"%{j_lower}%"])
+            
+            if type_where_clauses:
+                where_clauses.append("(" + " OR ".join(type_where_clauses) + ")")
 
             # Skills filter
             if skills:

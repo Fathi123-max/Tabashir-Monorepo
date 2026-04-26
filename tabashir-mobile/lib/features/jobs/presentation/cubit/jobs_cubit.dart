@@ -94,32 +94,19 @@ class JobsCubit extends Cubit<JobsState> {
 
   // Filter options
   final List<String> locationOptions = [
-    'Remote',
-    'On-site',
-    'Hybrid',
     'Dubai',
     'Abu Dhabi',
-    'Riyadh',
     'Sharjah',
-    'Doha',
-    'Jeddah',
-    'Muscat',
     'Ajman',
+    'Umm Al Quwain',
+    'Ras Al Khaimah',
+    'Fujairah',
   ];
 
   final List<String> jobTypeOptions = [
     'Full-time',
     'Part-time',
     'Contract',
-    'Internship',
-    'Remote',
-  ];
-
-  final List<String> experienceLevelOptions = [
-    'Entry-Level',
-    'Mid-Level',
-    'Senior',
-    'Lead',
   ];
 
   /// Load jobs from API with pagination (resets list)
@@ -133,12 +120,7 @@ class JobsCubit extends Cubit<JobsState> {
       AppLogger.debug('[JOBS_CUBIT] loadJobs() called - Page: $page, Limit: $limit, Email: ${email ?? "from profile"}', tag: 'Jobs');
       AppLogger.debug('[JOBS_CUBIT] Current state: $state', tag: 'Jobs');
 
-      // Emit loading state for initial page load
-      if (page == 0) {
-        emit(const JobsState.loading());
-      }
-
-      // Get current filters from state
+      // Get current filters from state BEFORE emitting loading
       String? search;
       List<String>? locations;
       List<String>? jobTypes;
@@ -149,23 +131,18 @@ class JobsCubit extends Cubit<JobsState> {
 
       if (state is JobsStateLoaded) {
         final loadedState = state as JobsStateLoaded;
-        search = loadedState.searchQuery.isNotEmpty
-            ? loadedState.searchQuery
-            : null;
-        locations = loadedState.selectedLocations.isNotEmpty
-            ? loadedState.selectedLocations
-            : null;
-        jobTypes = loadedState.selectedJobTypes.isNotEmpty
-            ? loadedState.selectedJobTypes
-            : null;
-        experienceLevels = loadedState.selectedExperienceLevels.isNotEmpty
-            ? loadedState.selectedExperienceLevels
-            : null;
+        search = loadedState.searchQuery.isNotEmpty ? loadedState.searchQuery : null;
+        locations = loadedState.selectedLocations.isNotEmpty ? loadedState.selectedLocations : null;
+        jobTypes = loadedState.selectedJobTypes.isNotEmpty ? loadedState.selectedJobTypes : null;
+        experienceLevels = loadedState.selectedExperienceLevels.isNotEmpty ? loadedState.selectedExperienceLevels : null;
         minSalary = loadedState.minSalary > 0 ? loadedState.minSalary : null;
-        maxSalary = loadedState.maxSalary < 100000
-            ? loadedState.maxSalary
-            : null;
+        maxSalary = loadedState.maxSalary < 100000 ? loadedState.maxSalary : null;
         sort = loadedState.selectedSort;
+      }
+
+      // Emit loading state for initial page load
+      if (page == 0) {
+        emit(const JobsState.loading());
       }
 
       // Use provided email or get from profile cubit
@@ -249,13 +226,20 @@ class JobsCubit extends Cubit<JobsState> {
           ),
         );
       } else {
-        // Initial state - create new loaded state
+        // Initial state - create new loaded state preserving filters
         emit(
           JobsState.loaded(
             jobs: jobsForUI,
             currentPage: page,
             hasMoreData: hasMore,
             totalJobs: totalJobs,
+            searchQuery: search ?? '',
+            selectedLocations: locations ?? const [],
+            selectedJobTypes: jobTypes ?? const [],
+            selectedExperienceLevels: experienceLevels ?? const [],
+            minSalary: minSalary ?? 0,
+            maxSalary: maxSalary ?? 100000,
+            selectedSort: sort ?? 'Relevance',
           ),
         );
       }
@@ -457,40 +441,47 @@ class JobsCubit extends Cubit<JobsState> {
     );
   }
 
-  // Filter methods - now trigger job reload
-  void updateLocationFilter(List<String> locations) {
+  /// Apply multiple filters at once and trigger a single job reload
+  void applyFilters({
+    List<String>? locations,
+    List<String>? jobTypes,
+    List<String>? experienceLevels,
+    int? minSalary,
+    int? maxSalary,
+  }) {
+    AppLogger.debug('[JOBS_CUBIT] applyFilters() called', tag: 'Jobs');
     if (state is JobsStateLoaded) {
       final loadedState = state as JobsStateLoaded;
-      emit(loadedState.copyWith(selectedLocations: locations));
-      // Reload jobs with new filter
+      emit(
+        loadedState.copyWith(
+          selectedLocations: locations ?? loadedState.selectedLocations,
+          selectedJobTypes: jobTypes ?? loadedState.selectedJobTypes,
+          selectedExperienceLevels:
+              experienceLevels ?? loadedState.selectedExperienceLevels,
+          minSalary: minSalary ?? loadedState.minSalary,
+          maxSalary: maxSalary ?? loadedState.maxSalary,
+        ),
+      );
+      // Reload jobs once with all new filters
       loadJobs();
     }
+  }
+
+  // Filter methods - now trigger job reload
+  void updateLocationFilter(List<String> locations) {
+    applyFilters(locations: locations);
   }
 
   void updateJobTypeFilter(List<String> jobTypes) {
-    if (state is JobsStateLoaded) {
-      final loadedState = state as JobsStateLoaded;
-      emit(loadedState.copyWith(selectedJobTypes: jobTypes));
-      // Reload jobs with new filter
-      loadJobs();
-    }
+    applyFilters(jobTypes: jobTypes);
   }
 
   void updateExperienceLevelFilter(List<String> experienceLevels) {
-    if (state is JobsStateLoaded) {
-      final loadedState = state as JobsStateLoaded;
-      emit(loadedState.copyWith(selectedExperienceLevels: experienceLevels));
-      // Reload jobs with new filter
-      loadJobs();
-    }
+    applyFilters(experienceLevels: experienceLevels);
   }
 
   void updateSalaryRange(int min, int max) {
-    AppLogger.debug('[JOBS_CUBIT] updateSalaryRange() called: $min - $max', tag: 'Jobs');
-    if (state is JobsStateLoaded) {
-      emit((state as JobsStateLoaded).copyWith(minSalary: min, maxSalary: max));
-      loadJobs();
-    }
+    applyFilters(minSalary: min, maxSalary: max);
   }
 
   void clearFilters() {

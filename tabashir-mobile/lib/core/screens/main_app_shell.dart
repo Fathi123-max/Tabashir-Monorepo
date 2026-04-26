@@ -9,6 +9,10 @@ import 'package:tabashir/features/resume/presentation/cubit/resume_vault_cubit.d
 import 'package:tabashir/features/notifications/presentation/screens/notifications_screen.dart';
 import 'package:tabashir/features/shared/widgets/widgets.dart';
 
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:tabashir/core/di/injection.dart';
+import 'package:tabashir/features/jobs/presentation/cubit/jobs_cubit.dart';
+
 class MainAppShell extends StatefulWidget {
   const MainAppShell({
     super.key,
@@ -33,7 +37,7 @@ class _MainAppShellState extends State<MainAppShell> {
 
   List<Widget> get _screens => [
     HomeScreen(
-      onTabChange: widget.onTabChange,
+      onTabChange: _changeTab,
     ),
     const JobsScreen(),
 
@@ -42,14 +46,17 @@ class _MainAppShellState extends State<MainAppShell> {
   ];
 
   @override
-  Widget build(BuildContext context) => Scaffold(
-    body: IndexedStack(
-      index: _currentIndex,
-      children: _screens,
-    ),
-    bottomNavigationBar: AppBottomNavigationBar(
-      currentIndex: _currentIndex,
-      onTap: _changeTab,
+  Widget build(BuildContext context) => BlocProvider<JobsCubit>(
+    create: (context) => getIt<JobsCubit>(),
+    child: Scaffold(
+      body: IndexedStack(
+        index: _currentIndex,
+        children: _screens,
+      ),
+      bottomNavigationBar: AppBottomNavigationBar(
+        currentIndex: _currentIndex,
+        onTap: _changeTab,
+      ),
     ),
   );
 }

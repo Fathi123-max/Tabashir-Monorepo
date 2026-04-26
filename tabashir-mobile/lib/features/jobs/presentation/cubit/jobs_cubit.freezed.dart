@@ -128,13 +128,13 @@ return loaded(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function()?  initial,TResult Function()?  loading,TResult Function( String message)?  error,TResult Function( String selectedSort,  bool isGridView,  String searchQuery,  String cardStyle,  List<JobUI> jobs,  List<String> selectedLocations,  List<String> selectedJobTypes,  List<String> selectedExperienceLevels,  int minSalary,  int maxSalary,  Set<String> savedJobs,  int currentPage,  int totalJobs,  int itemsPerPage,  bool hasMoreData,  bool isLoadingMore)?  loaded,required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function()?  initial,TResult Function()?  loading,TResult Function( String message)?  error,TResult Function( String selectedSort,  bool isGridView,  String searchQuery,  String cardStyle,  List<JobUI> jobs,  List<String> selectedLocations,  List<String> selectedJobTypes,  List<String> selectedExperienceLevels,  int minSalary,  int maxSalary,  Set<String> savedJobs,  int currentPage,  int totalJobs,  int itemsPerPage,  bool hasMoreData,  bool isLoadingMore,  bool isRefreshing)?  loaded,required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case JobsStateInitial() when initial != null:
 return initial();case JobsStateLoading() when loading != null:
 return loading();case JobsStateError() when error != null:
 return error(_that.message);case JobsStateLoaded() when loaded != null:
-return loaded(_that.selectedSort,_that.isGridView,_that.searchQuery,_that.cardStyle,_that.jobs,_that.selectedLocations,_that.selectedJobTypes,_that.selectedExperienceLevels,_that.minSalary,_that.maxSalary,_that.savedJobs,_that.currentPage,_that.totalJobs,_that.itemsPerPage,_that.hasMoreData,_that.isLoadingMore);case _:
+return loaded(_that.selectedSort,_that.isGridView,_that.searchQuery,_that.cardStyle,_that.jobs,_that.selectedLocations,_that.selectedJobTypes,_that.selectedExperienceLevels,_that.minSalary,_that.maxSalary,_that.savedJobs,_that.currentPage,_that.totalJobs,_that.itemsPerPage,_that.hasMoreData,_that.isLoadingMore,_that.isRefreshing);case _:
   return orElse();
 
 }
@@ -152,13 +152,13 @@ return loaded(_that.selectedSort,_that.isGridView,_that.searchQuery,_that.cardSt
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function()  initial,required TResult Function()  loading,required TResult Function( String message)  error,required TResult Function( String selectedSort,  bool isGridView,  String searchQuery,  String cardStyle,  List<JobUI> jobs,  List<String> selectedLocations,  List<String> selectedJobTypes,  List<String> selectedExperienceLevels,  int minSalary,  int maxSalary,  Set<String> savedJobs,  int currentPage,  int totalJobs,  int itemsPerPage,  bool hasMoreData,  bool isLoadingMore)  loaded,}) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function()  initial,required TResult Function()  loading,required TResult Function( String message)  error,required TResult Function( String selectedSort,  bool isGridView,  String searchQuery,  String cardStyle,  List<JobUI> jobs,  List<String> selectedLocations,  List<String> selectedJobTypes,  List<String> selectedExperienceLevels,  int minSalary,  int maxSalary,  Set<String> savedJobs,  int currentPage,  int totalJobs,  int itemsPerPage,  bool hasMoreData,  bool isLoadingMore,  bool isRefreshing)  loaded,}) {final _that = this;
 switch (_that) {
 case JobsStateInitial():
 return initial();case JobsStateLoading():
 return loading();case JobsStateError():
 return error(_that.message);case JobsStateLoaded():
-return loaded(_that.selectedSort,_that.isGridView,_that.searchQuery,_that.cardStyle,_that.jobs,_that.selectedLocations,_that.selectedJobTypes,_that.selectedExperienceLevels,_that.minSalary,_that.maxSalary,_that.savedJobs,_that.currentPage,_that.totalJobs,_that.itemsPerPage,_that.hasMoreData,_that.isLoadingMore);case _:
+return loaded(_that.selectedSort,_that.isGridView,_that.searchQuery,_that.cardStyle,_that.jobs,_that.selectedLocations,_that.selectedJobTypes,_that.selectedExperienceLevels,_that.minSalary,_that.maxSalary,_that.savedJobs,_that.currentPage,_that.totalJobs,_that.itemsPerPage,_that.hasMoreData,_that.isLoadingMore,_that.isRefreshing);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -175,13 +175,13 @@ return loaded(_that.selectedSort,_that.isGridView,_that.searchQuery,_that.cardSt
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function()?  initial,TResult? Function()?  loading,TResult? Function( String message)?  error,TResult? Function( String selectedSort,  bool isGridView,  String searchQuery,  String cardStyle,  List<JobUI> jobs,  List<String> selectedLocations,  List<String> selectedJobTypes,  List<String> selectedExperienceLevels,  int minSalary,  int maxSalary,  Set<String> savedJobs,  int currentPage,  int totalJobs,  int itemsPerPage,  bool hasMoreData,  bool isLoadingMore)?  loaded,}) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function()?  initial,TResult? Function()?  loading,TResult? Function( String message)?  error,TResult? Function( String selectedSort,  bool isGridView,  String searchQuery,  String cardStyle,  List<JobUI> jobs,  List<String> selectedLocations,  List<String> selectedJobTypes,  List<String> selectedExperienceLevels,  int minSalary,  int maxSalary,  Set<String> savedJobs,  int currentPage,  int totalJobs,  int itemsPerPage,  bool hasMoreData,  bool isLoadingMore,  bool isRefreshing)?  loaded,}) {final _that = this;
 switch (_that) {
 case JobsStateInitial() when initial != null:
 return initial();case JobsStateLoading() when loading != null:
 return loading();case JobsStateError() when error != null:
 return error(_that.message);case JobsStateLoaded() when loaded != null:
-return loaded(_that.selectedSort,_that.isGridView,_that.searchQuery,_that.cardStyle,_that.jobs,_that.selectedLocations,_that.selectedJobTypes,_that.selectedExperienceLevels,_that.minSalary,_that.maxSalary,_that.savedJobs,_that.currentPage,_that.totalJobs,_that.itemsPerPage,_that.hasMoreData,_that.isLoadingMore);case _:
+return loaded(_that.selectedSort,_that.isGridView,_that.searchQuery,_that.cardStyle,_that.jobs,_that.selectedLocations,_that.selectedJobTypes,_that.selectedExperienceLevels,_that.minSalary,_that.maxSalary,_that.savedJobs,_that.currentPage,_that.totalJobs,_that.itemsPerPage,_that.hasMoreData,_that.isLoadingMore,_that.isRefreshing);case _:
   return null;
 
 }
@@ -323,7 +323,7 @@ as String,
 
 
 class JobsStateLoaded implements JobsState {
-  const JobsStateLoaded({this.selectedSort = 'Relevance', this.isGridView = true, this.searchQuery = '', this.cardStyle = 'standard', final  List<JobUI> jobs = const [], final  List<String> selectedLocations = const [], final  List<String> selectedJobTypes = const [], final  List<String> selectedExperienceLevels = const [], this.minSalary = 0, this.maxSalary = 100000, final  Set<String> savedJobs = const <String>{}, this.currentPage = 0, this.totalJobs = 0, this.itemsPerPage = 20, this.hasMoreData = true, this.isLoadingMore = false}): _jobs = jobs,_selectedLocations = selectedLocations,_selectedJobTypes = selectedJobTypes,_selectedExperienceLevels = selectedExperienceLevels,_savedJobs = savedJobs;
+  const JobsStateLoaded({this.selectedSort = 'Relevance', this.isGridView = true, this.searchQuery = '', this.cardStyle = 'standard', final  List<JobUI> jobs = const [], final  List<String> selectedLocations = const [], final  List<String> selectedJobTypes = const [], final  List<String> selectedExperienceLevels = const [], this.minSalary = 0, this.maxSalary = 100000, final  Set<String> savedJobs = const <String>{}, this.currentPage = 0, this.totalJobs = 0, this.itemsPerPage = 20, this.hasMoreData = true, this.isLoadingMore = false, this.isRefreshing = false}): _jobs = jobs,_selectedLocations = selectedLocations,_selectedJobTypes = selectedJobTypes,_selectedExperienceLevels = selectedExperienceLevels,_savedJobs = savedJobs;
   
 
 @JsonKey() final  String selectedSort;
@@ -373,6 +373,7 @@ class JobsStateLoaded implements JobsState {
 @JsonKey() final  int itemsPerPage;
 @JsonKey() final  bool hasMoreData;
 @JsonKey() final  bool isLoadingMore;
+@JsonKey() final  bool isRefreshing;
 
 /// Create a copy of JobsState
 /// with the given fields replaced by the non-null parameter values.
@@ -384,16 +385,16 @@ $JobsStateLoadedCopyWith<JobsStateLoaded> get copyWith => _$JobsStateLoadedCopyW
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is JobsStateLoaded&&(identical(other.selectedSort, selectedSort) || other.selectedSort == selectedSort)&&(identical(other.isGridView, isGridView) || other.isGridView == isGridView)&&(identical(other.searchQuery, searchQuery) || other.searchQuery == searchQuery)&&(identical(other.cardStyle, cardStyle) || other.cardStyle == cardStyle)&&const DeepCollectionEquality().equals(other._jobs, _jobs)&&const DeepCollectionEquality().equals(other._selectedLocations, _selectedLocations)&&const DeepCollectionEquality().equals(other._selectedJobTypes, _selectedJobTypes)&&const DeepCollectionEquality().equals(other._selectedExperienceLevels, _selectedExperienceLevels)&&(identical(other.minSalary, minSalary) || other.minSalary == minSalary)&&(identical(other.maxSalary, maxSalary) || other.maxSalary == maxSalary)&&const DeepCollectionEquality().equals(other._savedJobs, _savedJobs)&&(identical(other.currentPage, currentPage) || other.currentPage == currentPage)&&(identical(other.totalJobs, totalJobs) || other.totalJobs == totalJobs)&&(identical(other.itemsPerPage, itemsPerPage) || other.itemsPerPage == itemsPerPage)&&(identical(other.hasMoreData, hasMoreData) || other.hasMoreData == hasMoreData)&&(identical(other.isLoadingMore, isLoadingMore) || other.isLoadingMore == isLoadingMore));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is JobsStateLoaded&&(identical(other.selectedSort, selectedSort) || other.selectedSort == selectedSort)&&(identical(other.isGridView, isGridView) || other.isGridView == isGridView)&&(identical(other.searchQuery, searchQuery) || other.searchQuery == searchQuery)&&(identical(other.cardStyle, cardStyle) || other.cardStyle == cardStyle)&&const DeepCollectionEquality().equals(other._jobs, _jobs)&&const DeepCollectionEquality().equals(other._selectedLocations, _selectedLocations)&&const DeepCollectionEquality().equals(other._selectedJobTypes, _selectedJobTypes)&&const DeepCollectionEquality().equals(other._selectedExperienceLevels, _selectedExperienceLevels)&&(identical(other.minSalary, minSalary) || other.minSalary == minSalary)&&(identical(other.maxSalary, maxSalary) || other.maxSalary == maxSalary)&&const DeepCollectionEquality().equals(other._savedJobs, _savedJobs)&&(identical(other.currentPage, currentPage) || other.currentPage == currentPage)&&(identical(other.totalJobs, totalJobs) || other.totalJobs == totalJobs)&&(identical(other.itemsPerPage, itemsPerPage) || other.itemsPerPage == itemsPerPage)&&(identical(other.hasMoreData, hasMoreData) || other.hasMoreData == hasMoreData)&&(identical(other.isLoadingMore, isLoadingMore) || other.isLoadingMore == isLoadingMore)&&(identical(other.isRefreshing, isRefreshing) || other.isRefreshing == isRefreshing));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,selectedSort,isGridView,searchQuery,cardStyle,const DeepCollectionEquality().hash(_jobs),const DeepCollectionEquality().hash(_selectedLocations),const DeepCollectionEquality().hash(_selectedJobTypes),const DeepCollectionEquality().hash(_selectedExperienceLevels),minSalary,maxSalary,const DeepCollectionEquality().hash(_savedJobs),currentPage,totalJobs,itemsPerPage,hasMoreData,isLoadingMore);
+int get hashCode => Object.hash(runtimeType,selectedSort,isGridView,searchQuery,cardStyle,const DeepCollectionEquality().hash(_jobs),const DeepCollectionEquality().hash(_selectedLocations),const DeepCollectionEquality().hash(_selectedJobTypes),const DeepCollectionEquality().hash(_selectedExperienceLevels),minSalary,maxSalary,const DeepCollectionEquality().hash(_savedJobs),currentPage,totalJobs,itemsPerPage,hasMoreData,isLoadingMore,isRefreshing);
 
 @override
 String toString() {
-  return 'JobsState.loaded(selectedSort: $selectedSort, isGridView: $isGridView, searchQuery: $searchQuery, cardStyle: $cardStyle, jobs: $jobs, selectedLocations: $selectedLocations, selectedJobTypes: $selectedJobTypes, selectedExperienceLevels: $selectedExperienceLevels, minSalary: $minSalary, maxSalary: $maxSalary, savedJobs: $savedJobs, currentPage: $currentPage, totalJobs: $totalJobs, itemsPerPage: $itemsPerPage, hasMoreData: $hasMoreData, isLoadingMore: $isLoadingMore)';
+  return 'JobsState.loaded(selectedSort: $selectedSort, isGridView: $isGridView, searchQuery: $searchQuery, cardStyle: $cardStyle, jobs: $jobs, selectedLocations: $selectedLocations, selectedJobTypes: $selectedJobTypes, selectedExperienceLevels: $selectedExperienceLevels, minSalary: $minSalary, maxSalary: $maxSalary, savedJobs: $savedJobs, currentPage: $currentPage, totalJobs: $totalJobs, itemsPerPage: $itemsPerPage, hasMoreData: $hasMoreData, isLoadingMore: $isLoadingMore, isRefreshing: $isRefreshing)';
 }
 
 
@@ -404,7 +405,7 @@ abstract mixin class $JobsStateLoadedCopyWith<$Res> implements $JobsStateCopyWit
   factory $JobsStateLoadedCopyWith(JobsStateLoaded value, $Res Function(JobsStateLoaded) _then) = _$JobsStateLoadedCopyWithImpl;
 @useResult
 $Res call({
- String selectedSort, bool isGridView, String searchQuery, String cardStyle, List<JobUI> jobs, List<String> selectedLocations, List<String> selectedJobTypes, List<String> selectedExperienceLevels, int minSalary, int maxSalary, Set<String> savedJobs, int currentPage, int totalJobs, int itemsPerPage, bool hasMoreData, bool isLoadingMore
+ String selectedSort, bool isGridView, String searchQuery, String cardStyle, List<JobUI> jobs, List<String> selectedLocations, List<String> selectedJobTypes, List<String> selectedExperienceLevels, int minSalary, int maxSalary, Set<String> savedJobs, int currentPage, int totalJobs, int itemsPerPage, bool hasMoreData, bool isLoadingMore, bool isRefreshing
 });
 
 
@@ -421,7 +422,7 @@ class _$JobsStateLoadedCopyWithImpl<$Res>
 
 /// Create a copy of JobsState
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') $Res call({Object? selectedSort = null,Object? isGridView = null,Object? searchQuery = null,Object? cardStyle = null,Object? jobs = null,Object? selectedLocations = null,Object? selectedJobTypes = null,Object? selectedExperienceLevels = null,Object? minSalary = null,Object? maxSalary = null,Object? savedJobs = null,Object? currentPage = null,Object? totalJobs = null,Object? itemsPerPage = null,Object? hasMoreData = null,Object? isLoadingMore = null,}) {
+@pragma('vm:prefer-inline') $Res call({Object? selectedSort = null,Object? isGridView = null,Object? searchQuery = null,Object? cardStyle = null,Object? jobs = null,Object? selectedLocations = null,Object? selectedJobTypes = null,Object? selectedExperienceLevels = null,Object? minSalary = null,Object? maxSalary = null,Object? savedJobs = null,Object? currentPage = null,Object? totalJobs = null,Object? itemsPerPage = null,Object? hasMoreData = null,Object? isLoadingMore = null,Object? isRefreshing = null,}) {
   return _then(JobsStateLoaded(
 selectedSort: null == selectedSort ? _self.selectedSort : selectedSort // ignore: cast_nullable_to_non_nullable
 as String,isGridView: null == isGridView ? _self.isGridView : isGridView // ignore: cast_nullable_to_non_nullable
@@ -439,6 +440,7 @@ as int,totalJobs: null == totalJobs ? _self.totalJobs : totalJobs // ignore: cas
 as int,itemsPerPage: null == itemsPerPage ? _self.itemsPerPage : itemsPerPage // ignore: cast_nullable_to_non_nullable
 as int,hasMoreData: null == hasMoreData ? _self.hasMoreData : hasMoreData // ignore: cast_nullable_to_non_nullable
 as bool,isLoadingMore: null == isLoadingMore ? _self.isLoadingMore : isLoadingMore // ignore: cast_nullable_to_non_nullable
+as bool,isRefreshing: null == isRefreshing ? _self.isRefreshing : isRefreshing // ignore: cast_nullable_to_non_nullable
 as bool,
   ));
 }

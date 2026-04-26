@@ -25,5 +25,6 @@ class JobsState with _$JobsState {
     @Default(20) int itemsPerPage,
     @Default(true) bool hasMoreData,
     @Default(false) bool isLoadingMore,
+    @Default(false) bool isRefreshing,
   }) = JobsStateLoaded;
 }

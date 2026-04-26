@@ -4,13 +4,19 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:tabashir/core/theme/app_theme.dart';
+import 'package:tabashir/features/jobs/presentation/cubit/jobs_cubit.dart';
 import 'package:tabashir/features/home/domain/repositories/home_repository.dart';
 import 'package:tabashir/features/home/presentation/cubit/home_cubit.dart';
 import 'package:tabashir/features/home/presentation/cubit/home_state.dart';
 
 /// Displays UAE cities with job counts as horizontal scrollable chips
 class HomeUAECitiesWidget extends StatelessWidget {
-  const HomeUAECitiesWidget({super.key});
+  const HomeUAECitiesWidget({
+    super.key,
+    this.onTabChange,
+  });
+
+  final void Function(int)? onTabChange;
 
   // UAE cities filter list
   static const Set<String> _uaeCities = {
@@ -57,7 +63,10 @@ class HomeUAECitiesWidget extends StatelessWidget {
                   final cityData = uaeCityCounts[index];
                   return Padding(
                     padding: EdgeInsets.only(right: AppTheme.spacingMd.w),
-                    child: _CityChip(cityData: cityData),
+                    child: _CityChip(
+                      cityData: cityData,
+                      onTabChange: onTabChange,
+                    ),
                   );
                 },
               ),
@@ -70,17 +79,28 @@ class HomeUAECitiesWidget extends StatelessWidget {
   }
 }
 
-/// Individual city chip widget
 class _CityChip extends StatelessWidget {
-  const _CityChip({required this.cityData});
+  const _CityChip({
+    required this.cityData,
+    this.onTabChange,
+  });
 
   final CityJobCount cityData;
+  final void Function(int)? onTabChange;
 
   @override
   Widget build(BuildContext context) => GestureDetector(
     onTap: () {
-      // Navigate to jobs screen filtered by city
-      context.push('/jobs?city=${Uri.encodeComponent(cityData.city)}');
+      // Apply the city filter to the JobsCubit
+      final jobsCubit = context.read<JobsCubit>();
+      jobsCubit.updateLocationFilter([cityData.city]);
+
+      // Navigate to jobs tab (index 1)
+      if (onTabChange != null) {
+        onTabChange!(1);
+      } else {
+        context.push('/jobs?city=${Uri.encodeComponent(cityData.city)}');
+      }
     },
     child: Container(
       padding: EdgeInsets.symmetric(

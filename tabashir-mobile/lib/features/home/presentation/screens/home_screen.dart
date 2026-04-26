@@ -457,7 +457,6 @@ class _HomeScreenState extends State<HomeScreen> {
           return MultiBlocProvider(
             providers: [
               BlocProvider.value(value: getIt<HomeCubit>()),
-              BlocProvider(create: (context) => getIt<JobsCubit>()),
             ],
             child: BlocBuilder<HomeCubit, HomeState>(
               builder: (context, state) {
@@ -587,7 +586,9 @@ class _HomeScreenState extends State<HomeScreen> {
                                       .withOpacity(0.1),
                                   iconBorderColor: AppTheme.warningColor
                                       .withOpacity(0.2),
-                                  content: const HomeUAECitiesWidget(),
+                                  content: HomeUAECitiesWidget(
+                                    onTabChange: widget.onTabChange,
+                                  ),
                                 ),
 
                                 // Matched Jobs Section - Core value

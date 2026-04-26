@@ -28,14 +28,29 @@ class JobsScreen extends StatelessWidget {
   final String? initialCity;
 
   @override
-  Widget build(BuildContext context) => BlocProvider<JobsCubit>(
-    create: (context) {
-      final cubit = getIt<JobsCubit>();
-      cubit.initializeState(initialCity: initialCity);
-      return cubit;
-    },
-    child: const JobsView(),
-  );
+  Widget build(BuildContext context) {
+    try {
+      final existingCubit = context.read<JobsCubit>();
+      // If we got here, JobsCubit exists in the tree (e.g. from MainAppShell)
+      if (initialCity != null) {
+        // Schedule the update after build
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          existingCubit.updateLocationFilter([initialCity!]);
+        });
+      }
+      return const JobsView();
+    } catch (_) {
+      // JobsCubit not found in context (e.g. standalone pushed route)
+      return BlocProvider<JobsCubit>(
+        create: (context) {
+          final cubit = getIt<JobsCubit>();
+          cubit.initializeState(initialCity: initialCity);
+          return cubit;
+        },
+        child: const JobsView(),
+      );
+    }
+  }
 }
 
 class JobsView extends StatefulWidget {
