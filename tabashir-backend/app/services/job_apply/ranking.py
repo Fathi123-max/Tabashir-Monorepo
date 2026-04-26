@@ -586,14 +586,14 @@ def main(client_email):
                 safe_get(client_row, 'filename'),
                 'pending',
                 current_date,
-                round(match['final_score'] * 100, 2),
+                round(match['final_score'] * 100, 0),
                 safe_get(client_row, 'degree')
             )
 
             batch_values.append(values)
 
             # Trigger notification for high-score matches (>= 80%)
-            final_score = round(match['final_score'] * 100, 2)
+            final_score = round(match['final_score'] * 100, 0)
             if final_score >= 80.0:
                 user_id = email_to_userid.get(client_email.lower())
                 if user_id:

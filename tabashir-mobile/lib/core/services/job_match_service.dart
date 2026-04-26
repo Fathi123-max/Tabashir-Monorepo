@@ -17,11 +17,16 @@ class JobMatchService {
           matchValue.toLowerCase().contains('match')) {
         return matchValue;
       }
+      // Parse as double first to handle "95.0" strings from backend
+      final parsed = double.tryParse(matchValue);
+      if (parsed != null) {
+        return '${parsed.round()}% Match';
+      }
       return '$matchValue% Match';
     }
 
     if (matchValue is num) {
-      return '${matchValue.toInt()}% Match';
+      return '${matchValue.round()}% Match';
     }
 
     return '50% Match';

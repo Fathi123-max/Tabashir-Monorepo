@@ -371,8 +371,8 @@ class HomeRepositoryImpl implements HomeRepository {
         if (matchPctRaw == null || matchPctRaw.isEmpty) {
           matchPct = 0;
         } else {
-          final cleaned = matchPctRaw.replaceAll(RegExp('[^0-9]'), '');
-          matchPct = cleaned.isEmpty ? 0 : int.parse(cleaned);
+          // Parse as double first to handle "95.0" strings from backend
+          matchPct = double.tryParse(matchPctRaw)?.round() ?? 0;
         }
         // Use jobId from either 'id' or 'job_id' field
         final jobId = job.jobId ?? job.rankingsJobId ?? '';

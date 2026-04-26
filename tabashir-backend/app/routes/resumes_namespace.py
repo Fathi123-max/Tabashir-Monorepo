@@ -1969,17 +1969,39 @@ class Jobs(Resource):
                     import traceback
                     traceback.print_exc()
 
+            # Fetch pre-calculated rankings for these jobs to ensure consistency across views
+            ranking_map = {}
+            if email:
+                try:
+                    job_ids = [j.get('id') for j in jobs if j.get('id')]
+                    if job_ids:
+                        # Convert IDs to strings as they might be stored as text in rankings
+                        str_job_ids = [str(jid) for jid in job_ids]
+                        cursor.execute("""
+                            SELECT job_id, ROUND(score)::int 
+                            FROM rankings 
+                            WHERE LOWER(email) = LOWER(%s) AND job_id = ANY(%s)
+                        """, (email, str_job_ids))
+                        ranking_map = {row[0]: row[1] for row in cursor.fetchall()}
+                except Exception as e:
+                    print(f"[JOBS_NS] Error fetching rankings for jobs list: {e}")
+
             for job in jobs:
                 job['is_saved'] = str(job['id']) in saved_job_ids
 
-                # AI Matching Calculation
-                if match_profile:
+                # Priority 1: Check pre-calculated rankings table first (for consistency)
+                pre_calculated_score = ranking_map.get(str(job.get('id')))
+                if pre_calculated_score is not None:
+                    job['match_percentage'] = str(pre_calculated_score)
+                    # For debugging
+                    # print(f"[JOBS_NS] Job {job.get('id')}: Using pre-calculated match {job['match_percentage']}%")
+                
+                # Priority 2: AI Matching Calculation (Fallback)
+                elif match_profile:
                     try:
                         title_score = title_position_match(job.get('job_title', ''), match_profile['positions'])
-                        # Use job_description for skills matching (don't delete it yet!)
+                        # Use job_description for skills matching
                         job_desc = job.get('job_description') or ''
-                        print(f"[JOBS_NS] Job {job.get('id')}: title='{job.get('job_title')}', desc_len={len(job_desc)}, city='{job.get('vacancy_city')}'")
-                        print(f"[JOBS_NS]   Profile: positions='{match_profile['positions']}', skills='{match_profile['skills']}', location='{match_profile['location']}'")
                         
                         skill_score = calculate_skills_match(job_desc if job_desc else job.get('job_title', ''), match_profile['skills'])
                         location_score = semantic_location_match(job.get('vacancy_city', ''), match_profile['location'])
@@ -2251,43 +2273,56 @@ class JobById(Resource):
             email = request.args.get('email')
             if email:
                 try:
-                    # Fetch profile from main DB instead of AI DB
-                    cols = get_table_columns('CandidateProfile', 'main')
-                    loc_field = 'cp.location' if 'location' in cols else "NULL as location"
-                    profile_row = execute_query(f"""
-                        SELECT cp."jobType", cp.skills, {loc_field} 
-                        FROM "CandidateProfile" cp
-                        JOIN "Candidate" c ON cp."candidateId" = c.id
-                        JOIN users u ON c."userId" = u.id
-                        WHERE u.email = %s
-                    """, (email,), fetch_one=True)
+                    # 1. Try to get score from rankings table first for consistency with the "Matched For you" section
+                    cursor.execute("""
+                        SELECT ROUND(score)::int 
+                        FROM rankings 
+                        WHERE LOWER(email) = LOWER(%s) AND job_id = %s::text
+                        LIMIT 1
+                    """, (email, job_id))
+                    ranking_row = cursor.fetchone()
+                    if ranking_row:
+                        job['match_percentage'] = str(ranking_row[0])
+                        # We found a matching score, no need to recalculate
+                    else:
+                        # 2. Fallback to on-demand calculation if not found in rankings
+                        # Fetch profile from main DB instead of AI DB
+                        cols = get_table_columns('CandidateProfile', 'main')
+                        loc_field = 'cp.location' if 'location' in cols else "NULL as location"
+                        profile_row = execute_query(f"""
+                            SELECT cp."jobType", cp.skills, {loc_field} 
+                            FROM "CandidateProfile" cp
+                            JOIN "Candidate" c ON cp."candidateId" = c.id
+                            JOIN users u ON c."userId" = u.id
+                            WHERE u.email = %s
+                        """, (email,), fetch_one=True)
 
-                    if profile_row:
-                        if isinstance(profile_row, dict):
-                            skills = profile_row.get('skills')
-                            skills_str = ", ".join(skills) if isinstance(skills, list) else (skills or "")
-                            match_profile = {
-                                "positions": profile_row.get('jobType') or "",
-                                "skills": skills_str,
-                                "location": profile_row.get('location') or ""
-                            }
-                        else:
-                            skills = profile_row[1]
-                            skills_str = ", ".join(skills) if isinstance(skills, list) else (skills or "")
-                            match_profile = {
-                                "positions": profile_row[0] or "",
-                                "skills": skills_str,
-                                "location": profile_row[2] or ""
-                            }
+                        if profile_row:
+                            if isinstance(profile_row, dict):
+                                skills = profile_row.get('skills')
+                                skills_str = ", ".join(skills) if isinstance(skills, list) else (skills or "")
+                                match_profile = {
+                                    "positions": profile_row.get('jobType') or "",
+                                    "skills": skills_str,
+                                    "location": profile_row.get('location') or ""
+                                }
+                            else:
+                                skills = profile_row[1]
+                                skills_str = ", ".join(skills) if isinstance(skills, list) else (skills or "")
+                                match_profile = {
+                                    "positions": profile_row[0] or "",
+                                    "skills": skills_str,
+                                    "location": profile_row[2] or ""
+                                }
 
-                        from app.services.job_apply.ai_matching import title_position_match, calculate_skills_match, semantic_location_match
-                        title_score = title_position_match(job.get('job_title', ''), match_profile['positions'])
-                        skill_score = calculate_skills_match(job.get('job_description', ''), match_profile['skills'])
-                        location_score = semantic_location_match(job.get('vacancy_city', ''), match_profile['location'])
-                        final_score = round((0.4 * title_score + 0.4 * skill_score + 0.2 * location_score), 3)
-                        job['match_percentage'] = str(int(round(final_score * 100, 0)))
+                            from app.services.job_apply.ai_matching import title_position_match, calculate_skills_match, semantic_location_match
+                            title_score = title_position_match(job.get('job_title', ''), match_profile['positions'])
+                            skill_score = calculate_skills_match(job.get('job_description', ''), match_profile['skills'])
+                            location_score = semantic_location_match(job.get('vacancy_city', ''), match_profile['location'])
+                            final_score = round((0.4 * title_score + 0.4 * skill_score + 0.2 * location_score), 3)
+                            job['match_percentage'] = str(int(round(final_score * 100, 0)))
                 except Exception as e:
-                    print(f"[JOBS_NS] Error calculating match for job details from main DB: {e}")
+                    print(f"[JOBS_NS] Error calculating match for job details: {e}")
 
             return {
                 "success": True,
@@ -2776,7 +2811,7 @@ class MatchedJobs(Resource):
                 location_score = semantic_location_match(current_city, user_profile['location'])
 
                 final_score = round((0.4 * title_score + 0.4 * skill_score + 0.2 * location_score), 3)
-                job['match_percentage'] = str(round(final_score * 100, 2))  # percentage as string
+                job['match_percentage'] = str(int(round(final_score * 100, 0)))  # percentage as integer string
 
             sorted_matches = sorted(jobs, key=lambda x: (-float(x['match_percentage']), x['id']))
             total_matches = len(sorted_matches)
@@ -2896,7 +2931,7 @@ class MatchedJobsPerClient(Resource):
                     j.application_email,
                     j.job_date,
                     r.status,
-                    r.score as match_percentage
+                    ROUND(r.score)::int as match_percentage
                 FROM rankings r
                 INNER JOIN jobs j ON r.job_id = j.id::text
                 WHERE LOWER(r.email) = LOWER(%s)
