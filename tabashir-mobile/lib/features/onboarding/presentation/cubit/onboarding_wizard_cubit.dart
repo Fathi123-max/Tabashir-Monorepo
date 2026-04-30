@@ -2,6 +2,7 @@ import 'dart:typed_data';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:injectable/injectable.dart';
+import 'package:tabashir/core/router/app_state.dart';
 import 'package:tabashir/features/ai_job_apply/domain/repositories/ai_job_apply_repository.dart';
 import 'package:tabashir/features/auth/presentation/cubit/auth_cubit.dart';
 import 'package:tabashir/features/profile/presentation/cubit/profile_cubit.dart';
@@ -192,6 +193,11 @@ class OnboardingWizardCubit extends Cubit<OnboardingWizardState> {
         nationality: state.nationality,
         gender: state.gender,
       );
+
+      // Mark setup as complete — persists to SharedPreferences and notifies
+      // the GoRouter so Gate 3 is lifted on this and all future launches.
+      await AppState.instance.setSetupComplete();
+
       emit(
         state.copyWith(
           isProcessing: false,

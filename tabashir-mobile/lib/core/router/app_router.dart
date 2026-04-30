@@ -2,7 +2,6 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tabashir/core/di/injection.dart';
 import 'package:tabashir/core/network/models/resume_response/resume_item.dart';
 import 'package:tabashir/features/profile/domain/repositories/profile_repository.dart';
@@ -36,11 +35,14 @@ import 'package:tabashir/features/resume/presentation/screens/resume_preview_scr
 import 'package:tabashir/features/resume/presentation/screens/resume_vault_screen.dart';
 import 'package:tabashir/features/resume/presentation/cubit/resume_import_cubit.dart';
 import 'package:tabashir/features/payments/presentation/screens/subscriptions_screen.dart';
-
-import 'route_names.dart';
-
 import 'package:tabashir/core/services/auth_session_service.dart';
 
+import 'app_state.dart';
+import 'route_names.dart';
+
+// ---------------------------------------------------------------------------
+// Bridges an arbitrary Stream into ChangeNotifier so GoRouter can listen to it
+// ---------------------------------------------------------------------------
 class StreamListenable extends ChangeNotifier {
   StreamListenable(Stream stream) {
     _subscription = stream.listen((_) {
@@ -57,51 +59,108 @@ class StreamListenable extends ChangeNotifier {
   }
 }
 
+// ---------------------------------------------------------------------------
+// Merges multiple Listenables so GoRouter re-evaluates the redirect whenever
+// any one of them fires.
+// ---------------------------------------------------------------------------
+class _MultiListenable extends ChangeNotifier {
+  _MultiListenable(List<Listenable> listenables) {
+    for (final l in listenables) {
+      l.addListener(notifyListeners);
+    }
+    _listenables = listenables;
+  }
+
+  late final List<Listenable> _listenables;
+
+  @override
+  void dispose() {
+    for (final l in _listenables) {
+      l.removeListener(notifyListeners);
+    }
+    super.dispose();
+  }
+}
+
 final GoRouter appRouter = GoRouter(
   initialLocation: RouteNames.splash,
-  refreshListenable: StreamListenable(
-    AuthSessionService.instance.authStateStream,
-  ),
-  redirect: (context, state) async {
-    final authService = AuthSessionService.instance;
-    final isAuthenticated = await authService.isAuthenticated;
+  // Re-evaluate redirect when either auth state OR onboarding state changes.
+  refreshListenable: _MultiListenable([
+    AppState.instance,
+    StreamListenable(AuthSessionService.instance.authStateStream),
+  ]),
 
+  // -------------------------------------------------------------------------
+  // IMPORTANT: GoRouter v12 redirect MUST be synchronous.
+  // We read from AppState which is pre-loaded at startup and kept up-to-date.
+  // -------------------------------------------------------------------------
+  redirect: (context, state) {
+    final appState = AppState.instance;
     final currentPath = state.uri.path;
 
-    // Allow access to public routes
-    final publicRoutes = [
+    // Routes that are always accessible (no gating).
+    const onboardingRoutes = [
       RouteNames.splash,
       RouteNames.onboarding,
+      RouteNames.onboardingWizard,
+    ];
+    const publicRoutes = [
+      ...onboardingRoutes,
       RouteNames.resumeImport,
       RouteNames.login,
       RouteNames.register,
     ];
+    // Routes that are accessible during the setup flow
+    // (authenticated but setup not yet complete).
+    const setupRoutes = [
+      RouteNames.onboardingWizard,
+      RouteNames.resumeImport,
+    ];
 
-    // Check if current route is public
+    // ------------------------------------------------------------------
+    // Gate 1 — Intro onboarding slides (unauthenticated users only)
+    //
+    // Only show the onboarding slides when:
+    //   • the user is NOT already logged in  (authenticated users skip)
+    //   • the slides have never been completed on this device
+    //   • the current route is not already an onboarding/auth route
+    // ------------------------------------------------------------------
     final isPublicRoute = publicRoutes.contains(currentPath);
 
-    // If not authenticated and trying to access protected route, redirect to login
-    if (!isAuthenticated && !isPublicRoute) {
-      // Check if onboarding is completed
-      final prefs = await SharedPreferences.getInstance();
-      final completedOnboarding =
-          prefs.getBool('has_completed_onboarding') ?? false;
-
-      if (!completedOnboarding) {
-        return RouteNames.onboarding;
-      } else {
-        return RouteNames.login;
-      }
+    if (!appState.isLoggedIn &&
+        !isPublicRoute &&
+        !appState.hasCompletedOnboarding) {
+      return RouteNames.onboarding;
     }
 
-    // If authenticated and trying to access auth screens, redirect to home
-    if (isAuthenticated &&
+    // ------------------------------------------------------------------
+    // Gate 2 — Authentication (for protected routes)
+    // ------------------------------------------------------------------
+    if (!appState.isLoggedIn && !isPublicRoute) {
+      return RouteNames.login;
+    }
+
+    // Prevent authenticated users from landing on auth screens.
+    if (appState.isLoggedIn &&
         (currentPath == RouteNames.login ||
             currentPath == RouteNames.register)) {
       return '/';
     }
 
-    // Otherwise, allow access
+    // ------------------------------------------------------------------
+    // Gate 3 — Post-signup setup flow
+    //
+    // If the user is authenticated but has NOT yet completed the setup
+    // (resume upload → wizard → addClient API), force them into the wizard.
+    // This fires on every restart until addClient succeeds.
+    // ------------------------------------------------------------------
+    final isSetupRoute = setupRoutes.contains(currentPath);
+    if (appState.isLoggedIn &&
+        !appState.hasCompletedSetup &&
+        !isSetupRoute) {
+      return RouteNames.onboardingWizard;
+    }
+
     return null;
   },
   routes: [

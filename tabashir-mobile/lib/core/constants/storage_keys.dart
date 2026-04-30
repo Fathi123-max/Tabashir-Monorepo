@@ -27,6 +27,9 @@ class StorageKeys {
   static const String hasSeenTutorial = 'has_seen_tutorial';
   static const String resumeParsedPrefill = 'resume_parsed_prefill';
 
+  /// Setup flow (post-signup: resume upload → wizard → addClient API)
+  static const String hasCompletedSetup = 'has_completed_setup';
+
   /// Notifications
   static const String notificationSettings = 'notification_settings';
   static const String enablePushNotifications = 'enable_push_notifications';

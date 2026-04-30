@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tabashir/core/network/models/resume_response/resume_item.dart';
 import 'package:tabashir/features/profile/presentation/cubit/profile_cubit.dart';
 import '../../../../core/router/route_names.dart';
@@ -46,7 +45,9 @@ class ResumeImportScreen extends StatelessWidget {
                 );
               },
               skipped: () {
-                _completeOnboardingAndNavigate(context);
+                // Skipping is no longer allowed — users must complete setup.
+                // Navigate to the wizard to continue the flow.
+                context.go(RouteNames.onboardingWizard);
               },
             );
           },
@@ -376,20 +377,6 @@ class ResumeImportScreen extends StatelessWidget {
     final theme = Theme.of(context);
     return Column(
       children: [
-        TextButton(
-          onPressed: () {
-            context.read<ResumeImportCubit>().skipForNow();
-          },
-          child: Text(
-            'Skip for now'.tr(),
-            style: theme.textTheme.labelMedium?.copyWith(
-              color: theme.brightness == Brightness.light
-                  ? AppTheme.textMutedLight
-                  : AppTheme.textMutedDark,
-            ),
-          ),
-        ),
-        SizedBox(height: AppTheme.spacingMd.h),
         Padding(
           padding: EdgeInsets.symmetric(horizontal: AppTheme.spacingMd.w),
           child: Text(
@@ -404,12 +391,11 @@ class ResumeImportScreen extends StatelessWidget {
   }
 
   Future<void> _completeOnboardingAndNavigate(BuildContext context) async {
-    try {
-      final prefs = await SharedPreferences.getInstance();
-      await prefs.setBool('has_completed_onboarding', true);
-    } catch (e) {}
+    // Resume import is a step in the setup flow.
+    // Navigate to the wizard to continue; do NOT mark setup as complete here
+    // — that only happens after addClient API succeeds in OnboardingWizardCubit.
     if (context.mounted) {
-      context.go('/');
+      context.go(RouteNames.onboardingWizard);
     }
   }
 
