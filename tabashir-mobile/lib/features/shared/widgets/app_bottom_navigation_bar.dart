@@ -42,7 +42,6 @@ class AppBottomNavigationBar extends StatelessWidget {
             : colorScheme.surfaceContainerHighest.withOpacity(0.7));
 
     return Container(
-      height: 80.h,
       decoration: BoxDecoration(
         color: currentBackgroundColor,
         borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
@@ -65,7 +64,10 @@ class AppBottomNavigationBar extends StatelessWidget {
         borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
         child: BackdropFilter(
           filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-          child: _buildNavigationItems(context, isDark, colorScheme),
+          child: SafeArea(
+            top: false,
+            child: _buildNavigationItems(context, isDark, colorScheme),
+          ),
         ),
       ),
     );

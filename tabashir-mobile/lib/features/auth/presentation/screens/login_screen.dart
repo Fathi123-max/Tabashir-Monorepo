@@ -5,6 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
+import 'package:flutter/services.dart';
 import 'package:tabashir/core/di/injection.dart';
 import 'package:tabashir/core/services/google_signin_service.dart';
 import 'package:tabashir/core/services/apple_signin_service.dart';
@@ -162,116 +163,149 @@ class _LoginScreenState extends State<LoginScreen> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
 
+    // Ensure system navigation bar is transparent for better aesthetics
+    SystemChrome.setSystemUIOverlayStyle(
+      SystemUiOverlayStyle(
+        systemNavigationBarColor: Colors.transparent,
+        systemNavigationBarIconBrightness: theme.brightness == Brightness.dark
+            ? Brightness.light
+            : Brightness.dark,
+        statusBarColor: Colors.transparent,
+        statusBarIconBrightness: theme.brightness == Brightness.dark
+            ? Brightness.light
+            : Brightness.dark,
+      ),
+    );
+
     return BlocProvider.value(
       value: _authCubit,
       child: Scaffold(
+        backgroundColor: theme.scaffoldBackgroundColor,
         body: Container(
+          width: double.infinity,
+          height: double.infinity,
           decoration: BoxDecoration(
             gradient: LinearGradient(
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
               colors: [
-                AppTheme.primaryColor.withOpacity(0.08),
+                AppTheme.primaryColor.withOpacity(0.12),
+                AppTheme.primaryColor.withOpacity(0.04),
                 theme.scaffoldBackgroundColor,
               ],
+              stops: const [0.0, 0.4, 1.0],
             ),
           ),
           child: SafeArea(
             child: LayoutBuilder(
               builder: (context, constraints) => SingleChildScrollView(
-                padding: EdgeInsets.symmetric(
-                  horizontal: AppTheme.spacingLg.w,
-                  vertical: AppTheme.spacingMd.h,
-                ),
+                physics: const BouncingScrollPhysics(),
                 child: ConstrainedBox(
-                  constraints: BoxConstraints(maxWidth: 448.w),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      // Compact Header
-                      SizedBox(height: AppTheme.spacingMd.h),
-                      const LoginHeaderWidget(),
-                      SizedBox(height: AppTheme.spacingLg.h),
+                  constraints: BoxConstraints(
+                    minHeight: constraints.maxHeight,
+                  ),
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(
+                      horizontal: AppTheme.spacingLg.w,
+                      vertical: AppTheme.spacingMd.h,
+                    ),
+                    child: Center(
+                      child: ConstrainedBox(
+                        constraints: BoxConstraints(maxWidth: 448.w),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: [
+                            // Compact Header
+                            SizedBox(height: AppTheme.spacingMd.h),
+                            const LoginHeaderWidget(),
+                            SizedBox(height: AppTheme.spacingLg.h),
 
-                      // Social Login - Compact
-                      SocialLoginButton(
-                        platform: SocialPlatform.google,
-                        text: 'Sign in with Google'.tr(),
-                        onPressed: () async {
-                          try {
-                            await getIt<GoogleSignInService>().signIn();
-                            // Success - router will handle navigation
-                          } catch (e) {
-                            _handleSocialSignInError(e, 'Google');
-                          }
-                        },
-                        useAppTheme: false,
-                      ),
-                      SizedBox(height: AppTheme.spacingSm.h),
-                      SocialLoginButton(
-                        platform: SocialPlatform.apple,
-                        text: 'Sign in with Apple'.tr(),
-                        onPressed: () async {
-                          try {
-                            await AppleSignInService.instance.signIn();
-                            // Success - router will handle navigation
-                          } catch (e) {
-                            _handleSocialSignInError(e, 'Apple');
-                          }
-                        },
-                        useAppTheme: false,
-                      ),
-                      SizedBox(height: AppTheme.spacingMd.h),
+                            // Social Login - Compact
+                            SocialLoginButton(
+                              platform: SocialPlatform.google,
+                              text: 'Sign in with Google'.tr(),
+                              onPressed: () async {
+                                try {
+                                  await getIt<GoogleSignInService>().signIn();
+                                  // Success - router will handle navigation
+                                } catch (e) {
+                                  _handleSocialSignInError(e, 'Google');
+                                }
+                              },
+                              useAppTheme: false,
+                            ),
+                            if (theme.platform == TargetPlatform.iOS) ...[
+                              SizedBox(height: AppTheme.spacingSm.h),
+                              SocialLoginButton(
+                                platform: SocialPlatform.apple,
+                                text: 'Sign in with Apple'.tr(),
+                                onPressed: () async {
+                                  try {
+                                    await AppleSignInService.instance.signIn();
+                                    // Success - router will handle navigation
+                                  } catch (e) {
+                                    _handleSocialSignInError(e, 'Apple');
+                                  }
+                                },
+                                useAppTheme: false,
+                              ),
+                            ],
+                            SizedBox(height: AppTheme.spacingMd.h),
 
-                      // Divider
-                      const SignupDividerWidget(),
-                      SizedBox(height: AppTheme.spacingMd.h),
+                            // Divider
+                            const SignupDividerWidget(),
+                            SizedBox(height: AppTheme.spacingMd.h),
 
-                      // Form Fields
-                      LoginEmailFieldWidget(
-                        controller: _emailController,
-                      ),
-                      SizedBox(height: AppTheme.spacingSm.h),
-                      LoginPasswordFieldWidget(
-                        controller: _passwordController,
-                        isPasswordVisible: _isPasswordVisible,
-                        onTogglePasswordVisibility: (isVisible) {
-                          setState(() {
-                            _isPasswordVisible = isVisible;
-                          });
-                        },
-                      ),
-                      SizedBox(height: AppTheme.spacingMd.h),
+                            // Form Fields
+                            LoginEmailFieldWidget(
+                              controller: _emailController,
+                            ),
+                            SizedBox(height: AppTheme.spacingSm.h),
+                            LoginPasswordFieldWidget(
+                              controller: _passwordController,
+                              isPasswordVisible: _isPasswordVisible,
+                              onTogglePasswordVisibility: (isVisible) {
+                                setState(() {
+                                  _isPasswordVisible = isVisible;
+                                });
+                              },
+                            ),
+                            SizedBox(height: AppTheme.spacingMd.h),
 
-                      // Sign In Button
-                      BlocBuilder<AuthCubit, AuthState>(
-                        builder: (context, state) {
-                          final isLoading = state.status == AuthStatus.loading;
-                          return LoginSigninButtonWidget(
-                            onPressed: isLoading ? null : _handleSignIn,
-                            isLoading: isLoading,
-                          );
-                        },
-                      ),
-                      SizedBox(height: AppTheme.spacingSm.h),
+                            // Sign In Button
+                            BlocBuilder<AuthCubit, AuthState>(
+                              builder: (context, state) {
+                                final isLoading =
+                                    state.status == AuthStatus.loading;
+                                return LoginSigninButtonWidget(
+                                  onPressed: isLoading ? null : _handleSignIn,
+                                  isLoading: isLoading,
+                                );
+                              },
+                            ),
+                            SizedBox(height: AppTheme.spacingSm.h),
 
-                      // AI Assistant - Compact
-                      AIAssistantWidget(
-                        message:
-                            'Your AI assistant is ready to resume your job search.'
-                                .tr(),
-                        useAppTheme: false,
-                      ),
-                      SizedBox(height: AppTheme.spacingMd.h),
+                            // AI Assistant - Compact
+                            AIAssistantWidget(
+                              message:
+                                  'Your AI assistant is ready to resume your job search.'
+                                      .tr(),
+                              useAppTheme: false,
+                            ),
+                            SizedBox(height: AppTheme.spacingMd.h),
 
-                      // Sign Up Link - Always visible at bottom
-                      SignupLinkWidget(
-                        onTap: () {
-                          context.pushReplacement(RouteNames.register);
-                        },
+                            // Sign Up Link - Always visible at bottom
+                            SignupLinkWidget(
+                              onTap: () {
+                                context.pushReplacement(RouteNames.register);
+                              },
+                            ),
+                            SizedBox(height: AppTheme.spacingMd.h),
+                          ],
+                        ),
                       ),
-                      SizedBox(height: AppTheme.spacingMd.h),
-                    ],
+                    ),
                   ),
                 ),
               ),
