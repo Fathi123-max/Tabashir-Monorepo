@@ -7,6 +7,7 @@ import 'package:tabashir/core/constants/storage_keys.dart';
 import 'package:tabashir/core/network/models/auth/refresh_token_response.dart';
 import 'package:tabashir/core/network/services/auth/auth_api_service.dart';
 import 'package:tabashir/core/network/_config/api_config.dart';
+import 'package:tabashir/core/router/app_state.dart';
 import 'package:tabashir/core/utils/app_logger.dart';
 
 /// Service to manage authentication session state
@@ -81,6 +82,8 @@ class AuthSessionService {
   }) async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setBool(StorageKeys.isLoggedIn, true);
+    // Keep synchronous AppState in sync so GoRouter redirect reads correct value
+    AppState.instance.setLoggedIn(value: true);
     _authStateController.add(true);
 
     // Store tokens securely using flutter_secure_storage (encrypted)
@@ -106,6 +109,8 @@ class AuthSessionService {
     AppLogger.info('setLoggedOut() - Clearing all auth data', tag: 'AuthSession');
     final prefs = await SharedPreferences.getInstance();
     await prefs.setBool(StorageKeys.isLoggedIn, false);
+    // Keep synchronous AppState in sync so GoRouter redirect reads correct value
+    AppState.instance.setLoggedIn(value: false);
     _authStateController.add(false);
 
     // Clear all auth-related data from secure storage

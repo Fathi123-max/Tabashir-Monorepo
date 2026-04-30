@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:tabashir/core/router/app_state.dart';
 import 'package:tabashir/features/onboarding/models/onboarding_page_model.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../widgets/onboarding_content.dart';
@@ -89,6 +90,8 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                     // Mark onboarding as completed
                     final prefs = await SharedPreferences.getInstance();
                     await prefs.setBool('has_completed_onboarding', true);
+                    // Notify the router (synchronous gate) so redirect fires
+                    AppState.instance.setOnboardingComplete();
 
                     // Navigate to login screen after onboarding completion
                     context.go('/login');

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'core/bootstrap/app_bootstrap.dart';
 import 'core/router/app_router.dart';
+import 'core/router/app_state.dart';
 import 'core/theme/app_theme.dart';
 import 'core/theme/theme_manager.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -24,6 +25,9 @@ void main() async {
 
   // Initialize theme manager
   await ThemeManager().loadPreferences();
+
+  // Pre-load synchronous state for GoRouter redirect (onboarding + auth flags)
+  await AppState.instance.init();
 
   // Initialize localization
   await EasyLocalization.ensureInitialized();

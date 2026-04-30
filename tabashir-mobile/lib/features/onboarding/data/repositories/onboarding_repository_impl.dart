@@ -50,8 +50,7 @@ class OnboardingRepositoryImpl implements OnboardingRepository {
   @override
   Future<bool> isOnboardingCompleted() async {
     try {
-      final value = _persistenceService.prefs.getString(_onboardingCompletedKey);
-      return value == 'true';
+      return _persistenceService.prefs.getBool(_onboardingCompletedKey) ?? false;
     } catch (e) {
       return false;
     }
@@ -60,7 +59,7 @@ class OnboardingRepositoryImpl implements OnboardingRepository {
   @override
   Future<void> completeOnboarding() async {
     try {
-      await _persistenceService.prefs.setString(_onboardingCompletedKey, 'true');
+      await _persistenceService.prefs.setBool(_onboardingCompletedKey, true);
       // Reset current page index when onboarding is completed
       await _persistenceService.prefs.remove(_currentPageIndexKey);
     } catch (e) {
