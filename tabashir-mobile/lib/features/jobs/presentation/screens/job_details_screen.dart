@@ -238,7 +238,6 @@ class _JobDetailScreenState extends State<JobDetailScreen> {
           // Company Details
           CompanyDetailsWidget(
             companyName: jobDetails.company,
-            onViewProfile: _onViewProfile,
           ),
 
           SizedBox(height: AppTheme.spacingLg.h),
@@ -661,9 +660,7 @@ class _JobDetailScreenState extends State<JobDetailScreen> {
     context.read<JobDetailsCubit>().toggleSaveJob(jobId);
   }
 
-  void _onViewProfile() {
-    // Implementation for viewing company profile
-  }
+
 
   Future<void> _onApply(BuildContext context) async {
     if (context.read<JobDetailsCubit>().state is JobDetailsLoaded) {

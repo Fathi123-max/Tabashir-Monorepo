@@ -385,16 +385,13 @@ class JobMatchAlert extends StatelessWidget {
 class CompanyDetailsWidget extends StatelessWidget {
   const CompanyDetailsWidget({
     required this.companyName,
-    required this.onViewProfile,
     super.key,
   });
+
   final String companyName;
-  final VoidCallback onViewProfile;
 
   @override
-  Widget build(BuildContext context) => GestureDetector(
-    onTap: onViewProfile,
-    child: Container(
+  Widget build(BuildContext context) => Container(
       width: double.infinity,
       padding: EdgeInsets.all(AppTheme.spacingMd.w),
       decoration: BoxDecoration(
@@ -444,25 +441,29 @@ class CompanyDetailsWidget extends StatelessWidget {
                   ),
                 ),
                 SizedBox(height: AppTheme.spacingXs.h),
-                Text(
-                  'View company profile',
-                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    color: Theme.of(context).colorScheme.primary,
-                    fontWeight: FontWeight.w500,
-                  ),
+                Row(
+                  children: [
+                    Icon(
+                      Icons.verified_rounded,
+                      size: 14.sp,
+                      color: AppTheme.successColor,
+                    ),
+                    SizedBox(width: 4.w),
+                    Text(
+                      'Verified Employer'.tr(),
+                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                        color: AppTheme.successColor,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ],
                 ),
               ],
             ),
           ),
-          Icon(
-            Icons.chevron_right_rounded,
-            color: Theme.of(context).colorScheme.onSurfaceVariant,
-            size: 24.sp,
-          ),
         ],
       ),
-    ),
-  );
+    );
 }
 
 // Job Tags Widget

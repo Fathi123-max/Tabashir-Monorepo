@@ -323,7 +323,7 @@ class HomeAISettingsWidget extends StatelessWidget {
             ),
             SizedBox(width: AppTheme.spacingSm.w),
             Text(
-              'Upgrade to Pro - AED 200',
+              'Upgrade to Pro',
               style: theme.textTheme.labelLarge?.copyWith(
                 fontWeight: FontWeight.w600,
                 color: Colors.white,
