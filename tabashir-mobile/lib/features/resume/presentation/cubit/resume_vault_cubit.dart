@@ -278,6 +278,56 @@ class ResumeVaultCubit extends Cubit<ResumeVaultState> {
     }
   }
 
+  Future<void> reformatResume({
+    required String fileName,
+    required String filePath,
+    required String fileType,
+    required int fileSize,
+    String? outputFormat,
+  }) async {
+    AppLogger.debug('🔵 [RESUME_VAULT_CUBIT] reformatResume() called', tag: 'Resume');
+    if (!isClosed) {
+      emit(state.copyWith(status: ResumeVaultStatus.uploading));
+    }
+
+    try {
+      final newResume = await _repository.reformatResume(
+        fileName: fileName,
+        filePath: filePath,
+        fileType: fileType,
+        fileSize: fileSize,
+        outputFormat: outputFormat,
+      );
+      AppLogger.debug('🔵 [RESUME_VAULT_CUBIT] ✅ Reformatted resume: ${newResume.id}', tag: 'Resume');
+
+      final updatedResumes = [newResume, ...state.resumes];
+
+      if (!isClosed) {
+        emit(
+          state.copyWith(
+            status: ResumeVaultStatus.success,
+            resumes: updatedResumes,
+          ),
+        );
+      }
+      
+      // Trigger AI Dashboard Refresh
+      try {
+        getIt<HomeCubit>().refreshHomeData();
+      } catch (_) {}
+    } catch (e, stackTrace) {
+      AppLogger.error('🔴 [RESUME_VAULT_CUBIT]', tag: 'Resume', error: e, stackTrace: stackTrace);
+      if (!isClosed) {
+        emit(
+          state.copyWith(
+            status: ResumeVaultStatus.failure,
+            errorMessage: 'Failed to reformat resume: $e',
+          ),
+        );
+      }
+    }
+  }
+
   /// Reset the cubit state (for logout/session change)
   void reset() {
     AppLogger.debug('[RESUME_VAULT_CUBIT] Resetting resume data...', tag: 'Resume');

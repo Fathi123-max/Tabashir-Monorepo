@@ -93,6 +93,7 @@ abstract class TabashirApiService {
   Future<HttpResponse<List<int>>> formatCV(
     @Part() MultipartFile file,
     @Part(name: 'output_language') String? outputLanguage,
+    @Part(name: 'output_format') String? outputFormat,
   );
 
   /// POST endpoint to receive raw CV text and return structured JSON format

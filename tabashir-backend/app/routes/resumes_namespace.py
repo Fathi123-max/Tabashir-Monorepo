@@ -45,6 +45,8 @@ resumes_ns = Namespace('resumes', description='Resume Management and AI Processi
 # Parser for file upload
 upload_parser = reqparse.RequestParser()
 upload_parser.add_argument('file', location='files', type=FileStorage, required=True, help='Resume PDF/DOCX file')
+upload_parser.add_argument('output_language', location='form', choices=('regular', 'arabic'), default='regular', help='Output language')
+upload_parser.add_argument('output_format', location='form', choices=('docx', 'pdf'), default='docx', help='Output format')
 
 
 @resumes_ns.route('')
@@ -392,13 +394,13 @@ class FormatCV(Resource):
         """
         temp_input_path = None
         try:
-            file, output_language = self._validate_and_extract_request(request)
+            file, output_language, output_format = self._validate_and_extract_request(request)
 
             filename = secure_filename(file.filename)
             base_name = os.path.splitext(filename)[0]
             temp_input_path = Config.TEMP_FOLDER / filename
             file.save(temp_input_path)
-            
+
 
             raw_cv_data = extract_text(temp_input_path)
             if not raw_cv_data:
@@ -411,20 +413,23 @@ class FormatCV(Resource):
             template = Config.ARABIC_TEMPLATE_PATH if output_language == 'arabic' else Config.REGULAR_TEMPLATE_PATH
             formatted_cv.write_document(template, formatted_path)
 
+            final_path = formatted_path
             if output_language == 'arabic':
                 translated_path = Config.TRANSLATED_FOLDER / f"{base_name}_translated.docx"
                 translate_docx_to_arabic(formatted_path, translated_path)
+                final_path = translated_path
 
+            if output_format == 'pdf':
+                pdf_path = convert_docx_to_pdf(final_path)
                 return send_file(
-                    translated_path, as_attachment=True, download_name=translated_path.name,
-                    mimetype='application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+                    pdf_path, as_attachment=True, download_name=pdf_path.name,
+                    mimetype='application/pdf'
                 )
 
             return send_file(
-                formatted_path, as_attachment=True, download_name=output_filename,
+                final_path, as_attachment=True, download_name=final_path.name,
                 mimetype='application/vnd.openxmlformats-officedocument.wordprocessingml.document'
             )
-
         except ValueError as ve:
             return self._error_response("Invalid input", str(ve), HTTPStatus.BAD_REQUEST.value)
         except Exception as e:
@@ -448,10 +453,14 @@ class FormatCV(Resource):
         if output_language not in ('arabic', 'regular'):
             raise ValueError("Invalid output_language. Only 'arabic' or 'regular' supported")
 
+        output_format = req.form.get('output_format', 'docx').lower()
+        if output_format not in ('pdf', 'docx'):
+            raise ValueError("Invalid output_format. Only 'pdf' or 'docx' supported")
+
         if not allowed_file(file.filename):
             raise ValueError("File type not allowed. Supported types: PDF, DOCX, RTF")
 
-        return file, output_language
+        return file, output_language, output_format
 
     def _error_response(self, message, error_detail, status_code):
         response = jsonify({
@@ -1380,9 +1389,14 @@ class ActivateJobApply(Resource):
             pdf_path = convert_docx_to_pdf(formatted_docx)
 
             final_filename = pdf_path.name
-            final_path = cv_dir_2 / final_filename
+            # 3 Move to final storage (production path if exists, otherwise default)
+            final_path = Config.AI_APPLY_CV_STORAGE_PATH / final_filename
+            try:
+                os.makedirs(Config.AI_APPLY_CV_STORAGE_PATH, exist_ok=True)
+            except Exception as e:
+                print(f"Warning: Could not create production CV directory {Config.AI_APPLY_CV_STORAGE_PATH}: {e}")
+                final_path = Config.CV_STORAGE_PATH / final_filename
 
-            # 3 Replace original CV
             shutil.move(pdf_path, final_path)
 
             # 4 Cleanup temp DOCX

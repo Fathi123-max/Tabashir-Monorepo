@@ -15,7 +15,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$SaveAndGenerateRequest {
 
- ResumeData get resumeData; String? get templateId; String? get filename; String? get paymentIntentId;
+ ResumeData get resumeData; String? get templateId; String? get filename; String? get paymentIntentId; String? get outputFormat;
 /// Create a copy of SaveAndGenerateRequest
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -28,16 +28,16 @@ $SaveAndGenerateRequestCopyWith<SaveAndGenerateRequest> get copyWith => _$SaveAn
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is SaveAndGenerateRequest&&(identical(other.resumeData, resumeData) || other.resumeData == resumeData)&&(identical(other.templateId, templateId) || other.templateId == templateId)&&(identical(other.filename, filename) || other.filename == filename)&&(identical(other.paymentIntentId, paymentIntentId) || other.paymentIntentId == paymentIntentId));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is SaveAndGenerateRequest&&(identical(other.resumeData, resumeData) || other.resumeData == resumeData)&&(identical(other.templateId, templateId) || other.templateId == templateId)&&(identical(other.filename, filename) || other.filename == filename)&&(identical(other.paymentIntentId, paymentIntentId) || other.paymentIntentId == paymentIntentId)&&(identical(other.outputFormat, outputFormat) || other.outputFormat == outputFormat));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,resumeData,templateId,filename,paymentIntentId);
+int get hashCode => Object.hash(runtimeType,resumeData,templateId,filename,paymentIntentId,outputFormat);
 
 @override
 String toString() {
-  return 'SaveAndGenerateRequest(resumeData: $resumeData, templateId: $templateId, filename: $filename, paymentIntentId: $paymentIntentId)';
+  return 'SaveAndGenerateRequest(resumeData: $resumeData, templateId: $templateId, filename: $filename, paymentIntentId: $paymentIntentId, outputFormat: $outputFormat)';
 }
 
 
@@ -48,7 +48,7 @@ abstract mixin class $SaveAndGenerateRequestCopyWith<$Res>  {
   factory $SaveAndGenerateRequestCopyWith(SaveAndGenerateRequest value, $Res Function(SaveAndGenerateRequest) _then) = _$SaveAndGenerateRequestCopyWithImpl;
 @useResult
 $Res call({
- ResumeData resumeData, String? templateId, String? filename, String? paymentIntentId
+ ResumeData resumeData, String? templateId, String? filename, String? paymentIntentId, String? outputFormat
 });
 
 
@@ -65,12 +65,13 @@ class _$SaveAndGenerateRequestCopyWithImpl<$Res>
 
 /// Create a copy of SaveAndGenerateRequest
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? resumeData = null,Object? templateId = freezed,Object? filename = freezed,Object? paymentIntentId = freezed,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? resumeData = null,Object? templateId = freezed,Object? filename = freezed,Object? paymentIntentId = freezed,Object? outputFormat = freezed,}) {
   return _then(_self.copyWith(
 resumeData: null == resumeData ? _self.resumeData : resumeData // ignore: cast_nullable_to_non_nullable
 as ResumeData,templateId: freezed == templateId ? _self.templateId : templateId // ignore: cast_nullable_to_non_nullable
 as String?,filename: freezed == filename ? _self.filename : filename // ignore: cast_nullable_to_non_nullable
 as String?,paymentIntentId: freezed == paymentIntentId ? _self.paymentIntentId : paymentIntentId // ignore: cast_nullable_to_non_nullable
+as String?,outputFormat: freezed == outputFormat ? _self.outputFormat : outputFormat // ignore: cast_nullable_to_non_nullable
 as String?,
   ));
 }
@@ -162,10 +163,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( ResumeData resumeData,  String? templateId,  String? filename,  String? paymentIntentId)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( ResumeData resumeData,  String? templateId,  String? filename,  String? paymentIntentId,  String? outputFormat)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _SaveAndGenerateRequest() when $default != null:
-return $default(_that.resumeData,_that.templateId,_that.filename,_that.paymentIntentId);case _:
+return $default(_that.resumeData,_that.templateId,_that.filename,_that.paymentIntentId,_that.outputFormat);case _:
   return orElse();
 
 }
@@ -183,10 +184,10 @@ return $default(_that.resumeData,_that.templateId,_that.filename,_that.paymentIn
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( ResumeData resumeData,  String? templateId,  String? filename,  String? paymentIntentId)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( ResumeData resumeData,  String? templateId,  String? filename,  String? paymentIntentId,  String? outputFormat)  $default,) {final _that = this;
 switch (_that) {
 case _SaveAndGenerateRequest():
-return $default(_that.resumeData,_that.templateId,_that.filename,_that.paymentIntentId);}
+return $default(_that.resumeData,_that.templateId,_that.filename,_that.paymentIntentId,_that.outputFormat);}
 }
 /// A variant of `when` that fallback to returning `null`
 ///
@@ -200,10 +201,10 @@ return $default(_that.resumeData,_that.templateId,_that.filename,_that.paymentIn
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( ResumeData resumeData,  String? templateId,  String? filename,  String? paymentIntentId)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( ResumeData resumeData,  String? templateId,  String? filename,  String? paymentIntentId,  String? outputFormat)?  $default,) {final _that = this;
 switch (_that) {
 case _SaveAndGenerateRequest() when $default != null:
-return $default(_that.resumeData,_that.templateId,_that.filename,_that.paymentIntentId);case _:
+return $default(_that.resumeData,_that.templateId,_that.filename,_that.paymentIntentId,_that.outputFormat);case _:
   return null;
 
 }
@@ -215,13 +216,14 @@ return $default(_that.resumeData,_that.templateId,_that.filename,_that.paymentIn
 
 @JsonSerializable(fieldRename: FieldRename.snake)
 class _SaveAndGenerateRequest implements SaveAndGenerateRequest {
-  const _SaveAndGenerateRequest({required this.resumeData, this.templateId, this.filename, this.paymentIntentId});
+  const _SaveAndGenerateRequest({required this.resumeData, this.templateId, this.filename, this.paymentIntentId, this.outputFormat});
   factory _SaveAndGenerateRequest.fromJson(Map<String, dynamic> json) => _$SaveAndGenerateRequestFromJson(json);
 
 @override final  ResumeData resumeData;
 @override final  String? templateId;
 @override final  String? filename;
 @override final  String? paymentIntentId;
+@override final  String? outputFormat;
 
 /// Create a copy of SaveAndGenerateRequest
 /// with the given fields replaced by the non-null parameter values.
@@ -236,16 +238,16 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _SaveAndGenerateRequest&&(identical(other.resumeData, resumeData) || other.resumeData == resumeData)&&(identical(other.templateId, templateId) || other.templateId == templateId)&&(identical(other.filename, filename) || other.filename == filename)&&(identical(other.paymentIntentId, paymentIntentId) || other.paymentIntentId == paymentIntentId));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _SaveAndGenerateRequest&&(identical(other.resumeData, resumeData) || other.resumeData == resumeData)&&(identical(other.templateId, templateId) || other.templateId == templateId)&&(identical(other.filename, filename) || other.filename == filename)&&(identical(other.paymentIntentId, paymentIntentId) || other.paymentIntentId == paymentIntentId)&&(identical(other.outputFormat, outputFormat) || other.outputFormat == outputFormat));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,resumeData,templateId,filename,paymentIntentId);
+int get hashCode => Object.hash(runtimeType,resumeData,templateId,filename,paymentIntentId,outputFormat);
 
 @override
 String toString() {
-  return 'SaveAndGenerateRequest(resumeData: $resumeData, templateId: $templateId, filename: $filename, paymentIntentId: $paymentIntentId)';
+  return 'SaveAndGenerateRequest(resumeData: $resumeData, templateId: $templateId, filename: $filename, paymentIntentId: $paymentIntentId, outputFormat: $outputFormat)';
 }
 
 
@@ -256,7 +258,7 @@ abstract mixin class _$SaveAndGenerateRequestCopyWith<$Res> implements $SaveAndG
   factory _$SaveAndGenerateRequestCopyWith(_SaveAndGenerateRequest value, $Res Function(_SaveAndGenerateRequest) _then) = __$SaveAndGenerateRequestCopyWithImpl;
 @override @useResult
 $Res call({
- ResumeData resumeData, String? templateId, String? filename, String? paymentIntentId
+ ResumeData resumeData, String? templateId, String? filename, String? paymentIntentId, String? outputFormat
 });
 
 
@@ -273,12 +275,13 @@ class __$SaveAndGenerateRequestCopyWithImpl<$Res>
 
 /// Create a copy of SaveAndGenerateRequest
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? resumeData = null,Object? templateId = freezed,Object? filename = freezed,Object? paymentIntentId = freezed,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? resumeData = null,Object? templateId = freezed,Object? filename = freezed,Object? paymentIntentId = freezed,Object? outputFormat = freezed,}) {
   return _then(_SaveAndGenerateRequest(
 resumeData: null == resumeData ? _self.resumeData : resumeData // ignore: cast_nullable_to_non_nullable
 as ResumeData,templateId: freezed == templateId ? _self.templateId : templateId // ignore: cast_nullable_to_non_nullable
 as String?,filename: freezed == filename ? _self.filename : filename // ignore: cast_nullable_to_non_nullable
 as String?,paymentIntentId: freezed == paymentIntentId ? _self.paymentIntentId : paymentIntentId // ignore: cast_nullable_to_non_nullable
+as String?,outputFormat: freezed == outputFormat ? _self.outputFormat : outputFormat // ignore: cast_nullable_to_non_nullable
 as String?,
   ));
 }

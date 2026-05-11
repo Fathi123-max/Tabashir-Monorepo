@@ -291,10 +291,9 @@ final GoRouter appRouter = GoRouter(
           const MainAppShell(), // Replace with actual company profile screen
     ),
     GoRoute(
-      path: RouteNames.aiResume,
+      path: '/ai-resume-screen',
       name: 'ai-resume-screen',
-      builder: (context, state) =>
-          const MainAppShell(), // Replace with actual ai resume screen
+      builder: (context, state) => const ResumeVaultScreen(),
     ),
     GoRoute(
       path: RouteNames.aiResumeBuilder,

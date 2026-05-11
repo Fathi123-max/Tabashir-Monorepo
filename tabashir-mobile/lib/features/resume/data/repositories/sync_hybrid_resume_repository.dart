@@ -6,6 +6,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:tabashir/core/database/models/local_resume.dart';
 import 'package:tabashir/core/database/repositories/local_resume_repository.dart';
 import 'package:tabashir/core/network/models/resume_response/resume_item.dart';
+import 'package:tabashir/core/network/services/job/tabashir_api_service.dart';
 import 'package:tabashir/core/network/services/resume/resume_api_service.dart';
 import 'package:tabashir/features/resume/domain/repositories/resume_vault_repository.dart';
 import 'package:tabashir/core/utils/app_logger.dart';
@@ -21,10 +22,12 @@ import 'package:tabashir/core/utils/app_logger.dart';
 class SyncHybridResumeRepository implements ResumeVaultRepository {
   SyncHybridResumeRepository(
     this._apiService,
+    this._tabashirApiService,
     this._localRepository,
   );
 
   final ResumeApiService _apiService;
+  final TabashirApiService _tabashirApiService;
   final LocalResumeRepository _localRepository;
 
   @override
@@ -177,6 +180,57 @@ class SyncHybridResumeRepository implements ResumeVaultRepository {
       return enrichedResume;
     } catch (e) {
       AppLogger.error('❌ [SYNC_REPO] ❌ Upload failed: $e', tag: 'Resume', error: e);
+      rethrow;
+    }
+  }
+
+  @override
+  Future<ResumeItem> reformatResume({
+    required String fileName,
+    required String filePath,
+    required String fileType,
+    required int fileSize,
+    String? outputFormat,
+  }) async {
+    AppLogger.debug('🔄 [SYNC_REPO] reformatResume() - Sending to ATS formatter...', tag: 'Resume');
+
+    try {
+      final multipartFile = await MultipartFile.fromFile(
+        filePath,
+        filename: fileName,
+      );
+
+      // Call the specialized formatCV endpoint
+      final response = await _tabashirApiService.formatCV(
+        multipartFile,
+        'en', // Default to English for now
+        outputFormat ?? 'pdf',
+      );
+
+      if (response.response.statusCode == 200) {
+        // The backend returns bytes for the formatted file.
+        // For a full implementation, we'd save these bytes and create a ResumeItem.
+        // For now, we'll upload the reformatted version to the vault to get a ResumeItem.
+        
+        final tempDir = await getTemporaryDirectory();
+        final ext = outputFormat == 'docx' ? 'docx' : 'pdf';
+        final reformattedPath = '${tempDir.path}/reformatted_${DateTime.now().millisecondsSinceEpoch}.$ext';
+        final file = File(reformattedPath);
+        await file.writeAsBytes(response.data);
+
+        AppLogger.debug('🔄 [SYNC_REPO] Reformatted file saved locally. Uploading to vault...', tag: 'Resume');
+        
+        return await uploadResume(
+          fileName: 'ATS_${outputFormat?.toUpperCase() ?? 'PDF'}_$fileName',
+          filePath: reformattedPath,
+          fileType: ext,
+          fileSize: response.data.length,
+        );
+      } else {
+        throw Exception('Failed to reformat CV: ${response.response.statusMessage}');
+      }
+    } catch (e) {
+      AppLogger.error('❌ [SYNC_REPO] ❌ Reformat failed: $e', tag: 'Resume', error: e);
       rethrow;
     }
   }

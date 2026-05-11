@@ -2,6 +2,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:go_router/go_router.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import 'package:tabashir/core/di/injection.dart';
@@ -97,7 +98,11 @@ class _ServicesScreenState extends State<ServicesScreen> {
     // Wait for payment sheet animation to dismiss before navigating
     Future.delayed(const Duration(milliseconds: 200), () {
       if (mounted) {
-        AppLogger.debug('[ServicesScreen] Navigating to PaymentSuccessScreen: ' 'service=$_pendingServiceTitle, amount=$_pendingAmount', tag: 'Services');
+        AppLogger.debug(
+          '[ServicesScreen] Navigating to PaymentSuccessScreen: '
+          'service=$_pendingServiceTitle, amount=$_pendingAmount',
+          tag: 'Services',
+        );
 
         Navigator.of(context).pushAndRemoveUntil(
           MaterialPageRoute(
@@ -108,19 +113,35 @@ class _ServicesScreenState extends State<ServicesScreen> {
               onOkPressed: () async {
                 // Refresh profile and home data before navigating home
                 try {
-                  AppLogger.debug('[ServicesScreen] onOkPressed: refreshing profile...', tag: 'Services');
+                  AppLogger.debug(
+                    '[ServicesScreen] onOkPressed: refreshing profile...',
+                    tag: 'Services',
+                  );
                   await getIt<ProfileCubit>().loadProfileData(force: true);
                   final homeCubit = getIt<HomeCubit>();
                   final email =
                       getIt<ProfileCubit>().state.profile?.email ?? '';
-                  AppLogger.debug('[ServicesScreen] onOkPressed: email=$email', tag: 'Services');
+                  AppLogger.debug(
+                    '[ServicesScreen] onOkPressed: email=$email',
+                    tag: 'Services',
+                  );
                   if (email.isNotEmpty) {
-                    AppLogger.debug('[ServicesScreen] onOkPressed: refreshing home...', tag: 'Services');
+                    AppLogger.debug(
+                      '[ServicesScreen] onOkPressed: refreshing home...',
+                      tag: 'Services',
+                    );
                     await homeCubit.loadAiEnhancedHomeData(email: email);
                   }
-                  AppLogger.debug('[ServicesScreen] onOkPressed: refresh complete', tag: 'Services');
+                  AppLogger.debug(
+                    '[ServicesScreen] onOkPressed: refresh complete',
+                    tag: 'Services',
+                  );
                 } catch (e) {
-                  AppLogger.error('[ServicesScreen] Error refreshing data on OK: $e', tag: 'Services', error: e);
+                  AppLogger.error(
+                    '[ServicesScreen] Error refreshing data on OK: $e',
+                    tag: 'Services',
+                    error: e,
+                  );
                 }
               },
             ),
@@ -306,11 +327,11 @@ class _ServicesScreenState extends State<ServicesScreen> {
 
                               ServiceCard(
                                 icon: Icons.workspace_premium_rounded,
-                                title: 'AI Job Apply Service - Premium',
+                                title: 'AI Job Apply Service - Premium'.tr(),
                                 description:
-                                    'Premium plan with priority applications and '
+                                    'Premium plan with 200 jobs matching and apply. '
                                         .tr() +
-                                    'advanced AI matching.'.tr(),
+                                    'aiJobApplyNote'.tr(),
                                 price: 'AED 200',
                                 buttonText: 'Auto Apply'.tr(),
                                 isEnabled: true,
@@ -328,11 +349,11 @@ class _ServicesScreenState extends State<ServicesScreen> {
 
                               ServiceCard(
                                 icon: Icons.flash_on_rounded,
-                                title: 'AI Job Apply Service - Basic',
+                                title: 'AI Job Apply Service - Basic'.tr(),
                                 description:
-                                    'Let our AI find and apply to the best jobs for '
+                                    'Let our AI find and apply to the best jobs for you. '
                                         .tr() +
-                                    'you automatically.'.tr(),
+                                    'aiJobApplyNote'.tr(),
                                 price: 'AED 100',
                                 buttonText: 'Auto Apply'.tr(),
                                 isEnabled: true,
@@ -347,22 +368,18 @@ class _ServicesScreenState extends State<ServicesScreen> {
                               ),
                               SizedBox(height: AppTheme.spacingMd.h),
 
-                              // ServiceCard(
-                              //   icon: Icons.description_rounded,
-                              //   title: 'AI Resume Optimization',
-                              //   description:
-                              //       'Get your resume scored and optimized by AI to '
-                              //           .tr() +
-                              //       'pass ATS and impress recruiters.'.tr(),
-                              //   price: 'Free trial • AED 29',
-                              //   buttonText: 'Get Started'.tr(),
-                              //   isEnabled: true,
-                              //   badgeText: 'Free Trial',
-                              //   onPressed: () {
-                              //     context.pushNamed('ai-resume-screen');
-                              //   },
-                              // ),
-                              // SizedBox(height: AppTheme.spacingMd.h),
+                              ServiceCard(
+                                icon: Icons.description_rounded,
+                                title: 'AI Resume Optimization'.tr(),
+                                description: 'aiResumeOptimizationDesc'.tr(),
+                                price: 'AED 40',
+                                buttonText: 'Get Started'.tr(),
+                                isEnabled: true,
+                                onPressed: () {
+                                  context.pushNamed('ai-resume-screen');
+                                },
+                              ),
+                              SizedBox(height: AppTheme.spacingMd.h),
                               ServiceCard(
                                 icon: Icons.link_rounded,
                                 title: 'AI LinkedIn Enhancement',

@@ -12,6 +12,7 @@ sealed class SaveAndGenerateRequest with _$SaveAndGenerateRequest {
     String? templateId,
     String? filename,
     String? paymentIntentId,
+    String? outputFormat,
   }) = _SaveAndGenerateRequest;
 
   factory SaveAndGenerateRequest.fromJson(Map<String, dynamic> json) =>

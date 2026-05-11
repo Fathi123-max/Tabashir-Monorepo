@@ -38,6 +38,9 @@ class Config:
     OPENAI_API_KEY = os.getenv('OPENAI_API_KEY')
     DEEPSEEK_API_KEY = os.getenv('DEEPSEEK_API_KEY')
     LLM_PROVIDER = os.getenv('LLM_PROVIDER')
+    LLM_API_KEY = os.getenv('LLM_API_KEY')
+    LLM_BASE_URL = os.getenv('LLM_BASE_URL', 'https://api.inceptionlabs.ai/v1')
+    LLM_MODEL = os.getenv('LLM_MODEL', 'mercury-2')
 
     # Email settings
     EMAIL_HOST = 'mail.tabashir.ae'
@@ -55,6 +58,7 @@ class Config:
     
     # Path for storing uploaded resumes permanently
     CV_STORAGE_PATH = BASE_DIR / "CVs"
+    AI_APPLY_CV_STORAGE_PATH = Path(os.getenv('AI_APPLY_CV_STORAGE_PATH', str(CV_STORAGE_PATH)))
 
     # Stripe settings
     STRIPE_SECRET_KEY = os.getenv('STRIPE_SECRET_KEY')

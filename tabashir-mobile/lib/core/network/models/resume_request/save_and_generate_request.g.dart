@@ -13,6 +13,7 @@ _SaveAndGenerateRequest _$SaveAndGenerateRequestFromJson(
   templateId: json['template_id'] as String?,
   filename: json['filename'] as String?,
   paymentIntentId: json['payment_intent_id'] as String?,
+  outputFormat: json['output_format'] as String?,
 );
 
 Map<String, dynamic> _$SaveAndGenerateRequestToJson(
@@ -22,4 +23,5 @@ Map<String, dynamic> _$SaveAndGenerateRequestToJson(
   'template_id': instance.templateId,
   'filename': instance.filename,
   'payment_intent_id': instance.paymentIntentId,
+  'output_format': instance.outputFormat,
 };

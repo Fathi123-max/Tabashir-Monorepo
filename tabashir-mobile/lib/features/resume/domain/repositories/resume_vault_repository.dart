@@ -18,6 +18,16 @@ abstract class ResumeVaultRepository {
     required int fileSize,
   });
 
+  /// Reformat an existing resume to ATS format
+  /// Returns the reformatted [ResumeItem]
+  Future<ResumeItem> reformatResume({
+    required String fileName,
+    required String filePath,
+    required String fileType,
+    required int fileSize,
+    String? outputFormat,
+  });
+
   /// Delete a resume
   /// Returns void when operation is complete
   Future<void> deleteResume({

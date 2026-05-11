@@ -272,6 +272,7 @@ class _TabashirApiService implements TabashirApiService {
   Future<HttpResponse<List<int>>> formatCV(
     MultipartFile file,
     String? outputLanguage,
+    String? outputFormat,
   ) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
@@ -281,6 +282,9 @@ class _TabashirApiService implements TabashirApiService {
     _data.files.add(MapEntry('file', file));
     if (outputLanguage != null) {
       _data.fields.add(MapEntry('output_language', outputLanguage));
+    }
+    if (outputFormat != null) {
+      _data.fields.add(MapEntry('output_format', outputFormat));
     }
     final _options = _setStreamType<HttpResponse<List<int>>>(
       Options(

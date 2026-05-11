@@ -299,12 +299,6 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factory<_i674.SettingsRepository>(
       () => _i955.SettingsRepositoryImpl(gh<_i527.LocalStorageService>()),
     );
-    gh.factory<_i229.ResumeVaultRepository>(
-      () => _i296.SyncHybridResumeRepository(
-        gh<_i914.ResumeApiService>(),
-        gh<_i475.LocalResumeRepository>(),
-      ),
-    );
     gh.factory<_i88.FileResumeRepository>(
       () => _i6.FileResumeRepositoryImpl(gh<_i914.ResumeApiService>()),
     );
@@ -314,8 +308,12 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i1.TabashirApiService>(),
       ),
     );
-    gh.lazySingleton<_i938.ResumeVaultCubit>(
-      () => _i938.ResumeVaultCubit(gh<_i229.ResumeVaultRepository>()),
+    gh.factory<_i229.ResumeVaultRepository>(
+      () => _i296.SyncHybridResumeRepository(
+        gh<_i914.ResumeApiService>(),
+        gh<_i1.TabashirApiService>(),
+        gh<_i475.LocalResumeRepository>(),
+      ),
     );
     gh.factory<_i939.ServicesRepository>(
       () => _i202.ServicesRepositoryImpl(gh<_i231.LocalPersistenceService>()),
@@ -416,6 +414,9 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i36.ProfileCubit>(),
         gh<_i117.AuthCubit>(),
       ),
+    );
+    gh.lazySingleton<_i938.ResumeVaultCubit>(
+      () => _i938.ResumeVaultCubit(gh<_i229.ResumeVaultRepository>()),
     );
     gh.factory<_i532.JobsCubit>(
       () => _i532.JobsCubit(

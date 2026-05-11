@@ -63,32 +63,32 @@ class AddResumeOptionsSheet extends StatelessWidget {
             SizedBox(height: AppTheme.spacingLg.h),
             ListTile(
               leading: Icon(
-                state.isUploading ? Icons.hourglass_top : Icons.upload_file,
+                state.isUploading ? Icons.hourglass_top : Icons.document_scanner_outlined,
                 color: state.isUploading ? AppTheme.primaryColor : null,
               ),
               title: Text(
                 state.isUploading
-                    ? 'Uploading resume...'.tr()
-                    : 'Upload from Device'.tr(),
+                    ? 'Reformatting resume...'.tr()
+                    : 'Reformat to ATS'.tr(),
               ),
               subtitle: Text(
                 state.isUploading
-                    ? 'Please wait while we upload your resume'.tr()
-                    : 'Upload PDF or DOCX files'.tr(),
+                    ? 'Please wait while we reformat your resume'.tr()
+                    : 'Upload existing resume to optimize for ATS'.tr(),
               ),
               onTap: state.isUploading
                   ? null
                   : () async {
-                      await _uploadFromDevice(context);
+                      await _uploadFromDevice(context, isReformat: true);
                       if (context.mounted) {
                         Navigator.pop(context);
                       }
                     },
             ),
             ListTile(
-              leading: const Icon(Icons.auto_awesome),
-              title: Text('Create with AI'.tr()),
-              subtitle: Text('Generate resume with AI assistance'.tr()),
+              leading: const Icon(Icons.create_outlined),
+              title: Text('Build from Scratch'.tr()),
+              subtitle: Text('Generate a new resume with AI assistance'.tr()),
               onTap: state.isUploading
                   ? null
                   : () {
@@ -125,72 +125,86 @@ class AddResumeOptionsSheet extends StatelessWidget {
     );
   }
 
-  Future<void> _uploadFromDevice(BuildContext context) async {
-    AppLogger.debug('🟢 [ADD_RESUME_SHEET] _uploadFromDevice() called', tag: 'Resume');
+  Future<void> _uploadFromDevice(BuildContext context, {bool isReformat = false}) async {
+    AppLogger.debug('🟢 [ADD_RESUME_SHEET] _uploadFromDevice() called (isReformat: $isReformat)', tag: 'Resume');
     try {
       final cubit = context.read<ResumeVaultCubit>();
-      AppLogger.debug('🟢 [ADD_RESUME_SHEET] Got ResumeVaultCubit instance', tag: 'Resume');
+
+      // If reformatting, ask for desired output format first
+      String? outputFormat;
+      if (isReformat) {
+        outputFormat = await showDialog<String>(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: Text('Select Output Format'.tr()),
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  ListTile(
+                    leading: const Icon(Icons.picture_as_pdf, color: Colors.red),
+                    title: const Text('PDF Document'),
+                    onTap: () => Navigator.pop(context, 'pdf'),
+                  ),
+                  ListTile(
+                    leading: const Icon(Icons.description, color: Colors.blue),
+                    title: const Text('Word Document (DOCX)'),
+                    onTap: () => Navigator.pop(context, 'docx'),
+                  ),
+                ],
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.pop(context),
+                  child: Text('Cancel'.tr()),
+                ),
+              ],
+            );
+          },
+        );
+
+        if (outputFormat == null) return; // User cancelled
+      }
 
       AppLogger.debug('🟢 [ADD_RESUME_SHEET] Opening file picker...', tag: 'Resume');
       final result = await FilePicker.platform.pickFiles(
         type: FileType.custom,
         allowedExtensions: ['pdf', 'docx'],
       );
-      AppLogger.debug('🟢 [ADD_RESUME_SHEET] File picker returned: ${result != null ? 'files selected' : 'user cancelled or null'}', tag: 'Resume');
-
-      if (result == null) {
-        AppLogger.debug('🟢 [ADD_RESUME_SHEET] File picker returned null (user cancelled or no permission)', tag: 'Resume');
-        return;
-      }
-
-      if (result.files.isEmpty) {
-        AppLogger.debug('🟢 [ADD_RESUME_SHEET] No files selected', tag: 'Resume');
-        return;
-      }
+      
+      if (result == null || result.files.isEmpty) return;
 
       final file = result.files.single;
-      AppLogger.debug('🟢 [ADD_RESUME_SHEET] File details:', tag: 'Resume');
-      AppLogger.debug('🟢 [ADD_RESUME_SHEET]   - Name: ${file.name}', tag: 'Resume');
-      AppLogger.debug('🟢 [ADD_RESUME_SHEET]   - Path: ${file.path}', tag: 'Resume');
-      AppLogger.debug('🟢 [ADD_RESUME_SHEET]   - Size: ${file.size} bytes', tag: 'Resume');
-      AppLogger.debug('🟢 [ADD_RESUME_SHEET]   - Extension: ${file.extension}', tag: 'Resume');
-
-      if (file.path == null) {
-        AppLogger.debug('🟢 [ADD_RESUME_SHEET] File path is null - cannot upload', tag: 'Resume');
-        // File path is null, nothing to upload
-        return;
-      }
+      if (file.path == null) return;
 
       final fileName = file.name;
       final filePath = file.path!;
       final fileSize = file.size;
       final fileExtension = file.extension?.toLowerCase() ?? '';
 
-      AppLogger.debug('🟢 [ADD_RESUME_SHEET] File validation:', tag: 'Resume');
-      AppLogger.debug('🟢 [ADD_RESUME_SHEET]   - fileSize: $fileSize bytes', tag: 'Resume');
-      AppLogger.debug('🟢 [ADD_RESUME_SHEET]   - fileExtension: $fileExtension', tag: 'Resume');
-
       if (fileSize > 10 * 1024 * 1024) {
-        AppLogger.debug('🟢 [ADD_RESUME_SHEET] File too large ($fileSize bytes > 10MB)', tag: 'Resume');
-        // File too large, nothing to upload
+        AppLogger.debug('🟢 [ADD_RESUME_SHEET] File too large');
         return;
       }
 
-      AppLogger.debug('🟢 [ADD_RESUME_SHEET] File validation passed. Calling cubit.uploadResume()...', tag: 'Resume');
-      await cubit.uploadResume(
-        fileName: fileName,
-        filePath: filePath,
-        fileType: fileExtension,
-        fileSize: fileSize,
-      );
-      AppLogger.debug('🟢 [ADD_RESUME_SHEET] ✅ cubit.uploadResume() completed', tag: 'Resume');
-      AppLogger.debug('🟢 [ADD_RESUME_SHEET] Upload initiated - UI will update via state changes', tag: 'Resume');
-      // Note: onTap handler will close the sheet after this method completes
+      if (isReformat) {
+        await cubit.reformatResume(
+          fileName: fileName,
+          filePath: filePath,
+          fileType: fileExtension,
+          fileSize: fileSize,
+          outputFormat: outputFormat,
+        );
+      } else {
+        await cubit.uploadResume(
+          fileName: fileName,
+          filePath: filePath,
+          fileType: fileExtension,
+          fileSize: fileSize,
+        );
+      }
     } catch (e, stackTrace) {
-      AppLogger.error('🟢 [ADD_RESUME_SHEET] ❌ Exception occurred: $e', tag: 'Resume', error: e);
-      AppLogger.debug('🟢 [ADD_RESUME_SHEET] StackTrace: $stackTrace', tag: 'Resume');
-      // Errors will be handled by the cubit's error state
-      // The screen's BlocListener will show error messages
+      AppLogger.error('🟢 [ADD_RESUME_SHEET] ❌ Exception: $e', tag: 'Resume', error: e);
     }
   }
 

@@ -109,7 +109,15 @@ class PaymentFulfillmentService:
             formatted_docx = format_cv_from_path(original_cv_path)
             pdf_path = convert_docx_to_pdf(formatted_docx)
             final_filename = pdf_path.name
-            final_path = cv_dir / final_filename
+            
+            # Use production CV storage path if possible
+            final_path = ResumesConfig.AI_APPLY_CV_STORAGE_PATH / final_filename
+            try:
+                os.makedirs(ResumesConfig.AI_APPLY_CV_STORAGE_PATH, exist_ok=True)
+            except Exception as e:
+                logger.warning(f"Could not create production CV directory {ResumesConfig.AI_APPLY_CV_STORAGE_PATH}: {e}")
+                final_path = cv_dir / final_filename
+
             shutil.move(pdf_path, final_path)
 
             if formatted_docx.exists():

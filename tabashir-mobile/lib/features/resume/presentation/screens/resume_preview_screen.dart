@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
@@ -117,7 +118,7 @@ class _ResumePreviewScreenState extends State<ResumePreviewScreen> {
         actions: [
           IconButton(
             icon: const Icon(Icons.download),
-            onPressed: () => _downloadResume(context),
+            onPressed: () => _showDownloadOptions(context),
             tooltip: 'Download',
           ),
         ],
@@ -217,7 +218,43 @@ class _ResumePreviewScreenState extends State<ResumePreviewScreen> {
     );
   }
 
-  Future<void> _downloadResume(BuildContext context) async {
+  Future<void> _showDownloadOptions(BuildContext context) async {
+    final String? selectedFormat = await showDialog<String>(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Select Format'.tr()),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              ListTile(
+                leading: const Icon(Icons.picture_as_pdf, color: Colors.red),
+                title: const Text('PDF Document'),
+                onTap: () => Navigator.pop(context, 'pdf'),
+              ),
+              ListTile(
+                leading: const Icon(Icons.description, color: Colors.blue),
+                title: const Text('Word Document (DOCX)'),
+                onTap: () => Navigator.pop(context, 'docx'),
+              ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: Text('Cancel'.tr()),
+            ),
+          ],
+        );
+      },
+    );
+
+    if (selectedFormat != null && mounted) {
+      _downloadResume(context, selectedFormat);
+    }
+  }
+
+  Future<void> _downloadResume(BuildContext context, String format) async {
     try {
       final scaffoldMessenger = ScaffoldMessenger.of(context);
 
@@ -227,14 +264,28 @@ class _ResumePreviewScreenState extends State<ResumePreviewScreen> {
         throw Exception('Resume URL is not available');
       }
 
+      // Add format parameter to URL
+      final downloadUrl = url.contains('?') 
+          ? '$url&output_format=$format' 
+          : '$url?output_format=$format';
+
       final dir = await getApplicationDocumentsDirectory();
-      final fileName = '${widget.resume.filename}.pdf';
+      final extension = format == 'docx' ? 'docx' : 'pdf';
+      final fileName = '${widget.resume.filename}.$extension';
       final filePath = '${dir.path}/$fileName';
 
       final token = await AuthSessionService.instance.accessToken;
       final dio = getIt<AuthDioClient>().dio;
+      
+      scaffoldMessenger.showSnackBar(
+        SnackBar(
+          content: Text('Downloading ${format.toUpperCase()}...'),
+          duration: const Duration(seconds: 1),
+        ),
+      );
+
       await dio.download(
-        url,
+        downloadUrl,
         filePath,
         options: Options(
           headers: {
@@ -248,11 +299,9 @@ class _ResumePreviewScreenState extends State<ResumePreviewScreen> {
           content: Text('Resume downloaded to $filePath'),
           backgroundColor: AppTheme.successColor,
           action: SnackBarAction(
-            label: 'View',
+            label: 'OK',
             textColor: Colors.white,
-            onPressed: () {
-              // Open file location (not possible on all platforms)
-            },
+            onPressed: () {},
           ),
         ),
       );

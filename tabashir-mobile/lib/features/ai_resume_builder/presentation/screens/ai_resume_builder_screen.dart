@@ -266,10 +266,35 @@ class AiResumeBuilderView extends StatelessWidget {
             child: Text('Review Again'.tr()),
           ),
           ElevatedButton(
-            onPressed: () {
+            onPressed: () async {
               Navigator.pop(context);
 
-              // Trigger Payment Flow
+              // 1. Select Format
+              final format = await showDialog<String>(
+                context: context,
+                builder: (BuildContext context) => AlertDialog(
+                  title: Text('Select Output Format'.tr()),
+                  content: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      ListTile(
+                        leading: const Icon(Icons.picture_as_pdf, color: Colors.red),
+                        title: const Text('PDF Document'),
+                        onTap: () => Navigator.pop(context, 'pdf'),
+                      ),
+                      ListTile(
+                        leading: const Icon(Icons.description, color: Colors.blue),
+                        title: const Text('Word Document (DOCX)'),
+                        onTap: () => Navigator.pop(context, 'docx'),
+                      ),
+                    ],
+                  ),
+                ),
+              );
+
+              if (format == null || !context.mounted) return;
+
+              // 2. Trigger Payment Flow
               context.read<PaymentCubit>().onPaymentSuccess = (result) async {
                 String? txnId;
                 result.when(
@@ -277,9 +302,10 @@ class AiResumeBuilderView extends StatelessWidget {
                   cancelled: () => txnId = null,
                   failed: (_) => txnId = null,
                 );
-                if (txnId != null) {
+                if (txnId != null && context.mounted) {
                   context.read<AiResumeBuilderCubit>().generateAndSave(
                     paymentIntentId: txnId,
+                    outputFormat: format,
                   );
                 }
                 context.read<PaymentCubit>().reset();
