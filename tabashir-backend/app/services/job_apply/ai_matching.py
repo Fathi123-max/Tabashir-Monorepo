@@ -6,34 +6,10 @@ import numpy as np
 import spacy
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
-from app.database.db import execute_query, execute_ai_query
 
 # Set up logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
-
-def ensure_user_in_ai_db(email):
-    """
-    Ensures that a user with the given email exists in the AI database.
-    If not, it attempts to sync them from the main database.
-    """
-    # 1. Check AI DB
-    client = execute_ai_query("SELECT id FROM clients WHERE email = %s", (email,), fetch_one=True)
-    if client:
-        return True
-        
-    # 2. Fallback to Main DB
-    user = execute_query('SELECT id, name FROM users WHERE email = %s', (email,), fetch_one=True)
-    if not user:
-        return False
-        
-    # 3. Provision in AI DB
-    execute_ai_query(
-        "INSERT INTO clients (email, name, date_in) VALUES (%s, %s, NOW())",
-        (email, user['name']),
-        commit=True
-    )
-    return True
 
 # Load spaCy model
 try:
@@ -90,23 +66,6 @@ def extract_job_title(description: str) -> str:
         logger.error(f"Error extracting job title: {e}")
         return description[:50].strip()
 
-# Simple cache for spaCy documents to avoid redundant processing
-_nlp_cache = {}
-
-def get_nlp_doc(text: str):
-    """Get or create a spaCy doc with caching"""
-    if not text or nlp is None:
-        return None
-    
-    # Use first 5000 chars as cache key
-    cache_key = text[:5000]
-    if cache_key not in _nlp_cache:
-        # Keep cache size manageable
-        if len(_nlp_cache) > 100:
-            _nlp_cache.clear()
-        _nlp_cache[cache_key] = nlp(cache_key)
-    return _nlp_cache[cache_key]
-
 def calculate_skills_match(job_text: str, candidate_skills: str) -> float:
     """Calculate skills match score using NLP"""
     try:
@@ -126,15 +85,14 @@ def calculate_skills_match(job_text: str, candidate_skills: str) -> float:
             
         # Enhance with spaCy similarity if available
         if nlp is not None:
-            doc1 = get_nlp_doc(job_text)
-            doc2 = get_nlp_doc(candidate_skills)
+            doc1 = nlp(job_text[:5000])  # Limit text size for performance
+            doc2 = nlp(candidate_skills[:5000])
+            spacy_similarity = doc1.similarity(doc2)
             
-            if doc1 and doc2:
-                spacy_similarity = doc1.similarity(doc2)
-                # Combine TF-IDF and spaCy similarity
-                combined_score = (similarity + spacy_similarity) / 2
-                logger.info(f"Skills match score: {combined_score:.2f}")
-                return combined_score
+            # Combine TF-IDF and spaCy similarity
+            combined_score = (similarity + spacy_similarity) / 2
+            logger.info(f"Skills match score: {combined_score:.2f}")
+            return combined_score
         
         logger.info(f"Skills match score (TF-IDF only): {similarity:.2f}")
         return similarity

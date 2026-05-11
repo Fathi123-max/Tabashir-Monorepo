@@ -179,12 +179,12 @@ class Profile(Resource):
                 placeholders = ', '.join(['%s'] * len(profile_data))
                 values = [profile_id, candidate['id']] + list(profile_data.values())
                 execute_query(
-                    f'INSERT INTO "CandidateProfile" ("id", "candidateId", {columns}, "createdAt", "updatedAt") VALUES (%s, %s, {placeholders}, NOW(), NOW())',
+                    f'INSERT INTO "CandidateProfile" ("id", "candidateId", {columns}, "onboardingCompleted", "createdAt", "updatedAt") VALUES (%s, %s, {placeholders}, true, NOW(), NOW())',
                     values,
                     commit=True
                 )
 
-        return {"message": "Profile updated", "success": True, "userId": user_id}, HTTPStatus.OK
+        return {"success": True, "message": "Profile updated successfully"}, HTTPStatus.OK
 
 
 def _ensure_candidate_exists(user_id):

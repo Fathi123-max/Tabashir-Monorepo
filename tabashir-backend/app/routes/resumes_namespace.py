@@ -37,8 +37,7 @@ from app.services.job_apply import (
 )
 from app.services.send_linkedin_email import send_email
 from app.services.job_apply.ai_matching import (
-    title_position_match, calculate_skills_match, semantic_location_match,
-    ensure_user_in_ai_db
+    title_position_match, calculate_skills_match, semantic_location_match
 )
 
 resumes_ns = Namespace('resumes', description='Resume Management and AI Processing')
@@ -1611,7 +1610,7 @@ class Jobs(Resource):
         'attendance': 'Match keyword in description (remote, hybrid, onsite)',
         'sort': 'Sort options: job_date_desc | job_date_asc | salary_desc | salary_asc',
         'limit': 'Number of jobs per page (default 15)',
-        'page': 'Page number (0-indexed, default 0)',
+        'page': 'Page number (default 1)',
         'lang': 'Language: en (default) | ar',
     })
     def get(self):
@@ -1650,12 +1649,11 @@ class Jobs(Resource):
 
             sort = args.get('sort', 'job_date_desc')
             language = args.get('lang', 'en').strip().lower()
-            _limit = args.get('limit', '15')
-            _page = args.get('page', '0')
+            _limit = args.get('limit', '')
+            _page = args.get('page', '')
             limit = int(_limit) if (_limit.isdigit() and int(_limit) > 0) else 15
-            page = int(_page) if _page.isdigit() else 0
-            if page < 0: page = 0
-            offset = page * limit
+            page = int(_page) if _page.isdigit() and int(_page) > 0 else 1
+            offset = (page - 1) * limit
             
             # Validate language parameter
             if language not in ['en', 'ar']:
@@ -1666,9 +1664,6 @@ class Jobs(Resource):
             params = []
             where_clauses.append("NULLIF(job_date, 'Nan')::date >= (CURRENT_DATE - INTERVAL '2 months')")
 
-            if email:
-                ensure_user_in_ai_db(email)
-
             client_id = None
             if email:
                 cursor.execute("SELECT id FROM clients WHERE email = %s", (email,))
@@ -1676,46 +1671,59 @@ class Jobs(Resource):
                 if client_row:
                     client_id = str(client_row[0])
             
-            # Emirates city filter (default) - works for both languages
-            # Only apply if no explicit location filters (cities) are provided
-            is_city_filtered = False
+            # --- IMPROVED FILTERING LOGIC ---
             
-            # Location filter - single and list
+            # 1. Location / Work Mode (Attendance)
+            # Split locations into cities and work modes (Remote, On-site, Hybrid)
+            actual_cities = []
+            detected_work_modes = []
+            work_mode_keywords = {
+                'remote': ['remote', 'remotely', 'work from home', 'telecommute', 'عن بعد'],
+                'on-site': ['on-site', 'onsite', 'in-office', 'office-based', 'من الموقع', 'من المكتب'],
+                'hybrid': ['hybrid', 'flexible', 'نظام مختلط', 'هجين']
+            }
+            
+            # Combine single location and locations list
+            all_location_inputs = []
             if location:
-                if language == 'ar':
-                    where_clauses.append("LOWER(COALESCE(vacancy_city_ar, vacancy_city)) = LOWER(%s)")
-                else:
-                    where_clauses.append("LOWER(vacancy_city) = LOWER(%s)")
-                params.append(location)
-                is_city_filtered = True
-            
+                all_location_inputs.append(location)
             if locations:
-                # Separate cities from work modes (sometimes sent in locations list from mobile)
-                work_modes = ['remote', 'on-site', 'hybrid', 'onsite']
-                actual_cities = [l for l in locations if l.lower() not in work_modes]
-                detected_work_modes = [l for l in locations if l.lower() in work_modes]
-                
-                if actual_cities:
-                    placeholders = ', '.join(['LOWER(%s)'] * len(actual_cities))
-                    if language == 'ar':
-                        where_clauses.append(f"LOWER(COALESCE(vacancy_city_ar, vacancy_city)) IN ({placeholders})")
-                    else:
-                        where_clauses.append(f"LOWER(vacancy_city) IN ({placeholders})")
-                    params.extend(actual_cities)
-                    is_city_filtered = True
-                
-                if detected_work_modes:
-                    mode_clauses = []
-                    for mode in detected_work_modes:
-                        search_mode = mode.lower().replace('on-site', 'onsite')
-                        if language == 'ar':
-                            mode_clauses.append("LOWER(COALESCE(job_description_ar, job_description)) LIKE %s")
-                        else:
-                            mode_clauses.append("LOWER(job_description) LIKE %s")
-                        params.append(f"%{search_mode}%")
-                    where_clauses.append("(" + " OR ".join(mode_clauses) + ")")
+                all_location_inputs.extend(locations)
+            
+            for loc in all_location_inputs:
+                loc_lower = loc.lower().strip()
+                found_mode = False
+                for mode, keywords in work_mode_keywords.items():
+                    if any(kw in loc_lower for kw in keywords):
+                        detected_work_modes.append(mode)
+                        found_mode = True
+                        break
+                if not found_mode:
+                    actual_cities.append(loc)
 
-            # Apply default Emirates filter if NO cities are filtered
+            # Filter by Cities
+            if actual_cities:
+                placeholders = ', '.join(['LOWER(%s)'] * len(actual_cities))
+                if language == 'ar':
+                    where_clauses.append(f"LOWER(COALESCE(vacancy_city_ar, vacancy_city)) IN ({placeholders})")
+                else:
+                    where_clauses.append(f"LOWER(vacancy_city) IN ({placeholders})")
+                params.extend(actual_cities)
+
+            # Filter by Work Modes (searched in description and working_hours)
+            if detected_work_modes:
+                mode_clauses = []
+                for mode in detected_work_modes:
+                    if language == 'ar':
+                        mode_clauses.append("LOWER(COALESCE(job_description_ar, job_description)) LIKE %s")
+                        params.append(f"%{mode}%")
+                    else:
+                        mode_clauses.append("(LOWER(job_description) LIKE %s OR LOWER(COALESCE(working_hours, '')) LIKE %s)")
+                        params.extend([f"%{mode}%", f"%{mode}%"])
+                where_clauses.append("(" + " OR ".join(mode_clauses) + ")")
+
+            # Default Emirates filter (only if no explicit location filters provided)
+            is_city_filtered = bool(actual_cities or detected_work_modes or attendance)
             if not is_city_filtered:
                 emirates = [
                     'abu dhabi', 'dubai', 'sharjah', 'ajman',
@@ -1728,7 +1736,7 @@ class Jobs(Resource):
                 where_clauses.append("(" + " OR ".join(city_clauses) + ")")
                 params.extend([f"%{city}%" for city in emirates])
 
-            # Search functionality - language specific
+            # 2. Search functionality - language specific
             if search:
                 if language == 'ar':
                     where_clauses.append("""
@@ -1739,74 +1747,59 @@ class Jobs(Resource):
                     where_clauses.append("(LOWER(job_title) ILIKE %s OR LOWER(job_description) ILIKE %s)")
                 params.extend([f"%{search.lower()}%"] * 2)
 
-            # Experience filter
-            if experience:
-                if language == 'ar':
-                    where_clauses.append("LOWER(COALESCE(experience_ar, experience)) = LOWER(%s)")
-                else:
-                    where_clauses.append("LOWER(experience) = LOWER(%s)")
-                params.append(experience)
-            
-            if experience_levels:
-                level_clauses = []
-                # Map common UI levels to DB keywords
-                level_map = {
-                    'entry-level': ['entry', 'junior', 'graduate', 'without', 'fresh', '0-1'],
-                    'mid-level': ['mid', 'intermediate', 'middle', '2-5'],
-                    'senior': ['senior', '5+', 'expert', 'lead'],
-                    'lead': ['lead', 'manager', 'head', 'director']
-                }
-                
-                for level in experience_levels:
-                    l_lower = level.lower()
-                    keywords = level_map.get(l_lower, [l_lower])
-                    
-                    for kw in keywords:
-                        if language == 'ar':
-                            level_clauses.append("LOWER(COALESCE(experience_ar, experience)) LIKE %s")
-                        else:
-                            level_clauses.append("LOWER(experience) LIKE %s")
-                        params.append(f"%{kw}%")
-                
-                if level_clauses:
-                    where_clauses.append("(" + " OR ".join(level_clauses) + ")")
-
-            # Job Type / Attendance filter
+            # 3. Job Type / Attendance (Directly from params)
             type_where_clauses = []
             
+            # If explicit attendance keyword provided (like from older web client)
             if attendance:
-                search_mode = attendance.lower().replace('on-site', 'onsite')
                 if language == 'ar':
                     type_where_clauses.append("LOWER(COALESCE(job_description_ar, job_description)) LIKE %s")
                 else:
                     type_where_clauses.append("LOWER(job_description) LIKE %s")
-                params.append(f"%{search_mode}%")
+                params.append(f"%{attendance}%")
                 
+            # Job types list (Full-time, Part-time, etc.)
             if job_types:
                 for jtype in job_types:
-                    j_lower = jtype.lower()
-                    # Check both job_type column AND description for robustness
                     if language == 'ar':
                         type_where_clauses.append("(LOWER(COALESCE(job_type, '')) = %s OR LOWER(COALESCE(job_description_ar, job_description)) LIKE %s)")
                     else:
                         type_where_clauses.append("(LOWER(COALESCE(job_type, '')) = %s OR LOWER(job_description) LIKE %s)")
-                    params.extend([j_lower, f"%{j_lower}%"])
-            
+                    params.extend([jtype.lower(), f"%{jtype.lower()}%"])
+
             if type_where_clauses:
                 where_clauses.append("(" + " OR ".join(type_where_clauses) + ")")
 
-            # Skills filter
-            if skills:
-                skill_clauses = []
-                for skill in skills:
-                    if language == 'ar':
-                        skill_clauses.append("LOWER(COALESCE(job_description_ar, job_description)) LIKE %s")
-                    else:
-                        skill_clauses.append("LOWER(job_description) LIKE %s")
-                    params.append(f"%{skill.lower()}%")
-                where_clauses.append("(" + " OR ".join(skill_clauses) + ")")
+            # 4. Experience Levels (Fuzzy matching using keywords)
+            if experience or experience_levels:
+                all_exp_inputs = []
+                if experience: all_exp_inputs.append(experience)
+                if experience_levels: all_exp_inputs.extend(experience_levels)
+                
+                exp_keywords = {
+                    'entry-level': ['entry', 'junior', 'fresh', 'beginner', 'no experience', 'مبتدئ', 'بدون خبرة'],
+                    'mid-level': ['mid', 'middle', 'intermediate', 'متوسط'],
+                    'senior': ['senior', 'expert', 'experienced', 'خبير', 'سينيور'],
+                    'lead': ['lead', 'manager', 'director', 'head', 'principal', 'رئيس', 'مدير']
+                }
+                
+                exp_overall_clauses = []
+                for exp in all_exp_inputs:
+                    exp_lower = exp.lower().strip()
+                    keywords = exp_keywords.get(exp_lower, [exp_lower])
+                    
+                    sub_clauses = []
+                    for kw in keywords:
+                        if language == 'ar':
+                            sub_clauses.append("LOWER(COALESCE(experience_ar, experience)) LIKE %s")
+                        else:
+                            sub_clauses.append("LOWER(experience) LIKE %s")
+                        params.append(f"%{kw}%")
+                    exp_overall_clauses.append("(" + " OR ".join(sub_clauses) + ")")
+                
+                where_clauses.append("(" + " OR ".join(exp_overall_clauses) + ")")
 
-            # Salary range filter
+            # 5. Salary range filter
             if min_salary is not None:
                 if language == 'ar':
                     where_clauses.append("NULLIF(substring(COALESCE(salary_ar, salary) from '\\d+'), '')::bigint >= %s")
@@ -1820,6 +1813,7 @@ class Jobs(Resource):
                 else:
                     where_clauses.append("NULLIF(substring(salary from '\\d+'), '')::bigint <= %s")
                 params.append(max_salary)
+
             
             if where_clauses:
                 where_sql = f"WHERE {' AND '.join(where_clauses)}"
@@ -1963,10 +1957,8 @@ class Jobs(Resource):
                             print(f"[JOBS_NS] Saved jobs count: {len(saved_job_ids)}")
 
                         # 2. Fetch Profile for Matching
-                        cols = get_table_columns('CandidateProfile', 'main')
-                        loc_field = 'cp.location' if 'location' in cols else "NULL as location"
                         profile = execute_query(
-                            f'''SELECT cp."jobType", cp.skills, {loc_field}
+                            '''SELECT cp."jobType", cp.skills, cp.location
                                FROM "Candidate" c
                                JOIN "CandidateProfile" cp ON cp."candidateId" = c.id
                                WHERE c."userId" = %s''',
@@ -2040,8 +2032,6 @@ class Jobs(Resource):
                 pre_calculated_score = ranking_map.get(str(job.get('id')))
                 if pre_calculated_score is not None:
                     job['match_percentage'] = str(pre_calculated_score)
-                    # For debugging
-                    # print(f"[JOBS_NS] Job {job.get('id')}: Using pre-calculated match {job['match_percentage']}%")
                 
                 # Priority 2: AI Matching Calculation (Fallback)
                 elif match_profile:
@@ -2049,6 +2039,8 @@ class Jobs(Resource):
                         title_score = title_position_match(job.get('job_title', ''), match_profile['positions'])
                         # Use job_description for skills matching
                         job_desc = job.get('job_description') or ''
+                        print(f"[JOBS_NS] Job {job.get('id')}: title='{job.get('job_title')}', desc_len={len(job_desc)}, city='{job.get('vacancy_city')}'")
+                        print(f"[JOBS_NS]   Profile: positions='{match_profile['positions']}', skills='{match_profile['skills']}', location='{match_profile['location']}'")
                         
                         skill_score = calculate_skills_match(job_desc if job_desc else job.get('job_title', ''), match_profile['skills'])
                         location_score = semantic_location_match(job.get('vacancy_city', ''), match_profile['location'])
@@ -2320,24 +2312,21 @@ class JobById(Resource):
             email = request.args.get('email')
             if email:
                 try:
-                    # 1. Try to get score from rankings table first for consistency with the "Matched For you" section
+                    # Priority 1: Check pre-calculated rankings table for consistency
                     cursor.execute("""
                         SELECT ROUND(score)::int 
                         FROM rankings 
-                        WHERE LOWER(email) = LOWER(%s) AND job_id = %s::text
-                        LIMIT 1
-                    """, (email, job_id))
-                    ranking_row = cursor.fetchone()
-                    if ranking_row:
-                        job['match_percentage'] = str(ranking_row[0])
-                        # We found a matching score, no need to recalculate
+                        WHERE LOWER(email) = LOWER(%s) AND job_id = %s
+                    """, (email, str(job_id)))
+                    rank_row = cursor.fetchone()
+                    
+                    if rank_row:
+                        job['match_percentage'] = str(rank_row[0])
                     else:
-                        # 2. Fallback to on-demand calculation if not found in rankings
+                        # Priority 2: Recalculate if not in rankings (Fallback)
                         # Fetch profile from main DB instead of AI DB
-                        cols = get_table_columns('CandidateProfile', 'main')
-                        loc_field = 'cp.location' if 'location' in cols else "NULL as location"
-                        profile_row = execute_query(f"""
-                            SELECT cp."jobType", cp.skills, {loc_field} 
+                        profile_row = execute_query("""
+                            SELECT cp."jobType", cp.skills, cp.location 
                             FROM "CandidateProfile" cp
                             JOIN "Candidate" c ON cp."candidateId" = c.id
                             JOIN users u ON c."userId" = u.id
@@ -2369,7 +2358,7 @@ class JobById(Resource):
                             final_score = round((0.4 * title_score + 0.4 * skill_score + 0.2 * location_score), 3)
                             job['match_percentage'] = str(int(round(final_score * 100, 0)))
                 except Exception as e:
-                    print(f"[JOBS_NS] Error calculating match for job details: {e}")
+                    print(f"[JOBS_NS] Error calculating match for job details from main DB: {e}")
 
             return {
                 "success": True,
@@ -2736,8 +2725,7 @@ class MatchedJobs(Resource):
     @resumes_ns.doc(params={
         'email': 'User email to match jobs against their profile',
         'limit': 'Number of jobs per page (default 15)',
-        'page': 'Page number (default 0)',
-        'lang': 'Language: en (default) | ar',
+        'page': 'Page number (default 1)',
     })
     def get(self):
         """
@@ -2748,22 +2736,12 @@ class MatchedJobs(Resource):
         try:
             args = request.args
             email = args.get('email')
-            language = args.get('lang', 'en').strip().lower()
-
             if not email:
                 return {"success": False, "message": "Email is required"}, 400
 
-            if language not in ['en', 'ar']:
-                language = 'en'
-
-            # Ensure user exists in AI DB before matching
-            ensure_user_in_ai_db(email)
-
             limit = int(args.get('limit', 15))
-            _page = args.get('page', '0')
-            page = int(_page) if _page.isdigit() else 0
-            if page < 0: page = 0
-            offset = page * limit
+            page = int(args.get('page', 1))
+            offset = (page - 1) * limit
 
             # Fetch user profile
             cursor.execute("SELECT positions, skills, location FROM clients WHERE email = %s", (email,))
@@ -2781,45 +2759,9 @@ class MatchedJobs(Resource):
             filter_term = user_profile["positions"].split(",")[0].strip().lower() if user_profile["positions"] else ""
             search_filter = f"%{filter_term}%"
 
-            # Build SELECT fields based on language
-            if language == 'ar':
-                select_fields = """
-                    id, entity, nationality, gender,
-                    COALESCE(job_title_ar, job_title) as job_title,
-                    COALESCE(job_description_ar, job_description) as job_description,
-                    COALESCE(academic_qualification_ar, academic_qualification) as academic_qualification,
-                    COALESCE(experience_ar, experience) as experience,
-                    COALESCE(languages_ar, languages) as languages,
-                    COALESCE(salary_ar, salary) as salary,
-                    COALESCE(vacancy_city_ar, vacancy_city) as vacancy_city,
-                    COALESCE(working_hours_ar, working_hours) as working_hours,
-                    COALESCE(working_days_ar, working_days) as working_days,
-                    application_email, job_date, phone, source, apply_url,
-                    COALESCE(company_name_ar, company_name) as entity,
-                    COALESCE(company_name_ar, company_name) as company_name,
-                    website_url, job_type, translation_status
-                """
-            else:
-                select_fields = """
-                    id, entity, nationality, gender,
-                    job_title,
-                    job_description,
-                    academic_qualification,
-                    experience,
-                    languages,
-                    salary,
-                    vacancy_city,
-                    working_hours,
-                    working_days,
-                    application_email, job_date, phone, source, apply_url,
-                    company_name,
-                    entity,
-                    website_url, job_type, translation_status
-                """
-
             # Fetch recent jobs excluding already applied ones with light filtering
-            cursor.execute(f"""
-               SELECT {select_fields}
+            cursor.execute("""
+               SELECT *
                FROM jobs
                WHERE id::text NOT IN (
                     SELECT job_id FROM rankings WHERE client_id = (
@@ -2845,72 +2787,42 @@ class MatchedJobs(Resource):
                     if isinstance(val, datetime):
                         job[key] = val.isoformat()
                 jobs.append(job)
+            print(f"Filter term for semantic match: '{filter_term}'")
+            print(f"Filtered Jobs Before Scoring: {len(jobs)}")
 
             # Score and rank jobs
             for job in jobs:
-                # Standardize field names for logic
-                current_title = job.get('job_title', '')
-                current_desc = job.get('job_description', '')
-                current_city = job.get('vacancy_city', '')
+                # Standardize aliases for mobile model compatibility
+                job['entity'] = job.get('company_name', '')
+                job['job_title'] = job.get('job_title', '') or job.get('title', '')
+                job['vacancy_city'] = job.get('vacancy_city', '') or job.get('location', '')
                 
-                title_score = title_position_match(current_title, user_profile['positions'])
-                skill_score = calculate_skills_match(current_desc, user_profile['skills'])
-                location_score = semantic_location_match(current_city, user_profile['location'])
+                title_score = title_position_match(job['job_title'], user_profile['positions'])
+                skill_score = calculate_skills_match(job['job_description'], user_profile['skills'])
+                location_score = semantic_location_match(job['vacancy_city'], user_profile['location'])
 
                 final_score = round((0.4 * title_score + 0.4 * skill_score + 0.2 * location_score), 3)
                 job['match_percentage'] = str(int(round(final_score * 100, 0)))  # percentage as integer string
 
             sorted_matches = sorted(jobs, key=lambda x: (-float(x['match_percentage']), x['id']))
             total_matches = len(sorted_matches)
+
+            print(f"Total Matches After Scoring: {total_matches}")
+            if total_matches > 0:
+                print("Top 5 Matches:")
+                for i, match in enumerate(sorted_matches[:5]):
+                    print(f" {i+1}. Job ID: {match['id']}, Title: '{match['job_title']}', Score: {match['match_percentage']}%")
+
             paginated = sorted_matches[offset:offset + limit]
-
-            # On-demand translation for current page (Arabic only)
-            if language == 'ar' and paginated:
-                try:
-                    ids_to_translate = [j['id'] for j in paginated if (j.get('translation_status') or '').lower() != 'completed']
-                    if ids_to_translate:
-                        from app.services.job_translation_worker import translate_job_now
-                        for jid in ids_to_translate:
-                            try:
-                                translate_job_now(jid)
-                            except Exception:
-                                pass
-
-                        # Re-fetch translated jobs and merge
-                        placeholders = ','.join(['%s'] * len(ids_to_translate))
-                        refetch_query = f"""
-                            SELECT {select_fields}
-                            FROM jobs
-                            WHERE id IN ({placeholders})
-                        """
-                        cursor.execute(refetch_query, tuple(ids_to_translate))
-                        refetch_columns = [desc[0] for desc in cursor.description]
-                        refetched = [dict(zip(refetch_columns, r)) for r in cursor.fetchall()]
-                        id_to_job = {j['id']: j for j in refetched}
-                        for idx, job in enumerate(paginated):
-                            updated = id_to_job.get(job['id'])
-                            if updated:
-                                # Preserve match percentage
-                                score = job['match_percentage']
-                                paginated[idx] = updated
-                                paginated[idx]['match_percentage'] = score
-                except Exception:
-                    pass
-
-            # Clean up job_description for response
-            for job in paginated:
-                if 'job_description' in job:
-                    del job['job_description']
-
 
             return {
                 "success": True,
                 "matched_jobs": paginated,
                 "pagination": {
-                    "total": total_matches,
+                    "total_jobs": total_matches,
                     "page": page,
                     "limit": limit,
-                    "pages": ceil(total_matches / limit)
+                    "total_pages": ceil(total_matches / limit)
                 }
             }, 200
 
@@ -2978,7 +2890,7 @@ class MatchedJobsPerClient(Resource):
                     j.application_email,
                     j.job_date,
                     r.status,
-                    ROUND(r.score)::int as match_percentage
+                    r.score::int as match_percentage
                 FROM rankings r
                 INNER JOIN jobs j ON r.job_id = j.id::text
                 WHERE LOWER(r.email) = LOWER(%s)

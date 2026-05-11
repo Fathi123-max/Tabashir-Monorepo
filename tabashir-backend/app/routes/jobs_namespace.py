@@ -1,4 +1,5 @@
 import uuid
+from datetime import date, datetime
 from flask_restx import Namespace, Resource
 from flask import request
 from http import HTTPStatus
@@ -54,9 +55,19 @@ class SavedJobs(Resource):
                 for job in jobs:
                     if job.get('savedAt') and hasattr(job['savedAt'], 'isoformat'):
                         job['savedAt'] = job['savedAt'].isoformat()
+                    # Ensure all values are JSON-serializable
+                    for key, val in list(job.items()):
+                        if isinstance(val, (datetime, date)):
+                            job[key] = val.isoformat()
+                        elif val is None:
+                            job[key] = None  # Keep nulls explicit
+            print(f"[SAVED_JOBS] user={user_id}, count={len(jobs) if jobs else 0}")
             return {"savedJobs": jobs or []}, HTTPStatus.OK
-        except Exception:
-            return {"savedJobs": []}, HTTPStatus.OK
+        except Exception as e:
+            import traceback
+            print(f"[SAVED_JOBS] ERROR: {e}")
+            print(traceback.format_exc())
+            return {"error": str(e), "savedJobs": []}, HTTPStatus.INTERNAL_SERVER_ERROR
 
     @jobs_ns.doc(security='Bearer')
     @jwt_required
