@@ -6,11 +6,16 @@ import 'package:go_router/go_router.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:dio/dio.dart';
+import 'package:tabashir/core/network/models/resume_response/resume_item.dart';
+import 'package:tabashir/features/resume/presentation/cubit/resume_vault_cubit.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/router/route_names.dart';
 import '../../domain/repositories/resume_vault_repository.dart';
-import '../../../../core/network/models/resume_response/resume_item.dart';
-import '../cubit/resume_vault_cubit.dart';
+import 'package:open_filex/open_filex.dart';
+import '../../../../core/network/_clients/auth_dio_client.dart';
+import '../../../../core/services/auth_session_service.dart';
+import '../../../../core/di/injection.dart';
+import '../../../../core/utils/app_logger.dart';
 
 /// Widget for displaying resume options bottom sheet
 class ResumeVaultOptionsSheet extends StatelessWidget {
@@ -98,6 +103,14 @@ class ResumeVaultOptionsSheet extends StatelessWidget {
     ),
     // Hidden: Make a Copy option removed
     // Hidden: Rename option removed
+    ListTile(
+      leading: const Icon(Icons.open_in_new),
+      title: const Text('Open with...'),
+      onTap: () {
+        Navigator.pop(context);
+        _openResume(context);
+      },
+    ),
     ListTile(
       leading: const Icon(Icons.share),
       title: const Text('Share'),
@@ -230,51 +243,30 @@ class ResumeVaultOptionsSheet extends StatelessWidget {
     );
   }
 
+  Future<void> _openResume(BuildContext context) async {
+    try {
+      final filePath = await _prepareFile(context);
+      if (filePath != null) {
+        await OpenFilex.open(filePath);
+      }
+    } catch (e) {
+      AppLogger.error('Failed to open resume: $e');
+    }
+  }
+
   Future<void> _shareResume(BuildContext context) async {
     try {
-      final scaffoldMessenger = ScaffoldMessenger.of(context);
-
-      // Download the file first
-      final dir = await getTemporaryDirectory();
-      final fileName = '${resume.name}.pdf';
-      final filePath = '${dir.path}/$fileName';
-
-      final dio = Dio();
-      // For local files, we might not need to download if it's already a local path
-      // But if it's a URL, we download it.
-      // Since we are in the vault, it's likely a local path, but let's handle both.
-
-      if (resume.filePath.startsWith('http')) {
-        await dio.download(
-          resume.filePath,
-          filePath,
+      final filePath = await _prepareFile(context);
+      if (filePath != null) {
+        final result = await Share.shareXFiles(
+          [XFile(filePath)],
+          subject: 'Resume: ${resume.name}',
+          text: 'Check out my resume',
         );
-      } else {
-        // It's a local file, just copy it to temp for sharing if needed,
-        // or just share directly if path is accessible.
-        // For safety, let's copy to temp.
-        final sourceFile = File(resume.filePath);
-        if (await sourceFile.exists()) {
-          await sourceFile.copy(filePath);
-        } else {
-          throw Exception('File not found at ${resume.filePath}');
+        if (result.status == ShareResultStatus.success) {
+          AppLogger.debug('Shared successfully');
         }
       }
-
-      // Share the file
-      final file = XFile(filePath, mimeType: 'application/pdf');
-      await Share.shareXFiles(
-        [file],
-        subject: 'Resume: ${resume.name}',
-        text: 'Check out my resume',
-      );
-
-      scaffoldMessenger.showSnackBar(
-        SnackBar(
-          content: const Text('Resume ready to share'),
-          backgroundColor: AppTheme.successColor,
-        ),
-      );
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
@@ -282,6 +274,63 @@ class ResumeVaultOptionsSheet extends StatelessWidget {
           backgroundColor: AppTheme.errorColor,
         ),
       );
+    }
+  }
+
+  Future<String?> _prepareFile(BuildContext context) async {
+    try {
+      final dir = await getTemporaryDirectory();
+
+      // Determine extension
+      String ext = '.pdf';
+      if (resume.fileType.toUpperCase() == 'DOCX' ||
+          resume.name.toLowerCase().contains('docx')) {
+        ext = '.docx';
+      }
+
+      String baseName = resume.name;
+      if (baseName.toLowerCase().endsWith('.pdf'))
+        baseName = baseName.substring(0, baseName.length - 4);
+      if (baseName.toLowerCase().endsWith('.docx'))
+        baseName = baseName.substring(0, baseName.length - 5);
+
+      final fileName =
+          '${baseName}_${DateTime.now().millisecondsSinceEpoch}$ext';
+      final filePath = '${dir.path}/$fileName';
+
+      if (resume.filePath.startsWith('http')) {
+        final token = await AuthSessionService.instance.accessToken;
+        final dio = getIt<AuthDioClient>().dio;
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Preparing resume...'),
+            duration: Duration(seconds: 1),
+          ),
+        );
+
+        await dio.download(
+          resume.filePath,
+          filePath,
+          options: Options(
+            headers: {
+              if (token != null) 'Authorization': 'Bearer $token',
+            },
+          ),
+        );
+      } else {
+        final sourceFile = File(resume.filePath);
+        if (await sourceFile.exists()) {
+          await sourceFile.copy(filePath);
+        } else {
+          throw Exception('File not found');
+        }
+      }
+
+      return filePath;
+    } catch (e) {
+      AppLogger.error('Failed to prepare file: $e');
+      return null;
     }
   }
 }

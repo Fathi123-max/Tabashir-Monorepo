@@ -30,6 +30,13 @@ class _ResumeVaultScreenState extends State<ResumeVaultScreen> {
   void initState() {
     super.initState();
     AppLogger.debug('🔵 [RESUME_VAULT_SCREEN] initState() called', tag: 'Resume');
+    
+    // Trigger load if not already loaded
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) {
+        context.read<ResumeVaultCubit>().loadResumes();
+      }
+    });
   }
 
   @override
@@ -78,7 +85,8 @@ class _ResumeVaultScreenState extends State<ResumeVaultScreen> {
         builder: (context, state) {
           AppLogger.debug('🔵 [RESUME_VAULT_SCREEN] Builder called with status: ${state.status}, resumes count: ${state.resumes.length}', tag: 'Resume');
 
-          if (state.status == ResumeVaultStatus.loading) {
+          if (state.status == ResumeVaultStatus.loading || 
+              state.status == ResumeVaultStatus.initial) {
             AppLogger.debug('🔵 [RESUME_VAULT_SCREEN] Showing loading indicator', tag: 'Resume');
             return const Center(
               child: Column(
@@ -195,29 +203,18 @@ class _ResumeVaultScreenState extends State<ResumeVaultScreen> {
   Widget _buildContent(BuildContext context, ResumeVaultState state) {
     AppLogger.debug('🔵 [RESUME_VAULT_SCREEN] Building content with ${state.resumes.length} resumes', tag: 'Resume');
 
-    // Filter out duplicates by filename to hide duplicate resumes
-    final uniqueResumes = <String>{};
-    final filteredResumes = state.resumes.where((resume) {
-      final key = '${resume.name}_${resume.id}';
-      if (uniqueResumes.contains(key)) {
-        return false;
-      }
-      uniqueResumes.add(key);
-      return true;
-    }).toList();
-
-    AppLogger.debug('🔵 [RESUME_VAULT_SCREEN] After filtering duplicates: ${filteredResumes.length} unique resumes', tag: 'Resume');
+    final resumes = state.resumes;
 
     return RefreshIndicator(
       onRefresh: () async {
-        AppLogger.debug('🔵 [RESUME_VAULT_SCREEN] Refresh indicator triggered, reloading...', tag: 'Resume');
-        await context.read<ResumeVaultCubit>().loadResumes();
+        AppLogger.debug('🔵 [RESUME_VAULT_SCREEN] Refresh indicator triggered, forcing reload...', tag: 'Resume');
+        await context.read<ResumeVaultCubit>().loadResumes(force: true);
       },
       child: ListView.builder(
         padding: EdgeInsets.all(AppTheme.spacingMd.w),
-        itemCount: filteredResumes.length,
+        itemCount: resumes.length,
         itemBuilder: (context, index) {
-          final resume = filteredResumes[index];
+          final resume = resumes[index];
           AppLogger.debug('🔵 [RESUME_VAULT_SCREEN] Building card for resume: ${resume.name}', tag: 'Resume');
           return Padding(
             padding: EdgeInsets.only(bottom: AppTheme.spacingMd.h),
@@ -235,21 +232,10 @@ class _ResumeVaultScreenState extends State<ResumeVaultScreen> {
   void _viewResume(BuildContext context, ResumeItem resume) {
     AppLogger.debug('🔵 [RESUME_VAULT_SCREEN] View resume tapped for: ${resume.name}', tag: 'Resume');
 
-    // Create a core ResumeItem for the preview
-    final coreResume = ResumeItem(
-      id: resume.id,
-      filename: resume.name,
-      originalUrl: resume.filePath ?? '',
-      formatedUrl: null,
-      isAiResume: false,
-      createdAt: DateTime.now(),
-      updatedAt: DateTime.now(),
-    );
-
-    // Navigate to resume preview
+    // Navigate to resume preview with the full resume object
     context.push(
       RouteNames.resumePreview,
-      extra: coreResume,
+      extra: resume,
     );
   }
 

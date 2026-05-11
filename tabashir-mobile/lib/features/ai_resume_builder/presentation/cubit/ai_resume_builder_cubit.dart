@@ -126,11 +126,10 @@ class AiResumeBuilderCubit extends Cubit<AiResumeBuilderState> {
 
     try {
       final apiService = getIt<ResumeApiService>();
-      final ext = outputFormat == 'docx' ? 'docx' : 'pdf';
       final request = SaveAndGenerateRequest(
         resumeData: state.resumeData,
         templateId: state.selectedTemplateId,
-        filename: 'AI_Resume_${DateTime.now().millisecondsSinceEpoch}.$ext',
+        filename: 'AI_Resume_${DateTime.now().millisecondsSinceEpoch}',
         paymentIntentId: paymentIntentId ?? state.paymentIntentId,
         outputFormat: outputFormat ?? 'pdf',
       );

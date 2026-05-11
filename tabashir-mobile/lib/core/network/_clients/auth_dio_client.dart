@@ -139,9 +139,9 @@ class AuthDioClient {
       // Main backend URL for authentication, user management, payments, etc.
       // Uses environment variable for local development
       baseUrl: baseUrl,
-      connectTimeout: const Duration(seconds: 120),
-      receiveTimeout: const Duration(seconds: 120),
-      sendTimeout: const Duration(seconds: 120),
+      connectTimeout: const Duration(seconds: 300),
+      receiveTimeout: const Duration(seconds: 300),
+      sendTimeout: const Duration(seconds: 300),
       // The default headers for the API client
       // In this case, we are setting the `Content-Type` to `application/json`.
       headers: {

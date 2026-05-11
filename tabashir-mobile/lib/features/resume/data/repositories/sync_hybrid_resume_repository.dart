@@ -203,7 +203,7 @@ class SyncHybridResumeRepository implements ResumeVaultRepository {
       // Call the specialized formatCV endpoint
       final response = await _tabashirApiService.formatCV(
         multipartFile,
-        'en', // Default to English for now
+        'regular', // Use 'regular' for English templates
         outputFormat ?? 'pdf',
       );
 
@@ -220,8 +220,14 @@ class SyncHybridResumeRepository implements ResumeVaultRepository {
 
         AppLogger.debug('🔄 [SYNC_REPO] Reformatted file saved locally. Uploading to vault...', tag: 'Resume');
         
+        // Remove old extension from fileName if it exists
+        String cleanFileName = fileName;
+        if (cleanFileName.contains('.')) {
+          cleanFileName = cleanFileName.substring(0, cleanFileName.lastIndexOf('.'));
+        }
+
         return await uploadResume(
-          fileName: 'ATS_${outputFormat?.toUpperCase() ?? 'PDF'}_$fileName',
+          fileName: 'ATS_${outputFormat?.toUpperCase() ?? 'PDF'}_$cleanFileName.$ext',
           filePath: reformattedPath,
           fileType: ext,
           fileSize: response.data.length,
@@ -230,6 +236,15 @@ class SyncHybridResumeRepository implements ResumeVaultRepository {
         throw Exception('Failed to reformat CV: ${response.response.statusMessage}');
       }
     } catch (e) {
+      if (e is DioException) {
+        String? serverMessage;
+        if (e.response?.data is Map) {
+          serverMessage = e.response?.data['error'] ?? e.response?.data['message'];
+        }
+        final finalMessage = serverMessage ?? e.message;
+        AppLogger.error('❌ [SYNC_REPO] ❌ Reformat failed: $finalMessage', tag: 'Resume', error: e);
+        throw Exception('Server error: $finalMessage');
+      }
       AppLogger.error('❌ [SYNC_REPO] ❌ Reformat failed: $e', tag: 'Resume', error: e);
       rethrow;
     }
@@ -437,9 +452,13 @@ class SyncHybridResumeRepository implements ResumeVaultRepository {
 
   /// Extract file type from filename
   String _extractFileType(String fileName) {
+    final lowerName = fileName.toLowerCase();
+    if (lowerName.contains('ats_docx') || lowerName.endsWith('.docx')) return 'DOCX';
+    
     final parts = fileName.split('.');
     if (parts.length > 1) {
-      return parts.last.toUpperCase();
+      final ext = parts.last.toUpperCase();
+      if (ext == 'DOC' || ext == 'DOCX' || ext == 'PDF') return ext;
     }
     return 'PDF'; // Default
   }

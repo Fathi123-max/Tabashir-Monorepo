@@ -3,8 +3,12 @@ import uuid
 import json
 import shutil
 import re
+import logging
 from math import ceil
 from datetime import datetime, timedelta
+
+logger = logging.getLogger(__name__)
+
 from dateutil.relativedelta import relativedelta
 from flask import request, send_file, jsonify, make_response
 from flask_restx import Namespace, Resource, reqparse, fields
@@ -150,9 +154,10 @@ class ResumeList(Resource):
     def get(self):
         """List all resumes for the user"""
         user_id = request.user_id
+        logger.debug(f"[RESUME_NS] Fetching resumes for user: {user_id}")
         
         resumes = execute_query(
-            """SELECT r.id, r.filename, r."originalUrl", r."formatedUrl", r."isAiResume", r."createdAt", r."updatedAt"
+            """SELECT r.id, r.filename, r."originalUrl", r."formatedUrl", r."isAiResume", r."formatedContent", r."createdAt", r."updatedAt"
                FROM "Resume" r
                JOIN "Candidate" c ON r."candidateId" = c.id
                WHERE c."userId" = %s
@@ -161,21 +166,31 @@ class ResumeList(Resource):
             fetch_all=True
         )
         
+        logger.debug(f"[RESUME_NS] Found {len(resumes) if resumes else 0} resumes in DB")
+        
         # Convert to list of dicts and handle datetime
         resume_list = []
         base_url = request.host_url.rstrip('/')
-        for r in resumes:
-            r_dict = dict(r)
-            r_dict['isAiResume'] = bool(r_dict.get('isAiResume', False))
-            
-            # Construct download URL if originalUrl is just a filename
-            if r_dict.get('originalUrl') and not r_dict['originalUrl'].startswith('http'):
-                r_dict['originalUrl'] = f"{base_url}/api/v1/resumes/{r_dict['id']}/download"
+        if resumes:
+            for r in resumes:
+                r_dict = dict(r)
+                r_dict['isAiResume'] = bool(r_dict.get('isAiResume', False))
                 
-            for key in ['createdAt', 'updatedAt']:
-                if r_dict.get(key):
-                    r_dict[key] = r_dict[key].isoformat()
-            resume_list.append(r_dict)
+                # Map formatedContent to sourceData for mobile app
+                if r_dict.get('formatedContent'):
+                    try:
+                        r_dict['sourceData'] = json.loads(r_dict['formatedContent'])
+                    except:
+                        r_dict['sourceData'] = None
+                
+                # Construct download URL if originalUrl is just a filename
+                if r_dict.get('originalUrl') and not r_dict['originalUrl'].startswith('http'):
+                    r_dict['originalUrl'] = f"{base_url}/api/v1/resumes/{r_dict['id']}/download"
+                    
+                for key in ['createdAt', 'updatedAt']:
+                    if r_dict.get(key):
+                        r_dict[key] = r_dict[key].isoformat()
+                resume_list.append(r_dict)
             
         return {
             "success": True,
@@ -205,6 +220,13 @@ class ResumeDetail(Resource):
             
         resume_dict = dict(resume)
         
+        # Map formatedContent to sourceData for mobile app
+        if resume_dict.get('formatedContent'):
+            try:
+                resume_dict['sourceData'] = json.loads(resume_dict['formatedContent'])
+            except:
+                resume_dict['sourceData'] = None
+                
         # Construct download URL if originalUrl is just a filename
         if resume_dict.get('originalUrl') and not resume_dict['originalUrl'].startswith('http'):
             base_url = request.host_url.rstrip('/')
@@ -262,6 +284,7 @@ class ResumeDownload(Resource):
     def get(self, resume_id):
         """Download the resume file"""
         user_id = request.user_id
+        output_format = request.args.get('output_format', '').lower()
         
         resume = execute_query(
             """SELECT r.filename, r."originalUrl" 
@@ -275,16 +298,40 @@ class ResumeDownload(Resource):
         if not resume:
             return {"success": False, "message": "Resume not found"}, HTTPStatus.NOT_FOUND
             
-        file_path = Config.CV_STORAGE_PATH / resume['originalUrl']
+        original_filename = resume['originalUrl']
+        file_path = Config.CV_STORAGE_PATH / original_filename
         
+        # Handle format requests
+        if output_format == 'pdf':
+            pdf_filename = original_filename.replace('.docx', '.pdf')
+            pdf_path = Config.CV_STORAGE_PATH / pdf_filename
+            if os.path.exists(pdf_path):
+                file_path = pdf_path
+                mimetype = 'application/pdf'
+                display_filename = resume['filename'].replace('.docx', '.pdf') if resume['filename'].lower().endswith('.docx') else f"{resume['filename']}.pdf"
+            else:
+                # Fallback to original if PDF doesn't exist
+                mimetype = 'application/pdf' if original_filename.lower().endsWith('.pdf') else 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+                display_filename = resume['filename']
+        else:
+            mimetype = 'application/pdf'
+            display_filename = resume['filename']
+            
+            # Check for mislabeled DOCX files
+            if 'ATS_DOCX' in display_filename or display_filename.lower().endswith('.docx') or original_filename.lower().endswith('.docx'):
+                mimetype = 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+                if not display_filename.lower().endswith('.docx'):
+                    display_filename = display_filename.replace('.pdf', '.docx') if display_filename.lower().endswith('.pdf') else f"{display_filename}.docx"
+                
         if not os.path.exists(file_path):
             return {"success": False, "message": "File not found on server"}, HTTPStatus.NOT_FOUND
-            
+                
         from flask import send_file
         return send_file(
             str(file_path),
             as_attachment=True,
-            download_name=resume['filename']
+            download_name=display_filename,
+            mimetype=mimetype
         )
 
 
@@ -399,7 +446,7 @@ class FormatCV(Resource):
             filename = secure_filename(file.filename)
             base_name = os.path.splitext(filename)[0]
             temp_input_path = Config.TEMP_FOLDER / filename
-            file.save(temp_input_path)
+            file.save(str(temp_input_path))
 
 
             raw_cv_data = extract_text(temp_input_path)
@@ -411,7 +458,11 @@ class FormatCV(Resource):
             formatted_path = Config.FORMATTED_FOLDER / output_filename
 
             template = Config.ARABIC_TEMPLATE_PATH if output_language == 'arabic' else Config.REGULAR_TEMPLATE_PATH
-            formatted_cv.write_document(template, formatted_path)
+            
+            if not template.exists():
+                raise Exception(f"CV Template not found at {template}. Please ensure the template file exists in the templates folder.")
+
+            formatted_cv.write_document(str(template), str(formatted_path))
 
             final_path = formatted_path
             if output_language == 'arabic':
@@ -420,11 +471,19 @@ class FormatCV(Resource):
                 final_path = translated_path
 
             if output_format == 'pdf':
-                pdf_path = convert_docx_to_pdf(final_path)
-                return send_file(
-                    pdf_path, as_attachment=True, download_name=pdf_path.name,
-                    mimetype='application/pdf'
-                )
+                try:
+                    pdf_path = convert_docx_to_pdf(final_path)
+                    return send_file(
+                        pdf_path, as_attachment=True, download_name=pdf_path.name,
+                        mimetype='application/pdf'
+                    )
+                except Exception as pdf_err:
+                    logger.error(f"PDF conversion failed: {pdf_err}")
+                    # If PDF fails, fallback to DOCX and notify user
+                    return send_file(
+                        final_path, as_attachment=True, download_name=final_path.name,
+                        mimetype='application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+                    )
 
             return send_file(
                 final_path, as_attachment=True, download_name=final_path.name,
@@ -433,6 +492,8 @@ class FormatCV(Resource):
         except ValueError as ve:
             return self._error_response("Invalid input", str(ve), HTTPStatus.BAD_REQUEST.value)
         except Exception as e:
+            import traceback
+            traceback.print_exc()
             return self._error_response("CV processing failed", str(e), HTTPStatus.INTERNAL_SERVER_ERROR.value)
         finally:
             if temp_input_path and os.path.exists(temp_input_path):
@@ -450,6 +511,9 @@ class FormatCV(Resource):
             raise ValueError("No file selected")
 
         output_language = req.form.get('output_language', 'regular').lower()
+        if output_language == 'en':
+            output_language = 'regular'
+            
         if output_language not in ('arabic', 'regular'):
             raise ValueError("Invalid output_language. Only 'arabic' or 'regular' supported")
 
@@ -681,8 +745,9 @@ class SaveAndGenerate(Resource):
             filename = data.get('filename', 'resume.docx')
             payment_intent_id = data.get('payment_intent_id')
             draft_id = data.get('draft_id')
+            output_format = data.get('output_format', 'pdf').lower()
 
-            print(f"DEBUG: Input data - template_id: {template_id}, payment_intent_id: {payment_intent_id}, draft_id: {draft_id}")
+            print(f"DEBUG: Input data - template_id: {template_id}, payment_intent_id: {payment_intent_id}, draft_id: {draft_id}, output_format: {output_format}")
             if not resume_data:
                 print("DEBUG: Missing resume_data in request")
                 raise ValueError("Missing 'resume_data' in request")
@@ -751,20 +816,39 @@ class SaveAndGenerate(Resource):
                 else:
                     candidate_id = candidate['id']
 
-                # 1.3 Resume Generation (Logic remains same, but wrapped in try/except)
+                # 1.3 Resume Generation
                 resume_obj = Resume.from_dict(resume_data)
                 resume_obj.source_data = resume_data
-                unique_filename = f"{uuid.uuid4()}_{secure_filename(filename)}"
+                
+                # Force base filename to be docx for the template engine
+                base_filename = secure_filename(filename)
+                if base_filename.lower().endswith('.pdf'):
+                    base_filename = base_filename[:-4]
+                if not base_filename.lower().endswith('.docx'):
+                    base_filename = f"{base_filename}.docx"
+                
+                unique_filename = f"{uuid.uuid4()}_{base_filename}"
                 os.makedirs(Config.CV_STORAGE_PATH, exist_ok=True)
                 file_path = Config.CV_STORAGE_PATH / unique_filename
+                
                 template_path = Config.ARABIC_TEMPLATE_PATH if template_id == 'arabic' else Config.REGULAR_TEMPLATE_PATH
                 resume_obj.write_document(str(template_path), str(file_path))
 
                 # 1.4 Create Resume record
                 resume_id = str(uuid.uuid4())
+                
+                # Determine URLs
+                base_url = request.host_url.rstrip('/')
+                download_url = f"{base_url}/api/v1/resumes/{resume_id}/download"
+                
+                # If PDF was generated, we can provide it as formattedUrl
+                pdf_filename = unique_filename.replace('.docx', '.pdf')
+                pdf_path = Config.CV_STORAGE_PATH / pdf_filename
+                formatted_url = f"{download_url}?output_format=pdf" if os.path.exists(pdf_path) else None
+
                 cursor.execute(
                     """INSERT INTO "Resume" 
-                       (id, "candidateId", filename, "originalUrl", "isAiResume", "sourceData", "createdAt", "updatedAt") 
+                       (id, "candidateId", filename, "originalUrl", "isAiResume", "formatedContent", "createdAt", "updatedAt") 
                        VALUES (%s, %s, %s, %s, %s, %s, NOW(), NOW())""",
                     (resume_id, candidate_id, filename, unique_filename, True, json.dumps(resume_obj.source_data))
                 )
@@ -802,19 +886,25 @@ class SaveAndGenerate(Resource):
                 conn.rollback()
                 print(f"DEBUG: DB Transaction Error (ROLLED BACK): {db_err}")
                 traceback.print_exc()
-                if os.path.exists(file_path):
-                    os.remove(file_path)
-                    os.remove(pdf_path)
+                try:
+                    if 'file_path' in locals() and os.path.exists(file_path):
+                        os.remove(file_path)
+                    # Check for PDF version too
+                    if 'file_path' in locals():
+                        pdf_cleanup = Path(file_path).with_suffix('.pdf')
+                        if os.path.exists(pdf_cleanup):
+                            os.remove(pdf_cleanup)
+                except:
+                    pass
                 raise db_err
 
             # Return ONLY the resume dictionary, not wrapped in {success, resume}
             # because ResumeApiService.saveAndGenerate expects ResumeItem directly.
-            base_url = request.host_url.rstrip('/')
             return {
                 "id": resume_id,
                 "filename": filename,
-                "originalUrl": f"{base_url}/api/v1/resumes/{resume_id}/download",
-                "formatedUrl": None,
+                "originalUrl": download_url,
+                "formatedUrl": formatted_url,
                 "isAiResume": True,
                 "sourceData": resume_obj.source_data,
                 "createdAt": datetime.utcnow().isoformat(),

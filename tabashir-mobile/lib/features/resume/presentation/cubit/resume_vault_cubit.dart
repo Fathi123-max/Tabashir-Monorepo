@@ -56,12 +56,6 @@ class ResumeVaultCubit extends Cubit<ResumeVaultState> {
       return;
     }
 
-    // If not initialized yet, don't auto-load - wait for initializeWithResumes
-    if (!_isInitialized && !force) {
-      AppLogger.debug('🔵 [RESUME_VAULT_CUBIT] Not initialized yet, skipping auto-load. Call initializeWithResumes() first.', tag: 'Resume');
-      return;
-    }
-
     _isLoading = true;
     AppLogger.debug('🔵 [RESUME_VAULT_CUBIT] loadResumes() called', tag: 'Resume');
     AppLogger.debug('🔵 [RESUME_VAULT_CUBIT] Current state: ${state.status}', tag: 'Resume');

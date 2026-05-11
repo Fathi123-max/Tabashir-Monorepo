@@ -137,104 +137,117 @@ def cv_formatter(cv_txt: str, translate_to_english=False) -> Resume:
 
     # Create Each Individual Section as an Object
     print("Formulating Header Section") 
-    if queries["header"]:
-        header = Header(name=queries["header"][0].upper(),
-                        email=queries["header"][1],
-                        phone=queries["header"][2],
-                        location=queries["header"][3],
-                        linkedin=queries["header"][4],
-                        github=queries["header"][5],
-                        nationality=queries["header"][6])
+    header_data = queries.get("header")
+    if header_data and isinstance(header_data, list) and len(header_data) >= 4:
+        header = Header(
+            name=header_data[0].upper() if header_data[0] else "CANDIDATE",
+            email=header_data[1] if len(header_data) > 1 else "",
+            phone=header_data[2] if len(header_data) > 2 else "",
+            location=header_data[3] if len(header_data) > 3 else "",
+            linkedin=header_data[4] if len(header_data) > 4 else "",
+            github=header_data[5] if len(header_data) > 5 else "",
+            nationality=header_data[6] if len(header_data) > 6 else ""
+        )
     else:
-        header = None
+        header = Header(name="CANDIDATE", email="", phone="", location="")
 
     print("Formulating CareerObjective Section") 
-    if queries["objective"]:
-        objective = CareerObjective(objective=queries["objective"])
+    objective_data = queries.get("objective")
+    if objective_data:
+        objective = CareerObjective(objective=str(objective_data))
     else:
-        objective = None    
+        objective = CareerObjective(objective="")    
         
     print("Formulating Education Section")
-    if queries["education"]:
-        education = []
-        for educ in queries["education"]:
-            education.append(EducationExperience(university=educ[0],
-                                        location=educ[1],
-                                        date=educ[2],
-                                        major=educ[3],
-                                        degree=educ[4],
-                                        GPA=educ[5],
-                                        coursework=educ[6],
-                                        details=educ[7]))
-    else:
-        education = None
-        
+    education_data = queries.get("education")
+    education = []
+    if education_data and isinstance(education_data, list):
+        for educ in education_data:
+            if isinstance(educ, list) and len(educ) >= 1:
+                education.append(EducationExperience(
+                    university=educ[0] if len(educ) > 0 else "",
+                    location=educ[1] if len(educ) > 1 else "",
+                    date=educ[2] if len(educ) > 2 else "",
+                    major=educ[3] if len(educ) > 3 else "",
+                    degree=educ[4] if len(educ) > 4 else "",
+                    GPA=educ[5] if len(educ) > 5 else "",
+                    coursework=educ[6] if len(educ) > 6 else [],
+                    details=educ[7] if len(educ) > 7 else []
+                ))
+    
     print("Formulating Work Section")
-    if queries["work"]:
-        work = []
-        for work_exp in queries["work"]:
-            work.append(WorkAndLeadershipExperience(company=work_exp[0],
-                                            position=work_exp[1],
-                                            date=work_exp[2],
-                                            location=work_exp[3],
-                                            details=work_exp[4]))
-    else:
-        work = None
+    work_data = queries.get("work")
+    work = []
+    if work_data and isinstance(work_data, list):
+        for work_exp in work_data:
+            if isinstance(work_exp, list) and len(work_exp) >= 1:
+                work.append(WorkAndLeadershipExperience(
+                    company=work_exp[0] if len(work_exp) > 0 else "",
+                    position=work_exp[1] if len(work_exp) > 1 else "",
+                    date=work_exp[2] if len(work_exp) > 2 else "",
+                    location=work_exp[3] if len(work_exp) > 3 else "",
+                    details=work_exp[4] if len(work_exp) > 4 else []
+                ))
         
     print("Formulating Projects Section")
-    if queries["projects"]:
-        projects = []
-        for project in queries["projects"]:
-            projects.append(Project(title=project[0],
-                                position=project[1],
-                                date=project[2],
-                                location=project[3],
-                                details=project[4]))
-    else:
-        projects = None
+    projects_data = queries.get("projects")
+    projects = []
+    if projects_data and isinstance(projects_data, list):
+        for project in projects_data:
+            if isinstance(project, list) and len(project) >= 1:
+                projects.append(Project(
+                    title=project[0] if len(project) > 0 else "",
+                    position=project[1] if len(project) > 1 else "",
+                    date=project[2] if len(project) > 2 else "",
+                    location=project[3] if len(project) > 3 else "",
+                    details=project[4] if len(project) > 4 else []
+                ))
         
     print("Formulating Leadership Section")
-    if queries["lship"]:
-        lship = []
-        for leadership in queries["lship"]:
-            lship.append(WorkAndLeadershipExperience(company = leadership[0],
-                                            position = leadership[1],
-                                            date = leadership[2],
-                                            location = leadership[3],
-                                            details = leadership[4]))
+    lship_data = queries.get("lship")
+    lship = []
+    if lship_data and isinstance(lship_data, list):
+        for leadership in lship_data:
+            if isinstance(leadership, list) and len(leadership) >= 1:
+                lship.append(WorkAndLeadershipExperience(
+                    company=leadership[0] if len(leadership) > 0 else "",
+                    position=leadership[1] if len(leadership) > 1 else "",
+                    date=leadership[2] if len(leadership) > 2 else "",
+                    location=leadership[3] if len(leadership) > 3 else "",
+                    details=leadership[4] if len(leadership) > 4 else []
+                ))
 
-        # If lship and work have any "copy/paste" instances, remove them from lship (prioritize work experience over leadership experience)
-        if work:  # Check if work is not None before iterating
+        # If lship and work have any "copy/paste" instances, remove them from lship
+        if work:
             for work_entry in work:
-                for lship_entry in lship:
+                for lship_entry in lship[:]: # Use slice to allow removal
                     if lship_entry == work_entry:
                         lship.remove(lship_entry)
 
-        if not work or work == []:  # If there are 0 work experiences, leadership experiences become work experiences (as they are technically the same thing)
+        if not work:
             work = lship
-            lship = None
-    else:
-        lship = []
+            lship = []
     
     print("Formulating Skills Section")
-    if queries["skills"]:
-        skills = Skills(softskills = queries["skills"][0],
-                        skillset  = queries["skills"][1],
-                        training  = queries["skills"][2])
+    skills_data = queries.get("skills")
+    if skills_data and isinstance(skills_data, list) and len(skills_data) >= 2:
+        skills = Skills(
+            softskills=skills_data[0] if len(skills_data) > 0 else [],
+            skillset=skills_data[1] if len(skills_data) > 1 else [],
+            training=skills_data[2] if len(skills_data) > 2 else []
+        )
     else:
-        skills = None
+        skills = Skills(softskills=[], skillset=[], training=[])
+
     print("Formulating Languages Section")
-    if queries["languages"]:
-        languages = Languages(langs = queries["languages"])
+    languages_data = queries.get("languages")
+    if languages_data:
+        languages = Languages(langs=languages_data)
     else:
         languages = None     
 
     print("Formulating Keywords Section")
-    if queries["keywords"]:
-        keywords = queries["keywords"]
-    else:
-        keywords = None
+    keywords = queries.get("keywords", [])
     
     print("Returning Resume Object to Function Caller")
-    # Arrange all Objects into a Single Formatted Resume Object and reutrn to Caller
-    return Resume(header = header, objective = objective, work = work, education = education, skills = skills,languages = languages, lship = lship, projects = projects, keywords = keywords)
+    return Resume(header=header, objective=objective, work=work, education=education, skills=skills, languages=languages, lship=lship, projects=projects, keywords=keywords)

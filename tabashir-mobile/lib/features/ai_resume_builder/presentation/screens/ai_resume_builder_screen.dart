@@ -5,6 +5,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:tabashir/core/router/route_names.dart';
 import 'package:tabashir/core/theme/app_theme.dart';
+import '../../../profile/presentation/cubit/profile_cubit.dart';
 import '../cubit/ai_resume_builder_cubit.dart';
 import '../widgets/ai_resume_builder_header.dart';
 import 'steps/personal_details_step.dart';
@@ -27,6 +28,7 @@ class AiResumeBuilderScreen extends StatelessWidget {
     providers: [
       BlocProvider(create: (context) => AiResumeBuilderCubit()),
       BlocProvider(create: (context) => getIt<PaymentCubit>()),
+      BlocProvider.value(value: getIt<ProfileCubit>()),
     ],
     child: const AiResumeBuilderView(),
   );
@@ -252,40 +254,56 @@ class AiResumeBuilderView extends StatelessWidget {
     BuildContext context,
     AiResumeBuilderCubit cubit,
   ) async {
+    final profileState = context.read<ProfileCubit>().state;
+    final plan = profileState.profile?.subscriptionPlan?.toUpperCase() ?? '';
+    final isSubscribed = plan == 'PRO' ||
+        plan == 'AI APPLY' ||
+        plan == 'AI_APPLY' ||
+        plan == 'PROFESSIONAL';
+
+    if (!context.mounted) return;
+
     await showDialog<void>(
       context: context,
-      builder: (context) => AlertDialog(
+      builder: (dialogContext) => AlertDialog(
         title: Text('Generate CV'.tr()),
         content: Text(
-          'Your resume is ready! Would you like to generate and save your professional CV now?'
-              .tr(),
+          isSubscribed
+              ? 'Your resume is ready! Since you have an active subscription, you can generate your professional CV for free.'
+                  .tr()
+              : 'Your resume is ready! Would you like to generate and save your professional CV now?'
+                  .tr(),
         ),
         actions: [
           TextButton(
-            onPressed: () => Navigator.pop(context),
+            onPressed: () => Navigator.pop(dialogContext),
             child: Text('Review Again'.tr()),
           ),
           ElevatedButton(
             onPressed: () async {
-              Navigator.pop(context);
+              Navigator.pop(dialogContext);
+
+              if (!context.mounted) return;
 
               // 1. Select Format
               final format = await showDialog<String>(
                 context: context,
-                builder: (BuildContext context) => AlertDialog(
+                builder: (formatContext) => AlertDialog(
                   title: Text('Select Output Format'.tr()),
                   content: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       ListTile(
-                        leading: const Icon(Icons.picture_as_pdf, color: Colors.red),
+                        leading:
+                            const Icon(Icons.picture_as_pdf, color: Colors.red),
                         title: const Text('PDF Document'),
-                        onTap: () => Navigator.pop(context, 'pdf'),
+                        onTap: () => Navigator.pop(formatContext, 'pdf'),
                       ),
                       ListTile(
-                        leading: const Icon(Icons.description, color: Colors.blue),
+                        leading:
+                            const Icon(Icons.description, color: Colors.blue),
                         title: const Text('Word Document (DOCX)'),
-                        onTap: () => Navigator.pop(context, 'docx'),
+                        onTap: () => Navigator.pop(formatContext, 'docx'),
                       ),
                     ],
                   ),
@@ -294,28 +312,59 @@ class AiResumeBuilderView extends StatelessWidget {
 
               if (format == null || !context.mounted) return;
 
-              // 2. Trigger Payment Flow
-              context.read<PaymentCubit>().onPaymentSuccess = (result) async {
+              // TEMPORARY: Skip payment flow for testing
+              cubit.generateAndSave(
+                outputFormat: format,
+              );
+              return;
+
+              /* // Payment Flow (Disabled for testing)
+              if (isSubscribed) {
+                // Free generation for subscribers
+                cubit.generateAndSave(
+                  outputFormat: format,
+                );
+                return;
+              }
+
+              // 2. Trigger Payment Flow for non-subscribers
+              final paymentCubit = context.read<PaymentCubit>();
+
+              paymentCubit.onPaymentSuccess = (result) async {
                 String? txnId;
                 result.when(
                   success: (id) => txnId = id,
                   cancelled: () => txnId = null,
                   failed: (_) => txnId = null,
                 );
+
                 if (txnId != null && context.mounted) {
-                  context.read<AiResumeBuilderCubit>().generateAndSave(
+                  cubit.generateAndSave(
                     paymentIntentId: txnId,
                     outputFormat: format,
                   );
                 }
-                context.read<PaymentCubit>().reset();
+                paymentCubit.reset();
               };
-              context.read<PaymentCubit>().processPayment(
-                serviceId: 'ai_resume_optimization',
-                amount: 40,
-              );
+
+              try {
+                await paymentCubit.processPayment(
+                  serviceId: 'ai_resume_optimization',
+                  amount: 40,
+                );
+              } catch (e) {
+                if (context.mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text('Payment initialization failed: $e'.tr()),
+                      backgroundColor: AppTheme.errorColor,
+                    ),
+                  );
+                }
+              }
+              */
             },
-            child: Text('Pay & Generate'.tr()),
+            child: Text(isSubscribed ? 'Generate'.tr() : 'Pay & Generate'.tr()),
           ),
         ],
       ),

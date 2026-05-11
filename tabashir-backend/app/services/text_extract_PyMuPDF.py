@@ -11,21 +11,39 @@ def extract_text(file_path: str) -> str:
     file_type = file_type.lower()
     text = ""
 
-    if file_type in [".docx", ".rtf"]:
-        text = docx2txt.process(file_path)
-
-    elif file_type == ".pdf":
+    # Helper for PDF extraction
+    def try_pdf(path):
         try:
-            doc = fitz.open(file_path)
+            pdf_text = ""
+            doc = fitz.open(path)
             for page in doc:
-                text += page.get_text("text")
-        except Exception as e:
-            raise RuntimeError(f"Error extracting PDF text: {e}")
+                pdf_text += page.get_text("text")
+            return pdf_text
+        except:
+            return None
 
+    # Helper for DOCX extraction
+    def try_docx(path):
+        try:
+            return docx2txt.process(path)
+        except:
+            return None
+
+    if file_type == ".pdf":
+        text = try_pdf(file_path)
+        # Fallback to DOCX if PDF fails (mislabeled file)
+        if not text or not text.strip():
+            text = try_docx(file_path)
+    elif file_type in [".docx", ".rtf"]:
+        text = try_docx(file_path)
+        # Fallback to PDF if DOCX fails
+        if not text or not text.strip():
+            text = try_pdf(file_path)
     else:
-        raise ValueError(f"Unsupported file type: {file_type}")
+        # Unknown extension, try both
+        text = try_pdf(file_path) or try_docx(file_path)
 
-    if not text.strip():
-        raise ValueError("Couldn't extract any text from the file.")
+    if not text or not text.strip():
+        raise ValueError(f"Couldn't extract any text from the file: {file_path}")
 
     return text

@@ -148,42 +148,40 @@ class Resume:
 
         # Add Hyper link to Email
         email_text = RichText()
-        if self.header.email:
+        if self.header and getattr(self.header, 'email', None):
             email_text.add("Email", font="Times New Roman", underline="single", color="0000FF", url_id=doc.build_url_id(f"mailto:{self.header.email}"))
 
         # Add Linkedin Hyper Link
         linkedin_text = RichText()
-        if self.header.linkedin:
+        if self.header and getattr(self.header, 'linkedin', None):
             linkedin_text.add("LinkedIn",font="Times New Roman", underline="single", color="0000FF", url_id=doc.build_url_id(self.header.linkedin))
 
         # Add GitHub Hyper Link
         github_text = RichText()
-        if self.header.github:
+        if self.header and getattr(self.header, 'github', None):
             github_text.add("GitHub",font="Times New Roman", underline="single", color="0000FF", url_id=doc.build_url_id(self.header.github))
 
         # Create context from the provided data
-        # Objective can be None for some CVs, so guard against that
         objective_text = ""
-        if getattr(self, "objective", None) is not None:
-            raw_obj = getattr(self.objective, "objective", "") or ""
-            objective_text = clean_objective_text(raw_obj)
+        if self.objective and getattr(self.objective, "objective", None):
+            objective_text = clean_objective_text(self.objective.objective)
 
         context = {
-            "header": self.header,
+            "header": self.header if self.header else Header(name="CANDIDATE", email="", phone="", location=""),
             "email_text": email_text,
             "linkedin_text": linkedin_text,
             "github_text": github_text,
             "objective": objective_text,
-            "education_list": self.education,
-            "work_list": self.work,
-            "lship_list": self.lship if self.lship else [],  # The same as 'training'.
+            "education_list": self.education if self.education else [],
+            "work_list": self.work if self.work else [],
+            "lship_list": self.lship if self.lship else [],
             "project_list": self.projects if self.projects else [],
-            "skills": {"softskills": self.skills.softskills, "skillset": self.skills.skillset,
-                       "training": self.skills.training if self.skills.training else []},
-            # This will assign 'training' to its attribute if training exits.
-            # "languages": self.languages.langs if self.languages and self.languages.langs else [],
+            "skills": {
+                "softskills": self.skills.softskills if self.skills else [],
+                "skillset": self.skills.skillset if self.skills else [],
+                "training": self.skills.training if self.skills and self.skills.training else []
+            },
             "languages": format_languages(self.languages.langs if self.languages and self.languages.langs else [])
-
         }
         try:
             # Render and Save the Document
@@ -233,18 +231,30 @@ class Resume:
     @staticmethod
     def from_dict(data: dict) -> 'Resume':
         """Converts dictionary to Resume object with defaults for missing fields."""
-        h = data.get('header', {})
+        # Support both 'header' and 'personal_details' (from mobile)
+        h = data.get('header', data.get('personal_details', {}))
         header = Header(
-            email=h.get('email', ''),
-            location=h.get('location', h.get('address', '')),
-            name=h.get('name', ''),
-            phone=h.get('phone', ''),
+            email=h.get('email', h.get('fullName', h.get('name', ''))),
+            location=h.get('location', h.get('address', h.get('city', ''))),
+            name=h.get('name', h.get('fullName', '')),
+            phone=h.get('phone', h.get('phoneNumber', '')),
             github=h.get('github'),
             linkedin=h.get('linkedin'),
             nationality=h.get('nationality')
         )
 
-        objective_data = data.get('objective', '')
+        # Handle social links if they are in a list (mobile format)
+        social_links = h.get('socialLinks', [])
+        if isinstance(social_links, list):
+            for link in social_links:
+                if not isinstance(link, dict): continue
+                platform = str(link.get('platform', '')).lower()
+                url = link.get('url', '')
+                if 'linkedin' in platform: header.linkedin = url
+                elif 'github' in platform: header.github = url
+
+        # Support both 'objective' and 'professional_summary' (from mobile)
+        objective_data = data.get('objective', data.get('professional_summary', ''))
         if isinstance(objective_data, dict):
             objective_str = objective_data.get('summary', objective_data.get('objective', ''))
         else:
@@ -262,6 +272,8 @@ class Resume:
                 raw_details = [raw_details]
             elif raw_details is None:
                 raw_details = []
+            elif not raw_details and edu.get('description'):
+                raw_details = [edu.get('description')]
             
             raw_coursework = edu.get('coursework', [])
             if isinstance(raw_coursework, str):
@@ -274,7 +286,6 @@ class Resume:
             if not edu_date and (edu.get('start_date') or edu.get('startDate')):
                 start = edu.get('start_date') or edu.get('startDate', '')
                 end = edu.get('end_date') or edu.get('endDate', 'Present')
-                # Simple extraction of Year-Month if it's ISO format
                 if isinstance(start, str) and 'T' in start: start = start.split('T')[0]
                 if isinstance(end, str) and 'T' in end: end = end.split('T')[0]
                 edu_date = f"{start} - {end}"
@@ -290,8 +301,10 @@ class Resume:
                 GPA=str(edu.get('GPA', edu.get('gpa', '')))
             ))
 
+        # Support both 'work' and 'work_experience' (from mobile)
+        work_list = data.get('work', data.get('work_experience', []))
         work = []
-        for w in data.get('work', []):
+        for w in work_list:
             if not isinstance(w, dict):
                 continue
             
@@ -300,8 +313,8 @@ class Resume:
                 raw_details = [raw_details]
             elif raw_details is None:
                 raw_details = []
-            elif not raw_details and w.get('description'):
-                raw_details = [w.get('description')]
+            elif not raw_details and (w.get('description') or w.get('keyTasks')):
+                raw_details = [w.get('description') or w.get('keyTasks')]
 
             work_date = w.get('date', '')
             if not work_date and (w.get('start_date') or w.get('startDate')):
@@ -387,10 +400,10 @@ class Resume:
                 if not isinstance(s, dict):
                     continue
                 name = s.get('name', '')
-                category = s.get('category', '')
-                if category == 'soft':
+                category = str(s.get('category', '')).lower()
+                if 'soft' in category:
                     soft_skills.append(name)
-                elif category == 'training':
+                elif 'training' in category:
                     training_list.append(name)
                 else:
                     technical_skills.append(name)

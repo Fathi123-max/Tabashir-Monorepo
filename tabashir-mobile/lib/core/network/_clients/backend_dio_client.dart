@@ -99,9 +99,9 @@ class BackendDioClient {
   BaseOptions _getDefaultOptions() => BaseOptions(
     // Base URL is loaded from .env
     baseUrl: dotenv.env['API_BASE_URL'] ?? 'http://10.0.2.2:5050',
-    connectTimeout: const Duration(seconds: 120),
-    receiveTimeout: const Duration(seconds: 120),
-    sendTimeout: const Duration(seconds: 120),
+    connectTimeout: const Duration(seconds: 300),
+    receiveTimeout: const Duration(seconds: 300),
+    sendTimeout: const Duration(seconds: 300),
     headers: {
       'Content-Type': 'application/json',
     },
