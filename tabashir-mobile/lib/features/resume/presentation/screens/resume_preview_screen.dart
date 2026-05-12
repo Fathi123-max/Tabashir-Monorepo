@@ -62,6 +62,15 @@ class _ResumePreviewScreenState extends State<ResumePreviewScreen> {
           widget.resume.filename.toLowerCase().endsWith('.docx') ||
           widget.resume.fileType.toLowerCase() == 'docx';
 
+      // Construct the download URL - if we want to view in PDF viewer, 
+      // we must ensure we get a PDF from the server
+      String downloadUrl = url;
+      if (!isDocx && url.startsWith('http')) {
+        downloadUrl = url.contains('?')
+            ? '$url&output_format=pdf'
+            : '$url?output_format=pdf';
+      }
+
       // Download the file to temporary directory
       final dir = await getTemporaryDirectory();
 
@@ -77,7 +86,7 @@ class _ResumePreviewScreenState extends State<ResumePreviewScreen> {
         final token = await AuthSessionService.instance.accessToken;
         final dio = getIt<AuthDioClient>().dio;
         await dio.download(
-          url,
+          downloadUrl,
           filePath,
           options: Options(
             headers: {

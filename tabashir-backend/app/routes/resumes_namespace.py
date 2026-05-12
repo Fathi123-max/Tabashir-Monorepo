@@ -837,6 +837,19 @@ class SaveAndGenerate(Resource):
                 # 1.4 Create Resume record
                 resume_id = str(uuid.uuid4())
                 
+                # Determine display filename with correct extension
+                display_filename = filename
+                if output_format == 'pdf' and not display_filename.lower().endswith('.pdf'):
+                    if display_filename.lower().endswith('.docx'):
+                        display_filename = display_filename[:-5] + '.pdf'
+                    else:
+                        display_filename = f"{display_filename}.pdf"
+                elif output_format == 'docx' and not display_filename.lower().endswith('.docx'):
+                    if display_filename.lower().endswith('.pdf'):
+                        display_filename = display_filename[:-4] + '.docx'
+                    else:
+                        display_filename = f"{display_filename}.docx"
+
                 # Determine URLs
                 base_url = request.host_url.rstrip('/')
                 download_url = f"{base_url}/api/v1/resumes/{resume_id}/download"
@@ -850,7 +863,7 @@ class SaveAndGenerate(Resource):
                     """INSERT INTO "Resume" 
                        (id, "candidateId", filename, "originalUrl", "isAiResume", "formatedContent", "createdAt", "updatedAt") 
                        VALUES (%s, %s, %s, %s, %s, %s, NOW(), NOW())""",
-                    (resume_id, candidate_id, filename, unique_filename, True, json.dumps(resume_obj.source_data))
+                    (resume_id, candidate_id, display_filename, unique_filename, True, json.dumps(resume_obj.source_data))
                 )
 
                 # 1.5 Create/Update Payment Record

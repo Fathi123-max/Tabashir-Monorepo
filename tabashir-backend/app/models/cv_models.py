@@ -1,11 +1,32 @@
+import subprocess
+import os
 from pathlib import Path
 from typing import Optional
 
-try:
-    from docx2pdf import convert
-except ImportError:
-    convert = None
-    print("Warning: docx2pdf not found, PDF conversion will be disabled")
+def convert_to_pdf(docx_path: str, output_dir: str) -> bool:
+    """
+    Converts a DOCX file to PDF using LibreOffice (soffice).
+    """
+    try:
+        print(f"Attempting PDF conversion for: {docx_path}")
+        # Use LibreOffice to convert
+        result = subprocess.run([
+            'soffice', 
+            '--headless', 
+            '--convert-to', 'pdf', 
+            '--outdir', str(output_dir), 
+            str(docx_path)
+        ], capture_output=True, text=True)
+        
+        if result.returncode == 0:
+            print("PDF conversion successful via LibreOffice")
+            return True
+        else:
+            print(f"LibreOffice conversion failed: {result.stderr}")
+            return False
+    except Exception as e:
+        print(f"Error during LibreOffice conversion: {e}")
+        return False
 
 from docxtpl import DocxTemplate, RichText
 
@@ -191,17 +212,13 @@ class Resume:
             print(f"Saving DOCX to: {output_path}")
             doc.save(output_path)
             
-            output_path_obj = Path(output_path)
-            pdf_path = output_path_obj.with_suffix('.pdf')
-            
-            print(f"Attempting PDF conversion to: {pdf_path}")
-            try:
-                # docx2pdf requires Microsoft Word on macOS/Windows and is often unstable in backends
-                convert(str(output_path), str(pdf_path))
+            print(f"Attempting PDF conversion...")
+            # Use new LibreOffice converter
+            success = convert_to_pdf(output_path, Path(output_path).parent)
+            if success:
                 print("PDF conversion successful")
-            except Exception as pdf_err:
-                print(f"Warning: PDF conversion failed (this is common in server environments): {pdf_err}")
-                # We don't raise here because we still have the DOCX saved
+            else:
+                print("Warning: PDF conversion failed via LibreOffice")
                 
         except Exception as e:
             import traceback

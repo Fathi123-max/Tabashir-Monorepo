@@ -1,12 +1,19 @@
+import 'dart:io';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:share_plus/share_plus.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:dio/dio.dart';
+import 'package:open_filex/open_filex.dart';
+import 'package:tabashir/core/di/injection.dart';
+import 'package:tabashir/core/network/_clients/auth_dio_client.dart';
+import 'package:tabashir/core/services/auth_session_service.dart';
 import 'package:tabashir/core/network/models/resume_response/resume_item.dart';
 import 'package:tabashir/core/router/route_names.dart';
 import 'package:tabashir/core/theme/app_theme.dart';
-import 'package:url_launcher/url_launcher.dart';
+import 'package:tabashir/core/utils/app_logger.dart';
 
 class ResumeSuccessScreen extends StatelessWidget {
   const ResumeSuccessScreen({
@@ -27,7 +34,6 @@ class ResumeSuccessScreen extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              // Success Icon/Animation Placeholder
               Container(
                 width: 120.w,
                 height: 120.w,
@@ -59,28 +65,19 @@ class ResumeSuccessScreen extends StatelessWidget {
                 textAlign: TextAlign.center,
               ),
               SizedBox(height: 48.h),
-              // Action Buttons
               _buildActionButton(
                 context,
                 icon: Icons.picture_as_pdf_rounded,
-                label: 'Download PDF'.tr(),
-                onTap:
-                    (resume.formatedUrl != null &&
-                        resume.formatedUrl!.isNotEmpty)
-                    ? () => _downloadPdf(context)
-                    : null,
+                label: 'Download & View PDF'.tr(),
+                onTap: () => _downloadAndOpen(context, 'pdf'),
                 isPrimary: true,
               ),
               SizedBox(height: 16.h),
               _buildActionButton(
                 context,
-                icon: Icons.description_rounded,
-                label: 'Share Word File'.tr(),
-                onTap:
-                    (resume.originalUrl != null &&
-                        resume.originalUrl!.isNotEmpty)
-                    ? () => _shareWordFile(context)
-                    : null,
+                icon: Icons.share_rounded,
+                label: 'Share Resume'.tr(),
+                onTap: () => _downloadAndShare(context),
               ),
               SizedBox(height: 16.h),
               _buildActionButton(
@@ -131,42 +128,102 @@ class ResumeSuccessScreen extends StatelessWidget {
     );
   }
 
-  Future<void> _downloadPdf(BuildContext context) async {
-    final url = resume.formatedUrl;
-    if (url == null || url.isEmpty) {
-      _showError(context, 'PDF download link is not available.'.tr());
-      return;
-    }
+  Future<void> _downloadAndOpen(BuildContext context, String format) async {
+    try {
+      final scaffoldMessenger = ScaffoldMessenger.of(context);
+      final url = resume.originalUrl;
+      if (url == null || url.isEmpty) throw Exception('URL not available');
 
-    final uri = Uri.parse(url);
-    if (await canLaunchUrl(uri)) {
-      await launchUrl(uri, mode: LaunchMode.externalApplication);
-    } else {
-      _showError(context, 'Could not open download link.'.tr());
+      final downloadUrl =
+          url.contains('?')
+              ? '$url&output_format=$format'
+              : '$url?output_format=$format';
+
+      final dir = await getApplicationDocumentsDirectory();
+      final fileName =
+          'Generated_Resume_${DateTime.now().millisecondsSinceEpoch}.${format == 'docx' ? 'docx' : 'pdf'}';
+      final filePath = '${dir.path}/$fileName';
+
+      final token = await AuthSessionService.instance.accessToken;
+      final dio = getIt<AuthDioClient>().dio;
+
+      scaffoldMessenger.showSnackBar(
+        SnackBar(content: Text('Downloading ${format.toUpperCase()}...')),
+      );
+
+      await dio.download(
+        downloadUrl,
+        filePath,
+        options: Options(
+          headers: {
+            if (token != null) 'Authorization': 'Bearer $token',
+          },
+        ),
+      );
+
+      final result = await OpenFilex.open(filePath);
+      if (result.type != ResultType.done) {
+        throw Exception(result.message);
+      }
+    } catch (e) {
+      AppLogger.error('Download failed: $e');
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Failed to download: $e'),
+            backgroundColor: AppTheme.errorColor,
+          ),
+        );
+      }
     }
   }
 
-  Future<void> _shareWordFile(BuildContext context) async {
-    final url = resume.originalUrl;
-    if (url == null || url.isEmpty) {
-      _showError(context, 'Word file link is not available.'.tr());
-      return;
+  Future<void> _downloadAndShare(BuildContext context) async {
+    try {
+      final scaffoldMessenger = ScaffoldMessenger.of(context);
+      final url = resume.originalUrl;
+      if (url == null || url.isEmpty) throw Exception('URL not available');
+
+      // Default to PDF for sharing unless it's known to be DOCX
+      final format = resume.filename.toLowerCase().endsWith('.docx') ? 'docx' : 'pdf';
+      final downloadUrl =
+          url.contains('?')
+              ? '$url&output_format=$format'
+              : '$url?output_format=$format';
+
+      final tempDir = await getTemporaryDirectory();
+      final ext = format == 'docx' ? '.docx' : '.pdf';
+      final filePath =
+          '${tempDir.path}/share_${DateTime.now().millisecondsSinceEpoch}$ext';
+
+      final token = await AuthSessionService.instance.accessToken;
+      final dio = getIt<AuthDioClient>().dio;
+
+      scaffoldMessenger.showSnackBar(
+        const SnackBar(content: Text('Preparing file for sharing...')),
+      );
+
+      await dio.download(
+        downloadUrl,
+        filePath,
+        options: Options(
+          headers: {
+            if (token != null) 'Authorization': 'Bearer $token',
+          },
+        ),
+      );
+
+      await Share.shareXFiles([XFile(filePath)], text: 'My Resume');
+    } catch (e) {
+      AppLogger.error('Share failed: $e');
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Error: $e'),
+            backgroundColor: AppTheme.errorColor,
+          ),
+        );
+      }
     }
-
-    // Since we don't have the file locally yet, we can share the link
-    // or download it first. For now, sharing the link is the simplest.
-    await Share.share(
-      '${'Check out my professional resume:'.tr()} $url',
-      subject: 'My Resume'.tr(),
-    );
-  }
-
-  void _showError(BuildContext context, String message) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(message),
-        backgroundColor: AppTheme.errorColor,
-      ),
-    );
   }
 }

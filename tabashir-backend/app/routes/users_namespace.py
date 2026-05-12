@@ -271,7 +271,7 @@ class MobileMe(Resource):
             )
 
         # 2. Lazy Sync: If profile data is missing, try to sync from resume
-        if user and (not user.get('nationality') or not user.get('gender')):
+        if user and not user.get('onboardingCompleted'):
             print(f"[ME_API] Missing profile data. Triggering lazy sync for {user_id}...")
             ProfileSyncService.sync_from_user_id(user_id)
             # Re-fetch after sync
