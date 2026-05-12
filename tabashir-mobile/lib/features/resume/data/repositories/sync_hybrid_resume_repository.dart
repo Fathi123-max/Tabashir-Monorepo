@@ -239,7 +239,7 @@ class SyncHybridResumeRepository implements ResumeVaultRepository {
       if (e is DioException) {
         String? serverMessage;
         if (e.response?.data is Map) {
-          serverMessage = e.response?.data['error'] ?? e.response?.data['message'];
+          serverMessage = (e.response?.data['error'] ?? e.response?.data['message']) as String?;
         }
         final finalMessage = serverMessage ?? e.message;
         AppLogger.error('❌ [SYNC_REPO] ❌ Reformat failed: $finalMessage', tag: 'Resume', error: e);

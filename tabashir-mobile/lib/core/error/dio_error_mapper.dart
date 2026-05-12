@@ -42,7 +42,6 @@ class DioErrorMapper {
       case DioExceptionType.connectionError:
         return 'Connection error. Please check your internet connection.';
       case DioExceptionType.unknown:
-      default:
         return 'An unknown error occurred. Please try again.';
     }
   }
