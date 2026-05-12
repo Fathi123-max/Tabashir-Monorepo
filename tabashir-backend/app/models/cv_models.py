@@ -126,6 +126,40 @@ class Languages:
     def __str__(self):
         return f"Langs: {self.langs}"    
 
+def format_date_string(date_str):
+    if not date_str:
+        return ""
+    # Try to parse YYYY-MM-DD or similar and convert to "Month YYYY"
+    import re
+    from datetime import datetime
+    
+    # Handle "2021-03-01 - Present"
+    parts = date_str.split(' - ')
+    formatted_parts = []
+    for part in parts:
+        part = part.strip()
+        if part.lower() == 'present':
+            formatted_parts.append('Present')
+            continue
+        try:
+            # Match YYYY-MM-DD or YYYY-MM
+            match = re.match(r'(\d{4})-(\d{2})(?:-\d{2})?', part)
+            if match:
+                dt = datetime.strptime(f"{match.group(1)}-{match.group(2)}", "%Y-%m")
+                formatted_parts.append(dt.strftime("%b %Y"))
+            else:
+                formatted_parts.append(part)
+        except:
+            formatted_parts.append(part)
+    return " - ".join(formatted_parts)
+
+def clean_detail_line(line):
+    # Strip leading bullets, spaces, and weird characters like '' and '•'
+    import re
+    line = line.strip()
+    line = re.sub(r'^[\s\-\*\•\·\▪\●\◦\‣\⁃\⁌\־\−\—\–\xad\x95\xb7\u2022\u2023\u25E6\u2043\u2219\uf0b7]+\s*', '', line)
+    return line
+
 class Resume:
     def __init__(self, education: list[EducationExperience], header: Header, 
                  objective: CareerObjective, skills: Skills, languages: Languages, 
@@ -167,20 +201,30 @@ class Resume:
         # Load the template
         doc = DocxTemplate(template_path)
 
-        # Add Hyper link to Email
-        email_text = RichText()
-        if self.header and getattr(self.header, 'email', None):
-            email_text.add("Email", font="Times New Roman", underline="single", color="0000FF", url_id=doc.build_url_id(f"mailto:{self.header.email}"))
+        # Build contact info dynamically to avoid trailing/leading separators
+        contact_parts = []
 
-        # Add Linkedin Hyper Link
-        linkedin_text = RichText()
-        if self.header and getattr(self.header, 'linkedin', None):
-            linkedin_text.add("LinkedIn",font="Times New Roman", underline="single", color="0000FF", url_id=doc.build_url_id(self.header.linkedin))
+        if self.header:
+            if getattr(self.header, 'location', None):
+                contact_parts.append(self.header.location)
+            if getattr(self.header, 'phone', None):
+                contact_parts.append(self.header.phone)
+            if getattr(self.header, 'email', None):
+                contact_parts.append(self.header.email)
+            if getattr(self.header, 'linkedin', None):
+                display_li = self.header.linkedin.replace('https://', '').replace('http://', '').replace('www.', '')
+                contact_parts.append(display_li)
+            if getattr(self.header, 'github', None):
+                display_gh = self.header.github.replace('https://', '').replace('http://', '').replace('www.', '')
+                contact_parts.append(display_gh)
+            if getattr(self.header, 'nationality', None):
+                contact_parts.append(self.header.nationality)
+            if getattr(self.header, 'extra_links', None):
+                for link in self.header.extra_links:
+                    display_link = link.replace('https://', '').replace('http://', '').replace('www.', '')
+                    contact_parts.append(display_link)
 
-        # Add GitHub Hyper Link
-        github_text = RichText()
-        if self.header and getattr(self.header, 'github', None):
-            github_text.add("GitHub",font="Times New Roman", underline="single", color="0000FF", url_id=doc.build_url_id(self.header.github))
+        contact_text = " | ".join(contact_parts)
 
         # Create context from the provided data
         objective_text = ""
@@ -189,9 +233,7 @@ class Resume:
 
         context = {
             "header": self.header if self.header else Header(name="CANDIDATE", email="", phone="", location=""),
-            "email_text": email_text,
-            "linkedin_text": linkedin_text,
-            "github_text": github_text,
+            "contact_info": contact_text,
             "objective": objective_text,
             "education_list": self.education if self.education else [],
             "work_list": self.work if self.work else [],
@@ -250,9 +292,14 @@ class Resume:
         """Converts dictionary to Resume object with defaults for missing fields."""
         # Support both 'header' and 'personal_details' (from mobile)
         h = data.get('header') or data.get('personal_details') or {}
+        
+        country = h.get('location') or h.get('country') or ''
+        city = h.get('city') or h.get('address') or ''
+        full_location = f"{city}, {country}".strip(', ') if city and country else city or country
+        
         header = Header(
             email=h.get('email') or h.get('fullName') or h.get('name') or '',
-            location=h.get('location') or h.get('address') or h.get('city') or '',
+            location=full_location,
             name=h.get('name') or h.get('fullName') or '',
             phone=h.get('phone') or h.get('phoneNumber') or '',
             github=h.get('github') or '',
@@ -260,6 +307,7 @@ class Resume:
             nationality=h.get('nationality') or ''
         )
 
+        extra_links = []
         # Handle social links if they are in a list (mobile format)
         social_links = h.get('socialLinks') or []
         if isinstance(social_links, list):
@@ -269,6 +317,8 @@ class Resume:
                 url = link.get('url') or ''
                 if 'linkedin' in platform: header.linkedin = url
                 elif 'github' in platform: header.github = url
+                elif url: extra_links.append(url)
+        header.extra_links = extra_links
 
         # Support both 'objective' and 'professional_summary' (from mobile)
         objective_data = data.get('objective') or data.get('professional_summary') or ''
@@ -286,18 +336,23 @@ class Resume:
             # Robustly handle details/coursework as string or list
             raw_details = edu.get('details') or []
             if isinstance(raw_details, str):
-                raw_details = [line.strip() for line in raw_details.split('\n') if line.strip()]
+                raw_details = [clean_detail_line(line) for line in raw_details.split('\n') if line.strip()]
             elif raw_details is None:
                 raw_details = []
-            elif not raw_details and edu.get('description'):
+            else:
+                raw_details = [clean_detail_line(str(line)) for line in raw_details if str(line).strip()]
+
+            if not raw_details and edu.get('description'):
                 desc = edu.get('description') or ''
-                raw_details = [line.strip() for line in desc.split('\n') if line.strip()] if isinstance(desc, str) else [desc]
+                raw_details = [clean_detail_line(line) for line in desc.split('\n') if line.strip()] if isinstance(desc, str) else [clean_detail_line(desc)]
             
             raw_coursework = edu.get('coursework') or []
             if isinstance(raw_coursework, str):
-                raw_coursework = [line.strip() for line in raw_coursework.split('\n') if line.strip()]
+                raw_coursework = [clean_detail_line(line) for line in raw_coursework.split('\n') if line.strip()]
             elif raw_coursework is None:
                 raw_coursework = []
+            else:
+                raw_coursework = [clean_detail_line(str(line)) for line in raw_coursework if str(line).strip()]
 
             # Handle date range if missing
             edu_date = edu.get('date') or ''
@@ -307,6 +362,7 @@ class Resume:
                 if isinstance(start, str) and 'T' in start: start = start.split('T')[0]
                 if isinstance(end, str) and 'T' in end: end = end.split('T')[0]
                 edu_date = f"{start} - {end}"
+            edu_date = format_date_string(edu_date)
 
             education.append(EducationExperience(
                 coursework=raw_coursework,
@@ -328,12 +384,15 @@ class Resume:
             
             raw_details = w.get('details') or []
             if isinstance(raw_details, str):
-                raw_details = [line.strip() for line in raw_details.split('\n') if line.strip()]
+                raw_details = [clean_detail_line(line) for line in raw_details.split('\n') if line.strip()]
             elif raw_details is None:
                 raw_details = []
-            elif not raw_details and (w.get('description') or w.get('keyTasks')):
+            else:
+                raw_details = [clean_detail_line(str(line)) for line in raw_details if str(line).strip()]
+
+            if not raw_details and (w.get('description') or w.get('keyTasks')):
                 desc = w.get('description') or w.get('keyTasks') or ''
-                raw_details = [line.strip() for line in desc.split('\n') if line.strip()] if isinstance(desc, str) else [desc]
+                raw_details = [clean_detail_line(line) for line in desc.split('\n') if line.strip()] if isinstance(desc, str) else [clean_detail_line(desc)]
 
             work_date = w.get('date') or ''
             if not work_date and (w.get('start_date') or w.get('startDate')):
@@ -342,6 +401,7 @@ class Resume:
                 if isinstance(start, str) and 'T' in start: start = start.split('T')[0]
                 if isinstance(end, str) and 'T' in end: end = end.split('T')[0]
                 work_date = f"{start} - {end}"
+            work_date = format_date_string(work_date)
 
             work.append(WorkAndLeadershipExperience(
                 company=w.get('company') or w.get('organization') or '',
@@ -358,12 +418,15 @@ class Resume:
             
             raw_details = l.get('details') or []
             if isinstance(raw_details, str):
-                raw_details = [line.strip() for line in raw_details.split('\n') if line.strip()]
+                raw_details = [clean_detail_line(line) for line in raw_details.split('\n') if line.strip()]
             elif raw_details is None:
                 raw_details = []
-            elif not raw_details and l.get('description'):
+            else:
+                raw_details = [clean_detail_line(str(line)) for line in raw_details if str(line).strip()]
+
+            if not raw_details and l.get('description'):
                 desc = l.get('description') or ''
-                raw_details = [line.strip() for line in desc.split('\n') if line.strip()] if isinstance(desc, str) else [desc]
+                raw_details = [clean_detail_line(line) for line in desc.split('\n') if line.strip()] if isinstance(desc, str) else [clean_detail_line(desc)]
 
             l_date = l.get('date') or ''
             if not l_date and (l.get('start_date') or l.get('startDate')):
@@ -372,6 +435,7 @@ class Resume:
                 if isinstance(start, str) and 'T' in start: start = start.split('T')[0]
                 if isinstance(end, str) and 'T' in end: end = end.split('T')[0]
                 l_date = f"{start} - {end}"
+            l_date = format_date_string(l_date)
 
             leadership.append(WorkAndLeadershipExperience(
                 company=l.get('company') or l.get('organization') or '',
@@ -388,12 +452,15 @@ class Resume:
             
             raw_details = p.get('details') or p.get('highlights') or []
             if isinstance(raw_details, str):
-                raw_details = [line.strip() for line in raw_details.split('\n') if line.strip()]
+                raw_details = [clean_detail_line(line) for line in raw_details.split('\n') if line.strip()]
             elif raw_details is None:
                 raw_details = []
-            elif not raw_details and p.get('description'):
+            else:
+                raw_details = [clean_detail_line(str(line)) for line in raw_details if str(line).strip()]
+
+            if not raw_details and p.get('description'):
                 desc = p.get('description') or ''
-                raw_details = [line.strip() for line in desc.split('\n') if line.strip()] if isinstance(desc, str) else [desc]
+                raw_details = [clean_detail_line(line) for line in desc.split('\n') if line.strip()] if isinstance(desc, str) else [clean_detail_line(desc)]
 
             p_date = p.get('date') or ''
             if not p_date and (p.get('start_date') or p.get('startDate')):
@@ -402,6 +469,7 @@ class Resume:
                 if isinstance(start, str) and 'T' in start: start = start.split('T')[0]
                 if isinstance(end, str) and 'T' in end: end = end.split('T')[0]
                 p_date = f"{start} - {end}"
+            p_date = format_date_string(p_date)
 
             projects.append(Project(
                 date=p_date,
