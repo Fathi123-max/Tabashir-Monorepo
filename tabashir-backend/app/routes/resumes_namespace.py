@@ -20,7 +20,7 @@ from pathlib import Path
 import psycopg2
 
 from app.config import Config
-from app.database.db import execute_query, execute_ai_query, get_ai_db_connection, get_table_columns
+from app.database.db import execute_query, execute_ai_query, get_ai_db_connection, get_table_columns, release_ai_db_connection, release_db_connection
 from app.routes.middleware import jwt_required
 from app.utils.file_utils import allowed_file
 from app.models.cv_models import (
@@ -910,6 +910,11 @@ class SaveAndGenerate(Resource):
                 except:
                     pass
                 raise db_err
+            finally:
+                if 'cursor' in locals() and cursor:
+                    cursor.close()
+                if 'conn' in locals() and conn:
+                    release_db_connection(conn)
 
             # Return ONLY the resume dictionary, not wrapped in {success, resume}
             # because ResumeApiService.saveAndGenerate expects ResumeItem directly.
@@ -1714,7 +1719,7 @@ class AppliedJobs(Resource):
 
         finally:
             cursor.close()
-            conn.close()
+            release_ai_db_connection(conn)
 
 
 @resumes_ns.route('/jobs')
@@ -2059,19 +2064,14 @@ class Jobs(Resource):
             match_profile = None
             if email:
                 try:
-                    print(f"[JOBS_NS] ========== MATCHING DEBUG START ==========")
-                    print(f"[JOBS_NS] Email: {email}")
-                    
                     user_row = execute_query('SELECT id FROM users WHERE email = %s', (email,), fetch_one=True)
                     if user_row:
                         user_id = user_row['id'] if isinstance(user_row, dict) else user_row[0]
-                        print(f"[JOBS_NS] User ID: {user_id}")
 
                         # 1. Fetch Saved Jobs
                         saved_entries = execute_query('SELECT "jobId" FROM "SavedJobPost" WHERE "userId" = %s', (user_id,), fetch_all=True)
                         if saved_entries:
                             saved_job_ids = {str(sj['jobId'] if isinstance(sj, dict) else sj[0]) for sj in saved_entries}
-                            print(f"[JOBS_NS] Saved jobs count: {len(saved_job_ids)}")
 
                         # 2. Fetch Profile for Matching
                         profile = execute_query(
@@ -2081,25 +2081,20 @@ class Jobs(Resource):
                                WHERE c."userId" = %s''',
                             (user_id,), fetch_one=True
                         )
-                        
-                        print(f"[JOBS_NS] CandidateProfile query result: {profile}")
-                        
+
                         # Fallback: If CandidateProfile is empty, try AI DB clients table
                         if not profile or (not profile.get('skills') and not profile.get('jobType')):
-                            print(f"[JOBS_NS] CandidateProfile empty for user {user_id}, trying AI DB clients table...")
                             client_profile = execute_ai_query(
                                 'SELECT positions, skills, location FROM clients WHERE email = %s',
                                 (email,), fetch_one=True
                             )
-                            print(f"[JOBS_NS] AI DB clients query result: {client_profile}")
                             if client_profile:
-                                print(f"[JOBS_NS] ✅ Found profile in AI DB clients table")
                                 profile = {
                                     "jobType": client_profile.get('positions') or "",
                                     "skills": client_profile.get('skills') or "",
                                     "location": client_profile.get('location') or ""
                                 }
-                        
+
                         if profile:
                             skills_list = profile.get('skills') or []
                             skills_str = ", ".join(skills_list) if isinstance(skills_list, list) else str(skills_list)
@@ -2108,20 +2103,7 @@ class Jobs(Resource):
                                 "skills": skills_str,
                                 "location": profile.get('location') or ""
                             }
-                            print(f"[JOBS_NS] Match profile loaded:")
-                            print(f"[JOBS_NS]   - positions: '{match_profile['positions']}'")
-                            print(f"[JOBS_NS]   - skills_count: {len(skills_list) if isinstance(skills_list, list) else 0}")
-                            print(f"[JOBS_NS]   - skills: '{skills_str[:100]}...'")
-                            print(f"[JOBS_NS]   - location: '{match_profile['location']}'")
-                        else:
-                            print(f"[JOBS_NS] ⚠️ NO PROFILE FOUND for user {user_id} in either database")
-                            print(f"[JOBS_NS] This means the user hasn't uploaded a CV or synced their profile yet")
-                    else:
-                        print(f"[JOBS_NS] ⚠️ User not found for email: {email}")
-                    
-                    print(f"[JOBS_NS] ========== MATCHING DEBUG END ==========")
                 except Exception as e:
-                    print(f"[JOBS_NS] ❌ Error fetching user context for jobs list: {e}")
                     import traceback
                     traceback.print_exc()
 
@@ -2142,6 +2124,9 @@ class Jobs(Resource):
                 except Exception as e:
                     print(f"[JOBS_NS] Error fetching rankings for jobs list: {e}")
 
+            # Collect fallback-calculated scores to cache into rankings table
+            scores_to_cache = []  # list of (job_id, score_float)
+
             for job in jobs:
                 job['is_saved'] = str(job['id']) in saved_job_ids
 
@@ -2149,24 +2134,19 @@ class Jobs(Resource):
                 pre_calculated_score = ranking_map.get(str(job.get('id')))
                 if pre_calculated_score is not None:
                     job['match_percentage'] = str(pre_calculated_score)
-                
+
                 # Priority 2: AI Matching Calculation (Fallback)
                 elif match_profile:
                     try:
                         title_score = title_position_match(job.get('job_title', ''), match_profile['positions'])
-                        # Use job_description for skills matching
                         job_desc = job.get('job_description') or ''
-                        print(f"[JOBS_NS] Job {job.get('id')}: title='{job.get('job_title')}', desc_len={len(job_desc)}, city='{job.get('vacancy_city')}'")
-                        print(f"[JOBS_NS]   Profile: positions='{match_profile['positions']}', skills='{match_profile['skills']}', location='{match_profile['location']}'")
-                        
                         skill_score = calculate_skills_match(job_desc if job_desc else job.get('job_title', ''), match_profile['skills'])
                         location_score = semantic_location_match(job.get('vacancy_city', ''), match_profile['location'])
-
                         final_score = round((0.4 * title_score + 0.4 * skill_score + 0.2 * location_score), 3)
-                        job['match_percentage'] = str(int(round(final_score * 100, 0)))
-                        print(f"[JOBS_NS]   Scores: T={title_score:.3f}, S={skill_score:.3f}, L={location_score:.3f} => {job['match_percentage']}%")
-                    except Exception as e:
-                        print(f"[JOBS_NS] Match calc error for job {job.get('id')}: {e}")
+                        pct = int(round(final_score * 100, 0))
+                        job['match_percentage'] = str(pct)
+                        scores_to_cache.append((str(job['id']), float(final_score * 100)))
+                    except Exception:
                         job['match_percentage'] = None  # Return null instead of '0' when matching fails
                 else:
                     # Don't include match_percentage field when no profile is available
@@ -2177,6 +2157,32 @@ class Jobs(Resource):
                 # Frontend only needs description in details view
                 if 'job_description' in job:
                     del job['job_description']
+
+            # Cache fallback scores into rankings so next request uses Priority 1
+            # NOTE: rankings has no unique constraint on (email, job_id), so we use
+            # INSERT ... WHERE NOT EXISTS to safely avoid duplicates.
+            if scores_to_cache and email:
+                try:
+                    from datetime import datetime as _dt
+                    today = _dt.now().strftime('%Y-%m-%d')
+                    inserted_count = 0
+                    for _job_id, _score in scores_to_cache:
+                        cursor.execute("""
+                            INSERT INTO rankings (email, job_id, score, status, date)
+                            SELECT %s, %s, %s, 'cached', %s
+                            WHERE NOT EXISTS (
+                                SELECT 1 FROM rankings
+                                WHERE LOWER(email) = LOWER(%s) AND job_id::text = %s::text
+                            )
+                        """, (email, _job_id, _score, today, email, str(_job_id)))
+                        inserted_count += cursor.rowcount
+                    conn.commit()
+                except Exception as cache_err:
+                    logger.warning(f"[CACHE] Failed to write rankings cache: {cache_err}")
+                    try:
+                        conn.rollback()
+                    except Exception:
+                        pass
 
             return {
                 "success": True,
@@ -2197,7 +2203,7 @@ class Jobs(Resource):
             }, HTTPStatus.INTERNAL_SERVER_ERROR
         finally:
             cursor.close()
-            conn.close()
+            release_ai_db_connection(conn)
 
     @resumes_ns.expect(resumes_ns.model('JobCreate', {
         'entity': fields.String(description='Entity'),
@@ -2307,7 +2313,7 @@ class Jobs(Resource):
 
         finally:
             cursor.close()
-            conn.close()
+            release_ai_db_connection(conn)
 
 
 job_update_model = resumes_ns.model('JobUpdate', {
@@ -2491,7 +2497,7 @@ class JobById(Resource):
             }, HTTPStatus.INTERNAL_SERVER_ERROR
         finally:
             cursor.close()
-            conn.close()
+            release_ai_db_connection(conn)
     
     @resumes_ns.doc(params={'job_id': 'ID of the job to edit'})
     @resumes_ns.expect(job_update_model, validate=True)
@@ -2567,7 +2573,7 @@ class JobById(Resource):
             }, HTTPStatus.INTERNAL_SERVER_ERROR
         finally:
             cursor.close()
-            conn.close()
+            release_ai_db_connection(conn)
 
 
 email_model = resumes_ns.model('EmailModel', {
@@ -2616,7 +2622,7 @@ class AppliedJobsCount(Resource):
 
         finally:
             cursor.close()
-            conn.close()
+            release_ai_db_connection(conn)
 
 
 send_email_model = resumes_ns.model('SendEmailModel', {
@@ -2711,7 +2717,7 @@ class SendEmail(Resource):
             }, HTTPStatus.INTERNAL_SERVER_ERROR
         finally:
             cursor.close()
-            conn.close()
+            release_ai_db_connection(conn)
 
 
 @resumes_ns.route('/jobs/monthly-count')
@@ -2775,7 +2781,7 @@ class JobsMonthlyCount(Resource):
             }, HTTPStatus.INTERNAL_SERVER_ERROR
         finally:
             cursor.close()
-            conn.close()
+            release_ai_db_connection(conn)
 
 
 @resumes_ns.route('/jobs/count-by-city')
@@ -2834,7 +2840,7 @@ class JobsCountByCity(Resource):
             }, HTTPStatus.INTERNAL_SERVER_ERROR
         finally:
             cursor.close()
-            conn.close()
+            release_ai_db_connection(conn)
 
 
 @resumes_ns.route('/jobs/match')
@@ -2947,7 +2953,7 @@ class MatchedJobs(Resource):
             return {"success": False, "message": "Matching failed", "error": str(e)}, 500
         finally:
             cursor.close()
-            conn.close()
+            release_ai_db_connection(conn)
 
 @resumes_ns.route('/jobs/matched')
 class MatchedJobsPerClient(Resource):
@@ -2964,6 +2970,15 @@ class MatchedJobsPerClient(Resource):
         cursor = conn.cursor()
         try:
             args = request.args
+            
+            # DEBUG: Log all received parameters
+            print(f"\n{'='*60}")
+            from datetime import datetime
+            print(f"[MATCHED_JOBS_NS] 🔍 RECEIVED REQUEST at {datetime.now().strftime('%H:%M:%S')}")
+            print(f"[MATCHED_JOBS_NS] Full args: {dict(args)}")
+            print(f"[MATCHED_JOBS_NS] Email param: '{args.get('email', 'NOT PROVIDED')}'")
+            print(f"{'='*60}\n")
+
             email = args.get('email')
             if not email:
                 return {"success": False, "message": "Email is required"}, 400
@@ -3040,7 +3055,7 @@ class MatchedJobsPerClient(Resource):
             }, 500
         finally:
             cursor.close()
-            conn.close()
+            release_ai_db_connection(conn)
 
 suggest_job_titles_parser = reqparse.RequestParser()
 suggest_job_titles_parser.add_argument(
@@ -3167,7 +3182,7 @@ class JobApplicantsCount(Resource):
             }, HTTPStatus.INTERNAL_SERVER_ERROR
         finally:
             cursor.close()
-            conn.close()
+            release_ai_db_connection(conn)
             
 analyze_client_ranking_parser = reqparse.RequestParser()
 analyze_client_ranking_parser.add_argument(
@@ -3192,24 +3207,18 @@ class AnalyzeClientRanking(Resource):
             email = args['email']
 
             # 1️⃣ Connect to PostgreSQL
-            conn = psycopg2.connect(
-                dbname=Config.AI_POSTGRES_DB,
-                user=Config.AI_POSTGRES_USER,
-                password=Config.AI_POSTGRES_PASSWORD,
-                host=Config.AI_POSTGRES_HOST,
-                port=Config.AI_POSTGRES_PORT
-            )
+            conn = get_ai_db_connection()
+            try:
+                with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
+                    cur.execute("""
+                        SELECT score
+                        FROM rankings
+                        WHERE email = %s
+                    """, (email,))
 
-            with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
-                cur.execute("""
-                    SELECT score
-                    FROM rankings
-                    WHERE email = %s
-                """, (email,))
-
-                records = cur.fetchall()
-
-            conn.close()
+                    records = cur.fetchall()
+            finally:
+                release_ai_db_connection(conn)
 
             # 2️⃣ Validate Data
             if not records:

@@ -69,7 +69,7 @@ class PaymentFulfillmentService:
         filename = get_client_cv_filename(email)
 
         # Update job count in AI DB
-        from app.database.db import get_ai_db_connection
+        from app.database.db import get_ai_db_connection, release_ai_db_connection
         ai_conn = get_ai_db_connection()
         ai_cursor = ai_conn.cursor()
         ai_cursor.execute(
@@ -78,7 +78,7 @@ class PaymentFulfillmentService:
         )
         ai_conn.commit()
         ai_cursor.close()
-        ai_conn.close()
+        release_ai_db_connection(ai_conn)
         logger.info(f'Updated job count for {email}: +{jobs_number} jobs')
 
         if not filename:

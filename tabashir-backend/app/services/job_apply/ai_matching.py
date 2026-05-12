@@ -1,5 +1,6 @@
 
 import logging
+import warnings
 from typing import Dict
 
 import numpy as np
@@ -7,9 +8,13 @@ import spacy
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 
-# Set up logging
-logging.basicConfig(level=logging.INFO)
+# Suppress spaCy W007 warning — en_core_web_sm has no word vectors (expected behaviour)
+warnings.filterwarnings("ignore", message=".*W007.*")
+
+# Set up logging - WARNING level to suppress per-job calculation noise in production
+logging.basicConfig(level=logging.WARNING)
 logger = logging.getLogger(__name__)
+logger.setLevel(logging.WARNING)
 
 # Load spaCy model
 try:

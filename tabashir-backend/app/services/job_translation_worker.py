@@ -6,7 +6,7 @@ Handles translation of existing jobs and new jobs using DeepSeek API
 import time
 import threading
 from typing import Dict, List
-from app.database.db import get_ai_db_connection
+from app.database.db import get_ai_db_connection, release_ai_db_connection
 from app.services.translation_service import JobTranslationService
 
 class JobTranslationWorker:
@@ -110,7 +110,7 @@ class JobTranslationWorker:
             print(f"Error in batch translation: {e}")
         finally:
             cursor.close()
-            conn.close()
+            release_ai_db_connection(conn)
     
     def _translate_single_job(self, job_data: Dict, cursor) -> bool:
         """
@@ -193,7 +193,7 @@ class JobTranslationWorker:
             return False
         finally:
             cursor.close()
-            conn.close()
+            release_ai_db_connection(conn)
     
     def get_translation_stats(self) -> Dict:
         """
@@ -225,7 +225,7 @@ class JobTranslationWorker:
             return {}
         finally:
             cursor.close()
-            conn.close()
+            release_ai_db_connection(conn)
 
 translation_worker = JobTranslationWorker()
 

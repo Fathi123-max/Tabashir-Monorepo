@@ -35,7 +35,18 @@ class AppInitializationCubit extends Cubit<AppInitializationState> {
     try {
       // 1. Load user profile
       AppLogger.debug('[APP_INIT] 1/2 Loading user profile...', tag: 'Home');
-      final userProfile = await _profileRepository.getUserProfile();
+      final cachedProfile = await _profileRepository.getCachedProfile();
+      UserProfileResponse? userProfile;
+      bool usedCache = false;
+
+      if (cachedProfile != null) {
+        AppLogger.debug('[APP_INIT] ✅ Using cached profile for fast startup', tag: 'Home');
+        userProfile = cachedProfile;
+        usedCache = true;
+      } else {
+        userProfile = await _profileRepository.getUserProfile();
+      }
+      
       AppLogger.debug('[APP_INIT] ✅ User profile loaded', tag: 'Home');
 
       // 2. Initialize other cubits with shared data
@@ -55,6 +66,19 @@ class AppInitializationCubit extends Cubit<AppInitializationState> {
       }
 
       AppLogger.debug('[APP_INIT] ✅✅ App initialization complete', tag: 'Home');
+
+      // 3. Background refresh if we used cache
+      if (usedCache) {
+        AppLogger.debug('[APP_INIT] Triggering background refresh of profile data...', tag: 'Home');
+        getIt<ProfileCubit>().loadProfileData(force: true).then((_) {
+          final freshProfile = getIt<ProfileCubit>().state.userProfileResponse;
+          if (freshProfile != null && !isClosed) {
+            emit(state.copyWith(userProfile: freshProfile));
+          }
+        }).catchError((e) {
+          AppLogger.error('[APP_INIT] Background profile refresh failed: $e', tag: 'Home');
+        });
+      }
     } catch (e) {
       // If authentication failed and logged the user out, we shouldn't show an error.
       // We just let the UI redirect to the login screen.
@@ -100,9 +124,9 @@ class AppInitializationCubit extends Cubit<AppInitializationState> {
       final profileCubit = getIt<ProfileCubit>();
       await profileCubit.initializeWithProfileData(userProfile);
 
-      // Initialize ResumeVaultCubit
+      // Initialize ResumeVaultCubit (Don't await to speed up startup)
       final resumeCubit = getIt<ResumeVaultCubit>();
-      await resumeCubit.loadResumes();
+      resumeCubit.loadResumes();
 
       // Initialize HomeCubit
       final homeCubit = getIt<HomeCubit>();

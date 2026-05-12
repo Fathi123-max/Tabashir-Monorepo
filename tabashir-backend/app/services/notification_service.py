@@ -3,7 +3,7 @@ import json
 import uuid
 from datetime import datetime
 from app.config import Config
-from app.database.db import get_db_connection
+from app.database.db import get_db_connection, release_db_connection
 
 class NotificationService:
     @staticmethod
@@ -64,7 +64,7 @@ class NotificationService:
             print(f"Error inserting notification into DB: {e}")
         finally:
             if conn:
-                conn.close()
+                release_db_connection(conn)
 
     @staticmethod
     def _send_push_notification(user_id, title, message, data=None):

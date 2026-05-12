@@ -272,21 +272,10 @@ class MobileMe(Resource):
 
         # 2. Lazy Sync: If profile data is missing, try to sync from resume
         if user and not user.get('onboardingCompleted'):
-            print(f"[ME_API] Missing profile data. Triggering lazy sync for {user_id}...")
-            ProfileSyncService.sync_from_user_id(user_id)
-            # Re-fetch after sync
-            user = execute_query(
-                f"""SELECT u.id, u.email, u.name, u.image, u."userType",
-                          cp.id as profile_id, cp.phone, cp.nationality, cp.gender, cp.languages, cp.age,
-                          cp."profilePicture", cp."jobType", cp.skills, cp.experience,
-                          cp.education, cp.degree, {location_field}, {linkedin_field}, cp."onboardingCompleted"
-                   FROM users u
-                   LEFT JOIN "Candidate" c ON c."userId" = u.id
-                   LEFT JOIN "CandidateProfile" cp ON cp."candidateId" = c.id
-                   WHERE u.id = %s""",
-                (user_id,),
-                fetch_one=True
-            )
+            import threading
+            print(f"[ME_API] Missing profile data. Triggering background lazy sync for {user_id}...")
+            threading.Thread(target=ProfileSyncService.sync_from_user_id, args=(user_id,)).start()
+            # Do not block the response; the sync will complete in the background.
 
         # 3. AI Client data integration (fallback for missing profile fields)
         ai_client = None

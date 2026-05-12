@@ -1,3 +1,4 @@
+import threading
 import psycopg2
 from psycopg2.pool import ThreadedConnectionPool
 from psycopg2.extras import RealDictCursor
@@ -7,41 +8,43 @@ import atexit
 # Initialize pools as None, create them lazily
 main_pool = None
 ai_pool = None
+_pool_lock = threading.Lock()  # Prevents race condition on concurrent first requests
 
 def init_pools():
     global main_pool, ai_pool
-    if main_pool is None:
-        try:
-            main_pool = ThreadedConnectionPool(
-                minconn=1,
-                maxconn=20,
-                host=Config.POSTGRES_HOST,
-                port=Config.POSTGRES_PORT,
-                dbname=Config.POSTGRES_DB,
-                user=Config.POSTGRES_USER,
-                password=Config.POSTGRES_PASSWORD,
-                cursor_factory=RealDictCursor,
-                sslmode=Config.POSTGRES_SSLMODE,
-                connect_timeout=50
-            )
-            print("Initialized Main DB Connection Pool")
-        except Exception as e:
-            print("Failed to initialize Main DB pool:", e)
-            
-    if ai_pool is None:
-        try:
-            ai_pool = ThreadedConnectionPool(
-                minconn=1,
-                maxconn=20,
-                dbname=Config.AI_POSTGRES_DB,
-                user=Config.AI_POSTGRES_USER,
-                password=Config.AI_POSTGRES_PASSWORD,
-                host=Config.AI_POSTGRES_HOST,
-                port=Config.AI_POSTGRES_PORT,
-            )
-            print("Initialized AI DB Connection Pool")
-        except Exception as e:
-            print("Failed to initialize AI DB pool:", e)
+    with _pool_lock:  # Only one thread initializes the pool
+        if main_pool is None:
+            try:
+                main_pool = ThreadedConnectionPool(
+                    minconn=2,
+                    maxconn=20,
+                    host=Config.POSTGRES_HOST,
+                    port=Config.POSTGRES_PORT,
+                    dbname=Config.POSTGRES_DB,
+                    user=Config.POSTGRES_USER,
+                    password=Config.POSTGRES_PASSWORD,
+                    cursor_factory=RealDictCursor,
+                    sslmode=Config.POSTGRES_SSLMODE,
+                    connect_timeout=50
+                )
+                print("Initialized Main DB Connection Pool")
+            except Exception as e:
+                print("Failed to initialize Main DB pool:", e)
+                
+        if ai_pool is None:
+            try:
+                ai_pool = ThreadedConnectionPool(
+                    minconn=2,
+                    maxconn=20,
+                    dbname=Config.AI_POSTGRES_DB,
+                    user=Config.AI_POSTGRES_USER,
+                    password=Config.AI_POSTGRES_PASSWORD,
+                    host=Config.AI_POSTGRES_HOST,
+                    port=Config.AI_POSTGRES_PORT,
+                )
+                print("Initialized AI DB Connection Pool")
+            except Exception as e:
+                print("Failed to initialize AI DB pool:", e)
 
 @atexit.register
 def close_pools():
@@ -79,6 +82,7 @@ def release_ai_db_connection(conn):
         except:
             pass
         ai_pool.putconn(conn)
+
 
 
 _column_cache = {}

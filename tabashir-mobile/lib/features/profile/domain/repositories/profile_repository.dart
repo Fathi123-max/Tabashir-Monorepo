@@ -12,6 +12,10 @@ abstract class ProfileRepository {
   /// Returns [UserProfileResponse] with user profile information
   Future<UserProfileResponse> getUserProfile();
 
+  /// Get user profile from local cache if available
+  /// Returns [UserProfileResponse] or null if no cache exists
+  Future<UserProfileResponse?> getCachedProfile();
+
   /// Update user profile information (name, email, phone, etc.)
   /// This is a general profile update for all user types
   Future<void> updateProfile({

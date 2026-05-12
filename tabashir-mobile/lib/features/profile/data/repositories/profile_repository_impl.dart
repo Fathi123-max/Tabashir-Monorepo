@@ -32,6 +32,19 @@ class ProfileRepositoryImpl implements ProfileRepository {
   final TabashirApiService _tabashirApiService;
 
   @override
+  Future<UserProfileResponse?> getCachedProfile() async {
+    try {
+      final cachedProfile = await _localProfileRepository.getLatestProfile();
+      if (cachedProfile != null) {
+        return _convertFromLocal(cachedProfile);
+      }
+    } catch (e) {
+      AppLogger.error('[PROFILE_REPO] Error getting cached profile: $e', tag: 'Profile', error: e);
+    }
+    return null;
+  }
+
+  @override
   Future<UserProfileResponse> getUserProfile() async {
     AppLogger.debug('\n\n########## [PROFILE_REPO] GET USER PROFILE CALLED ##########', tag: 'Profile');
     try {

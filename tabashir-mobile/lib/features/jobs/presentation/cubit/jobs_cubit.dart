@@ -43,6 +43,7 @@ class JobsCubit extends Cubit<JobsState> {
   StreamSubscription<Set<String>>? _savedJobsSubscription;
   Set<String> _appliedJobIds = {};
   bool _isInitialized = false;
+  String? _cachedEmail;
 
   @override
   Future<void> close() {
@@ -146,8 +147,13 @@ class JobsCubit extends Cubit<JobsState> {
         emit(const JobsState.loading());
       }
 
-      // Use provided email or get from profile cubit
-      final userEmail = email ?? _profileCubit.state.profile?.email;
+      // Cache the email if provided
+      if (email != null && email.isNotEmpty) {
+        _cachedEmail = email;
+      }
+
+      // Use provided email, cached email, or get from profile cubit
+      final userEmail = _cachedEmail ?? _profileCubit.state.profile?.email;
       if (userEmail != null && userEmail.isNotEmpty) {
         AppLogger.debug('[JOBS_CUBIT] ✅ Using email for matching: $userEmail', tag: 'Jobs');
       } else {

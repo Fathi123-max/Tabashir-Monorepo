@@ -1,4 +1,4 @@
-from app.database.db import get_db_connection
+from app.database.db import get_db_connection, release_db_connection
 
 def user_exists(user_id):
     conn = None
@@ -14,7 +14,7 @@ def user_exists(user_id):
         return False
     finally:
         if conn:
-            conn.close()
+            release_db_connection(conn)
 
 def insert_user_resume_document(user_id, unformatted_file_path=None, raw_cv_text=None, formatted_file_path=None, translated_file_path=None, file_type=None, output_language=None, status=None, error_message=None):
     conn = None
@@ -64,4 +64,4 @@ def insert_user_resume_document(user_id, unformatted_file_path=None, raw_cv_text
         raise
     finally:
         if conn:
-            conn.close()
+            release_db_connection(conn)
