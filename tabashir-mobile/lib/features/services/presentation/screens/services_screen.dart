@@ -367,18 +367,7 @@ class _ServicesScreenState extends State<ServicesScreen> {
                               ),
                               SizedBox(height: AppTheme.spacingMd.h),
 
-                              ServiceCard(
-                                icon: Icons.description_rounded,
-                                title: 'AI Resume Optimization'.tr(),
-                                description: 'aiResumeOptimizationDesc'.tr(),
-                                price: 'AED 40',
-                                buttonText: 'Get Started'.tr(),
-                                isEnabled: true,
-                                onPressed: () {
-                                  context.pushNamed('ai-resume-screen');
-                                },
-                              ),
-                              SizedBox(height: AppTheme.spacingMd.h),
+
                               ServiceCard(
                                 icon: Icons.link_rounded,
                                 title: 'AI LinkedIn Enhancement',

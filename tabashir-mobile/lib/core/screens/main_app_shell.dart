@@ -5,6 +5,7 @@ import '../../features/home/presentation/screens/home_screen.dart';
 import '../../features/jobs/presentation/cubit/jobs_cubit.dart';
 import '../../features/jobs/presentation/screens/jobs_screen.dart';
 import '../../features/profile/presentation/screens/profile_screen.dart';
+import '../../features/resume/presentation/screens/resume_vault_screen.dart';
 import '../../features/services/presentation/screens/services_screen.dart';
 import '../../features/shared/widgets/widgets.dart';
 import '../di/injection.dart';
@@ -36,7 +37,7 @@ class _MainAppShellState extends State<MainAppShell> {
       onTabChange: _changeTab,
     ),
     const JobsScreen(),
-
+    const ResumeVaultScreen(),
     const ServicesScreen(),
     const ProfileScreen(),
   ];
