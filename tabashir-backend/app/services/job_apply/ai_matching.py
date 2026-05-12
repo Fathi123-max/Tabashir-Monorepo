@@ -19,6 +19,15 @@ except OSError:
     logger.error("Failed to load spaCy model. Please run: python -m spacy download en_core_web_sm")
     nlp = None
 
+from functools import lru_cache
+
+@lru_cache(maxsize=128)
+def get_spacy_doc(text):
+    """Cache spaCy document processing to avoid redundant parsing for candidate profiles"""
+    if nlp is None or not text:
+        return None
+    return nlp(text)
+
 def extract_job_title(description: str) -> str:
     """Extract job title using NLP techniques"""
     try:
@@ -86,7 +95,7 @@ def calculate_skills_match(job_text: str, candidate_skills: str) -> float:
         # Enhance with spaCy similarity if available
         if nlp is not None:
             doc1 = nlp(job_text[:5000])  # Limit text size for performance
-            doc2 = nlp(candidate_skills[:5000])
+            doc2 = get_spacy_doc(candidate_skills[:5000])
             spacy_similarity = doc1.similarity(doc2)
             
             # Combine TF-IDF and spaCy similarity
@@ -181,7 +190,7 @@ def semantic_location_match(job_location: str, candidate_location: str) -> float
         # Use spaCy similarity as fallback for remaining cases
         if nlp is not None:
             doc1 = nlp(job_location)
-            doc2 = nlp(candidate_location)
+            doc2 = get_spacy_doc(candidate_location)
             similarity = doc1.similarity(doc2)
             # Scale down NLP similarity a bit to prefer exact matches
             return similarity * 0.8
@@ -280,7 +289,7 @@ def title_position_match(job_title: str, candidate_positions: str) -> float:
         # spaCy semantic similarity
         if nlp is not None:
             doc1 = nlp(job_title)
-            doc2 = nlp(candidate_positions)
+            doc2 = get_spacy_doc(candidate_positions)
             spacy_similarity = doc1.similarity(doc2)
             
             # Return weighted average of similarities
