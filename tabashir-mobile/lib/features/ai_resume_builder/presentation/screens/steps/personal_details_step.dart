@@ -8,129 +8,180 @@ import '../../../../../core/theme/app_theme.dart';
 import '../../cubit/ai_resume_builder_cubit.dart';
 import '../../widgets/shared/form_fields.dart';
 
-class PersonalDetailsStep extends StatelessWidget {
+class PersonalDetailsStep extends StatefulWidget {
   const PersonalDetailsStep({super.key});
 
   @override
-  Widget build(
-    BuildContext context,
-  ) => BlocBuilder<AiResumeBuilderCubit, AiResumeBuilderState>(
-    builder: (context, state) {
-      final details = state.resumeData.personalDetails;
-      final controller = _FormController();
+  State<PersonalDetailsStep> createState() => _PersonalDetailsStepState();
+}
 
-      return SingleChildScrollView(
-        padding: EdgeInsets.all(AppTheme.spacingMd.w),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              'Personal Details'.tr(),
-              style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                fontWeight: FontWeight.bold,
+class _PersonalDetailsStepState extends State<PersonalDetailsStep> {
+  late TextEditingController fullNameController;
+  late TextEditingController emailController;
+  late TextEditingController phoneController;
+  late TextEditingController cityController;
+  late TextEditingController nationalityController;
+  late TextEditingController linkedinController;
+  late TextEditingController githubController;
+
+  @override
+  void initState() {
+    super.initState();
+    final details = context.read<AiResumeBuilderCubit>().state.resumeData.personalDetails;
+    fullNameController = TextEditingController(text: details?.fullName);
+    emailController = TextEditingController(text: details?.email);
+    phoneController = TextEditingController(text: details?.phoneNumber);
+    cityController = TextEditingController(text: details?.city);
+    nationalityController = TextEditingController(text: details?.nationality);
+    linkedinController = TextEditingController(text: details?.linkedin);
+    githubController = TextEditingController(text: details?.github);
+  }
+
+  @override
+  void dispose() {
+    fullNameController.dispose();
+    emailController.dispose();
+    phoneController.dispose();
+    cityController.dispose();
+    nationalityController.dispose();
+    linkedinController.dispose();
+    githubController.dispose();
+    super.dispose();
+  }
+
+  void _updateCubit() {
+    final cubit = context.read<AiResumeBuilderCubit>();
+    final currentDetails = cubit.state.resumeData.personalDetails ?? const PersonalDetails();
+    
+    cubit.updatePersonalDetails(
+      currentDetails.copyWith(
+        fullName: fullNameController.text,
+        email: emailController.text,
+        phoneNumber: phoneController.text,
+        city: cityController.text,
+        nationality: nationalityController.text,
+        linkedin: linkedinController.text.isNotEmpty ? linkedinController.text : null,
+        github: githubController.text.isNotEmpty ? githubController.text : null,
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocBuilder<AiResumeBuilderCubit, AiResumeBuilderState>(
+      builder: (context, state) {
+        final details = state.resumeData.personalDetails;
+
+        return SingleChildScrollView(
+          padding: EdgeInsets.all(AppTheme.spacingMd.w),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'Personal Details'.tr(),
+                style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+                  fontWeight: FontWeight.bold,
+                ),
               ),
-            ),
-            SizedBox(height: AppTheme.spacingXs.h),
-            Text(
-              'Tell us about yourself. This information will appear on your resume.'
-                  .tr(),
-              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                color: AppTheme.textMutedLight,
+              SizedBox(height: AppTheme.spacingXs.h),
+              Text(
+                'Tell us about yourself. This information will appear on your resume.'
+                    .tr(),
+                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                  color: AppTheme.textMutedLight,
+                ),
               ),
-            ),
-            SizedBox(height: AppTheme.spacingXl.h),
-            Form(
-              key: controller.formKey,
-              child: Column(
-                children: [
-                  AppTextField(
-                    label: 'Full Name *'.tr(),
-                    hint: 'Enter your full name'.tr(),
-                    initialValue: details?.fullName,
-                    onChanged: (value) => controller.fullName = value,
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Full name is required'.tr();
-                      }
-                      return null;
-                    },
-                  ),
-                  SizedBox(height: AppTheme.spacingMd.h),
-                  AppTextField(
-                    label: 'Email *'.tr(),
-                    hint: 'your.email@example.com'.tr(),
-                    initialValue: details?.email,
-                    onChanged: (value) => controller.email = value,
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Email is required'.tr();
-                      }
-                      if (!RegExp(
-                        r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$'.tr(),
-                      ).hasMatch(value)) {
-                        return 'Enter a valid email'.tr();
-                      }
-                      return null;
-                    },
-                    keyboardType: TextInputType.emailAddress,
-                  ),
-                  SizedBox(height: AppTheme.spacingMd.h),
-                  AppTextField(
-                    label: 'Phone Number'.tr(),
-                    hint: '+1 (555) 123-4567'.tr(),
-                    initialValue: details?.phoneNumber,
-                    onChanged: (value) => controller.phoneNumber = value,
-                    keyboardType: TextInputType.phone,
-                  ),
-                  SizedBox(height: AppTheme.spacingMd.h),
-                  AppDropdownField<String>(
-                    label: 'Country'.tr(),
-                    hint: 'Select your country'.tr(),
-                    value: details?.country,
-                    items: [
-                      DropdownMenuItem(
-                        value: 'US',
-                        child: Text('United States'.tr()),
-                      ),
-                      DropdownMenuItem(
-                        value: 'UK',
-                        child: Text('United Kingdom'.tr()),
-                      ),
-                      DropdownMenuItem(value: 'CA', child: Text('Canada'.tr())),
-                      DropdownMenuItem(
-                        value: 'AU',
-                        child: Text('Australia'.tr()),
-                      ),
-                      DropdownMenuItem(
-                        value: 'DE',
-                        child: Text('Germany'.tr()),
-                      ),
-                      DropdownMenuItem(value: 'FR', child: Text('France'.tr())),
-                    ],
-                    onChanged: (value) => controller.country = value,
-                  ),
-                  SizedBox(height: AppTheme.spacingMd.h),
-                  AppTextField(
-                    label: 'City'.tr(),
-                    hint: 'Enter your city'.tr(),
-                    initialValue: details?.city,
-                    onChanged: (value) => controller.city = value,
-                  ),
-                  SizedBox(height: AppTheme.spacingLg.h),
-                  _buildSocialLinksSection(context, state, controller),
-                ],
+              SizedBox(height: AppTheme.spacingXl.h),
+              Form(
+                child: Column(
+                  children: [
+                    AppTextField(
+                      label: 'Full Name *'.tr(),
+                      hint: 'Enter your full name'.tr(),
+                      controller: fullNameController,
+                      onChanged: (_) => _updateCubit(),
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Full name is required'.tr();
+                        }
+                        return null;
+                      },
+                    ),
+                    SizedBox(height: AppTheme.spacingMd.h),
+                    AppTextField(
+                      label: 'Email *'.tr(),
+                      hint: 'your.email@example.com'.tr(),
+                      controller: emailController,
+                      onChanged: (_) => _updateCubit(),
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Email is required'.tr();
+                        }
+                        if (!RegExp(
+                          r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$'.tr(),
+                        ).hasMatch(value)) {
+                          return 'Enter a valid email'.tr();
+                        }
+                        return null;
+                      },
+                      keyboardType: TextInputType.emailAddress,
+                    ),
+                    SizedBox(height: AppTheme.spacingMd.h),
+                    AppTextField(
+                      label: 'Phone Number'.tr(),
+                      hint: '+1 (555) 123-4567'.tr(),
+                      controller: phoneController,
+                      onChanged: (_) => _updateCubit(),
+                      keyboardType: TextInputType.phone,
+                    ),
+                    SizedBox(height: AppTheme.spacingMd.h),
+                    AppDropdownField<String>(
+                      label: 'Country'.tr(),
+                      hint: 'Select your country'.tr(),
+                      value: details?.country,
+                      items: [
+                        DropdownMenuItem(value: 'AE', child: Text('United Arab Emirates'.tr())),
+                        DropdownMenuItem(value: 'SA', child: Text('Saudi Arabia'.tr())),
+                        DropdownMenuItem(value: 'QA', child: Text('Qatar'.tr())),
+                        DropdownMenuItem(value: 'KW', child: Text('Kuwait'.tr())),
+                        DropdownMenuItem(value: 'US', child: Text('United States'.tr())),
+                        DropdownMenuItem(value: 'UK', child: Text('United Kingdom'.tr())),
+                      ],
+                      onChanged: (value) {
+                        final cubit = context.read<AiResumeBuilderCubit>();
+                        final currentDetails = cubit.state.resumeData.personalDetails ?? const PersonalDetails();
+                        cubit.updatePersonalDetails(currentDetails.copyWith(country: value));
+                      },
+                    ),
+                    SizedBox(height: AppTheme.spacingMd.h),
+                    AppTextField(
+                      label: 'City'.tr(),
+                      hint: 'Enter your city'.tr(),
+                      controller: cityController,
+                      onChanged: (_) => _updateCubit(),
+                    ),
+                    SizedBox(height: AppTheme.spacingMd.h),
+                    AppTextField(
+                      label: 'Nationality'.tr(),
+                      hint: 'Enter your nationality'.tr(),
+                      controller: nationalityController,
+                      onChanged: (_) => _updateCubit(),
+                    ),
+                    SizedBox(height: AppTheme.spacingLg.h),
+                    _buildSocialLinksSection(context, state),
+                  ],
+                ),
               ),
-            ),
-          ],
-        ),
-      );
-    },
-  );
+            ],
+          ),
+        );
+      },
+    );
+  }
 
   Widget _buildSocialLinksSection(
     BuildContext context,
     AiResumeBuilderState state,
-    _FormController controller,
   ) {
     final theme = Theme.of(context);
     final socialLinks = state.resumeData.personalDetails?.socialLinks ?? [];
@@ -175,13 +226,6 @@ class PersonalDetailsStep extends StatelessWidget {
                 Text(
                   'No social links added yet'.tr(),
                   style: theme.textTheme.bodyLarge?.copyWith(
-                    color: AppTheme.textMutedLight,
-                  ),
-                ),
-                SizedBox(height: AppTheme.spacingXs.h),
-                Text(
-                  'Add Your First Social Link'.tr(),
-                  style: theme.textTheme.bodyMedium?.copyWith(
                     color: AppTheme.textMutedLight,
                   ),
                 ),
@@ -258,7 +302,6 @@ class PersonalDetailsStep extends StatelessWidget {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                // Header with icon and title
                 Row(
                   children: [
                     Container(
@@ -288,89 +331,50 @@ class PersonalDetailsStep extends StatelessWidget {
                   ],
                 ),
                 SizedBox(height: AppTheme.spacingLg.h),
-                // Form fields
-                Expanded(
-                  child: SingleChildScrollView(
-                    child: Form(
-                      key: formKey,
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          // Platform Section
-                          _buildSectionHeader(
-                            context,
-                            Icons.public_outlined,
-                            'Platform'.tr(),
-                          ),
-                          SizedBox(height: AppTheme.spacingMd.h),
-                          AppDropdownField<String>(
-                            label: 'Select Platform *'.tr(),
-                            hint: 'Choose platform'.tr(),
-                            items: [
-                              DropdownMenuItem(
-                                value: 'LinkedIn',
-                                child: Text('LinkedIn'.tr()),
-                              ),
-                              DropdownMenuItem(
-                                value: 'GitHub',
-                                child: Text('GitHub'.tr()),
-                              ),
-                              DropdownMenuItem(
-                                value: 'Twitter',
-                                child: Text('Twitter'.tr()),
-                              ),
-                              DropdownMenuItem(
-                                value: 'Portfolio',
-                                child: Text('Portfolio'.tr()),
-                              ),
-                            ],
-                            onChanged: (value) => platform = value ?? '',
-                            validator: (value) {
-                              if (value == null || value.isEmpty) {
-                                return 'Platform is required'.tr();
-                              }
-                              return null;
-                            },
-                          ),
-                          SizedBox(height: AppTheme.spacingLg.h),
-                          // URL Section
-                          _buildSectionHeader(
-                            context,
-                            Icons.link_outlined,
-                            'Profile URL'.tr(),
-                          ),
-                          SizedBox(height: AppTheme.spacingMd.h),
-                          AppTextField(
-                            label: 'URL *'.tr(),
-                            hint: 'https://linkedin.com/in/yourprofile',
-                            onChanged: (value) => url = value,
-                            validator: (value) {
-                              if (value == null || value.isEmpty) {
-                                return 'URL is required'.tr();
-                              }
-                              return null;
-                            },
-                          ),
-                          SizedBox(height: AppTheme.spacingLg.h),
+                Form(
+                  key: formKey,
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      AppDropdownField<String>(
+                        label: 'Select Platform *'.tr(),
+                        hint: 'Choose platform'.tr(),
+                        items: [
+                          DropdownMenuItem(value: 'LinkedIn', child: Text('LinkedIn'.tr())),
+                          DropdownMenuItem(value: 'GitHub', child: Text('GitHub'.tr())),
+                          DropdownMenuItem(value: 'Twitter', child: Text('Twitter'.tr())),
+                          DropdownMenuItem(value: 'Portfolio', child: Text('Portfolio'.tr())),
                         ],
+                        onChanged: (value) => platform = value ?? '',
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Platform is required'.tr();
+                          }
+                          return null;
+                        },
                       ),
-                    ),
+                      SizedBox(height: AppTheme.spacingMd.h),
+                      AppTextField(
+                        label: 'URL *'.tr(),
+                        hint: 'https://linkedin.com/in/yourprofile',
+                        onChanged: (value) => url = value,
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'URL is required'.tr();
+                          }
+                          return null;
+                        },
+                      ),
+                    ],
                   ),
                 ),
-                // Action buttons
+                SizedBox(height: AppTheme.spacingLg.h),
                 Row(
                   children: [
                     Expanded(
                       child: OutlinedButton(
                         onPressed: () => Navigator.pop(context),
-                        child: Text(
-                          'Cancel'.tr(),
-                          style: Theme.of(context).textTheme.bodyMedium
-                              ?.copyWith(
-                                color: AppTheme.errorColor,
-                                fontWeight: FontWeight.w600,
-                              ),
-                        ),
+                        child: Text('Cancel'.tr()),
                       ),
                     ),
                     SizedBox(width: AppTheme.spacingMd.w),
@@ -406,45 +410,13 @@ class PersonalDetailsStep extends StatelessWidget {
     );
   }
 
-  Widget _buildSectionHeader(
-    BuildContext context,
-    IconData icon,
-    String title,
-  ) => Row(
-    children: [
-      Icon(
-        icon,
-        size: 20.sp,
-        color: AppTheme.accentColor,
-      ),
-      SizedBox(width: AppTheme.spacingSm.w),
-      Text(
-        title,
-        style: Theme.of(context).textTheme.labelLarge?.copyWith(
-          fontWeight: FontWeight.w600,
-          color: AppTheme.accentColor,
-        ),
-      ),
-    ],
-  );
-
   void _removeSocialLink(BuildContext context, int index) {
-    final state = context.read<AiResumeBuilderCubit>().state;
-    final currentDetails =
-        state.resumeData.personalDetails ?? const PersonalDetails();
+    final cubit = context.read<AiResumeBuilderCubit>();
+    final currentDetails = cubit.state.resumeData.personalDetails ?? const PersonalDetails();
     final updatedLinks = [...currentDetails.socialLinks];
     updatedLinks.removeAt(index);
-    context.read<AiResumeBuilderCubit>().updatePersonalDetails(
+    cubit.updatePersonalDetails(
       currentDetails.copyWith(socialLinks: updatedLinks),
     );
   }
-}
-
-class _FormController {
-  final formKey = GlobalKey<FormState>();
-  String? fullName;
-  String? email;
-  String? phoneNumber;
-  String? country;
-  String? city;
 }

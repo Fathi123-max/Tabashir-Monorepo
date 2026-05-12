@@ -833,6 +833,13 @@ class SaveAndGenerate(Resource):
                 
                 template_path = Config.ARABIC_TEMPLATE_PATH if template_id == 'arabic' else Config.REGULAR_TEMPLATE_PATH
                 resume_obj.write_document(str(template_path), str(file_path))
+                
+                # Also generate the PDF version so it's available for preview and download
+                try:
+                    from app.services.job_apply.process_cv import convert_docx_to_pdf
+                    convert_docx_to_pdf(Path(file_path))
+                except Exception as e:
+                    print(f"DEBUG: Failed to generate PDF: {e}")
 
                 # 1.4 Create Resume record
                 resume_id = str(uuid.uuid4())
@@ -920,7 +927,7 @@ class SaveAndGenerate(Resource):
             # because ResumeApiService.saveAndGenerate expects ResumeItem directly.
             return {
                 "id": resume_id,
-                "filename": filename,
+                "filename": display_filename,
                 "originalUrl": download_url,
                 "formatedUrl": formatted_url,
                 "isAiResume": True,

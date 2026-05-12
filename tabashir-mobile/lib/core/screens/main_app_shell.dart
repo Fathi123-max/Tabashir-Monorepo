@@ -14,16 +14,34 @@ class MainAppShell extends StatefulWidget {
   const MainAppShell({
     super.key,
     this.onTabChange,
+    this.initialIndex = 0,
   });
 
   final void Function(int)? onTabChange;
+  final int initialIndex;
 
   @override
   State<MainAppShell> createState() => _MainAppShellState();
 }
 
 class _MainAppShellState extends State<MainAppShell> {
-  int _currentIndex = 0;
+  late int _currentIndex;
+
+  @override
+  void initState() {
+    super.initState();
+    _currentIndex = widget.initialIndex;
+  }
+
+  @override
+  void didUpdateWidget(MainAppShell oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.initialIndex != oldWidget.initialIndex) {
+      setState(() {
+        _currentIndex = widget.initialIndex;
+      });
+    }
+  }
 
   void _changeTab(int index) {
     setState(() {

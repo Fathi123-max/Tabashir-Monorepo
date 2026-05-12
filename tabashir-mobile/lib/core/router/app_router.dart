@@ -168,7 +168,10 @@ final GoRouter appRouter = GoRouter(
     GoRoute(
       path: '/',
       name: 'home',
-      builder: (context, state) => const MainAppShell(),
+      builder: (context, state) {
+        final index = state.extra as int? ?? 0;
+        return MainAppShell(initialIndex: index);
+      },
     ),
     GoRoute(
       path: RouteNames.home,

@@ -567,6 +567,9 @@ class SkillsStep extends StatelessWidget {
     final formKey = GlobalKey<FormState>();
     final cubit = context.read<AiResumeBuilderCubit>();
     final skill = skills[index];
+    var name = skill.name ?? '';
+    var category = skill.category ?? SkillCategory.technical;
+    var proficiency = skill.proficiency ?? ProficiencyLevel.intermediate;
 
     showDialog(
       context: context,
@@ -582,8 +585,8 @@ class SkillsStep extends StatelessWidget {
                 AppTextField(
                   label: 'Skill Name *'.tr(),
                   hint: 'e.g., JavaScript, Leadership'.tr(),
-                  initialValue: skill.name,
-                  onChanged: (value) {},
+                  initialValue: name,
+                  onChanged: (value) => name = value,
                   validator: (value) {
                     if (value == null || value.isEmpty) {
                       return 'Skill name is required'.tr();
@@ -594,7 +597,7 @@ class SkillsStep extends StatelessWidget {
                 SizedBox(height: AppTheme.spacingMd.h),
                 AppDropdownField<SkillCategory>(
                   label: 'Category *'.tr(),
-                  value: skill.category,
+                  value: category,
                   items: [
                     DropdownMenuItem(
                       value: SkillCategory.technical,
@@ -609,7 +612,7 @@ class SkillsStep extends StatelessWidget {
                       child: Text('Languages'.tr()),
                     ),
                   ],
-                  onChanged: (value) {},
+                  onChanged: (value) => category = value ?? SkillCategory.technical,
                   validator: (value) {
                     if (value == null) {
                       return 'Category is required'.tr();
@@ -620,7 +623,7 @@ class SkillsStep extends StatelessWidget {
                 SizedBox(height: AppTheme.spacingMd.h),
                 AppDropdownField<ProficiencyLevel>(
                   label: 'Proficiency Level'.tr(),
-                  value: skill.proficiency,
+                  value: proficiency,
                   items: [
                     DropdownMenuItem(
                       value: ProficiencyLevel.beginner,
@@ -639,7 +642,7 @@ class SkillsStep extends StatelessWidget {
                       child: Text('Expert'.tr()),
                     ),
                   ],
-                  onChanged: (value) {},
+                  onChanged: (value) => proficiency = value ?? ProficiencyLevel.intermediate,
                 ),
               ],
             ),
@@ -651,7 +654,17 @@ class SkillsStep extends StatelessWidget {
             ),
             ElevatedButton(
               onPressed: () {
-                Navigator.pop(context);
+                if (formKey.currentState!.validate()) {
+                  cubit.updateSkill(
+                    index,
+                    Skill(
+                      name: name,
+                      category: category,
+                      proficiency: proficiency,
+                    ),
+                  );
+                  Navigator.pop(context);
+                }
               },
               child: Text('Update'.tr()),
             ),
