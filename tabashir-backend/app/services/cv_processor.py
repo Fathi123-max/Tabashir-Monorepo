@@ -48,13 +48,31 @@ def chat_with_model(messages) -> str:
 
 
 def safe_parse_ai_response(response_str):
+    if not response_str:
+        return None
+    
+    s = response_str.strip()
+    # Strip markdown code blocks if present
+    if s.startswith("```json"):
+        s = s[7:]
+    elif s.startswith("```python"):
+        s = s[9:]
+    elif s.startswith("```"):
+        s = s[3:]
+    if s.endswith("```"):
+        s = s[:-3]
+    s = s.strip()
+
     try:
-        return ast.literal_eval(response_str)
+        return ast.literal_eval(s)
     except Exception:
         try:
-            return json.loads(response_str)
+            return json.loads(s)
         except Exception as e:
             print(f"Failed to parse AI response:\n{response_str}\nError: {e}")
+            # Fallback: if it's raw text and not pretending to be JSON
+            if s and not s.startswith(('[', '{')):
+                return s
             return None
 
 
