@@ -1,6 +1,6 @@
 import 'dart:typed_data';
 import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:tabashir/core/network/models/jobs_match_response.dart';
+import '../../../../core/network/models/jobs_match_response.dart';
 
 part 'onboarding_wizard_state.freezed.dart';
 

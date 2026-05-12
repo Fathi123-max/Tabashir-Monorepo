@@ -1,8 +1,9 @@
 import 'package:dio/dio.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:tabashir/core/network/interceptors/language_interceptor.dart';
-import 'package:tabashir/core/services/auth_session_service.dart';
-import 'package:tabashir/core/utils/app_logger.dart';
+
+import '../../services/auth_session_service.dart';
+import '../../utils/app_logger.dart';
+import '../interceptors/language_interceptor.dart';
 
 /// Backend Dio client for backend.tabashir.ae API
 /// Adds user authentication token to requests but no x-api-token

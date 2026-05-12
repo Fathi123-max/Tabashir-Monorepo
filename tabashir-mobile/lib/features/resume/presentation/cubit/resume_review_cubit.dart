@@ -1,8 +1,9 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:injectable/injectable.dart';
-import 'package:tabashir/features/profile/presentation/cubit/profile_cubit.dart';
-import 'package:tabashir/features/resume/presentation/cubit/resume_vault_cubit.dart';
+
+import '../../../profile/presentation/cubit/profile_cubit.dart';
 import 'resume_review_state.dart';
+import 'resume_vault_cubit.dart';
 
 @injectable
 class ResumeReviewCubit extends Cubit<ResumeReviewState> {

@@ -1,7 +1,7 @@
-import 'package:tabashir/core/network/models/payment/payment_intent_request.dart';
-import 'package:tabashir/core/services/stripe_service.dart' as stripe_svc;
-import 'package:tabashir/features/payments/domain/repositories/payment_platform.dart';
-import 'package:tabashir/features/payments/domain/repositories/payment_repository.dart';
+import '../../../../core/network/models/payment/payment_intent_request.dart';
+import '../../../../core/services/stripe_service.dart' as stripe_svc;
+import '../../domain/repositories/payment_platform.dart';
+import '../../domain/repositories/payment_repository.dart';
 
 /// Stripe implementation of [PaymentPlatform] for Android.
 class StripePaymentPlatform implements PaymentPlatform {

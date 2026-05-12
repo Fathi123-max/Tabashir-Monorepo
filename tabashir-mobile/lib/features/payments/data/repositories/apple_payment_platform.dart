@@ -1,8 +1,8 @@
 import 'dart:async';
 
 import 'package:in_app_purchase/in_app_purchase.dart';
-import 'package:tabashir/core/services/apple_iap_service.dart';
-import 'package:tabashir/features/payments/domain/repositories/payment_platform.dart';
+import '../../../../core/services/apple_iap_service.dart';
+import '../../domain/repositories/payment_platform.dart';
 
 /// iOS payment platform implementation using StoreKit 2.
 class ApplePaymentPlatform implements PaymentPlatform {

@@ -1,9 +1,9 @@
 import 'package:dio/dio.dart';
 import 'package:injectable/injectable.dart';
-import 'package:tabashir/core/network/models/ai_resume/create_ai_resume_request.dart';
-import 'package:tabashir/core/network/models/ai_resume/create_ai_resume_response.dart';
-import 'package:tabashir/core/network/services/ai_resume/ai_resume_api_service.dart';
-import 'package:tabashir/features/ai_resume/domain/repositories/ai_resume_repository.dart';
+import '../../../../core/network/models/ai_resume/create_ai_resume_request.dart';
+import '../../../../core/network/models/ai_resume/create_ai_resume_response.dart';
+import '../../../../core/network/services/ai_resume/ai_resume_api_service.dart';
+import '../../domain/repositories/ai_resume_repository.dart';
 
 /// Implementation of [AiResumeRepository]
 /// Handles AI resume operations using [AiResumeApiService]

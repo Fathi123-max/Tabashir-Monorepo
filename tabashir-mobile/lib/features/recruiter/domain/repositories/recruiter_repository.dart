@@ -1,4 +1,4 @@
-import 'package:tabashir/features/recruiter/data/models/recruiter_model.dart';
+import '../../data/models/recruiter_model.dart';
 
 /// Repository interface for recruiter operations
 /// Defines the contract for recruiter data operations

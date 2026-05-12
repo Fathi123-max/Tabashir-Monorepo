@@ -1,4 +1,4 @@
-import 'package:tabashir/features/resume/data/models/resume_model.dart';
+import '../../data/models/resume_model.dart';
 
 /// Repository interface for resume operations
 /// Defines the contract for resume data operations

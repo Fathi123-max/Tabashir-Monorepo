@@ -2,8 +2,9 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:path_provider/path_provider.dart';
-import 'package:tabashir/core/database/models/local_resume.dart';
-import 'package:tabashir/core/services/local_persistence_service.dart';
+
+import '../../services/local_persistence_service.dart';
+import '../models/local_resume.dart';
 
 /// Repository for managing local resumes stored in SharedPreferences
 class LocalResumeRepository {

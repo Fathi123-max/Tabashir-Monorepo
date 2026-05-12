@@ -1,13 +1,12 @@
 import 'package:easy_localization/easy_localization.dart';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:tabashir/core/theme/app_theme.dart';
-import 'package:tabashir/features/ai_resume_builder/presentation/cubit/ai_resume_builder_cubit.dart';
-import 'package:tabashir/features/ai_resume_builder/presentation/widgets/shared/form_fields.dart';
 
 import '../../../../../core/network/models/ai_resume/resume_models.dart';
+import '../../../../../core/theme/app_theme.dart';
+import '../../cubit/ai_resume_builder_cubit.dart';
+import '../../widgets/shared/form_fields.dart';
 
 class PersonalDetailsStep extends StatelessWidget {
   const PersonalDetailsStep({super.key});

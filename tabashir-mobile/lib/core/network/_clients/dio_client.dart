@@ -1,6 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:tabashir/core/network/interceptors/language_interceptor.dart';
+import '../interceptors/language_interceptor.dart';
 
 class DioClient {
   DioClient() {

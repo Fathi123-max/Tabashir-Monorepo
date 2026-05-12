@@ -1,9 +1,10 @@
 import 'dart:convert';
 
 import 'package:injectable/injectable.dart';
-import 'package:tabashir/core/services/local_persistence_service.dart';
-import 'package:tabashir/features/recruiter/data/models/recruiter_model.dart';
-import 'package:tabashir/features/recruiter/domain/repositories/recruiter_repository.dart';
+
+import '../../../../core/services/local_persistence_service.dart';
+import '../../domain/repositories/recruiter_repository.dart';
+import '../models/recruiter_model.dart';
 
 /// Implementation of RecruiterRepository
 @Injectable(as: RecruiterRepository)

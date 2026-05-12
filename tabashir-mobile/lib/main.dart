@@ -1,19 +1,20 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+
 import 'core/bootstrap/app_bootstrap.dart';
+import 'core/di/injection.dart';
 import 'core/router/app_router.dart';
 import 'core/router/app_state.dart';
-import 'core/theme/app_theme.dart';
-import 'core/theme/theme_manager.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:tabashir/core/di/injection.dart';
-import 'package:tabashir/features/jobs/presentation/cubit/saved_jobs_cubit.dart';
-import 'package:tabashir/features/profile/presentation/cubit/profile_cubit.dart';
-import 'features/resume/presentation/cubit/resume_vault_cubit.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'core/services/apple_signin_service.dart';
 import 'core/session/cubit/session_cubit.dart';
+import 'core/theme/app_theme.dart';
+import 'core/theme/theme_manager.dart';
+import 'features/jobs/presentation/cubit/saved_jobs_cubit.dart';
+import 'features/profile/presentation/cubit/profile_cubit.dart';
+import 'features/resume/presentation/cubit/resume_vault_cubit.dart';
 
 void main() async {
   await dotenv.load();

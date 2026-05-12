@@ -1,6 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:tabashir/features/candidate/domain/repositories/candidate_repository.dart';
+import '../../domain/repositories/candidate_repository.dart';
 
 part 'candidate_state.dart';
 part 'candidate_cubit.freezed.dart';

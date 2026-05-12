@@ -1,11 +1,12 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:tabashir/features/onboarding/models/onboarding_page_model.dart';
-import 'package:tabashir/features/onboarding/domain/repositories/onboarding_repository.dart';
 
-part 'onboarding_state.dart';
+import '../../domain/repositories/onboarding_repository.dart';
+import '../../models/onboarding_page_model.dart';
+
 part 'onboarding_cubit.freezed.dart';
 part 'onboarding_cubit.g.dart';
+part 'onboarding_state.dart';
 
 class OnboardingCubit extends Cubit<OnboardingState> {
   OnboardingCubit(this._repository) : super(const OnboardingState());

@@ -1,22 +1,24 @@
 import 'dart:convert';
+
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:injectable/injectable.dart';
 import 'package:reactive_forms/reactive_forms.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:tabashir/core/services/auth_session_service.dart';
-import 'package:tabashir/core/network/models/user/user_profile_response.dart';
-import 'package:tabashir/core/network/models/profile/profile_update_request.dart';
-import 'package:tabashir/core/constants/storage_keys.dart';
-import 'package:tabashir/features/profile/domain/repositories/profile_repository.dart';
-import 'package:tabashir/core/network/models/candidate/professional_info_request.dart';
-import 'package:tabashir/core/di/injection.dart';
-import 'package:tabashir/features/home/presentation/cubit/home_cubit.dart';
-import 'package:tabashir/features/home/presentation/cubit/app_initialization_cubit.dart';
-import 'package:tabashir/core/utils/app_logger.dart';
 
-part 'profile_state.dart';
+import '../../../../core/constants/storage_keys.dart';
+import '../../../../core/di/injection.dart';
+import '../../../../core/network/models/candidate/professional_info_request.dart';
+import '../../../../core/network/models/profile/profile_update_request.dart';
+import '../../../../core/network/models/user/user_profile_response.dart';
+import '../../../../core/services/auth_session_service.dart';
+import '../../../../core/utils/app_logger.dart';
+import '../../../home/presentation/cubit/app_initialization_cubit.dart';
+import '../../../home/presentation/cubit/home_cubit.dart';
+import '../../domain/repositories/profile_repository.dart';
+
 part 'profile_cubit.freezed.dart';
+part 'profile_state.dart';
 
 /// Custom validator for LinkedIn URL
 /// Now optional - only validates if a value is provided

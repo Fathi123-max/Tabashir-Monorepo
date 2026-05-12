@@ -2,26 +2,26 @@ import 'dart:math';
 
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
-import 'package:flutter/services.dart';
-import 'package:tabashir/core/di/injection.dart';
-import 'package:tabashir/core/services/auth_session_service.dart';
-import 'package:tabashir/core/services/google_signin_service.dart';
-import 'package:tabashir/core/services/apple_signin_service.dart';
 
-import '../../../../core/theme/app_theme.dart';
+import '../../../../core/di/injection.dart';
 import '../../../../core/router/route_names.dart';
+import '../../../../core/services/apple_signin_service.dart';
+import '../../../../core/services/auth_session_service.dart';
+import '../../../../core/services/google_signin_service.dart';
+import '../../../../core/theme/app_theme.dart';
 import '../cubit/auth_cubit.dart';
-import '../widgets/signup_header_widget.dart';
-import '../widgets/social_login_button.dart';
-import '../widgets/signup_divider_widget.dart';
-import '../widgets/signup_text_field_widget.dart';
-import '../widgets/terms_checkbox_widget.dart';
+import '../widgets/ai_assistant_widget.dart';
 import '../widgets/create_account_button_widget.dart';
 import '../widgets/signin_link_widget.dart';
-import '../widgets/ai_assistant_widget.dart';
+import '../widgets/signup_divider_widget.dart';
+import '../widgets/signup_header_widget.dart';
+import '../widgets/signup_text_field_widget.dart';
+import '../widgets/social_login_button.dart';
+import '../widgets/terms_checkbox_widget.dart';
 
 class SignupScreen extends StatefulWidget {
   const SignupScreen({super.key});

@@ -1,13 +1,14 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:injectable/injectable.dart';
-import 'package:tabashir/core/di/injection.dart';
-import 'package:tabashir/core/network/models/applied_jobs_response.dart';
-import 'package:tabashir/core/network/models/user/user_profile_response.dart';
-import 'package:tabashir/core/network/models/job_details_response.dart';
-import 'package:tabashir/core/services/job_match_service.dart';
-import 'package:tabashir/features/home/domain/repositories/home_repository.dart';
+
+import '../../../../core/di/injection.dart';
+import '../../../../core/network/models/applied_jobs_response.dart';
+import '../../../../core/network/models/job_details_response.dart';
+import '../../../../core/network/models/user/user_profile_response.dart';
+import '../../../../core/services/job_match_service.dart';
+import '../../../../core/utils/app_logger.dart';
+import '../../domain/repositories/home_repository.dart';
 import 'home_state.dart';
-import 'package:tabashir/core/utils/app_logger.dart';
 
 @lazySingleton
 class HomeCubit extends Cubit<HomeState> {

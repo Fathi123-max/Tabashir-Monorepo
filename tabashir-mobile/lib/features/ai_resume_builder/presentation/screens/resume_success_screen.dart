@@ -1,19 +1,19 @@
-import 'dart:io';
+import 'package:dio/dio.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
-import 'package:share_plus/share_plus.dart';
-import 'package:path_provider/path_provider.dart';
-import 'package:dio/dio.dart';
 import 'package:open_filex/open_filex.dart';
-import 'package:tabashir/core/di/injection.dart';
-import 'package:tabashir/core/network/_clients/auth_dio_client.dart';
-import 'package:tabashir/core/services/auth_session_service.dart';
-import 'package:tabashir/core/network/models/resume_response/resume_item.dart';
-import 'package:tabashir/core/router/route_names.dart';
-import 'package:tabashir/core/theme/app_theme.dart';
-import 'package:tabashir/core/utils/app_logger.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:share_plus/share_plus.dart';
+
+import '../../../../core/di/injection.dart';
+import '../../../../core/network/_clients/auth_dio_client.dart';
+import '../../../../core/network/models/resume_response/resume_item.dart';
+import '../../../../core/router/route_names.dart';
+import '../../../../core/services/auth_session_service.dart';
+import '../../../../core/theme/app_theme.dart';
+import '../../../../core/utils/app_logger.dart';
 
 class ResumeSuccessScreen extends StatelessWidget {
   const ResumeSuccessScreen({

@@ -1,7 +1,8 @@
 import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
+import '../utils/app_logger.dart';
 import 'device_capability_service.dart';
-import 'package:tabashir/core/utils/app_logger.dart';
 
 /// Animation quality levels
 enum AnimationQuality {

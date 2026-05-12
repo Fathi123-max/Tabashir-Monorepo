@@ -1,8 +1,8 @@
 import 'dart:io';
 
-import 'package:tabashir/core/network/models/applied_jobs_response.dart';
-import 'package:tabashir/core/network/models/job_details_response.dart';
-import 'package:tabashir/core/network/models/jobs_match_response.dart';
+import '../../../../core/network/models/applied_jobs_response.dart';
+import '../../../../core/network/models/job_details_response.dart';
+import '../../../../core/network/models/jobs_match_response.dart';
 
 /// Repository interface for job operations
 /// Defines the contract for job-related data operations

@@ -3,10 +3,11 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
-import 'package:tabashir/core/router/route_names.dart';
-import 'package:tabashir/core/theme/app_theme.dart';
-import 'package:tabashir/core/network/models/user/user_profile_response.dart';
-import 'package:tabashir/features/shared/widgets/pro_badge_widget.dart';
+
+import '../../../../core/network/models/user/user_profile_response.dart';
+import '../../../../core/router/route_names.dart';
+import '../../../../core/theme/app_theme.dart';
+import '../../../shared/widgets/pro_badge_widget.dart';
 
 /// Premium Pro Header Widget
 /// Displays user info with Pro badge - consistent with app design

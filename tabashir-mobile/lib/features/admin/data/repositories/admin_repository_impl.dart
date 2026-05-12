@@ -1,8 +1,8 @@
 import 'dart:convert';
 
 import 'package:injectable/injectable.dart';
-import 'package:tabashir/core/services/local_persistence_service.dart';
-import 'package:tabashir/features/admin/domain/repositories/admin_repository.dart';
+import '../../../../core/services/local_persistence_service.dart';
+import '../../domain/repositories/admin_repository.dart';
 
 /// Implementation of [AdminRepository]
 /// Handles admin operations using [LocalPersistenceService] for local storage

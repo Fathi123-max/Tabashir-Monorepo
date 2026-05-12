@@ -3,11 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:iconsax/iconsax.dart';
-import 'package:tabashir/features/home/presentation/cubit/home_cubit.dart';
-import 'package:tabashir/features/home/presentation/cubit/home_state.dart';
-import 'package:tabashir/features/home/presentation/widgets/home_application_stat_item_widget.dart';
-import 'package:tabashir/features/home/presentation/widgets/pie_chart_widget.dart';
-import 'package:tabashir/core/theme/app_theme.dart';
+
+import '../../../../core/theme/app_theme.dart';
+import '../cubit/home_cubit.dart';
+import '../cubit/home_state.dart';
+import 'home_application_stat_item_widget.dart';
+import 'pie_chart_widget.dart';
 
 class HomeApplicationStatsWidget extends StatefulWidget {
   const HomeApplicationStatsWidget({super.key});

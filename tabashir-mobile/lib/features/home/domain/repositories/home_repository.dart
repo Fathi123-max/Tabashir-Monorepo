@@ -1,5 +1,5 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:tabashir/core/network/models/applied_jobs_response.dart';
+import '../../../../core/network/models/applied_jobs_response.dart';
 
 part 'home_repository.freezed.dart';
 part 'home_repository.g.dart';

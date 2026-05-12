@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:tabashir/core/theme/app_theme.dart';
+import '../../../../core/theme/app_theme.dart';
 
 /// Reusable card widget displaying AI recommendation
 class AIRecommendationCard extends StatelessWidget {

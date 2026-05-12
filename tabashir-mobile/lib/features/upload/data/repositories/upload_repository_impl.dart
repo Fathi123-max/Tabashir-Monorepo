@@ -2,9 +2,9 @@ import 'dart:io';
 
 import 'package:dio/dio.dart';
 import 'package:injectable/injectable.dart';
-import 'package:tabashir/core/network/models/upload/upload_response.dart';
-import 'package:tabashir/core/network/services/upload/upload_api_service.dart';
-import 'package:tabashir/features/upload/domain/repositories/upload_repository.dart';
+import '../../../../core/network/models/upload/upload_response.dart';
+import '../../../../core/network/services/upload/upload_api_service.dart';
+import '../../domain/repositories/upload_repository.dart';
 
 /// Implementation of [UploadRepository]
 /// Handles file upload operations using [UploadApiService]

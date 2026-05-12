@@ -7,8 +7,8 @@ import 'package:go_router/go_router.dart';
 
 import '../../../../core/router/route_names.dart';
 import '../../../../core/theme/app_theme.dart';
+import '../../../../core/utils/app_logger.dart';
 import '../cubit/resume_vault_cubit.dart';
-import 'package:tabashir/core/utils/app_logger.dart';
 
 /// Widget for displaying add resume options bottom sheet
 class AddResumeOptionsSheet extends StatelessWidget {
@@ -135,7 +135,7 @@ class AddResumeOptionsSheet extends StatelessWidget {
       if (isReformat) {
         outputFormat = await showDialog<String>(
           context: context,
-          builder: (BuildContext context) {
+          builder: (context) {
             return AlertDialog(
               title: Text('Select Output Format'.tr()),
               content: Column(
@@ -203,7 +203,7 @@ class AddResumeOptionsSheet extends StatelessWidget {
           fileSize: fileSize,
         );
       }
-    } catch (e, stackTrace) {
+    } catch (e) {
       AppLogger.error('🟢 [ADD_RESUME_SHEET] ❌ Exception: $e', tag: 'Resume', error: e);
     }
   }

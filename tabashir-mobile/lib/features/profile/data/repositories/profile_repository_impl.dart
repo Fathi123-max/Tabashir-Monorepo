@@ -1,18 +1,19 @@
 import 'package:dio/dio.dart';
 import 'package:injectable/injectable.dart';
-import 'package:tabashir/core/database/models/local_profile.dart';
-import 'package:tabashir/core/database/repositories/local_profile_repository.dart';
-import 'package:tabashir/core/network/models/user/user_profile_response.dart';
-import 'package:tabashir/core/network/models/candidate/personal_info_request.dart';
-import 'package:tabashir/core/network/models/candidate/professional_info_request.dart';
-import 'package:tabashir/core/network/models/candidate/onboarding_response.dart';
-import 'package:tabashir/core/network/models/profile/profile_update_request.dart';
-import 'package:tabashir/core/network/models/job/ai_client_response.dart';
-import 'package:tabashir/core/network/services/job/tabashir_api_service.dart';
-import 'package:tabashir/core/network/services/user/user_api_service.dart';
-import 'package:tabashir/core/network/services/auth/auth_api_service.dart';
-import 'package:tabashir/features/profile/domain/repositories/profile_repository.dart';
-import 'package:tabashir/core/utils/app_logger.dart';
+
+import '../../../../core/database/models/local_profile.dart';
+import '../../../../core/database/repositories/local_profile_repository.dart';
+import '../../../../core/network/models/candidate/onboarding_response.dart';
+import '../../../../core/network/models/candidate/personal_info_request.dart';
+import '../../../../core/network/models/candidate/professional_info_request.dart';
+import '../../../../core/network/models/job/ai_client_response.dart';
+import '../../../../core/network/models/profile/profile_update_request.dart';
+import '../../../../core/network/models/user/user_profile_response.dart';
+import '../../../../core/network/services/auth/auth_api_service.dart';
+import '../../../../core/network/services/job/tabashir_api_service.dart';
+import '../../../../core/network/services/user/user_api_service.dart';
+import '../../../../core/utils/app_logger.dart';
+import '../../domain/repositories/profile_repository.dart';
 
 /// Implementation of [ProfileRepository]
 /// Handles profile operations using [UserApiService] with local caching

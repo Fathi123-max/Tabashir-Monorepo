@@ -1,31 +1,28 @@
 import 'package:easy_localization/easy_localization.dart';
-
 import 'package:flutter/material.dart';
-
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-import 'package:tabashir/core/di/injection.dart';
-import 'package:tabashir/core/theme/app_theme.dart';
-import 'package:tabashir/core/services/ai_job_apply_config_service.dart';
-import 'package:tabashir/features/ai_job_apply/data/models/location_preference_model.dart';
-import 'package:tabashir/features/ai_job_apply/data/models/personal_details_model.dart';
-import 'package:tabashir/features/ai_job_apply/data/models/target_role_model.dart';
-import 'package:tabashir/features/profile/presentation/cubit/profile_cubit.dart';
-
-import 'package:tabashir/features/ai_job_apply/presentation/cubit/ai_job_apply_cubit.dart';
-import 'package:tabashir/features/ai_job_apply/presentation/cubit/ai_job_apply_state.dart';
-import 'package:tabashir/features/ai_job_apply/presentation/screens/ai_job_apply_results_screen.dart';
-import 'package:tabashir/features/ai_job_apply/presentation/widgets/ai_location_suggestion.dart';
-import 'package:tabashir/features/ai_job_apply/presentation/widgets/ai_recommendation_card.dart';
-import 'package:tabashir/features/ai_job_apply/presentation/widgets/create_resume_bottom_sheet.dart';
-import 'package:tabashir/features/ai_job_apply/presentation/widgets/gender_chip.dart';
-import 'package:tabashir/features/ai_job_apply/presentation/widgets/location_chip.dart';
-import 'package:tabashir/features/ai_job_apply/presentation/widgets/resume_selection_card.dart';
-import 'package:tabashir/features/ai_job_apply/presentation/widgets/role_chip.dart';
-import 'package:tabashir/features/ai_job_apply/presentation/widgets/visa_toggle.dart';
-import 'package:tabashir/shared/widgets/cv_required_blur.dart';
-import 'package:tabashir/features/resume/presentation/cubit/resume_vault_cubit.dart';
+import '../../../../core/di/injection.dart';
+import '../../../../core/services/ai_job_apply_config_service.dart';
+import '../../../../core/theme/app_theme.dart';
+import '../../../../shared/widgets/cv_required_blur.dart';
+import '../../../profile/presentation/cubit/profile_cubit.dart';
+import '../../../resume/presentation/cubit/resume_vault_cubit.dart';
+import '../../data/models/location_preference_model.dart';
+import '../../data/models/personal_details_model.dart';
+import '../../data/models/target_role_model.dart';
+import '../cubit/ai_job_apply_cubit.dart';
+import '../cubit/ai_job_apply_state.dart';
+import '../widgets/ai_location_suggestion.dart';
+import '../widgets/ai_recommendation_card.dart';
+import '../widgets/create_resume_bottom_sheet.dart';
+import '../widgets/gender_chip.dart';
+import '../widgets/location_chip.dart';
+import '../widgets/resume_selection_card.dart';
+import '../widgets/role_chip.dart';
+import '../widgets/visa_toggle.dart';
+import 'ai_job_apply_results_screen.dart';
 
 /// Unified AI Job Apply screen
 

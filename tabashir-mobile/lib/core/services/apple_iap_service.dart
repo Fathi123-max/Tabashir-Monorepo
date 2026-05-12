@@ -3,7 +3,7 @@ import 'dart:async';
 import 'package:dio/dio.dart';
 import 'package:in_app_purchase/in_app_purchase.dart';
 
-import 'package:tabashir/core/utils/app_logger.dart';
+import '../utils/app_logger.dart';
 
 /// Service for handling Apple In-App Purchases (StoreKit 2).
 class AppleIAPService {

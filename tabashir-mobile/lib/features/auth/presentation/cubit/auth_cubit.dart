@@ -1,17 +1,16 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:injectable/injectable.dart';
-import 'package:tabashir/core/di/injection.dart';
-import 'package:tabashir/core/network/models/auth/auth_response.dart';
-import 'package:tabashir/core/network/models/auth/email_verification_response.dart';
-import 'package:tabashir/core/services/auth_session_service.dart';
-import 'package:tabashir/core/utils/app_logger.dart';
-import 'package:tabashir/features/auth/domain/repositories/auth_repository.dart';
-import 'package:tabashir/features/home/presentation/cubit/app_initialization_cubit.dart';
 
-part 'auth_state.dart';
+import '../../../../core/di/injection.dart';
+import '../../../../core/services/auth_session_service.dart';
+import '../../../../core/utils/app_logger.dart';
+import '../../../home/presentation/cubit/app_initialization_cubit.dart';
+import '../../domain/repositories/auth_repository.dart';
+
 part 'auth_cubit.freezed.dart';
 part 'auth_cubit.g.dart';
+part 'auth_state.dart';
 
 @injectable
 class AuthCubit extends Cubit<AuthState> {

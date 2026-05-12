@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:tabashir/core/theme/app_theme.dart';
+import '../../../core/theme/app_theme.dart';
 
 /// A standardized floating action button component following Tabashir project styling guidelines.
 ///

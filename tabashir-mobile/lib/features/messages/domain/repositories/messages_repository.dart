@@ -1,4 +1,4 @@
-import 'package:tabashir/features/notifications/data/models/notification_model.dart';
+import '../../../notifications/data/models/notification_model.dart';
 
 /// Repository interface for messages operations
 /// Defines the contract for message data operations

@@ -1,6 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:tabashir/features/admin/domain/repositories/admin_repository.dart';
+import '../../domain/repositories/admin_repository.dart';
 
 part 'admin_state.dart';
 part 'admin_cubit.freezed.dart';

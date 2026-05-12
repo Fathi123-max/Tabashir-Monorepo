@@ -1,7 +1,8 @@
 import 'package:injectable/injectable.dart';
-import 'package:tabashir/core/services/local_storage_service.dart';
-import 'package:tabashir/core/network/models/user/user_profile_response.dart';
-import 'package:tabashir/core/utils/app_logger.dart';
+
+import '../../../../core/network/models/user/user_profile_response.dart';
+import '../../../../core/services/local_storage_service.dart';
+import '../../../../core/utils/app_logger.dart';
 
 /// Local data source for home screen
 /// Handles caching of user profile and home data

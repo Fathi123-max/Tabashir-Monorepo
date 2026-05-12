@@ -1,12 +1,13 @@
 import 'package:dio/dio.dart';
 import 'package:injectable/injectable.dart';
-import 'package:tabashir/core/network/models/payment/payment_intent_request.dart';
-import 'package:tabashir/core/network/models/payment/payment_intent_response.dart';
-import 'package:tabashir/core/network/models/payment/checkout_session_request.dart';
-import 'package:tabashir/core/network/models/payment/checkout_session_response.dart';
-import 'package:tabashir/core/network/models/payment/latest_payment_response.dart';
-import 'package:tabashir/core/network/services/payment/payment_api_service.dart';
-import 'package:tabashir/features/payments/domain/repositories/payment_repository.dart';
+
+import '../../../../core/network/models/payment/checkout_session_request.dart';
+import '../../../../core/network/models/payment/checkout_session_response.dart';
+import '../../../../core/network/models/payment/latest_payment_response.dart';
+import '../../../../core/network/models/payment/payment_intent_request.dart';
+import '../../../../core/network/models/payment/payment_intent_response.dart';
+import '../../../../core/network/services/payment/payment_api_service.dart';
+import '../../domain/repositories/payment_repository.dart';
 
 /// Implementation of [PaymentRepository]
 /// Handles payment operations using [PaymentApiService]

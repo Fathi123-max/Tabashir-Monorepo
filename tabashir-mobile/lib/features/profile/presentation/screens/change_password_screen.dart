@@ -1,6 +1,6 @@
-import 'package:easy_localization/easy_localization.dart';
-
 import 'dart:async';
+
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -9,8 +9,8 @@ import 'package:reactive_forms/reactive_forms.dart';
 
 import '../../../../core/theme/app_theme.dart';
 import '../cubit/change_password_cubit.dart';
-import '../widgets/security_notice_card.dart';
 import '../widgets/password_requirements_list.dart';
+import '../widgets/security_notice_card.dart';
 
 class ChangePasswordScreen extends StatefulWidget {
   const ChangePasswordScreen({super.key});

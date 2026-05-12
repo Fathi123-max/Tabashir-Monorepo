@@ -2,7 +2,7 @@
 /// Defines the contract for managing resume files and metadata
 library;
 
-import 'package:tabashir/core/network/models/resume_response/resume_item.dart';
+import '../../../../core/network/models/resume_response/resume_item.dart';
 
 abstract class ResumeVaultRepository {
   /// Get all resumes for the current user

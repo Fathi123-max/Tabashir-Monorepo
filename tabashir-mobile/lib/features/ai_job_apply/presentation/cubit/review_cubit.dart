@@ -1,9 +1,10 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:tabashir/core/config/animation_config.dart';
-import '../../data/models/review_model.dart';
-import '../../data/models/target_role_model.dart';
+
+import '../../../../core/config/animation_config.dart';
 import '../../data/models/location_preference_model.dart';
 import '../../data/models/personal_details_model.dart';
+import '../../data/models/review_model.dart';
+import '../../data/models/target_role_model.dart';
 import 'review_state.dart';
 
 /// Cubit for managing review screen state

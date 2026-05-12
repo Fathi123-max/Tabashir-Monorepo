@@ -1,10 +1,10 @@
+import 'package:freezed_annotation/freezed_annotation.dart';
+
+import '../../../../core/network/models/jobs_match_response.dart';
+import '../../data/models/location_preference_model.dart';
 import '../../data/models/personal_details_model.dart';
 import '../../data/models/resume_selection_model.dart';
 import '../../data/models/target_role_model.dart';
-import '../../data/models/location_preference_model.dart';
-import 'package:tabashir/core/network/models/jobs_match_response.dart';
-
-import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'ai_job_apply_state.freezed.dart';
 

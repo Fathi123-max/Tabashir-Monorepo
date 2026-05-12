@@ -5,13 +5,14 @@ import 'dart:typed_data';
 
 import 'package:dio/dio.dart';
 import 'package:injectable/injectable.dart';
-import 'package:tabashir/core/services/auth_session_service.dart';
-import 'package:tabashir/core/services/file_service.dart';
-import 'package:tabashir/core/network/models/raw_cv_input.dart';
-import 'package:tabashir/core/network/services/job/tabashir_api_service.dart';
-import 'package:tabashir/features/resume/services/resume_parsing_service.dart';
-import 'package:tabashir/features/resume/services/resume_text_extractor.dart';
-import 'package:tabashir/core/utils/app_logger.dart';
+
+import '../../../core/network/models/raw_cv_input.dart';
+import '../../../core/network/services/job/tabashir_api_service.dart';
+import '../../../core/services/auth_session_service.dart';
+import '../../../core/services/file_service.dart';
+import '../../../core/utils/app_logger.dart';
+import 'resume_parsing_service.dart';
+import 'resume_text_extractor.dart';
 
 /// Implementation of ResumeParsingService
 /// Uses TabashirApiService to parse CV files and text

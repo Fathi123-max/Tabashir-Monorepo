@@ -1,12 +1,10 @@
 import 'package:dio/dio.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:injectable/injectable.dart';
 import 'package:retrofit/retrofit.dart';
 
-import '../../models/auth/login_request.dart';
-import '../../models/auth/register_request.dart';
 import '../../models/auth/auth_response.dart';
+import '../../models/auth/login_request.dart';
 import '../../models/auth/refresh_token_response.dart';
+import '../../models/auth/register_request.dart';
 
 part 'auth_api_service.g.dart';
 

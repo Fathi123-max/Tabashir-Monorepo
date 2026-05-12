@@ -2,10 +2,11 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
-import 'package:tabashir/features/home/presentation/widgets/home_quick_action_card_widget.dart';
-import 'package:tabashir/core/theme/app_theme.dart';
-import 'package:tabashir/core/router/route_names.dart';
-import 'package:tabashir/core/utils/app_logger.dart';
+
+import '../../../../core/router/route_names.dart';
+import '../../../../core/theme/app_theme.dart';
+import '../../../../core/utils/app_logger.dart';
+import 'home_quick_action_card_widget.dart';
 
 class HomeQuickActionsGridWidget extends StatelessWidget {
   const HomeQuickActionsGridWidget({super.key});

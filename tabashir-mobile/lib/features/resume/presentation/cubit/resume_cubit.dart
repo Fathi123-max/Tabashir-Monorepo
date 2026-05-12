@@ -1,7 +1,7 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:tabashir/features/resume/data/models/resume_model.dart';
-import 'package:tabashir/features/resume/domain/repositories/resume_repository.dart';
+import '../../data/models/resume_model.dart';
+import '../../domain/repositories/resume_repository.dart';
 
 part 'resume_state.dart';
 part 'resume_cubit.freezed.dart';

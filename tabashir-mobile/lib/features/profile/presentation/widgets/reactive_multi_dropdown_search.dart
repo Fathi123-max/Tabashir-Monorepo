@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:reactive_forms/reactive_forms.dart';
-import 'package:tabashir/core/theme/app_theme.dart';
+import '../../../../core/theme/app_theme.dart';
 
 /// A reactive multi-select dropdown field with search functionality that stores values as a comma-separated string
 class ReactiveMultiDropdownSearch<T> extends ReactiveFormField<String, String> {
@@ -55,7 +55,7 @@ class ReactiveMultiDropdownSearch<T> extends ReactiveFormField<String, String> {
                Future<void> showDropdown() async {
                  // Clear search when opening
                  filteredItems.clear();
-                 bool hasSearched = false;
+                 var hasSearched = false;
                  
                  await showModalBottomSheet<void>(
                    context: context,
@@ -122,7 +122,6 @@ class ReactiveMultiDropdownSearch<T> extends ReactiveFormField<String, String> {
                                          );
                                      });
                                    },
-                                   autofocus: false,
                                  ),
                                ),
                              if (showSearch) SizedBox(height: AppTheme.spacingMd.h),

@@ -1,15 +1,15 @@
 import 'package:dio/dio.dart';
 import 'package:injectable/injectable.dart';
-import 'package:tabashir/core/network/_config/api_config.dart';
-import 'package:tabashir/core/network/models/auth/auth_response.dart';
-import 'package:tabashir/core/network/models/auth/email_verification_request.dart';
-import 'package:tabashir/core/network/models/auth/login_request.dart';
-import 'package:tabashir/core/network/models/auth/register_request.dart';
-import 'package:tabashir/core/network/models/auth/email_verification_response.dart';
-import 'package:tabashir/core/network/services/auth/auth_api_service.dart';
-import 'package:tabashir/core/network/services/auth/email_api_service.dart';
-import 'package:tabashir/core/utils/app_logger.dart';
-import 'package:tabashir/features/auth/domain/repositories/auth_repository.dart';
+
+import '../../../../core/network/models/auth/auth_response.dart';
+import '../../../../core/network/models/auth/email_verification_request.dart';
+import '../../../../core/network/models/auth/email_verification_response.dart';
+import '../../../../core/network/models/auth/login_request.dart';
+import '../../../../core/network/models/auth/register_request.dart';
+import '../../../../core/network/services/auth/auth_api_service.dart';
+import '../../../../core/network/services/auth/email_api_service.dart';
+import '../../../../core/utils/app_logger.dart';
+import '../../domain/repositories/auth_repository.dart';
 
 /// Implementation of [AuthRepository]
 /// Handles authentication operations using [AuthApiService] and [EmailApiService]

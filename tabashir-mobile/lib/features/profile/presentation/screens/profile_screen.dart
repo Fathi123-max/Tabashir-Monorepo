@@ -4,16 +4,15 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 
-import 'package:tabashir/core/di/injection.dart';
-import 'package:tabashir/core/services/auth_session_service.dart';
-import 'package:tabashir/core/theme/app_theme.dart';
-import 'package:tabashir/core/router/route_names.dart';
-import 'package:tabashir/core/constants/countries.dart';
-
+import '../../../../core/constants/countries.dart';
+import '../../../../core/di/injection.dart';
+import '../../../../core/router/route_names.dart';
+import '../../../../core/services/auth_session_service.dart';
+import '../../../../core/theme/app_theme.dart';
 import '../cubit/profile_cubit.dart';
-import '../widgets/profile_card.dart';
 import '../widgets/info_item.dart';
 import '../widgets/menu_tile.dart';
+import '../widgets/profile_card.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});

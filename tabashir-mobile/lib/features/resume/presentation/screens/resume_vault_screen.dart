@@ -1,22 +1,20 @@
 import 'package:easy_localization/easy_localization.dart';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
+
 import '../../../../core/network/models/resume_response/resume_item.dart';
 import '../../../../core/router/route_names.dart';
 import '../../../../core/theme/app_theme.dart';
-import '../../domain/repositories/resume_vault_repository.dart';
+import '../../../../core/utils/app_logger.dart';
 import '../cubit/resume_vault_cubit.dart';
-
+import '../widgets/add_resume_options_sheet.dart';
 import '../widgets/resume_card.dart';
-import '../widgets/resume_vault_info_dialog.dart';
 import '../widgets/resume_vault_empty_state.dart';
 import '../widgets/resume_vault_error_state.dart';
+import '../widgets/resume_vault_info_dialog.dart';
 import '../widgets/resume_vault_options_sheet.dart';
-import '../widgets/add_resume_options_sheet.dart';
-import 'package:tabashir/core/utils/app_logger.dart';
 
 class ResumeVaultScreen extends StatefulWidget {
   const ResumeVaultScreen({super.key});

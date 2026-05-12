@@ -1,10 +1,11 @@
 import 'package:dio/dio.dart';
 import 'package:injectable/injectable.dart';
-import 'package:tabashir/core/network/models/applied_jobs_response.dart';
-import 'package:tabashir/core/network/models/jobs_count_response.dart';
-import 'package:tabashir/core/network/models/email_model.dart';
-import 'package:tabashir/core/network/services/job/tabashir_api_service.dart';
-import 'package:tabashir/features/job_applications/domain/repositories/job_applications_repository.dart';
+
+import '../../../../core/network/models/applied_jobs_response.dart';
+import '../../../../core/network/models/email_model.dart';
+import '../../../../core/network/models/jobs_count_response.dart';
+import '../../../../core/network/services/job/tabashir_api_service.dart';
+import '../../domain/repositories/job_applications_repository.dart';
 
 /// Implementation of [JobApplicationsRepository]
 /// Handles job application operations using [TabashirApiService]

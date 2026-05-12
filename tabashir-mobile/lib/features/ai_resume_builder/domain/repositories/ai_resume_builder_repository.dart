@@ -1,5 +1,5 @@
-import 'package:tabashir/core/network/models/ai_resume/create_ai_resume_response.dart';
-import 'package:tabashir/core/network/models/ai_resume/resume_models.dart';
+import '../../../../core/network/models/ai_resume/create_ai_resume_response.dart';
+import '../../../../core/network/models/ai_resume/resume_models.dart';
 
 /// Repository interface for AI Resume Builder feature
 abstract class AiResumeBuilderRepository {

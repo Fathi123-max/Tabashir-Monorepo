@@ -2,9 +2,8 @@ import 'dart:ui';
 
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:tabashir/core/theme/theme_constants.dart';
+import '../../../core/theme/theme_constants.dart';
 
 /// Advanced bottom navigation bar with proper color harmony,
 /// responsive design and accessibility features for the Tabashir app

@@ -1,7 +1,5 @@
 import 'package:dio/dio.dart';
-import 'package:injectable/injectable.dart';
 import 'package:retrofit/retrofit.dart';
-import 'package:flutter/foundation.dart';
 
 import '../../models/config/ai_job_apply_config_response.dart';
 

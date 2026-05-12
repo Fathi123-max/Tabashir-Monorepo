@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:tabashir/core/theme/app_theme.dart';
-import 'package:tabashir/core/navigation/tabashir_navigation.dart';
+
+import '../../../core/navigation/tabashir_navigation.dart';
+import '../../../core/theme/app_theme.dart';
 
 /// A customizable bottom navigation bar widget that follows the Tabashir design system
 class TabashirBottomNavigationBar extends StatelessWidget {

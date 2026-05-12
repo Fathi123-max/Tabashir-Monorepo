@@ -1,9 +1,10 @@
 import 'dart:convert';
 
 import 'package:injectable/injectable.dart';
-import 'package:tabashir/core/services/local_persistence_service.dart';
-import 'package:tabashir/features/search/data/models/search_model.dart';
-import 'package:tabashir/features/search/domain/repositories/search_repository.dart';
+
+import '../../../../core/services/local_persistence_service.dart';
+import '../../domain/repositories/search_repository.dart';
+import '../models/search_model.dart';
 
 /// Implementation of SearchRepository
 @Injectable(as: SearchRepository)

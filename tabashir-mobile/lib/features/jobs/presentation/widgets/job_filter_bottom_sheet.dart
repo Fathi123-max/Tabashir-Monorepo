@@ -1,8 +1,7 @@
 import 'package:easy_localization/easy_localization.dart';
-
 import 'package:flutter/material.dart' hide FilterChip;
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
+
 import '../../../../core/theme/app_theme.dart';
 import '../cubit/jobs_cubit.dart';
 import 'job_filter_chip.dart';

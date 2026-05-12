@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:tabashir/core/router/route_names.dart';
 
 extension NavigationExtension on BuildContext {
   /// Navigate to notifications screen

@@ -1,4 +1,4 @@
-import 'package:tabashir/features/search/data/models/search_model.dart';
+import '../../data/models/search_model.dart';
 
 /// Repository interface for search operations
 /// Defines the contract for search data operations

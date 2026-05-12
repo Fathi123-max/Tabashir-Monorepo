@@ -1,21 +1,21 @@
 import 'dart:io';
+
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
-import 'package:share_plus/share_plus.dart';
-import 'package:path_provider/path_provider.dart';
-import 'package:dio/dio.dart';
-import 'package:tabashir/core/network/models/resume_response/resume_item.dart';
-import 'package:tabashir/features/resume/presentation/cubit/resume_vault_cubit.dart';
-import '../../../../core/theme/app_theme.dart';
-import '../../../../core/router/route_names.dart';
-import '../../domain/repositories/resume_vault_repository.dart';
 import 'package:open_filex/open_filex.dart';
-import '../../../../core/network/_clients/auth_dio_client.dart';
-import '../../../../core/services/auth_session_service.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:share_plus/share_plus.dart';
+
 import '../../../../core/di/injection.dart';
+import '../../../../core/network/_clients/auth_dio_client.dart';
+import '../../../../core/network/models/resume_response/resume_item.dart';
+import '../../../../core/router/route_names.dart';
+import '../../../../core/services/auth_session_service.dart';
+import '../../../../core/theme/app_theme.dart';
 import '../../../../core/utils/app_logger.dart';
+import '../cubit/resume_vault_cubit.dart';
 
 /// Widget for displaying resume options bottom sheet
 class ResumeVaultOptionsSheet extends StatelessWidget {
@@ -282,17 +282,19 @@ class ResumeVaultOptionsSheet extends StatelessWidget {
       final dir = await getTemporaryDirectory();
 
       // Determine extension
-      String ext = '.pdf';
+      var ext = '.pdf';
       if (resume.fileType.toUpperCase() == 'DOCX' ||
           resume.name.toLowerCase().contains('docx')) {
         ext = '.docx';
       }
 
-      String baseName = resume.name;
-      if (baseName.toLowerCase().endsWith('.pdf'))
+      var baseName = resume.name;
+      if (baseName.toLowerCase().endsWith('.pdf')) {
         baseName = baseName.substring(0, baseName.length - 4);
-      if (baseName.toLowerCase().endsWith('.docx'))
+      }
+      if (baseName.toLowerCase().endsWith('.docx')) {
         baseName = baseName.substring(0, baseName.length - 5);
+      }
 
       final fileName =
           '${baseName}_${DateTime.now().millisecondsSinceEpoch}$ext';

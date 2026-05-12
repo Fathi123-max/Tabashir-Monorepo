@@ -1,12 +1,13 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:dio/dio.dart';
-import 'package:tabashir/core/network/services/config/config_api_service.dart';
-import 'package:tabashir/core/network/models/config/ai_job_apply_config_response.dart';
+
+import '../network/models/config/ai_job_apply_config_response.dart';
+import '../network/services/config/config_api_service.dart';
+import '../utils/app_logger.dart';
+import 'ab_testing_service.dart';
 import 'analytics_service.dart';
 import 'performance_monitoring_service.dart';
-import 'ab_testing_service.dart';
-import 'package:tabashir/core/utils/app_logger.dart';
 
 /// Configuration service for AI Job Apply feature
 /// Provides configurable lists and settings for the feature

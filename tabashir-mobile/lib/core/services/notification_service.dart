@@ -1,7 +1,8 @@
-import 'package:tabashir/core/constants/app_constants.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:onesignal_flutter/onesignal_flutter.dart';
-import 'package:tabashir/core/utils/app_logger.dart';
+
+import '../constants/app_constants.dart';
+import '../utils/app_logger.dart';
 
 /// Service to handle notification operations using OneSignal v5
 class NotificationService {

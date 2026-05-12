@@ -1,10 +1,9 @@
 import 'dart:async';
 
 import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_stripe/flutter_stripe.dart';
-import 'package:tabashir/core/utils/app_logger.dart';
+import '../utils/app_logger.dart';
 
 // import '../constants/stripe_constants.dart';
 

@@ -1,5 +1,5 @@
-import 'package:tabashir/core/network/models/applied_jobs_response.dart';
-import 'package:tabashir/core/network/models/jobs_count_response.dart';
+import '../../../../core/network/models/applied_jobs_response.dart';
+import '../../../../core/network/models/jobs_count_response.dart';
 
 /// Repository interface for job applications operations
 /// Defines the contract for job application data operations

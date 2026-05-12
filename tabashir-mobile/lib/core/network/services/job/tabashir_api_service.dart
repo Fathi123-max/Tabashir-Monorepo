@@ -1,28 +1,25 @@
 import 'package:dio/dio.dart';
-import 'package:injectable/injectable.dart';
 import 'package:retrofit/retrofit.dart';
 
-import '../../models/raw_cv_input.dart';
-import '../../models/cv_format_response.dart';
+import '../../models/applied_jobs_response.dart';
 import '../../models/email_model.dart';
 import '../../models/formatted_cv_response.dart';
+import '../../models/job/ai_client_response.dart';
 import '../../models/job_api_response.dart';
-import '../../models/job_create_model.dart';
+import '../../models/job_applicants_count_response.dart';
 import '../../models/job_create_payload.dart';
 import '../../models/job_details_response.dart';
-import '../../models/applied_jobs_response.dart';
-import '../../models/jobs_count_response.dart';
-import '../../models/jobs_count_by_city_response.dart';
-import '../../models/jobs_list_response.dart';
-import '../../models/jobs_match_response.dart';
-import '../../models/jobs_match_list_response.dart';
 import '../../models/job_update_model.dart';
 import '../../models/job_update_response.dart';
+import '../../models/jobs_count_by_city_response.dart';
+import '../../models/jobs_count_response.dart';
+import '../../models/jobs_list_response.dart';
+import '../../models/jobs_match_list_response.dart';
+import '../../models/jobs_match_response.dart';
 import '../../models/jobs_monthly_count_response.dart';
-import '../../models/job_applicants_count_response.dart';
+import '../../models/raw_cv_input.dart';
 import '../../models/send_linkedin_email_request.dart';
 import '../../models/suggest_job_titles_response.dart';
-import 'package:tabashir/core/network/models/job/ai_client_response.dart';
 
 part 'tabashir_api_service.g.dart';
 

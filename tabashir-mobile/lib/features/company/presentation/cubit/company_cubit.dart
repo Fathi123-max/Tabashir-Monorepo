@@ -1,7 +1,7 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:tabashir/features/company/data/models/company_model.dart';
-import 'package:tabashir/features/company/domain/repositories/company_repository.dart';
+import '../../data/models/company_model.dart';
+import '../../domain/repositories/company_repository.dart';
 
 part 'company_state.dart';
 part 'company_cubit.freezed.dart';

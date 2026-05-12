@@ -1,11 +1,11 @@
 import 'package:injectable/injectable.dart';
-import 'package:tabashir/core/network/_clients/auth_dio_client.dart';
-import 'package:tabashir/core/network/models/home_dashboard_response.dart';
-import 'package:tabashir/core/network/models/job_details_response.dart';
-import 'package:tabashir/core/network/services/job/tabashir_api_service.dart';
-import 'package:tabashir/core/network/services/user/user_api_service.dart';
-import 'package:tabashir/core/services/local_storage_service.dart';
-import 'package:tabashir/core/utils/app_logger.dart';
+import '../../../core/network/_clients/auth_dio_client.dart';
+import '../../../core/network/models/home_dashboard_response.dart';
+import '../../../core/network/models/job_details_response.dart';
+import '../../../core/network/services/job/tabashir_api_service.dart';
+import '../../../core/network/services/user/user_api_service.dart';
+import '../../../core/services/local_storage_service.dart';
+import '../../../core/utils/app_logger.dart';
 
 /// Service for fetching home dashboard data
 @injectable

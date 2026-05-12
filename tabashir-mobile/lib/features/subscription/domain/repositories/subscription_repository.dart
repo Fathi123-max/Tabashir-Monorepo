@@ -1,5 +1,5 @@
-import 'package:tabashir/core/network/models/subscription/subscription_response.dart';
-import 'package:tabashir/core/network/models/subscription/subscription_debug_response.dart';
+import '../../../../core/network/models/subscription/subscription_debug_response.dart';
+import '../../../../core/network/models/subscription/subscription_response.dart';
 
 /// Repository interface for subscription operations
 /// Defines the contract for subscription data operations

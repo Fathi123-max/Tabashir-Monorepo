@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:tabashir/core/theme/app_theme.dart';
-import 'theme_manager.dart';
+
+import 'app_theme.dart';
 import 'theme_constants.dart';
 import 'theme_extensions.dart';
+import 'theme_manager.dart';
 
 /// Example widget demonstrating how to use the theme system
 class ThemeUsageExample extends StatelessWidget {

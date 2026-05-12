@@ -1,5 +1,5 @@
-import 'package:tabashir/core/network/models/ai_resume/create_ai_resume_request.dart';
-import 'package:tabashir/core/network/models/ai_resume/create_ai_resume_response.dart';
+import '../../../../core/network/models/ai_resume/create_ai_resume_request.dart';
+import '../../../../core/network/models/ai_resume/create_ai_resume_response.dart';
 
 /// Repository interface for AI resume operations
 /// Defines the contract for AI resume data operations

@@ -1,8 +1,8 @@
 import 'dart:async';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import 'package:tabashir/core/network/services/job/saved_jobs_api_service.dart';
-import 'package:tabashir/core/utils/app_logger.dart';
+import '../network/services/job/saved_jobs_api_service.dart';
+import '../utils/app_logger.dart';
 
 /// Service for managing saved jobs using SharedPreferences
 class LocalPersistenceService {

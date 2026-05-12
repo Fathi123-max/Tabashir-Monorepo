@@ -3,20 +3,19 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
-import 'package:tabashir/core/di/injection.dart';
-import 'package:tabashir/core/theme/app_theme.dart';
-import 'package:tabashir/core/network/models/user/user_profile_response.dart';
-import 'package:tabashir/features/home/presentation/cubit/cubit.dart';
-import 'package:tabashir/features/home/presentation/cubit/app_initialization_cubit.dart';
-import 'package:tabashir/features/home/data/models/app_initialization_state.dart';
-import 'package:tabashir/features/home/presentation/widgets/widgets.dart';
-import 'package:tabashir/features/home/presentation/widgets/pro_quick_actions_widget.dart';
-import 'package:tabashir/features/profile/presentation/cubit/profile_cubit.dart';
-import 'package:tabashir/features/home/presentation/screens/all_matched_jobs_screen.dart';
-import 'package:tabashir/features/jobs/presentation/cubit/jobs_cubit.dart';
-import 'package:tabashir/shared/widgets/cv_required_blur.dart';
-import 'package:tabashir/features/resume/presentation/cubit/resume_vault_cubit.dart';
+
+import '../../../../core/di/injection.dart';
+import '../../../../core/network/models/user/user_profile_response.dart';
+import '../../../../core/theme/app_theme.dart';
+import '../../../../shared/widgets/cv_required_blur.dart';
+import '../../../profile/presentation/cubit/profile_cubit.dart';
+import '../../../resume/presentation/cubit/resume_vault_cubit.dart';
 import '../../../shared/widgets/app_logo.dart';
+import '../../data/models/app_initialization_state.dart';
+import '../cubit/app_initialization_cubit.dart';
+import '../cubit/cubit.dart';
+import '../widgets/widgets.dart';
+import 'all_matched_jobs_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({

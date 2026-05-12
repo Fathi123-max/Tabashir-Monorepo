@@ -1,7 +1,6 @@
 import 'dart:io';
 
-import 'package:tabashir/core/network/models/resume_response/resume_item.dart';
-import 'package:tabashir/core/network/models/resume_response/resume_response.dart';
+import '../../../../core/network/models/resume_response/resume_item.dart';
 
 /// Repository interface for file-based resume operations
 /// Handles PDF upload, download, and management via backend API

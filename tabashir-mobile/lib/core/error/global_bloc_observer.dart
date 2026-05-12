@@ -1,6 +1,6 @@
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:tabashir/core/utils/app_logger.dart';
+import '../utils/app_logger.dart';
 
 /// Global observer for Bloc/Cubit error handling
 class GlobalBlocObserver extends BlocObserver {

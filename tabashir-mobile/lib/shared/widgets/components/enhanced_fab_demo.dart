@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:tabashir/core/theme/app_theme.dart';
-import 'package:tabashir/shared/widgets/components/standard_fab.dart';
+import 'standard_fab.dart';
 
 /// Example screen demonstrating the enhanced StandardFAB component
 class EnhancedFABDemoScreen extends StatelessWidget {

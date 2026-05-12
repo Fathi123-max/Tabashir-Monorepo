@@ -1,9 +1,10 @@
 import 'dart:convert';
 
 import 'package:injectable/injectable.dart';
-import 'package:tabashir/core/services/local_persistence_service.dart';
-import 'package:tabashir/features/resume/data/models/resume_model.dart';
-import 'package:tabashir/features/resume/domain/repositories/resume_repository.dart';
+
+import '../../../../core/services/local_persistence_service.dart';
+import '../../domain/repositories/resume_repository.dart';
+import '../models/resume_model.dart';
 
 /// Implementation of ResumeRepository
 /// For structured resume data (local storage)

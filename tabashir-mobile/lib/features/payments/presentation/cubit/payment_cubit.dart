@@ -1,19 +1,20 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:injectable/injectable.dart';
-import 'package:tabashir/core/di/injection.dart';
-import 'package:tabashir/core/models/stripe/stripe_enums.dart';
-import 'package:tabashir/core/network/models/payment/checkout_session_response.dart';
-import 'package:tabashir/core/network/models/payment/latest_payment_response.dart';
-import 'package:tabashir/core/network/models/payment/payment_intent_response.dart';
-import 'package:tabashir/core/utils/app_logger.dart';
-import 'package:tabashir/features/home/presentation/cubit/home_cubit.dart';
-import 'package:tabashir/features/payments/domain/repositories/payment_platform.dart';
-import 'package:tabashir/features/payments/domain/repositories/payment_repository.dart';
-import 'package:tabashir/features/profile/presentation/cubit/profile_cubit.dart';
 
-part 'payment_state.dart';
+import '../../../../core/di/injection.dart';
+import '../../../../core/models/stripe/stripe_enums.dart';
+import '../../../../core/network/models/payment/checkout_session_response.dart';
+import '../../../../core/network/models/payment/latest_payment_response.dart';
+import '../../../../core/network/models/payment/payment_intent_response.dart';
+import '../../../../core/utils/app_logger.dart';
+import '../../../home/presentation/cubit/home_cubit.dart';
+import '../../../profile/presentation/cubit/profile_cubit.dart';
+import '../../domain/repositories/payment_platform.dart';
+import '../../domain/repositories/payment_repository.dart';
+
 part 'payment_cubit.freezed.dart';
+part 'payment_state.dart';
 
 @injectable
 class PaymentCubit extends Cubit<PaymentState> {

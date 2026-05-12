@@ -1,4 +1,4 @@
-import 'package:tabashir/features/onboarding/models/onboarding_page_model.dart';
+import '../../models/onboarding_page_model.dart';
 
 /// Repository interface for Onboarding feature
 abstract class OnboardingRepository {

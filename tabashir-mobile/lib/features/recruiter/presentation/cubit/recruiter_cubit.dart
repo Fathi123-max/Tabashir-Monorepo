@@ -1,7 +1,7 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:tabashir/features/recruiter/data/models/recruiter_model.dart';
-import 'package:tabashir/features/recruiter/domain/repositories/recruiter_repository.dart';
+import '../../data/models/recruiter_model.dart';
+import '../../domain/repositories/recruiter_repository.dart';
 
 part 'recruiter_state.dart';
 part 'recruiter_cubit.freezed.dart';

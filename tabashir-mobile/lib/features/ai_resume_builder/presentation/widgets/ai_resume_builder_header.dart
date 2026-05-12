@@ -1,9 +1,8 @@
 import 'package:easy_localization/easy_localization.dart';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:tabashir/core/theme/app_theme.dart';
-import '../../../../core/network/models/ai_resume/resume_models.dart';
+
+import '../../../../core/theme/app_theme.dart';
 
 class AiResumeBuilderHeader extends StatelessWidget {
   const AiResumeBuilderHeader({

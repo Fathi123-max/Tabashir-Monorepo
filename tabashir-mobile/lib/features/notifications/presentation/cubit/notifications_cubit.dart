@@ -1,5 +1,5 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:tabashir/features/notifications/domain/repositories/notifications_repository.dart';
+import '../../domain/repositories/notifications_repository.dart';
 import 'notifications_state.dart';
 
 class NotificationsCubit extends Cubit<NotificationsState> {

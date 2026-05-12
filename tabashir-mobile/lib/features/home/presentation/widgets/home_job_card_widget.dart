@@ -2,8 +2,9 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
-import 'package:tabashir/features/home/presentation/widgets/home_tag_chip_widget.dart';
-import 'package:tabashir/core/theme/app_theme.dart';
+
+import '../../../../core/theme/app_theme.dart';
+import 'home_tag_chip_widget.dart';
 
 class HomeJobCardWidget extends StatelessWidget {
   const HomeJobCardWidget({

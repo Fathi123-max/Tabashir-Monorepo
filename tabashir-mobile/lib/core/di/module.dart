@@ -1,9 +1,7 @@
-import 'dart:io';
-
+import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:get_it/get_it.dart';
 import 'package:injectable/injectable.dart';
-import 'package:dio/dio.dart';
 
 import '../../features/notifications/data/repositories/notifications_repository_impl.dart';
 import '../../features/notifications/domain/repositories/notifications_repository.dart';
@@ -11,13 +9,8 @@ import '../../features/payments/data/repositories/apple_payment_platform.dart';
 import '../../features/payments/data/repositories/stripe_payment_platform.dart';
 import '../../features/payments/domain/repositories/payment_platform.dart';
 import '../../features/payments/domain/repositories/payment_repository.dart';
-
 import '../database/repositories/local_profile_repository.dart';
 import '../database/repositories/local_resume_repository.dart';
-import '../services/applied_jobs_storage.dart';
-import '../services/local_persistence_service.dart';
-import '../services/local_storage_service.dart';
-
 import '../network/_clients/auth_dio_client.dart';
 import '../network/_clients/backend_dio_client.dart';
 import '../network/_clients/dio_client.dart';
@@ -27,20 +20,20 @@ import '../network/services/auth/auth_api_service.dart';
 import '../network/services/auth/email_api_service.dart';
 import '../network/services/job/saved_jobs_api_service.dart';
 import '../network/services/job/tabashir_api_service.dart';
+import '../network/services/notification/notification_api_service.dart';
 import '../network/services/payment/payment_api_service.dart';
 import '../network/services/resume/resume_api_service.dart';
 import '../network/services/subscription/subscription_api_service.dart';
 import '../network/services/upload/upload_api_service.dart';
 import '../network/services/user/user_api_service.dart';
-import '../../features/home/services/home_api_service.dart';
-import '../services/analytics_service.dart';
 import '../services/apple_iap_service.dart';
+import '../services/applied_jobs_storage.dart';
 import '../services/file_service.dart';
 import '../services/google_signin_service.dart';
+import '../services/local_persistence_service.dart';
+import '../services/local_storage_service.dart';
 import '../services/notification_service.dart';
-import '../network/services/notification/notification_api_service.dart';
 import '../services/stripe_service.dart';
-
 import 'module.config.dart';
 
 @InjectableInit(
@@ -157,7 +150,10 @@ abstract class RegisterModule {
     if (defaultTargetPlatform == TargetPlatform.iOS) {
       return ApplePaymentPlatform(appleIAPService);
     }
-    return StripePaymentPlatform(stripeService, GetIt.instance<PaymentRepository>());
+    return StripePaymentPlatform(
+      stripeService,
+      GetIt.instance<PaymentRepository>(),
+    );
   }
 
   // SyncHybridResumeRepository is auto-registered via @Injectable annotation

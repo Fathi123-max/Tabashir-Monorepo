@@ -1,8 +1,7 @@
-import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_stripe/flutter_stripe.dart';
-import 'package:tabashir/core/theme/app_theme.dart';
 
 /// Platform Pay button widget (Apple Pay / Google Pay)
 /// Automatically shows/hides based on device support

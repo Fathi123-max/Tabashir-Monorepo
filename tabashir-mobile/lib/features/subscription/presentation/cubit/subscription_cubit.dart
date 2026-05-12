@@ -1,9 +1,9 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:injectable/injectable.dart';
-import 'package:tabashir/core/network/models/subscription/subscription_debug_response.dart';
-import 'package:tabashir/core/network/models/subscription/subscription_response.dart';
-import 'package:tabashir/features/subscription/domain/repositories/subscription_repository.dart';
+import '../../../../core/network/models/subscription/subscription_debug_response.dart';
+import '../../../../core/network/models/subscription/subscription_response.dart';
+import '../../domain/repositories/subscription_repository.dart';
 
 part 'subscription_state.dart';
 part 'subscription_cubit.freezed.dart';

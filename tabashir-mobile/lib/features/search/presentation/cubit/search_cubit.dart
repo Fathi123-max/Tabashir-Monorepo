@@ -1,7 +1,7 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:tabashir/features/search/data/models/search_model.dart';
-import 'package:tabashir/features/search/domain/repositories/search_repository.dart';
+import '../../data/models/search_model.dart';
+import '../../domain/repositories/search_repository.dart';
 
 part 'search_state.dart';
 part 'search_cubit.freezed.dart';

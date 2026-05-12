@@ -4,7 +4,7 @@ import 'dart:io';
 import 'package:archive/archive.dart';
 import 'package:flutter_pdf_text/flutter_pdf_text.dart';
 import 'package:xml/xml.dart';
-import 'package:tabashir/core/utils/app_logger.dart';
+import '../../../core/utils/app_logger.dart';
 
 /// Utility that extracts plain text from supported resume formats on-device.
 class ResumeTextExtractor {

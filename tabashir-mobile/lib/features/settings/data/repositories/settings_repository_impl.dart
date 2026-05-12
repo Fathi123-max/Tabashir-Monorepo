@@ -1,8 +1,8 @@
 import 'dart:convert';
 
 import 'package:injectable/injectable.dart';
-import 'package:tabashir/core/services/local_storage_service.dart';
-import 'package:tabashir/features/settings/domain/repositories/settings_repository.dart';
+import '../../../../core/services/local_storage_service.dart';
+import '../../domain/repositories/settings_repository.dart';
 
 /// Implementation of [SettingsRepository]
 /// Handles settings operations using [LocalStorageService]

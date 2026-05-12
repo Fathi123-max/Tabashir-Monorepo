@@ -1,8 +1,8 @@
 import 'dart:convert';
 
 import 'package:injectable/injectable.dart';
-import 'package:tabashir/core/services/local_persistence_service.dart';
-import 'package:tabashir/features/services/domain/repositories/services_repository.dart';
+import '../../../../core/services/local_persistence_service.dart';
+import '../../domain/repositories/services_repository.dart';
 
 /// Implementation of [ServicesRepository]
 /// Handles services operations using [LocalPersistenceService] for local storage

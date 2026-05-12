@@ -1,12 +1,11 @@
 import 'package:dio/dio.dart';
-import 'package:injectable/injectable.dart';
 import 'package:retrofit/retrofit.dart';
 
-import '../../models/payment/payment_intent_request.dart';
-import '../../models/payment/payment_intent_response.dart';
 import '../../models/payment/checkout_session_request.dart';
 import '../../models/payment/checkout_session_response.dart';
 import '../../models/payment/latest_payment_response.dart';
+import '../../models/payment/payment_intent_request.dart';
+import '../../models/payment/payment_intent_response.dart';
 
 part 'payment_api_service.g.dart';
 

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:tabashir/core/network/models/resume_response/resume_item.dart';
-import 'package:tabashir/features/resume/domain/repositories/resume_vault_repository.dart';
+
+import '../../../../core/network/models/resume_response/resume_item.dart';
 import '../../../../core/theme/app_theme.dart';
 
 class ResumeCard extends StatelessWidget {

@@ -1,7 +1,7 @@
-import 'package:tabashir/core/network/services/notification/notification_api_service.dart';
-import 'package:tabashir/features/notifications/data/models/notification_model.dart';
-import 'package:tabashir/features/notifications/domain/repositories/notifications_repository.dart';
-import 'package:tabashir/core/utils/app_logger.dart';
+import '../../../../core/network/services/notification/notification_api_service.dart';
+import '../../../../core/utils/app_logger.dart';
+import '../../domain/repositories/notifications_repository.dart';
+import '../models/notification_model.dart';
 
 class NotificationsRepositoryImpl implements NotificationsRepository {
   NotificationsRepositoryImpl(this._apiService);

@@ -1,14 +1,13 @@
 import 'package:easy_localization/easy_localization.dart';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:tabashir/core/theme/app_theme.dart';
 
-import 'package:tabashir/features/services/presentation/cubit/interview_training_cubit.dart';
-import 'package:tabashir/features/services/presentation/widgets/interview_training_info_banner.dart';
-import 'package:tabashir/features/services/presentation/widgets/coming_soon_card.dart';
-import 'package:tabashir/features/services/presentation/widgets/waitlist_form.dart';
+import '../../../../core/theme/app_theme.dart';
+import '../cubit/interview_training_cubit.dart';
+import '../widgets/coming_soon_card.dart';
+import '../widgets/interview_training_info_banner.dart';
+import '../widgets/waitlist_form.dart';
 
 class InterviewTrainingComingSoonScreen extends StatelessWidget {
   const InterviewTrainingComingSoonScreen({super.key});

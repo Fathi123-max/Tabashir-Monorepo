@@ -1,7 +1,7 @@
 import 'dart:io';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/foundation.dart';
-import 'package:tabashir/core/utils/app_logger.dart';
+import '../utils/app_logger.dart';
 
 /// Device performance tiers
 enum DeviceTier {

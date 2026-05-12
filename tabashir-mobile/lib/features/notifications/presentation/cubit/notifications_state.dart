@@ -1,5 +1,5 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:tabashir/features/notifications/data/models/notification_model.dart';
+import '../../data/models/notification_model.dart';
 
 part 'notifications_state.freezed.dart';
 

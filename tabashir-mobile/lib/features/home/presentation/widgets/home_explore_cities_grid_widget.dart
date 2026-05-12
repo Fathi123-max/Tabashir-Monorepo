@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
-import 'package:tabashir/core/theme/app_theme.dart';
-import 'package:tabashir/features/home/domain/repositories/home_repository.dart';
+import '../../../../core/theme/app_theme.dart';
+import '../../domain/repositories/home_repository.dart';
 
 class HomeExploreCitiesGridWidget extends StatelessWidget {
   const HomeExploreCitiesGridWidget({

@@ -1,9 +1,9 @@
 import 'dart:convert';
 
 import 'package:injectable/injectable.dart';
-import 'package:tabashir/core/services/local_persistence_service.dart';
-import 'package:tabashir/features/notifications/data/models/notification_model.dart';
-import 'package:tabashir/features/messages/domain/repositories/messages_repository.dart';
+import '../../../../core/services/local_persistence_service.dart';
+import '../../../notifications/data/models/notification_model.dart';
+import '../../domain/repositories/messages_repository.dart';
 
 /// Implementation of [MessagesRepository]
 /// Handles message operations using [LocalPersistenceService] for local storage

@@ -1,6 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:tabashir/features/ai_job_apply/data/models/location_preference_model.dart';
+import '../../data/models/location_preference_model.dart';
 
 part 'location_preferences_cubit.freezed.dart';
 part 'location_preferences_state.dart';

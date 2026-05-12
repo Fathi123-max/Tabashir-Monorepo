@@ -1,21 +1,20 @@
 import 'dart:io';
 import 'dart:typed_data';
-import 'package:flutter_bloc/flutter_bloc.dart';
 
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:injectable/injectable.dart';
 
-import 'package:tabashir/features/ai_job_apply/data/models/personal_details_model.dart';
-import 'package:tabashir/features/ai_job_apply/data/models/target_role_model.dart';
-import 'package:tabashir/features/ai_job_apply/data/models/resume_selection_model.dart';
-import 'package:tabashir/features/ai_job_apply/data/models/location_preference_model.dart';
-import 'package:tabashir/features/ai_job_apply/domain/repositories/ai_job_apply_repository.dart';
-import 'package:tabashir/features/resume/domain/repositories/resume_vault_repository.dart';
-import 'package:tabashir/features/profile/presentation/cubit/profile_cubit.dart';
-import 'package:tabashir/core/di/injection.dart';
-import 'package:tabashir/features/home/presentation/cubit/home_cubit.dart';
-
+import '../../../../core/di/injection.dart';
+import '../../../../core/utils/app_logger.dart';
+import '../../../home/presentation/cubit/home_cubit.dart';
+import '../../../profile/presentation/cubit/profile_cubit.dart';
+import '../../../resume/domain/repositories/resume_vault_repository.dart';
+import '../../data/models/location_preference_model.dart';
+import '../../data/models/personal_details_model.dart';
+import '../../data/models/resume_selection_model.dart';
+import '../../data/models/target_role_model.dart';
+import '../../domain/repositories/ai_job_apply_repository.dart';
 import 'ai_job_apply_state.dart';
-import 'package:tabashir/core/utils/app_logger.dart';
 
 /// Unified cubit for AI job application flow
 /// Combines all functionality from AiApplyCubit, TargetRolesCubit,

@@ -1,7 +1,6 @@
-import 'dart:convert';
+import 'location_preference_model.dart';
 import 'personal_details_model.dart';
 import 'target_role_model.dart';
-import 'location_preference_model.dart';
 
 /// Class representing review data for AI job application
 class ReviewModel {

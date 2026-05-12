@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:tabashir/core/theme/app_theme.dart';
-import 'package:tabashir/features/jobs/presentation/cubit/saved_jobs_cubit.dart';
-import 'package:tabashir/features/jobs/presentation/widgets/card_style_option.dart';
+import '../../../../core/theme/app_theme.dart';
+import '../cubit/saved_jobs_cubit.dart';
+import 'card_style_option.dart';
 
 class SavedJobsControls extends StatelessWidget {
   const SavedJobsControls({

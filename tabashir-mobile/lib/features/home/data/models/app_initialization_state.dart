@@ -1,7 +1,8 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:tabashir/core/network/models/user/user_profile_response.dart';
-import 'package:tabashir/core/network/models/home_dashboard_response.dart';
-import 'package:tabashir/core/network/models/resume_response/resume_item.dart';
+
+import '../../../../core/network/models/home_dashboard_response.dart';
+import '../../../../core/network/models/resume_response/resume_item.dart';
+import '../../../../core/network/models/user/user_profile_response.dart';
 
 part 'app_initialization_state.freezed.dart';
 

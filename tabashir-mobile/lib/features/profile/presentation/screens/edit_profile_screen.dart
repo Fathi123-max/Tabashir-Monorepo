@@ -1,20 +1,20 @@
 import 'dart:async';
 
 import 'package:easy_localization/easy_localization.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:reactive_forms/reactive_forms.dart';
-import 'package:file_picker/file_picker.dart';
 
-import '../../../../core/constants/profile_options.dart';
 import '../../../../core/constants/countries.dart';
+import '../../../../core/constants/profile_options.dart';
 import '../../../../core/theme/app_theme.dart';
+import '../../../../core/utils/app_logger.dart';
 import '../cubit/profile_cubit.dart';
 import '../widgets/reactive_dropdown_search.dart';
 import '../widgets/reactive_gender_dropdown.dart';
 import '../widgets/reactive_multi_dropdown_search.dart';
-import 'package:tabashir/core/utils/app_logger.dart';
 
 // FormBuilder instance for creating forms
 final fb = FormBuilder();
@@ -126,9 +126,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       body: BlocBuilder<ProfileCubit, ProfileState>(
         builder: (context, state) {
           if (state.profile != null) {
-            if (_form == null) {
-              _form = cubit.getEditForm(state.profile!);
-            }
+            _form ??= cubit.getEditForm(state.profile!);
           }
 
           if (state.status == ProfileStatus.loading && _form == null) {

@@ -1,9 +1,10 @@
 import 'package:dio/dio.dart';
 import 'package:injectable/injectable.dart';
-import 'package:tabashir/core/network/models/subscription/subscription_response.dart';
-import 'package:tabashir/core/network/models/subscription/subscription_debug_response.dart';
-import 'package:tabashir/core/network/services/subscription/subscription_api_service.dart';
-import 'package:tabashir/features/subscription/domain/repositories/subscription_repository.dart';
+
+import '../../../../core/network/models/subscription/subscription_debug_response.dart';
+import '../../../../core/network/models/subscription/subscription_response.dart';
+import '../../../../core/network/services/subscription/subscription_api_service.dart';
+import '../../domain/repositories/subscription_repository.dart';
 
 /// Implementation of [SubscriptionRepository]
 /// Handles subscription operations using [SubscriptionApiService]

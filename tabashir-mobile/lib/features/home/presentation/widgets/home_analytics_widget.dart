@@ -3,10 +3,11 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:iconsax/iconsax.dart';
-import 'package:tabashir/core/theme/app_theme.dart';
-import 'package:tabashir/features/home/presentation/widgets/pie_chart_widget.dart';
-import 'package:tabashir/features/home/presentation/widgets/bar_chart_widget.dart';
-import 'package:tabashir/features/home/presentation/widgets/line_chart_widget.dart';
+
+import '../../../../core/theme/app_theme.dart';
+import 'bar_chart_widget.dart';
+import 'line_chart_widget.dart';
+import 'pie_chart_widget.dart';
 
 class HomeAnalyticsWidget extends StatelessWidget {
   const HomeAnalyticsWidget({

@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_stripe/flutter_stripe.dart';
-import 'package:tabashir/core/theme/app_theme.dart';
 
 /// Legacy Google Pay button widget (DEPRECATED)
 /// Use PlatformPayButtonWidget instead for unified Apple Pay / Google Pay

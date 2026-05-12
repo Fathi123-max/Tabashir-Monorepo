@@ -1,7 +1,7 @@
 import 'dart:math';
 import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:tabashir/core/utils/app_logger.dart';
+import '../utils/app_logger.dart';
 import 'ai_job_apply_config_service.dart';
 
 /// A/B Test configuration

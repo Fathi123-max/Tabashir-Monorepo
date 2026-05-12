@@ -5,16 +5,16 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:injectable/injectable.dart';
 
-import 'package:tabashir/core/di/injection.dart';
-import 'package:tabashir/core/network/models/resume_response/resume_item.dart';
-import 'package:tabashir/core/services/auth_session_service.dart';
-import 'package:tabashir/features/home/presentation/cubit/home_cubit.dart';
-import 'package:tabashir/features/resume/domain/repositories/resume_vault_repository.dart';
-import 'package:tabashir/features/resume/services/resume_parsing_service.dart';
-import 'package:tabashir/core/utils/app_logger.dart';
+import '../../../../core/di/injection.dart';
+import '../../../../core/network/models/resume_response/resume_item.dart';
+import '../../../../core/services/auth_session_service.dart';
+import '../../../../core/utils/app_logger.dart';
+import '../../../home/presentation/cubit/home_cubit.dart';
+import '../../domain/repositories/resume_vault_repository.dart';
+import '../../services/resume_parsing_service.dart';
 
-part 'resume_import_state.dart';
 part 'resume_import_cubit.freezed.dart';
+part 'resume_import_state.dart';
 
 @Injectable()
 class ResumeImportCubit extends Cubit<ResumeImportState> {

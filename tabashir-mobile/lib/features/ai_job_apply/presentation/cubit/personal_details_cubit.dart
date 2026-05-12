@@ -1,6 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:tabashir/features/ai_job_apply/data/models/personal_details_model.dart';
+import '../../data/models/personal_details_model.dart';
 
 part 'personal_details_cubit.freezed.dart';
 part 'personal_details_state.dart';

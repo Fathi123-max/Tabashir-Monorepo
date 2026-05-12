@@ -3,11 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
-import 'package:tabashir/core/di/injection.dart';
-import 'package:tabashir/core/services/job_match_service.dart';
-import 'package:tabashir/features/home/presentation/cubit/home_cubit.dart';
-import 'package:tabashir/features/home/presentation/cubit/home_state.dart';
-import 'package:tabashir/features/home/presentation/widgets/home_job_card_widget.dart';
+import '../../../../core/di/injection.dart';
+import '../../../../core/services/job_match_service.dart';
+import '../cubit/home_cubit.dart';
+import '../cubit/home_state.dart';
+import 'home_job_card_widget.dart';
 
 class HomeLatestJobsFeedWidget extends StatefulWidget {
   const HomeLatestJobsFeedWidget({super.key});

@@ -3,12 +3,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
-import 'package:tabashir/core/di/injection.dart';
-import 'package:tabashir/core/network/models/applied_jobs_response.dart';
-import 'package:tabashir/core/theme/app_theme.dart';
-import 'package:tabashir/features/home/presentation/cubit/home_cubit.dart';
-import 'package:tabashir/features/home/presentation/cubit/home_state.dart';
-import 'package:tabashir/core/utils/app_logger.dart';
+
+import '../../../../core/di/injection.dart';
+import '../../../../core/network/models/applied_jobs_response.dart';
+import '../../../../core/theme/app_theme.dart';
+import '../../../../core/utils/app_logger.dart';
+import '../../../home/presentation/cubit/home_cubit.dart';
+import '../../../home/presentation/cubit/home_state.dart';
 
 /// Screen displaying all job applications submitted by the user with infinite scroll
 class ApplicationsListScreen extends StatefulWidget {

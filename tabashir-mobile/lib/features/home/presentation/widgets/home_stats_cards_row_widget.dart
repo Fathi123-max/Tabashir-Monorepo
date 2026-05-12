@@ -2,10 +2,11 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:tabashir/features/home/presentation/cubit/home_cubit.dart';
-import 'package:tabashir/features/home/presentation/cubit/home_state.dart';
-import 'package:tabashir/features/home/presentation/widgets/home_stat_card_widget.dart';
-import 'package:tabashir/core/theme/app_theme.dart';
+
+import '../../../../core/theme/app_theme.dart';
+import '../cubit/home_cubit.dart';
+import '../cubit/home_state.dart';
+import 'home_stat_card_widget.dart';
 
 class HomeStatsCardsRowWidget extends StatelessWidget {
   const HomeStatsCardsRowWidget({super.key});

@@ -1,10 +1,12 @@
 import 'dart:convert';
 import 'dart:math';
+
 import 'package:crypto/crypto.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
-import 'package:tabashir/core/services/auth_session_service.dart';
-import 'package:tabashir/core/di/injection.dart';
-import 'package:tabashir/features/auth/domain/repositories/auth_repository.dart';
+
+import '../../features/auth/domain/repositories/auth_repository.dart';
+import '../di/injection.dart';
+import 'auth_session_service.dart';
 
 /// Service for Apple Sign-In authentication
 /// Uses sign_in_with_apple package with custom backend API

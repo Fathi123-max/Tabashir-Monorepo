@@ -1,9 +1,9 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:injectable/injectable.dart';
-import 'package:tabashir/core/network/models/ai_resume/create_ai_resume_request.dart';
-import 'package:tabashir/core/network/models/ai_resume/create_ai_resume_response.dart';
-import 'package:tabashir/features/ai_resume/domain/repositories/ai_resume_repository.dart';
+import '../../../../core/network/models/ai_resume/create_ai_resume_request.dart';
+import '../../../../core/network/models/ai_resume/create_ai_resume_response.dart';
+import '../../domain/repositories/ai_resume_repository.dart';
 
 part 'ai_resume_state.dart';
 part 'ai_resume_cubit.freezed.dart';

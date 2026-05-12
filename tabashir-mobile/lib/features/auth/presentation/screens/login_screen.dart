@@ -1,26 +1,27 @@
 import 'dart:async';
+
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
-import 'package:flutter/services.dart';
-import 'package:tabashir/core/di/injection.dart';
-import 'package:tabashir/core/services/google_signin_service.dart';
-import 'package:tabashir/core/services/apple_signin_service.dart';
 
+import '../../../../core/di/injection.dart';
 import '../../../../core/router/route_names.dart';
+import '../../../../core/services/apple_signin_service.dart';
+import '../../../../core/services/google_signin_service.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../cubit/auth_cubit.dart';
-import '../widgets/login_header_widget.dart';
+import '../widgets/ai_assistant_widget.dart';
 import '../widgets/login_email_field_widget.dart';
+import '../widgets/login_header_widget.dart';
 import '../widgets/login_password_field_widget.dart';
 import '../widgets/login_signin_button_widget.dart';
 import '../widgets/signup_divider_widget.dart';
 import '../widgets/signup_link_widget.dart';
 import '../widgets/social_login_button.dart';
-import '../widgets/ai_assistant_widget.dart';
 
 /// Login screen for Tabashir application
 class LoginScreen extends StatefulWidget {

@@ -3,13 +3,13 @@ import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:injectable/injectable.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:tabashir/core/database/models/local_resume.dart';
-import 'package:tabashir/core/database/repositories/local_resume_repository.dart';
-import 'package:tabashir/core/network/models/resume_response/resume_item.dart';
-import 'package:tabashir/core/network/services/job/tabashir_api_service.dart';
-import 'package:tabashir/core/network/services/resume/resume_api_service.dart';
-import 'package:tabashir/features/resume/domain/repositories/resume_vault_repository.dart';
-import 'package:tabashir/core/utils/app_logger.dart';
+
+import '../../../../core/database/repositories/local_resume_repository.dart';
+import '../../../../core/network/models/resume_response/resume_item.dart';
+import '../../../../core/network/services/job/tabashir_api_service.dart';
+import '../../../../core/network/services/resume/resume_api_service.dart';
+import '../../../../core/utils/app_logger.dart';
+import '../../domain/repositories/resume_vault_repository.dart';
 
 /// Hybrid repository that combines backend storage with local caching
 /// Implements the ResumeVaultRepository interface
@@ -221,7 +221,7 @@ class SyncHybridResumeRepository implements ResumeVaultRepository {
         AppLogger.debug('🔄 [SYNC_REPO] Reformatted file saved locally. Uploading to vault...', tag: 'Resume');
         
         // Remove old extension from fileName if it exists
-        String cleanFileName = fileName;
+        var cleanFileName = fileName;
         if (cleanFileName.contains('.')) {
           cleanFileName = cleanFileName.substring(0, cleanFileName.lastIndexOf('.'));
         }

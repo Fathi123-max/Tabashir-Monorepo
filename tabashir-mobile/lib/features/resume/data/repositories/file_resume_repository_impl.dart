@@ -2,10 +2,9 @@ import 'dart:io';
 
 import 'package:dio/dio.dart';
 import 'package:injectable/injectable.dart';
-import 'package:tabashir/core/network/models/resume_response/resume_item.dart';
-import 'package:tabashir/core/network/models/resume_response/resume_response.dart';
-import 'package:tabashir/core/network/services/resume/resume_api_service.dart';
-import 'package:tabashir/features/resume/domain/repositories/file_resume_repository.dart';
+import '../../../../core/network/models/resume_response/resume_item.dart';
+import '../../../../core/network/services/resume/resume_api_service.dart';
+import '../../domain/repositories/file_resume_repository.dart';
 
 /// Implementation of FileResumeRepository
 /// Handles file-based resume operations via backend API

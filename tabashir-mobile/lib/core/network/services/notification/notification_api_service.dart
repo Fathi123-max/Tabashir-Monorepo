@@ -1,12 +1,11 @@
-import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:injectable/injectable.dart';
-import 'package:retrofit/retrofit.dart';
 import 'package:dio/dio.dart';
-import 'package:tabashir/features/notifications/data/models/notification_model.dart';
-import 'package:tabashir/core/network/models/_base/api_response.dart';
+import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:retrofit/retrofit.dart';
 
-part 'notification_api_service.g.dart';
+import '../../../../features/notifications/data/models/notification_model.dart';
+
 part 'notification_api_service.freezed.dart';
+part 'notification_api_service.g.dart';
 
 @RestApi(baseUrl: '/api/mobile/notifications')
 abstract class NotificationApiService {

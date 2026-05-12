@@ -1,5 +1,5 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:tabashir/core/network/models/resume_response/resume_item.dart';
+import 'resume_item.dart';
 
 part 'resume_duplicate_response.freezed.dart';
 part 'resume_duplicate_response.g.dart';

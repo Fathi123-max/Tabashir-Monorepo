@@ -5,16 +5,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_stripe/flutter_stripe.dart';
-import 'package:tabashir/core/constants/app_constants.dart';
-import 'package:tabashir/core/di/injection.dart';
-import 'package:tabashir/core/di/module.dart';
-import 'package:tabashir/core/error/global_bloc_observer.dart';
-import 'package:tabashir/core/services/google_signin_service.dart';
-import 'package:tabashir/core/services/local_storage_service.dart';
-import 'package:tabashir/core/services/notification_service.dart';
-import 'package:tabashir/core/services/onesignal_notification_service.dart';
 
-import 'package:tabashir/core/services/local_persistence_service.dart';
+import '../constants/app_constants.dart';
+import '../di/injection.dart';
+import '../di/module.dart';
+import '../error/global_bloc_observer.dart';
+import '../services/google_signin_service.dart';
+import '../services/local_persistence_service.dart';
+import '../services/local_storage_service.dart';
+import '../services/notification_service.dart';
+import '../services/onesignal_notification_service.dart';
 
 // AppBootstrap handles all the initialization logic for the application
 class AppBootstrap {

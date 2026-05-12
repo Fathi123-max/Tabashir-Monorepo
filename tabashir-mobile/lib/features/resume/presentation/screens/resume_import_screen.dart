@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
-import 'package:tabashir/core/network/models/resume_response/resume_item.dart';
-import 'package:tabashir/features/profile/presentation/cubit/profile_cubit.dart';
+
+import '../../../../core/network/models/resume_response/resume_item.dart';
 import '../../../../core/router/route_names.dart';
 import '../../../../core/services/auth_session_service.dart';
 import '../../../../core/theme/app_theme.dart';

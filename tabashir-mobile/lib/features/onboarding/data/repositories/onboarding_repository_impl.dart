@@ -1,7 +1,8 @@
 import 'package:injectable/injectable.dart';
-import 'package:tabashir/core/services/local_persistence_service.dart';
-import 'package:tabashir/features/onboarding/models/onboarding_page_model.dart';
-import 'package:tabashir/features/onboarding/domain/repositories/onboarding_repository.dart';
+
+import '../../../../core/services/local_persistence_service.dart';
+import '../../domain/repositories/onboarding_repository.dart';
+import '../../models/onboarding_page_model.dart';
 
 /// Implementation of OnboardingRepository
 @Injectable(as: OnboardingRepository)

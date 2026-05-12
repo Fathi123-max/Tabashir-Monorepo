@@ -1,12 +1,13 @@
 import 'dart:convert';
 
 import 'package:injectable/injectable.dart';
-import 'package:tabashir/core/network/models/applied_jobs_response.dart';
-import 'package:tabashir/core/services/local_persistence_service.dart';
-import 'package:tabashir/features/home/domain/repositories/home_repository.dart';
-import 'package:tabashir/core/network/services/job/tabashir_api_service.dart';
-import 'package:tabashir/core/network/models/email_model.dart';
-import 'package:tabashir/core/utils/app_logger.dart';
+
+import '../../../../core/network/models/applied_jobs_response.dart';
+import '../../../../core/network/models/email_model.dart';
+import '../../../../core/network/services/job/tabashir_api_service.dart';
+import '../../../../core/services/local_persistence_service.dart';
+import '../../../../core/utils/app_logger.dart';
+import '../../domain/repositories/home_repository.dart';
 
 /// Implementation of [HomeRepository]
 /// Handles home dashboard operations using [LocalPersistenceService] for local storage

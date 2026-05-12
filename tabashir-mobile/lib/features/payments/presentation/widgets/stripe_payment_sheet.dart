@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:tabashir/core/models/stripe/stripe_enums.dart';
-import 'package:tabashir/core/theme/app_theme.dart';
+import '../../../../core/models/stripe/stripe_enums.dart';
+import '../../../../core/theme/app_theme.dart';
 
 import '../cubit/payment_cubit.dart';
 

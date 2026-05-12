@@ -1,8 +1,9 @@
 import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:tabashir/features/ai_job_apply/data/models/target_role_model.dart';
-import 'package:tabashir/features/ai_job_apply/data/models/location_preference_model.dart';
-import 'package:tabashir/core/utils/app_logger.dart';
+
+import '../../features/ai_job_apply/data/models/location_preference_model.dart';
+import '../../features/ai_job_apply/data/models/target_role_model.dart';
+import '../utils/app_logger.dart';
 
 /// User preferences service
 /// Manages sync between user profile and AI job apply feature

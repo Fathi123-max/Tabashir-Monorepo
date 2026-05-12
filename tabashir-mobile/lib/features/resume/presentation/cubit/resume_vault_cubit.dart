@@ -1,14 +1,15 @@
-import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:injectable/injectable.dart';
-import 'package:tabashir/core/di/injection.dart';
-import 'package:tabashir/core/network/models/resume_response/resume_item.dart';
-import 'package:tabashir/features/home/presentation/cubit/home_cubit.dart';
-import 'package:tabashir/features/resume/domain/repositories/resume_vault_repository.dart';
-import 'package:tabashir/core/utils/app_logger.dart';
 
-part 'resume_vault_state.dart';
+import '../../../../core/di/injection.dart';
+import '../../../../core/network/models/resume_response/resume_item.dart';
+import '../../../../core/utils/app_logger.dart';
+import '../../../home/presentation/cubit/home_cubit.dart';
+import '../../domain/repositories/resume_vault_repository.dart';
+
 part 'resume_vault_cubit.freezed.dart';
+part 'resume_vault_state.dart';
 
 @lazySingleton
 class ResumeVaultCubit extends Cubit<ResumeVaultState> {

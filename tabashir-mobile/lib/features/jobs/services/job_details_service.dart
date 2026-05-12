@@ -1,14 +1,15 @@
 import 'package:dio/dio.dart';
 import 'package:injectable/injectable.dart';
-import 'package:tabashir/core/di/injection.dart';
-import 'package:tabashir/core/network/models/job_details_response.dart';
-import 'package:tabashir/core/network/models/jobs_match_response.dart';
-import 'package:tabashir/core/network/models/user/user_profile_response.dart';
-import 'package:tabashir/core/network/services/job/tabashir_api_service.dart';
-import 'package:tabashir/core/services/job_match_service.dart';
+
+import '../../../core/di/injection.dart';
+import '../../../core/network/models/job_details_response.dart';
+import '../../../core/network/models/jobs_match_response.dart';
+import '../../../core/network/models/user/user_profile_response.dart';
+import '../../../core/network/services/job/tabashir_api_service.dart';
+import '../../../core/services/job_match_service.dart';
+import '../../../core/utils/app_logger.dart';
 import '../data/models/job_details.dart';
 import '../domain/repositories/jobs_repository.dart';
-import 'package:tabashir/core/utils/app_logger.dart';
 
 /// Service class for managing job details operations.
 /// Provides methods to fetch job details, apply to jobs, save jobs, and share job information.

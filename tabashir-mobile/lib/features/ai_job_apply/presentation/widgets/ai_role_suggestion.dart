@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:tabashir/core/theme/app_theme.dart';
-import 'package:tabashir/features/ai_job_apply/data/models/target_role_model.dart';
+import '../../../../core/theme/app_theme.dart';
+import '../../data/models/target_role_model.dart';
 
 /// Reusable widget displaying AI role suggestion
 class AIRoleSuggestion extends StatelessWidget {

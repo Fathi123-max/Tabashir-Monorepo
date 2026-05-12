@@ -1,20 +1,19 @@
 import 'package:easy_localization/easy_localization.dart';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:tabashir/core/di/injection.dart';
 
-import 'package:tabashir/core/theme/app_theme.dart';
-import 'package:tabashir/features/jobs/presentation/cubit/jobs_cubit.dart';
-import 'package:tabashir/features/jobs/presentation/cubit/saved_jobs_cubit.dart';
-import 'package:tabashir/features/jobs/presentation/widgets/card_styles.dart';
-import 'package:tabashir/features/jobs/presentation/widgets/job_card_styles.dart';
-import 'package:tabashir/features/jobs/presentation/widgets/saved_jobs_controls.dart';
-import 'package:tabashir/features/jobs/presentation/widgets/saved_jobs_empty_state.dart';
-import 'package:tabashir/features/jobs/presentation/widgets/saved_jobs_header.dart';
-import 'package:tabashir/features/jobs/presentation/widgets/saved_jobs_search_bar.dart';
-import 'package:tabashir/core/utils/app_logger.dart';
+import '../../../../core/di/injection.dart';
+import '../../../../core/theme/app_theme.dart';
+import '../../../../core/utils/app_logger.dart';
+import '../cubit/jobs_cubit.dart';
+import '../cubit/saved_jobs_cubit.dart';
+import '../widgets/card_styles.dart';
+import '../widgets/job_card_styles.dart';
+import '../widgets/saved_jobs_controls.dart';
+import '../widgets/saved_jobs_empty_state.dart';
+import '../widgets/saved_jobs_header.dart';
+import '../widgets/saved_jobs_search_bar.dart';
 
 class SavedJobsScreen extends StatelessWidget {
   const SavedJobsScreen({super.key});

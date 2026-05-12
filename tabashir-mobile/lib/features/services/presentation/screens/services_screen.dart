@@ -5,18 +5,17 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-import 'package:tabashir/core/di/injection.dart';
-import 'package:tabashir/core/theme/app_theme.dart';
-import 'package:tabashir/features/home/presentation/cubit/home_cubit.dart';
-import 'package:tabashir/features/payments/presentation/cubit/payment_cubit.dart';
-import 'package:tabashir/features/payments/domain/repositories/payment_platform.dart';
-import 'package:tabashir/features/payments/presentation/screens/payment_success_screen.dart';
-import 'package:tabashir/features/profile/presentation/cubit/profile_cubit.dart';
-
+import '../../../../core/di/injection.dart';
+import '../../../../core/theme/app_theme.dart';
+import '../../../../core/utils/app_logger.dart';
+import '../../../home/presentation/cubit/home_cubit.dart';
+import '../../../payments/domain/repositories/payment_platform.dart';
+import '../../../payments/presentation/cubit/payment_cubit.dart';
+import '../../../payments/presentation/screens/payment_success_screen.dart';
+import '../../../profile/presentation/cubit/profile_cubit.dart';
 import '../cubit/services_cubit.dart';
 import '../widgets/service_card.dart';
 import '../widgets/trust_indicators.dart';
-import 'package:tabashir/core/utils/app_logger.dart';
 
 /// Services screen that displays AI career services including:
 /// - AI Resume Optimization

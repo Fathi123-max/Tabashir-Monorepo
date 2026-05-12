@@ -1,8 +1,8 @@
 import 'dart:convert';
 
 import 'package:injectable/injectable.dart';
-import 'package:tabashir/core/services/local_persistence_service.dart';
-import 'package:tabashir/features/candidate/domain/repositories/candidate_repository.dart';
+import '../../../../core/services/local_persistence_service.dart';
+import '../../domain/repositories/candidate_repository.dart';
 
 /// Implementation of [CandidateRepository]
 /// Handles candidate operations using [LocalPersistenceService] for local storage

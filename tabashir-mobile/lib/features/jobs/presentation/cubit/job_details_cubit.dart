@@ -1,18 +1,20 @@
 import 'dart:async';
+
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:tabashir/core/di/injection.dart';
-import 'package:tabashir/core/services/applied_jobs_storage.dart';
-import 'package:tabashir/features/ai_job_apply/presentation/cubit/ai_job_apply_cubit.dart';
-import 'package:tabashir/features/jobs/data/models/job_details.dart';
-import 'package:tabashir/core/services/local_persistence_service.dart';
-import 'package:tabashir/features/jobs/presentation/cubit/jobs_cubit.dart';
-import 'package:tabashir/features/jobs/services/job_details_service.dart';
-import 'package:tabashir/features/profile/presentation/cubit/profile_cubit.dart';
-import 'package:tabashir/core/utils/app_logger.dart';
 
-part 'job_details_state.dart';
+import '../../../../core/di/injection.dart';
+import '../../../../core/services/applied_jobs_storage.dart';
+import '../../../../core/services/local_persistence_service.dart';
+import '../../../../core/utils/app_logger.dart';
+import '../../../ai_job_apply/presentation/cubit/ai_job_apply_cubit.dart';
+import '../../../profile/presentation/cubit/profile_cubit.dart';
+import '../../data/models/job_details.dart';
+import '../../services/job_details_service.dart';
+import 'jobs_cubit.dart';
+
 part 'job_details_cubit.freezed.dart';
+part 'job_details_state.dart';
 
 /// Cubit for managing the state of the job details screen.
 /// Handles loading, displaying, applying to, saving, and sharing job details.

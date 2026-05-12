@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:tabashir/core/theme/app_theme.dart';
-import 'package:tabashir/features/ai_job_apply/data/models/personal_details_model.dart';
+import '../../../../core/theme/app_theme.dart';
+import '../../data/models/personal_details_model.dart';
 
 /// Reusable chip widget for gender selection
 class GenderChip extends StatelessWidget {

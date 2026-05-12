@@ -3,15 +3,16 @@ import 'dart:typed_data';
 
 import 'package:dio/dio.dart';
 import 'package:injectable/injectable.dart';
-import 'package:tabashir/core/network/models/jobs_match_response.dart';
-import 'package:tabashir/core/network/services/job/tabashir_api_service.dart';
-import 'package:tabashir/core/services/local_persistence_service.dart';
-import 'package:tabashir/features/ai_job_apply/data/models/location_preference_model.dart';
-import 'package:tabashir/features/ai_job_apply/data/models/personal_details_model.dart';
-import 'package:tabashir/features/ai_job_apply/data/models/resume_selection_model.dart';
-import 'package:tabashir/features/ai_job_apply/data/models/target_role_model.dart';
-import 'package:tabashir/features/ai_job_apply/data/models/review_model.dart';
-import 'package:tabashir/features/ai_job_apply/domain/repositories/ai_job_apply_repository.dart';
+
+import '../../../../core/network/models/jobs_match_response.dart';
+import '../../../../core/network/services/job/tabashir_api_service.dart';
+import '../../../../core/services/local_persistence_service.dart';
+import '../../domain/repositories/ai_job_apply_repository.dart';
+import '../models/location_preference_model.dart';
+import '../models/personal_details_model.dart';
+import '../models/resume_selection_model.dart';
+import '../models/review_model.dart';
+import '../models/target_role_model.dart';
 
 /// Implementation of [AiJobApplyRepository]
 /// Handles AI job application operations using [TabashirApiService] and [LocalPersistenceService]

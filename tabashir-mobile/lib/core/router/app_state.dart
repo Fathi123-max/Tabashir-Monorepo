@@ -1,6 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:tabashir/core/constants/storage_keys.dart';
+import '../constants/storage_keys.dart';
 
 /// Holds synchronous snapshots of the gating flags that GoRouter redirect
 /// needs: authentication state, intro-onboarding completion, and post-signup

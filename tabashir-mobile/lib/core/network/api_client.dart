@@ -1,9 +1,9 @@
 import 'package:dio/dio.dart';
 import 'package:injectable/injectable.dart';
 
-import '_clients/dio_client.dart';
 import '_clients/auth_dio_client.dart';
 import '_clients/backend_dio_client.dart';
+import '_clients/dio_client.dart';
 import 'services/index.dart';
 
 /// Main API client that provides access to all API services

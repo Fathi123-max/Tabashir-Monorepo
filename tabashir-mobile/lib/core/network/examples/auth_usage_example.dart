@@ -6,11 +6,12 @@ library;
 
 import 'package:dio/dio.dart';
 import 'package:get_it/get_it.dart';
-import 'package:tabashir/core/network/api_client.dart';
-import 'package:tabashir/core/network/models/auth/login_request.dart';
-import 'package:tabashir/core/network/models/auth/register_request.dart';
-import 'package:tabashir/core/error/dio_error_mapper.dart';
-import 'package:tabashir/core/utils/app_logger.dart';
+
+import '../../error/dio_error_mapper.dart';
+import '../../utils/app_logger.dart';
+import '../api_client.dart';
+import '../models/auth/login_request.dart';
+import '../models/auth/register_request.dart';
 
 void main() async {
   // Get the API client from dependency injection

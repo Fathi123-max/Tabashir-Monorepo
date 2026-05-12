@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:tabashir/core/theme/app_theme.dart';
-import 'package:tabashir/features/payments/presentation/cubit/payment_cubit.dart';
-import 'package:tabashir/features/payments/presentation/widgets/apple_pay_button.dart';
-import 'package:tabashir/features/payments/presentation/widgets/stripe_payment_sheet.dart';
+import '../../../../core/theme/app_theme.dart';
+import '../cubit/payment_cubit.dart';
+import '../widgets/apple_pay_button.dart';
+import '../widgets/stripe_payment_sheet.dart';
 
 /// Example usage of Stripe Payment integration
 /// This demonstrates the latest PaymentPlatform abstraction.

@@ -1,9 +1,7 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:go_router/go_router.dart';
-import 'package:tabashir/core/config/animation_config.dart';
-import 'package:tabashir/core/router/route_names.dart';
-import 'package:tabashir/features/ai_job_apply/data/models/resume_selection_model.dart';
+import '../../../../core/config/animation_config.dart';
+import '../../data/models/resume_selection_model.dart';
 
 part 'ai_apply_cubit.freezed.dart';
 part 'ai_apply_state.dart';

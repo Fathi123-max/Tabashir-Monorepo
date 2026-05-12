@@ -1,7 +1,8 @@
+import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:fl_chart/fl_chart.dart';
-import 'package:tabashir/core/theme/app_theme.dart';
+
+import '../../../../core/theme/app_theme.dart';
 
 class PieChartWidget extends StatelessWidget {
   const PieChartWidget({

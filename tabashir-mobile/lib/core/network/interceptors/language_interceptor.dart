@@ -1,6 +1,6 @@
 import 'package:dio/dio.dart';
-import 'package:tabashir/core/di/injection.dart';
-import 'package:tabashir/core/services/language_service.dart';
+import '../../di/injection.dart';
+import '../../services/language_service.dart';
 
 /// Interceptor to automatically add 'lang' parameter to all requests
 class LanguageInterceptor extends Interceptor {

@@ -1,19 +1,20 @@
 import 'dart:io';
-import 'package:easy_localization/easy_localization.dart';
+
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
+import 'package:open_filex/open_filex.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:pdfx/pdfx.dart';
-import 'package:dio/dio.dart';
 import 'package:share_plus/share_plus.dart';
-import 'package:open_filex/open_filex.dart';
-import 'package:tabashir/core/di/injection.dart';
-import 'package:tabashir/core/network/_clients/auth_dio_client.dart';
-import 'package:tabashir/core/services/auth_session_service.dart';
-import 'package:tabashir/core/theme/app_theme.dart';
-import 'package:tabashir/core/utils/app_logger.dart';
+
+import '../../../../core/di/injection.dart';
+import '../../../../core/network/_clients/auth_dio_client.dart';
 import '../../../../core/network/models/resume_response/resume_item.dart';
+import '../../../../core/services/auth_session_service.dart';
+import '../../../../core/theme/app_theme.dart';
+import '../../../../core/utils/app_logger.dart';
 
 class ResumePreviewScreen extends StatefulWidget {
   const ResumePreviewScreen({
@@ -58,13 +59,13 @@ class _ResumePreviewScreenState extends State<ResumePreviewScreen> {
       }
 
       // Detect file type
-      final bool isDocx =
+      final isDocx =
           widget.resume.filename.toLowerCase().endsWith('.docx') ||
           widget.resume.fileType.toLowerCase() == 'docx';
 
       // Construct the download URL - if we want to view in PDF viewer, 
       // we must ensure we get a PDF from the server
-      String downloadUrl = url;
+      var downloadUrl = url;
       if (!isDocx && url.startsWith('http')) {
         downloadUrl = url.contains('?')
             ? '$url&output_format=pdf'
@@ -75,7 +76,7 @@ class _ResumePreviewScreenState extends State<ResumePreviewScreen> {
       final dir = await getTemporaryDirectory();
 
       // Ensure we don't double the extension
-      String fileName = widget.resume.filename;
+      var fileName = widget.resume.filename;
       final extension = isDocx ? '.docx' : '.pdf';
       if (!fileName.toLowerCase().endsWith(extension)) {
         fileName = '$fileName$extension';
@@ -145,7 +146,7 @@ class _ResumePreviewScreenState extends State<ResumePreviewScreen> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final bool isDocx =
+    final isDocx =
         widget.resume.filename.toLowerCase().endsWith('.docx') ||
         widget.resume.fileType.toLowerCase() == 'docx';
 
@@ -333,11 +334,13 @@ class _ResumePreviewScreenState extends State<ResumePreviewScreen> {
       final dotExtension = format == 'docx' ? '.docx' : '.pdf';
 
       // Clean fileName
-      String baseFileName = widget.resume.filename;
-      if (baseFileName.toLowerCase().endsWith('.pdf'))
+      var baseFileName = widget.resume.filename;
+      if (baseFileName.toLowerCase().endsWith('.pdf')) {
         baseFileName = baseFileName.substring(0, baseFileName.length - 4);
-      if (baseFileName.toLowerCase().endsWith('.docx'))
+      }
+      if (baseFileName.toLowerCase().endsWith('.docx')) {
         baseFileName = baseFileName.substring(0, baseFileName.length - 5);
+      }
 
       final fileName = '$baseFileName$dotExtension';
       final filePath = '${dir.path}/$fileName';
@@ -364,7 +367,7 @@ class _ResumePreviewScreenState extends State<ResumePreviewScreen> {
 
       scaffoldMessenger.showSnackBar(
         SnackBar(
-          content: Text('Resume downloaded successfully'),
+          content: const Text('Resume downloaded successfully'),
           backgroundColor: AppTheme.successColor,
           action: SnackBarAction(
             label: 'Open',
@@ -395,11 +398,13 @@ class _ResumePreviewScreenState extends State<ResumePreviewScreen> {
       final tempDir = await getTemporaryDirectory();
       final ext = format == 'docx' ? '.docx' : '.pdf';
 
-      String baseFileName = widget.resume.filename;
-      if (baseFileName.toLowerCase().endsWith('.pdf'))
+      var baseFileName = widget.resume.filename;
+      if (baseFileName.toLowerCase().endsWith('.pdf')) {
         baseFileName = baseFileName.substring(0, baseFileName.length - 4);
-      if (baseFileName.toLowerCase().endsWith('.docx'))
+      }
+      if (baseFileName.toLowerCase().endsWith('.docx')) {
         baseFileName = baseFileName.substring(0, baseFileName.length - 5);
+      }
 
       final filePath =
           '${tempDir.path}/share_${baseFileName}_${DateTime.now().millisecondsSinceEpoch}$ext';

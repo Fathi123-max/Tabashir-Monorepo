@@ -3,7 +3,7 @@
 /// without searching through multiple files
 library;
 
-import 'package:tabashir/core/services/device_capability_service.dart';
+import '../services/device_capability_service.dart';
 
 class AnimationConfig {
   // Private constructor to prevent instantiation

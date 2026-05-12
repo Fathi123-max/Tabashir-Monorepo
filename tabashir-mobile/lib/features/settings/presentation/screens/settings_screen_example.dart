@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:get_it/get_it.dart';
-import 'package:tabashir/core/di/injection.dart';
-import 'package:tabashir/features/settings/domain/repositories/settings_repository.dart';
-import 'package:tabashir/features/settings/presentation/cubit/settings_cubit.dart';
+import '../../../../core/di/injection.dart';
+import '../../domain/repositories/settings_repository.dart';
+import '../cubit/settings_cubit.dart';
 
 /// Example usage of SettingsCubit in a screen
 class SettingsScreenExample extends StatelessWidget {

@@ -1,8 +1,10 @@
 import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
-import 'package:tabashir/core/config/animation_config.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:tabashir/core/theme/app_theme.dart';
+
+import '../../../../core/config/animation_config.dart';
+import '../../../../core/theme/app_theme.dart';
 
 /// Custom page route with magical AI-themed animations
 class MagicPageRoute<T> extends PageRouteBuilder<T> {

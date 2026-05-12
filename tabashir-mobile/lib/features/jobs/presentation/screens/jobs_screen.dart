@@ -1,24 +1,23 @@
 import 'package:easy_localization/easy_localization.dart';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
-import 'package:tabashir/core/theme/app_theme.dart';
-import 'package:tabashir/core/router/route_names.dart';
-import 'package:tabashir/core/di/injection.dart';
-import 'package:tabashir/features/ai_job_apply/presentation/cubit/ai_job_apply_cubit.dart';
-import 'package:tabashir/features/ai_job_apply/presentation/cubit/ai_job_apply_state.dart';
-import 'package:tabashir/features/jobs/presentation/cubit/jobs_cubit.dart';
-import 'package:tabashir/features/jobs/domain/models/job_ui_model.dart';
-import 'package:tabashir/features/profile/presentation/cubit/profile_cubit.dart';
-import 'package:tabashir/features/jobs/domain/repositories/jobs_repository.dart';
 
-import 'package:tabashir/features/jobs/presentation/widgets/job_card.dart';
-import 'package:tabashir/features/jobs/presentation/widgets/job_filter_bottom_sheet.dart';
-import 'package:tabashir/shared/widgets/cv_required_blur.dart';
-import 'package:tabashir/features/resume/presentation/cubit/resume_vault_cubit.dart';
-import 'package:tabashir/core/utils/app_logger.dart';
+import '../../../../core/di/injection.dart';
+import '../../../../core/router/route_names.dart';
+import '../../../../core/theme/app_theme.dart';
+import '../../../../core/utils/app_logger.dart';
+import '../../../../shared/widgets/cv_required_blur.dart';
+import '../../../ai_job_apply/presentation/cubit/ai_job_apply_cubit.dart';
+import '../../../ai_job_apply/presentation/cubit/ai_job_apply_state.dart';
+import '../../../profile/presentation/cubit/profile_cubit.dart';
+import '../../../resume/presentation/cubit/resume_vault_cubit.dart';
+import '../../domain/models/job_ui_model.dart';
+import '../../domain/repositories/jobs_repository.dart';
+import '../cubit/jobs_cubit.dart';
+import '../widgets/job_card.dart';
+import '../widgets/job_filter_bottom_sheet.dart';
 
 class JobsScreen extends StatelessWidget {
   const JobsScreen({
@@ -330,11 +329,11 @@ class _JobsViewState extends State<JobsView> {
                     children: [
                       const Icon(Icons.error_outline, color: Colors.red, size: 60),
                       const SizedBox(height: 16),
-                      Text("Something went wrong"),
+                      const Text('Something went wrong'),
                       const SizedBox(height: 16),
                       ElevatedButton(
                         onPressed: () => context.read<JobsCubit>().loadJobs(),
-                        child: const Text("Retry"),
+                        child: const Text('Retry'),
                       ),
                     ],
                   ),

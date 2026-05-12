@@ -1,6 +1,6 @@
 import 'package:injectable/injectable.dart';
 import 'package:onesignal_flutter/onesignal_flutter.dart';
-import 'package:tabashir/core/utils/app_logger.dart';
+import '../utils/app_logger.dart';
 
 /// Base interface for OneSignal notification service
 abstract class OneSignalNotificationServiceBase {

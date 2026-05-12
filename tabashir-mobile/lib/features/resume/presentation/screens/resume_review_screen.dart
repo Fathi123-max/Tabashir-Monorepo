@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:iconsax/iconsax.dart';
-import 'package:tabashir/core/theme/app_theme.dart';
+import '../../../../core/theme/app_theme.dart';
 import '../cubit/resume_review_cubit.dart';
 import '../cubit/resume_review_state.dart';
 

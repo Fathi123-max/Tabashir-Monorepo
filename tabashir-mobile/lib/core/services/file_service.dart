@@ -4,7 +4,7 @@ import 'dart:typed_data';
 import 'package:image_picker/image_picker.dart';
 import 'package:path/path.dart' as path;
 import 'package:path_provider/path_provider.dart';
-import 'package:tabashir/core/utils/app_logger.dart';
+import '../utils/app_logger.dart';
 
 /// Service to handle file operations
 class FileService {

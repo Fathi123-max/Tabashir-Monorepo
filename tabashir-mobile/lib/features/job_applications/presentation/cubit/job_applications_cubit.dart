@@ -1,9 +1,8 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:injectable/injectable.dart';
-import 'package:tabashir/core/network/models/applied_jobs_response.dart';
-import 'package:tabashir/core/network/models/jobs_count_response.dart';
-import 'package:tabashir/features/job_applications/domain/repositories/job_applications_repository.dart';
+import '../../../../core/network/models/applied_jobs_response.dart';
+import '../../domain/repositories/job_applications_repository.dart';
 
 part 'job_applications_state.dart';
 part 'job_applications_cubit.freezed.dart';

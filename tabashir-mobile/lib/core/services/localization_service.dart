@@ -1,7 +1,8 @@
 import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:tabashir/core/services/ai_job_apply_config_service.dart';
-import 'package:tabashir/core/utils/app_logger.dart';
+
+import '../utils/app_logger.dart';
+import 'ai_job_apply_config_service.dart';
 
 /// Supported languages for the app
 enum SupportedLanguage {

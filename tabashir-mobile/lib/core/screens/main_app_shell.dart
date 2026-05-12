@@ -1,17 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:tabashir/core/theme/app_theme.dart';
-import 'package:tabashir/features/home/presentation/screens/home_screen.dart';
-import 'package:tabashir/features/jobs/presentation/screens/jobs_screen.dart';
-import 'package:tabashir/features/profile/presentation/screens/profile_screen.dart';
-import 'package:tabashir/features/services/presentation/screens/services_screen.dart';
-
-import 'package:tabashir/features/resume/presentation/cubit/resume_vault_cubit.dart';
-import 'package:tabashir/features/notifications/presentation/screens/notifications_screen.dart';
-import 'package:tabashir/features/shared/widgets/widgets.dart';
-
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:tabashir/core/di/injection.dart';
-import 'package:tabashir/features/jobs/presentation/cubit/jobs_cubit.dart';
+
+import '../../features/home/presentation/screens/home_screen.dart';
+import '../../features/jobs/presentation/cubit/jobs_cubit.dart';
+import '../../features/jobs/presentation/screens/jobs_screen.dart';
+import '../../features/profile/presentation/screens/profile_screen.dart';
+import '../../features/services/presentation/screens/services_screen.dart';
+import '../../features/shared/widgets/widgets.dart';
+import '../di/injection.dart';
 
 class MainAppShell extends StatefulWidget {
   const MainAppShell({

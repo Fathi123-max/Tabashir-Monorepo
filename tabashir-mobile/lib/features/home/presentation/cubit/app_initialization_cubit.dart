@@ -1,14 +1,15 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:injectable/injectable.dart';
-import 'package:tabashir/core/di/injection.dart';
-import 'package:tabashir/core/network/models/user/user_profile_response.dart';
-import 'package:tabashir/core/session/cubit/session_cubit.dart';
-import 'package:tabashir/features/home/data/models/app_initialization_state.dart';
-import 'package:tabashir/features/profile/domain/repositories/profile_repository.dart';
-import 'package:tabashir/features/profile/presentation/cubit/profile_cubit.dart';
-import 'package:tabashir/features/home/presentation/cubit/home_cubit.dart';
-import 'package:tabashir/features/resume/presentation/cubit/resume_vault_cubit.dart';
-import 'package:tabashir/core/utils/app_logger.dart';
+
+import '../../../../core/di/injection.dart';
+import '../../../../core/network/models/user/user_profile_response.dart';
+import '../../../../core/session/cubit/session_cubit.dart';
+import '../../../../core/utils/app_logger.dart';
+import '../../../profile/domain/repositories/profile_repository.dart';
+import '../../../profile/presentation/cubit/profile_cubit.dart';
+import '../../../resume/presentation/cubit/resume_vault_cubit.dart';
+import '../../data/models/app_initialization_state.dart';
+import 'home_cubit.dart';
 
 @lazySingleton
 class AppInitializationCubit extends Cubit<AppInitializationState> {

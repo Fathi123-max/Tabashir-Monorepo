@@ -1,8 +1,5 @@
-import 'package:tabashir/core/network/models/auth/auth_response.dart';
-import 'package:tabashir/core/network/models/auth/login_request.dart';
-import 'package:tabashir/core/network/models/auth/register_request.dart';
-import 'package:tabashir/core/network/models/auth/email_verification_request.dart';
-import 'package:tabashir/core/network/models/auth/email_verification_response.dart';
+import '../../../../core/network/models/auth/auth_response.dart';
+import '../../../../core/network/models/auth/email_verification_response.dart';
 
 /// Repository interface for authentication operations
 /// Defines the contract for authentication data operations

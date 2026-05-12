@@ -1,9 +1,8 @@
 import 'package:dio/dio.dart';
-import 'package:injectable/injectable.dart';
 import 'package:retrofit/retrofit.dart';
 
-import '../../models/subscription/subscription_response.dart';
 import '../../models/subscription/subscription_debug_response.dart';
+import '../../models/subscription/subscription_response.dart';
 
 part 'subscription_api_service.g.dart';
 

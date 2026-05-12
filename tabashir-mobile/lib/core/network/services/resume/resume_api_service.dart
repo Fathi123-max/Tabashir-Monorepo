@@ -1,9 +1,9 @@
 import 'package:dio/dio.dart';
 import 'package:injectable/injectable.dart';
 import 'package:retrofit/retrofit.dart';
-import 'package:tabashir/core/network/models/resume_request/save_and_generate_request.dart';
-import 'package:tabashir/core/network/models/resume_response/resume_item.dart';
-import 'package:tabashir/core/network/models/resume_response/resume_response.dart';
+import '../../models/resume_request/save_and_generate_request.dart';
+import '../../models/resume_response/resume_item.dart';
+import '../../models/resume_response/resume_response.dart';
 
 part 'resume_api_service.g.dart';
 

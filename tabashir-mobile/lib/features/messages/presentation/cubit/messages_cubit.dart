@@ -1,12 +1,13 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:tabashir/core/utils/app_logger.dart';
-import 'package:tabashir/features/messages/domain/repositories/messages_repository.dart';
-import 'package:tabashir/features/notifications/data/models/notification_model.dart';
 
-part 'messages_state.dart';
+import '../../../../core/utils/app_logger.dart';
+import '../../../notifications/data/models/notification_model.dart';
+import '../../domain/repositories/messages_repository.dart';
+
 part 'messages_cubit.freezed.dart';
 part 'messages_cubit.g.dart';
+part 'messages_state.dart';
 
 class MessagesCubit extends Cubit<MessagesState> {
   MessagesCubit(this._repository) : super(const MessagesState());

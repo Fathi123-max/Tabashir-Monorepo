@@ -1,14 +1,14 @@
 import 'dart:async';
+
 import 'package:dio/dio.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:tabashir/core/constants/storage_keys.dart';
-import 'package:tabashir/core/network/models/auth/refresh_token_response.dart';
-import 'package:tabashir/core/network/services/auth/auth_api_service.dart';
-import 'package:tabashir/core/network/_config/api_config.dart';
-import 'package:tabashir/core/router/app_state.dart';
-import 'package:tabashir/core/utils/app_logger.dart';
+
+import '../constants/storage_keys.dart';
+import '../network/models/auth/refresh_token_response.dart';
+import '../router/app_state.dart';
+import '../utils/app_logger.dart';
 
 /// Service to manage authentication session state
 /// Handles secure token storage and retrieval for authenticated API calls

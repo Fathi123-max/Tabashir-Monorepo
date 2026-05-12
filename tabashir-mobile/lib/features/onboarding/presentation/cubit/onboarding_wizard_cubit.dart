@@ -1,11 +1,10 @@
-import 'dart:typed_data';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:injectable/injectable.dart';
-import 'package:tabashir/core/router/app_state.dart';
-import 'package:tabashir/features/ai_job_apply/domain/repositories/ai_job_apply_repository.dart';
-import 'package:tabashir/features/auth/presentation/cubit/auth_cubit.dart';
-import 'package:tabashir/features/profile/presentation/cubit/profile_cubit.dart';
+import '../../../../core/router/app_state.dart';
+import '../../../ai_job_apply/domain/repositories/ai_job_apply_repository.dart';
+import '../../../auth/presentation/cubit/auth_cubit.dart';
+import '../../../profile/presentation/cubit/profile_cubit.dart';
 import 'onboarding_wizard_state.dart';
 
 @injectable

@@ -1,6 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:tabashir/features/ai_job_apply/data/models/target_role_model.dart';
+import '../../data/models/target_role_model.dart';
 
 part 'target_roles_cubit.freezed.dart';
 part 'target_roles_state.dart';

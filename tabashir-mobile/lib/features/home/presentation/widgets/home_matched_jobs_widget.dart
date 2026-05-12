@@ -1,15 +1,13 @@
-import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
-import 'package:tabashir/core/theme/app_theme.dart';
-import 'package:tabashir/features/home/domain/repositories/home_repository.dart';
-import 'package:tabashir/features/home/presentation/cubit/home_cubit.dart';
-import 'package:tabashir/features/home/presentation/cubit/home_state.dart';
-import 'package:tabashir/features/home/presentation/screens/all_matched_jobs_screen.dart';
-import 'package:tabashir/features/jobs/presentation/widgets/job_card.dart';
-import 'package:tabashir/core/utils/app_logger.dart';
+
+import '../../../../core/theme/app_theme.dart';
+import '../../../../core/utils/app_logger.dart';
+import '../../../jobs/presentation/widgets/job_card.dart';
+import '../cubit/home_cubit.dart';
+import '../cubit/home_state.dart';
 
 /// Displays a grid of AI-matched job cards using standard JobCard component
 class HomeMatchedJobsWidget extends StatelessWidget {

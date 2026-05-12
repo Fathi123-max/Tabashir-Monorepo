@@ -1,20 +1,21 @@
 import 'dart:async';
+
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:injectable/injectable.dart';
 
-import 'package:tabashir/core/network/models/job_details_response.dart';
-import 'package:tabashir/core/services/applied_jobs_storage.dart';
-import 'package:tabashir/core/services/local_persistence_service.dart';
-import 'package:tabashir/features/jobs/domain/models/job_ui_model.dart';
-import 'package:tabashir/features/jobs/domain/repositories/jobs_repository.dart';
-import 'package:tabashir/features/profile/presentation/cubit/profile_cubit.dart';
-import 'package:tabashir/core/services/job_match_service.dart';
-import 'package:tabashir/core/di/injection.dart';
-import 'package:tabashir/core/utils/app_logger.dart';
+import '../../../../core/di/injection.dart';
+import '../../../../core/network/models/job_details_response.dart';
+import '../../../../core/services/applied_jobs_storage.dart';
+import '../../../../core/services/job_match_service.dart';
+import '../../../../core/services/local_persistence_service.dart';
+import '../../../../core/utils/app_logger.dart';
+import '../../../profile/presentation/cubit/profile_cubit.dart';
+import '../../domain/models/job_ui_model.dart';
+import '../../domain/repositories/jobs_repository.dart';
 
-part 'jobs_state.dart';
 part 'jobs_cubit.freezed.dart';
+part 'jobs_state.dart';
 
 @injectable
 class JobsCubit extends Cubit<JobsState> {

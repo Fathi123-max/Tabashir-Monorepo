@@ -1,13 +1,13 @@
 import 'package:easy_localization/easy_localization.dart';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:tabashir/core/di/injection.dart';
-import 'package:tabashir/core/theme/app_theme.dart';
-import 'package:tabashir/features/notifications/domain/repositories/notifications_repository.dart';
-import 'package:tabashir/features/notifications/presentation/cubit/cubit.dart';
-import 'package:tabashir/features/notifications/data/models/notification_model.dart';
+
+import '../../../../core/di/injection.dart';
+import '../../../../core/theme/app_theme.dart';
+import '../../data/models/notification_model.dart';
+import '../../domain/repositories/notifications_repository.dart';
+import '../cubit/cubit.dart';
 
 class NotificationsScreen extends StatelessWidget {
   const NotificationsScreen({super.key});

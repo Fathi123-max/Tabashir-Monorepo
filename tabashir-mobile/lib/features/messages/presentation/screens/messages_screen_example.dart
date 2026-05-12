@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:get_it/get_it.dart';
-import 'package:tabashir/core/di/injection.dart';
-import 'package:tabashir/features/messages/domain/repositories/messages_repository.dart';
-import 'package:tabashir/features/messages/presentation/cubit/messages_cubit.dart';
-import 'package:tabashir/features/notifications/data/models/notification_model.dart';
+
+import '../../../../core/di/injection.dart';
+import '../../../notifications/data/models/notification_model.dart';
+import '../../domain/repositories/messages_repository.dart';
+import '../cubit/messages_cubit.dart';
 
 /// Example usage of MessagesCubit in a screen
 class MessagesScreenExample extends StatelessWidget {

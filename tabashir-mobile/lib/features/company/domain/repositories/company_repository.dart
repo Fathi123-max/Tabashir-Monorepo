@@ -1,4 +1,4 @@
-import 'package:tabashir/features/company/data/models/company_model.dart';
+import '../../data/models/company_model.dart';
 
 /// Repository interface for company operations
 /// Defines the contract for company data operations

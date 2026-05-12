@@ -3,8 +3,8 @@ import 'dart:io';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:injectable/injectable.dart';
-import 'package:tabashir/core/network/models/upload/upload_response.dart';
-import 'package:tabashir/features/upload/domain/repositories/upload_repository.dart';
+import '../../../../core/network/models/upload/upload_response.dart';
+import '../../domain/repositories/upload_repository.dart';
 
 part 'upload_state.dart';
 part 'upload_cubit.freezed.dart';

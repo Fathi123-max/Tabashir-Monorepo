@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:get_it/get_it.dart';
-import 'package:tabashir/core/di/injection.dart';
-import 'package:tabashir/features/job_applications/domain/repositories/job_applications_repository.dart';
-import 'package:tabashir/features/job_applications/presentation/cubit/job_applications_cubit.dart';
+import '../../../../core/di/injection.dart';
+import '../../domain/repositories/job_applications_repository.dart';
+import '../cubit/job_applications_cubit.dart';
 
 /// Example usage of JobApplicationsCubit in a screen
 class JobApplicationsScreenExample extends StatelessWidget {

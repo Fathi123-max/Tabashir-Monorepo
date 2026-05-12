@@ -1,7 +1,7 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:tabashir/core/network/models/applied_jobs_response.dart';
-import 'package:tabashir/core/network/models/user/user_profile_response.dart';
-import 'package:tabashir/features/home/domain/repositories/home_repository.dart';
+import '../../../../core/network/models/applied_jobs_response.dart';
+import '../../../../core/network/models/user/user_profile_response.dart';
+import '../../domain/repositories/home_repository.dart';
 
 part 'home_state.freezed.dart';
 

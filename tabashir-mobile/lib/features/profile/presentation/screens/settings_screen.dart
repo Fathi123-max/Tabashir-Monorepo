@@ -1,20 +1,18 @@
 import 'package:easy_localization/easy_localization.dart';
-
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-import 'package:tabashir/core/constants/storage_keys.dart';
-import 'package:tabashir/core/di/injection.dart';
-import 'package:tabashir/core/theme/app_theme.dart';
-import 'package:tabashir/core/theme/theme_manager.dart';
-import 'package:tabashir/core/router/route_names.dart';
-import 'package:tabashir/features/profile/presentation/cubit/profile_cubit.dart';
-import 'package:tabashir/features/profile/presentation/widgets/menu_tile.dart';
-import 'package:tabashir/core/services/notification_service.dart';
+import '../../../../core/constants/storage_keys.dart';
+import '../../../../core/di/injection.dart';
+import '../../../../core/router/route_names.dart';
+import '../../../../core/services/notification_service.dart';
+import '../../../../core/theme/app_theme.dart';
+import '../../../../core/theme/theme_manager.dart';
+import '../cubit/profile_cubit.dart';
+import '../widgets/menu_tile.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});

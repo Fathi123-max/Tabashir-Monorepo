@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:intl/intl.dart';
-import 'package:tabashir/core/theme/app_theme.dart';
-import 'package:tabashir/features/notifications/data/models/notification_model.dart';
+import '../../../../core/theme/app_theme.dart';
+import '../../data/models/notification_model.dart';
 
 class NotificationItemWidget extends StatelessWidget {
   const NotificationItemWidget({

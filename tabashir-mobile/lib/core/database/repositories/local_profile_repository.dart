@@ -1,8 +1,8 @@
 import 'dart:convert';
-import 'package:injectable/injectable.dart';
-import 'package:tabashir/core/database/models/local_profile.dart';
-import 'package:tabashir/core/services/local_persistence_service.dart';
-import 'package:tabashir/core/utils/app_logger.dart';
+
+import '../../services/local_persistence_service.dart';
+import '../../utils/app_logger.dart';
+import '../models/local_profile.dart';
 
 /// Repository for managing profile data in SharedPreferences
 /// Provides caching functionality for offline access

@@ -1,9 +1,9 @@
-import 'package:tabashir/core/network/models/user/user_profile_response.dart';
-import 'package:tabashir/core/network/models/candidate/personal_info_request.dart';
-import 'package:tabashir/core/network/models/candidate/professional_info_request.dart';
-import 'package:tabashir/core/network/models/candidate/onboarding_response.dart';
-import 'package:tabashir/core/network/models/profile/profile_update_request.dart';
-import 'package:tabashir/core/network/models/job/ai_client_response.dart';
+import '../../../../core/network/models/candidate/onboarding_response.dart';
+import '../../../../core/network/models/candidate/personal_info_request.dart';
+import '../../../../core/network/models/candidate/professional_info_request.dart';
+import '../../../../core/network/models/job/ai_client_response.dart';
+import '../../../../core/network/models/profile/profile_update_request.dart';
+import '../../../../core/network/models/user/user_profile_response.dart';
 
 /// Repository interface for profile operations
 /// Defines the contract for profile data operations

@@ -2,17 +2,17 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
-import 'package:tabashir/core/constants/countries.dart';
-import 'package:tabashir/core/di/injection.dart';
-import 'package:tabashir/core/theme/app_theme.dart';
-import 'package:tabashir/features/ai_job_apply/data/models/location_preference_model.dart';
-import 'package:tabashir/features/ai_job_apply/data/models/personal_details_model.dart';
-import 'package:tabashir/features/ai_job_apply/data/models/target_role_model.dart';
-import 'package:tabashir/features/ai_job_apply/presentation/widgets/gender_chip.dart';
-import 'package:tabashir/features/ai_job_apply/presentation/widgets/location_chip.dart';
-import 'package:tabashir/features/ai_job_apply/presentation/widgets/role_chip.dart';
-import 'package:tabashir/features/onboarding/presentation/cubit/onboarding_wizard_cubit.dart';
-import 'package:tabashir/features/onboarding/presentation/cubit/onboarding_wizard_state.dart';
+import '../../../../core/constants/countries.dart';
+import '../../../../core/di/injection.dart';
+import '../../../../core/theme/app_theme.dart';
+import '../../../ai_job_apply/data/models/location_preference_model.dart';
+import '../../../ai_job_apply/data/models/personal_details_model.dart';
+import '../../../ai_job_apply/data/models/target_role_model.dart';
+import '../../../ai_job_apply/presentation/widgets/gender_chip.dart';
+import '../../../ai_job_apply/presentation/widgets/location_chip.dart';
+import '../../../ai_job_apply/presentation/widgets/role_chip.dart';
+import '../cubit/onboarding_wizard_cubit.dart';
+import '../cubit/onboarding_wizard_state.dart';
 
 class OnboardingWizardScreen extends StatefulWidget {
   const OnboardingWizardScreen({super.key});

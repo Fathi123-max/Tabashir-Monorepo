@@ -1,7 +1,8 @@
 import 'package:google_sign_in/google_sign_in.dart';
-import 'package:tabashir/core/services/auth_session_service.dart';
-import 'package:tabashir/core/di/injection.dart';
-import 'package:tabashir/features/auth/domain/repositories/auth_repository.dart';
+
+import '../../features/auth/domain/repositories/auth_repository.dart';
+import '../di/injection.dart';
+import 'auth_session_service.dart';
 
 /// Service for Google Sign-In authentication
 /// Uses Firebase Auth (recommended approach)

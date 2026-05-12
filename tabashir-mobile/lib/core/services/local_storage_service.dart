@@ -1,6 +1,6 @@
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:tabashir/core/constants/storage_keys.dart';
+import '../constants/storage_keys.dart';
 
 /// Service to handle local storage operations
 class LocalStorageService {
