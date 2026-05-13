@@ -25,18 +25,36 @@ def add_horizontal_line(paragraph):
     pBdr.append(bottom)
 
 def make_rtl(paragraph):
-    p = paragraph._p
-    pPr = p.get_or_add_pPr()
+    # Ensure paragraph is aligned to the right
+    paragraph.alignment = WD_ALIGN_PARAGRAPH.RIGHT
     
-    # 1. Add bidi tag
+    # Inject w:bidi tag correctly so Word respects it
+    pPr = paragraph._p.get_or_add_pPr()
     bidi = OxmlElement('w:bidi')
     bidi.set(qn('w:val'), '1')
-    pPr.append(bidi)
-    
-    # 2. Add right alignment
-    jc = OxmlElement('w:jc')
-    jc.set(qn('w:val'), 'right')
-    pPr.append(jc)
+    pPr.insert_element_before(bidi,
+        'w:adjustRightInd', 'w:snapToGrid', 'w:spacing', 'w:ind',
+        'w:contextualSpacing', 'w:mirrorIndents', 'w:suppressOverlap', 'w:jc',
+        'w:textDirection', 'w:textAlignment', 'w:textboxTightWrap',
+        'w:outlineLvl', 'w:divId', 'w:cnfStyle', 'w:rPr', 'w:sectPr',
+        'w:pPrChange'
+    )
+
+def make_rtl_run(run):
+    # Inject w:rtl tag into the run properties so the text flows right-to-left
+    rPr = run._r.get_or_add_rPr()
+    rtl = OxmlElement('w:rtl')
+    rtl.set(qn('w:val'), '1')
+    rPr.insert_element_before(rtl,
+        'w:cs', 'w:emb', 'w:sz', 'w:szCs', 'w:effect', 'w:bdr', 'w:shd',
+        'w:fitText', 'w:vertAlign', 'w:rtl', 'w:cs', 'w:em', 'w:lang',
+        'w:eastAsianLayout', 'w:specVanish', 'w:oMath'
+    )
+
+def add_rtl_run(paragraph, text):
+    run = paragraph.add_run(text)
+    make_rtl_run(run)
+    return run
 
 doc = Document()
 
@@ -54,107 +72,114 @@ font = style.font
 font.name = 'Arial'
 font.size = Pt(11)
 
-# Modify default LTR so runs inherit RTL where possible
-# This is tricky in python-docx, we just rely on make_rtl.
-
 # --- HEADER ---
 name_p = doc.add_paragraph()
 make_rtl(name_p)
 name_p.alignment = WD_ALIGN_PARAGRAPH.CENTER
-name_run = name_p.add_run("{{ header.name }}")
+name_run = add_rtl_run(name_p, "{{ header.name }}")
 name_run.bold = True
 name_run.font.size = Pt(16)
 
 contact_p = doc.add_paragraph()
 make_rtl(contact_p)
 contact_p.alignment = WD_ALIGN_PARAGRAPH.CENTER
-contact_run = contact_p.add_run("{{ contact_info }}")
+contact_run = add_rtl_run(contact_p, "{{ contact_info }}")
 contact_run.font.size = Pt(10)
 
 # --- SUMMARY ---
 doc.add_paragraph("{% if objective %}")
-p = doc.add_paragraph("الملخص المهني")
-p.style.font.bold = True
-p.style.font.size = Pt(12)
+p = doc.add_paragraph()
 make_rtl(p)
+run = add_rtl_run(p, "الملخص المهني")
+run.bold = True
+run.font.size = Pt(12)
 add_horizontal_line(p)
 
-obj_p = doc.add_paragraph("{{ objective }}")
+obj_p = doc.add_paragraph()
 make_rtl(obj_p)
+add_rtl_run(obj_p, "{{ objective }}")
 doc.add_paragraph("{% endif %}")
 
 # --- WORK EXPERIENCE ---
 doc.add_paragraph("{% if work_list %}")
-p = doc.add_paragraph("الخبرة المهنية")
-p.style.font.bold = True
-p.style.font.size = Pt(12)
+p = doc.add_paragraph()
 make_rtl(p)
+run = add_rtl_run(p, "الخبرة المهنية")
+run.bold = True
+run.font.size = Pt(12)
 add_horizontal_line(p)
 
 doc.add_paragraph("{% for work in work_list %}")
 work_p = doc.add_paragraph()
 make_rtl(work_p)
-work_p.add_run("{{ work.position }}").bold = True
-work_p.add_run("{% if work.company %} | {{ work.company }}{% endif %}").italic = True
-work_p.add_run("{% if work.location %} | {{ work.location }}{% endif %}{% if work.date %} | {{ work.date }}{% endif %}")
+add_rtl_run(work_p, "{{ work.position }}").bold = True
+add_rtl_run(work_p, "{% if work.company %} | {{ work.company }}{% endif %}").italic = True
+add_rtl_run(work_p, "{% if work.location %} | {{ work.location }}{% endif %}{% if work.date %} | {{ work.date }}{% endif %}")
 
 doc.add_paragraph("{% for detail in work.details %}")
-detail_p = doc.add_paragraph("•  {{ detail }}")
+detail_p = doc.add_paragraph()
 make_rtl(detail_p)
+add_rtl_run(detail_p, "•  {{ detail }}")
 doc.add_paragraph("{% endfor %}")
 doc.add_paragraph("{% endfor %}")
 doc.add_paragraph("{% endif %}")
 
 # --- LEADERSHIP EXPERIENCE ---
 doc.add_paragraph("{% if lship_list %}")
-p = doc.add_paragraph("الخبرة القيادية")
-p.style.font.bold = True
-p.style.font.size = Pt(12)
+p = doc.add_paragraph()
 make_rtl(p)
+run = add_rtl_run(p, "الخبرة القيادية")
+run.bold = True
+run.font.size = Pt(12)
 add_horizontal_line(p)
 
 doc.add_paragraph("{% for lship in lship_list %}")
 lship_p = doc.add_paragraph()
 make_rtl(lship_p)
-lship_p.add_run("{{ lship.position }}").bold = True
-lship_p.add_run("{% if lship.company %} | {{ lship.company }}{% endif %}").italic = True
-lship_p.add_run("{% if lship.location %} | {{ lship.location }}{% endif %}{% if lship.date %} | {{ lship.date }}{% endif %}")
+add_rtl_run(lship_p, "{{ lship.position }}").bold = True
+add_rtl_run(lship_p, "{% if lship.company %} | {{ lship.company }}{% endif %}").italic = True
+add_rtl_run(lship_p, "{% if lship.location %} | {{ lship.location }}{% endif %}{% if lship.date %} | {{ lship.date }}{% endif %}")
 
 doc.add_paragraph("{% for detail in lship.details %}")
-detail_p = doc.add_paragraph("•  {{ detail }}")
+detail_p = doc.add_paragraph()
 make_rtl(detail_p)
+add_rtl_run(detail_p, "•  {{ detail }}")
 doc.add_paragraph("{% endfor %}")
 doc.add_paragraph("{% endfor %}")
 doc.add_paragraph("{% endif %}")
 
 # --- EDUCATION ---
 doc.add_paragraph("{% if education_list %}")
-p = doc.add_paragraph("التعليم")
-p.style.font.bold = True
-p.style.font.size = Pt(12)
+p = doc.add_paragraph()
 make_rtl(p)
+run = add_rtl_run(p, "التعليم")
+run.bold = True
+run.font.size = Pt(12)
 add_horizontal_line(p)
 
 doc.add_paragraph("{% for edu in education_list %}")
 edu_p = doc.add_paragraph()
 make_rtl(edu_p)
-edu_p.add_run("{{ edu.degree }}{% if edu.major %} في {{ edu.major }}{% endif %}").bold = True
-edu_p.add_run("{% if edu.university %} | {{ edu.university }}{% endif %}").italic = True
-edu_p.add_run("{% if edu.location %} | {{ edu.location }}{% endif %}{% if edu.date %} | {{ edu.date }}{% endif %}")
+add_rtl_run(edu_p, "{{ edu.degree }}{% if edu.major %} في {{ edu.major }}{% endif %}").bold = True
+add_rtl_run(edu_p, "{% if edu.university %} | {{ edu.university }}{% endif %}").italic = True
+add_rtl_run(edu_p, "{% if edu.location %} | {{ edu.location }}{% endif %}{% if edu.date %} | {{ edu.date }}{% endif %}")
 
 doc.add_paragraph("{% if edu.gpa and edu.gpa != 'None' %}")
-gpa_p = doc.add_paragraph("المعدل: {{ edu.gpa }}")
+gpa_p = doc.add_paragraph()
 make_rtl(gpa_p)
+add_rtl_run(gpa_p, "المعدل: {{ edu.gpa }}")
 doc.add_paragraph("{% endif %}")
 
 doc.add_paragraph("{% for detail in edu.details %}")
-detail_p = doc.add_paragraph("•  {{ detail }}")
+detail_p = doc.add_paragraph()
 make_rtl(detail_p)
+add_rtl_run(detail_p, "•  {{ detail }}")
 doc.add_paragraph("{% endfor %}")
 
 doc.add_paragraph("{% for course in edu.coursework %}")
-course_p = doc.add_paragraph("•  الدورات: {{ course }}")
+course_p = doc.add_paragraph()
 make_rtl(course_p)
+add_rtl_run(course_p, "•  الدورات: {{ course }}")
 doc.add_paragraph("{% endfor %}")
 
 doc.add_paragraph("{% endfor %}")
@@ -162,22 +187,24 @@ doc.add_paragraph("{% endif %}")
 
 # --- PROJECTS ---
 doc.add_paragraph("{% if project_list %}")
-p = doc.add_paragraph("المشاريع")
-p.style.font.bold = True
-p.style.font.size = Pt(12)
+p = doc.add_paragraph()
 make_rtl(p)
+run = add_rtl_run(p, "المشاريع")
+run.bold = True
+run.font.size = Pt(12)
 add_horizontal_line(p)
 
 doc.add_paragraph("{% for project in project_list %}")
 proj_p = doc.add_paragraph()
 make_rtl(proj_p)
-proj_p.add_run("{{ project.title }}").bold = True
-proj_p.add_run("{% if project.position %} | {{ project.position }}{% endif %}").italic = True
-proj_p.add_run("{% if project.location %} | {{ project.location }}{% endif %}{% if project.date %} | {{ project.date }}{% endif %}")
+add_rtl_run(proj_p, "{{ project.title }}").bold = True
+add_rtl_run(proj_p, "{% if project.position %} | {{ project.position }}{% endif %}").italic = True
+add_rtl_run(proj_p, "{% if project.location %} | {{ project.location }}{% endif %}{% if project.date %} | {{ project.date }}{% endif %}")
 
 doc.add_paragraph("{% for detail in project.details %}")
-detail_p = doc.add_paragraph("•  {{ detail }}")
+detail_p = doc.add_paragraph()
 make_rtl(detail_p)
+add_rtl_run(detail_p, "•  {{ detail }}")
 doc.add_paragraph("{% endfor %}")
 
 doc.add_paragraph("{% endfor %}")
@@ -185,38 +212,39 @@ doc.add_paragraph("{% endif %}")
 
 # --- SKILLS & LANGUAGES ---
 doc.add_paragraph("{% if skills.skillset or skills.softskills or languages %}")
-p = doc.add_paragraph("المهارات والكفاءات")
-p.style.font.bold = True
-p.style.font.size = Pt(12)
+p = doc.add_paragraph()
 make_rtl(p)
+run = add_rtl_run(p, "المهارات والكفاءات")
+run.bold = True
+run.font.size = Pt(12)
 add_horizontal_line(p)
 
 doc.add_paragraph("{% if skills.skillset %}")
 sk_p = doc.add_paragraph()
 make_rtl(sk_p)
-sk_p.add_run("المهارات التقنية: ").bold = True
-sk_p.add_run("{{ skills.skillset|join('، ') }}")
+add_rtl_run(sk_p, "المهارات التقنية: ").bold = True
+add_rtl_run(sk_p, "{{ skills.skillset|join('، ') }}")
 doc.add_paragraph("{% endif %}")
 
 doc.add_paragraph("{% if skills.softskills %}")
 ss_p = doc.add_paragraph()
 make_rtl(ss_p)
-ss_p.add_run("الكفاءات الأساسية: ").bold = True
-ss_p.add_run("{{ skills.softskills|join('، ') }}")
+add_rtl_run(ss_p, "الكفاءات الأساسية: ").bold = True
+add_rtl_run(ss_p, "{{ skills.softskills|join('، ') }}")
 doc.add_paragraph("{% endif %}")
 
 doc.add_paragraph("{% if languages %}")
 lang_p = doc.add_paragraph()
 make_rtl(lang_p)
-lang_p.add_run("اللغات: ").bold = True
-lang_p.add_run("{{ languages|join('، ') }}")
+add_rtl_run(lang_p, "اللغات: ").bold = True
+add_rtl_run(lang_p, "{{ languages|join('، ') }}")
 doc.add_paragraph("{% endif %}")
 
 doc.add_paragraph("{% if skills.training %}")
 tr_p = doc.add_paragraph()
 make_rtl(tr_p)
-tr_p.add_run("التدريب والشهادات: ").bold = True
-tr_p.add_run("{{ skills.training|join('، ') }}")
+add_rtl_run(tr_p, "التدريب والشهادات: ").bold = True
+add_rtl_run(tr_p, "{{ skills.training|join('، ') }}")
 doc.add_paragraph("{% endif %}")
 
 doc.add_paragraph("{% endif %}")
