@@ -97,16 +97,7 @@ class EducationExperience:
     @gpa.setter
     def gpa(self, gpa):
         if gpa:    
-            try:
-                gpa_float = float(gpa)
-                if 3.2 <= gpa_float <= 5.0:
-                    self._gpa = gpa
-                elif 90.0 <= gpa_float <= 100.0:
-                    self._gpa = gpa + "%"
-                else:
-                    self._gpa = ""
-            except ValueError:
-                self._gpa = ""
+            self._gpa = str(gpa).strip()
         else:
             self._gpa = ""
 
@@ -309,12 +300,13 @@ class Resume:
 
         extra_links = []
         # Handle social links if they are in a list (mobile format)
-        social_links = h.get('socialLinks') or []
+        social_links = h.get('social_links') or h.get('socialLinks') or []
         if isinstance(social_links, list):
             for link in social_links:
                 if not isinstance(link, dict): continue
                 platform = str(link.get('platform') or '').lower()
                 url = link.get('url') or ''
+                if not url: continue
                 if 'linkedin' in platform: header.linkedin = url
                 elif 'github' in platform: header.github = url
                 elif url: extra_links.append(url)
@@ -398,6 +390,8 @@ class Resume:
             if not work_date and (w.get('start_date') or w.get('startDate')):
                 start = w.get('start_date') or w.get('startDate') or ''
                 end = w.get('end_date') or w.get('endDate') or 'Present'
+                if w.get('is_present') or w.get('isPresent'):
+                    end = 'Present'
                 if isinstance(start, str) and 'T' in start: start = start.split('T')[0]
                 if isinstance(end, str) and 'T' in end: end = end.split('T')[0]
                 work_date = f"{start} - {end}"

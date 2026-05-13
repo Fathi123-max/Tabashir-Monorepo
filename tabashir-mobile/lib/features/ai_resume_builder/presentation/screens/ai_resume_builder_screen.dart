@@ -19,6 +19,8 @@ import 'steps/professional_summary_step.dart';
 import 'steps/skills_step.dart';
 import 'steps/template_selection_step.dart';
 import 'steps/work_experience_step.dart';
+import 'steps/projects_step.dart';
+import 'steps/leadership_step.dart';
 
 class AiResumeBuilderScreen extends StatelessWidget {
   const AiResumeBuilderScreen({super.key});
@@ -135,6 +137,8 @@ class AiResumeBuilderView extends StatelessWidget {
                       WorkExperienceStep(),
                       EducationStep(),
                       SkillsStep(),
+                      ResumeProjectsStep(),
+                      LeadershipStep(),
                       TemplateSelectionStep(),
                     ],
                   ),
@@ -256,7 +260,8 @@ class AiResumeBuilderView extends StatelessWidget {
   ) async {
     final profileState = context.read<ProfileCubit>().state;
     final plan = profileState.profile?.subscriptionPlan?.toUpperCase() ?? '';
-    final isSubscribed = plan == 'PRO' ||
+    final isSubscribed =
+        plan == 'PRO' ||
         plan == 'AI APPLY' ||
         plan == 'AI_APPLY' ||
         plan == 'PROFESSIONAL';
@@ -270,9 +275,9 @@ class AiResumeBuilderView extends StatelessWidget {
         content: Text(
           isSubscribed
               ? 'Your resume is ready! Since you have an active subscription, you can generate your professional CV for free.'
-                  .tr()
+                    .tr()
               : 'Your resume is ready! Would you like to generate and save your professional CV now?'
-                  .tr(),
+                    .tr(),
         ),
         actions: [
           TextButton(
@@ -294,14 +299,18 @@ class AiResumeBuilderView extends StatelessWidget {
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       ListTile(
-                        leading:
-                            const Icon(Icons.picture_as_pdf, color: Colors.red),
+                        leading: const Icon(
+                          Icons.picture_as_pdf,
+                          color: Colors.red,
+                        ),
                         title: const Text('PDF Document'),
                         onTap: () => Navigator.pop(formatContext, 'pdf'),
                       ),
                       ListTile(
-                        leading:
-                            const Icon(Icons.description, color: Colors.blue),
+                        leading: const Icon(
+                          Icons.description,
+                          color: Colors.blue,
+                        ),
                         title: const Text('Word Document (DOCX)'),
                         onTap: () => Navigator.pop(formatContext, 'docx'),
                       ),

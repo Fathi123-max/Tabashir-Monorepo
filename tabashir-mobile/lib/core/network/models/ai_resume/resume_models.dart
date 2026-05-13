@@ -15,7 +15,7 @@ sealed class ResumeData with _$ResumeData {
     @Default([]) List<WorkExperience> leadership,
     @Default([]) List<Education> education,
     @Default([]) List<Skill> skills,
-    @Default([]) List<Project> projects,
+    @Default([]) List<ResumeProject> projects,
     @Default([]) List<Language> languages,
   }) = _ResumeData;
 
@@ -121,17 +121,21 @@ sealed class Education with _$Education {
 }
 
 @freezed
-sealed class Project with _$Project {
+sealed class ResumeProject with _$ResumeProject {
   @JsonSerializable(fieldRename: FieldRename.snake)
-  const factory Project({
+  const factory ResumeProject({
     String? name,
     String? description,
     String? url,
     List<String>? highlights,
-  }) = _Project;
+    String? position,
+    @JsonKey(name: 'location') String? city,
+    DateTime? startDate,
+    DateTime? endDate,
+  }) = _ResumeProject;
 
-  factory Project.fromJson(Map<String, dynamic> json) =>
-      _$ProjectFromJson(json);
+  factory ResumeProject.fromJson(Map<String, dynamic> json) =>
+      _$ResumeProjectFromJson(json);
 
   @override
   Map<String, dynamic> toJson();
@@ -156,6 +160,7 @@ enum SkillCategory {
   technical,
   soft,
   languages,
+  training,
 }
 
 enum ProficiencyLevel {
@@ -187,5 +192,7 @@ class BuilderStep {
   static const int workExperience = 2;
   static const int education = 3;
   static const int skills = 4;
-  static const int templateSelection = 5;
+  static const int projects = 5;
+  static const int leadership = 6;
+  static const int templateSelection = 7;
 }

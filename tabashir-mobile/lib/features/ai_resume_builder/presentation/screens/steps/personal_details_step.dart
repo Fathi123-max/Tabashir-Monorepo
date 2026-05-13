@@ -162,6 +162,20 @@ class _PersonalDetailsStepState extends State<PersonalDetailsStep> {
                     ),
                     SizedBox(height: AppTheme.spacingMd.h),
                     AppTextField(
+                      label: 'LinkedIn Profile'.tr(),
+                      hint: 'https://linkedin.com/in/yourprofile'.tr(),
+                      controller: linkedinController,
+                      onChanged: (_) => _updateCubit(),
+                    ),
+                    SizedBox(height: AppTheme.spacingMd.h),
+                    AppTextField(
+                      label: 'GitHub Profile'.tr(),
+                      hint: 'https://github.com/yourusername'.tr(),
+                      controller: githubController,
+                      onChanged: (_) => _updateCubit(),
+                    ),
+                    SizedBox(height: AppTheme.spacingMd.h),
+                    AppTextField(
                       label: 'Nationality'.tr(),
                       hint: 'Enter your nationality'.tr(),
                       controller: nationalityController,

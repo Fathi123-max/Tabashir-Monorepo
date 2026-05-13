@@ -139,7 +139,8 @@ add_horizontal_line(p)
 doc.add_paragraph("{% for project in project_list %}")
 proj_p = doc.add_paragraph()
 proj_p.add_run("{{ project.title }}").bold = True
-proj_p.add_run("{% if project.date %} | {{ project.date }}{% endif %}")
+proj_p.add_run("{% if project.position %} | {{ project.position }}{% endif %}").italic = True
+proj_p.add_run("{% if project.location %} | {{ project.location }}{% endif %}{% if project.date %} | {{ project.date }}{% endif %}")
 
 doc.add_paragraph("{% for detail in project.details %}")
 doc.add_paragraph("{{ detail }}", style='List Bullet')

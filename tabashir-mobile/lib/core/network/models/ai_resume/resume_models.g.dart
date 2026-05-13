@@ -37,7 +37,7 @@ _ResumeData _$ResumeDataFromJson(Map<String, dynamic> json) => _ResumeData(
       const [],
   projects:
       (json['projects'] as List<dynamic>?)
-          ?.map((e) => Project.fromJson(e as Map<String, dynamic>))
+          ?.map((e) => ResumeProject.fromJson(e as Map<String, dynamic>))
           .toList() ??
       const [],
   languages:
@@ -163,21 +163,35 @@ Map<String, dynamic> _$EducationToJson(_Education instance) =>
       'GPA': instance.gpa,
     };
 
-_Project _$ProjectFromJson(Map<String, dynamic> json) => _Project(
-  name: json['name'] as String?,
-  description: json['description'] as String?,
-  url: json['url'] as String?,
-  highlights: (json['highlights'] as List<dynamic>?)
-      ?.map((e) => e as String)
-      .toList(),
-);
+_ResumeProject _$ResumeProjectFromJson(Map<String, dynamic> json) =>
+    _ResumeProject(
+      name: json['name'] as String?,
+      description: json['description'] as String?,
+      url: json['url'] as String?,
+      highlights: (json['highlights'] as List<dynamic>?)
+          ?.map((e) => e as String)
+          .toList(),
+      position: json['position'] as String?,
+      city: json['location'] as String?,
+      startDate: json['start_date'] == null
+          ? null
+          : DateTime.parse(json['start_date'] as String),
+      endDate: json['end_date'] == null
+          ? null
+          : DateTime.parse(json['end_date'] as String),
+    );
 
-Map<String, dynamic> _$ProjectToJson(_Project instance) => <String, dynamic>{
-  'name': instance.name,
-  'description': instance.description,
-  'url': instance.url,
-  'highlights': instance.highlights,
-};
+Map<String, dynamic> _$ResumeProjectToJson(_ResumeProject instance) =>
+    <String, dynamic>{
+      'name': instance.name,
+      'description': instance.description,
+      'url': instance.url,
+      'highlights': instance.highlights,
+      'position': instance.position,
+      'location': instance.city,
+      'start_date': instance.startDate?.toIso8601String(),
+      'end_date': instance.endDate?.toIso8601String(),
+    };
 
 _Language _$LanguageFromJson(Map<String, dynamic> json) => _Language(
   name: json['name'] as String?,
@@ -208,6 +222,7 @@ const _$SkillCategoryEnumMap = {
   SkillCategory.technical: 'technical',
   SkillCategory.soft: 'soft',
   SkillCategory.languages: 'languages',
+  SkillCategory.training: 'training',
 };
 
 const _$ProficiencyLevelEnumMap = {

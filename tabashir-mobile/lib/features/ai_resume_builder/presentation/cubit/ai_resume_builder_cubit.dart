@@ -86,6 +86,18 @@ class AiResumeBuilderCubit extends Cubit<AiResumeBuilderState> {
     }
   }
 
+  void updateResumeProjects(List<ResumeProject> projects) {
+    final updatedData = state.resumeData.copyWith(projects: projects);
+    emit(state.copyWith(resumeData: updatedData));
+    _updateResumeScore();
+  }
+
+  void updateLeadership(List<WorkExperience> leadership) {
+    final updatedData = state.resumeData.copyWith(leadership: leadership);
+    emit(state.copyWith(resumeData: updatedData));
+    _updateResumeScore();
+  }
+
   void addSkill(Skill skill) {
     final updatedList = [...state.resumeData.skills, skill];
     final updatedData = state.resumeData.copyWith(skills: updatedList);
@@ -217,6 +229,10 @@ class AiResumeBuilderCubit extends Cubit<AiResumeBuilderState> {
         return state.isEducationComplete;
       case BuilderStep.skills:
         return state.isSkillsComplete;
+      case BuilderStep.projects:
+        return true;
+      case BuilderStep.leadership:
+        return true;
       case BuilderStep.templateSelection:
         return state.isTemplateSelectionComplete;
       default:
@@ -238,12 +254,14 @@ class AiResumeBuilderCubit extends Cubit<AiResumeBuilderState> {
       phoneNumber: '+1 (555) 123-4567',
       country: 'US',
       city: 'San Francisco',
+      linkedin: 'https://linkedin.com/in/johndoe',
+      github: 'https://github.com/johndoe',
+      nationality: 'American',
       socialLinks: [
         SocialLink(
-          platform: 'LinkedIn',
-          url: 'https://linkedin.com/in/johndoe',
+          platform: 'Portfolio',
+          url: 'https://johndoe.com',
         ),
-        SocialLink(platform: 'GitHub', url: 'https://github.com/johndoe'),
       ],
     );
 
@@ -279,7 +297,9 @@ class AiResumeBuilderCubit extends Cubit<AiResumeBuilderState> {
     final sampleEducation = [
       Education(
         school: 'University of California, Berkeley',
-        degree: 'Bachelor of Science in Computer Science',
+        degree: 'Bachelor of Science',
+        major: 'Computer Science',
+        gpa: '3.8/4.0',
         city: 'Berkeley, CA',
         startDate: DateTime(2015, 8),
         endDate: DateTime(2018, 5),
@@ -335,6 +355,33 @@ class AiResumeBuilderCubit extends Cubit<AiResumeBuilderState> {
         category: SkillCategory.languages,
         proficiency: ProficiencyLevel.intermediate,
       ),
+      const Skill(
+        name: 'AWS Certified Solutions Architect',
+        category: SkillCategory.training,
+        proficiency: ProficiencyLevel.advanced,
+      ),
+    ];
+
+    final sampleResumeProjects = [
+      ResumeProject(
+        name: 'E-Commerce Platform',
+        position: 'Lead Backend Developer',
+        city: 'Remote',
+        startDate: DateTime(2020, 5),
+        endDate: DateTime(2021, 1),
+        description: '• Architected the backend using Node.js and Express.\n• Integrated Stripe for payments.',
+      )
+    ];
+
+    final sampleLeadership = [
+      WorkExperience(
+        position: 'President',
+        organization: 'Computer Science Club',
+        city: 'Berkeley, CA',
+        startDate: DateTime(2017, 8),
+        endDate: DateTime(2018, 5),
+        keyTasks: '• Organized weekly coding workshops for 50+ students.\n• Hosted hackathons with industry sponsors.',
+      )
     ];
 
     // Create updated resume data with sample information
@@ -344,6 +391,8 @@ class AiResumeBuilderCubit extends Cubit<AiResumeBuilderState> {
       workExperience: sampleWorkExperience,
       education: sampleEducation,
       skills: sampleSkills,
+      projects: sampleResumeProjects,
+      leadership: sampleLeadership,
     );
 
     emit(state.copyWith(resumeData: updatedData));

@@ -115,6 +115,9 @@ class SkillsStep extends StatelessWidget {
     final languageSkills = skills
         .where((s) => s.category == SkillCategory.languages)
         .toList();
+    final trainingSkills = skills
+        .where((s) => s.category == SkillCategory.training)
+        .toList();
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -146,6 +149,16 @@ class SkillsStep extends StatelessWidget {
             languageSkills,
             Icons.language,
             Colors.orange,
+          ),
+          SizedBox(height: AppTheme.spacingLg.h),
+        ],
+        if (trainingSkills.isNotEmpty) ...[
+          _buildCategorySection(
+            context,
+            'Training & Certifications'.tr(),
+            trainingSkills,
+            Icons.card_membership,
+            Colors.purple,
           ),
         ],
       ],
@@ -228,9 +241,10 @@ class SkillsStep extends StatelessWidget {
         chipColor = AppTheme.accentColor;
       case SkillCategory.languages:
         chipColor = Colors.orange;
+      case SkillCategory.training:
+        chipColor = Colors.purple;
       case null:
-        // TODO: Handle this case.
-        throw UnimplementedError();
+        chipColor = Colors.grey;
     }
 
     return Chip(
@@ -445,6 +459,10 @@ class SkillsStep extends StatelessWidget {
                                 value: SkillCategory.languages,
                                 child: Text('Languages'.tr()),
                               ),
+                              DropdownMenuItem(
+                                value: SkillCategory.training,
+                                child: Text('Training & Certifications'.tr()),
+                              ),
                             ],
                             onChanged: (value) =>
                                 category = value ?? SkillCategory.technical,
@@ -610,6 +628,10 @@ class SkillsStep extends StatelessWidget {
                     DropdownMenuItem(
                       value: SkillCategory.languages,
                       child: Text('Languages'.tr()),
+                    ),
+                    DropdownMenuItem(
+                      value: SkillCategory.training,
+                      child: Text('Training & Certifications'.tr()),
                     ),
                   ],
                   onChanged: (value) => category = value ?? SkillCategory.technical,

@@ -8,15 +8,15 @@ import '../../../../../core/theme/app_theme.dart';
 import '../../cubit/ai_resume_builder_cubit.dart';
 import '../../widgets/shared/form_fields.dart';
 
-class EducationStep extends StatelessWidget {
-  const EducationStep({super.key});
+class LeadershipStep extends StatelessWidget {
+  const LeadershipStep({super.key});
 
   @override
   Widget build(
     BuildContext context,
   ) => BlocBuilder<AiResumeBuilderCubit, AiResumeBuilderState>(
     builder: (context, state) {
-      final education = state.resumeData.education;
+      final workExperience = state.resumeData.leadership;
 
       return SingleChildScrollView(
         padding: EdgeInsets.all(AppTheme.spacingMd.w),
@@ -24,35 +24,39 @@ class EducationStep extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Education'.tr(),
+              'Leadership'.tr(),
               style: Theme.of(context).textTheme.headlineMedium?.copyWith(
                 fontWeight: FontWeight.bold,
               ),
             ),
             SizedBox(height: AppTheme.spacingXs.h),
             Text(
-              'Add your educational background. Include your degrees and certifications.'
+              'Add your work experience. Start with your most recent position.'
                   .tr(),
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                 color: AppTheme.textMutedLight,
               ),
             ),
             SizedBox(height: AppTheme.spacingXl.h),
-            if (education.isEmpty)
+            if (workExperience.isEmpty)
               _buildEmptyState(context)
             else
-              ...education.asMap().entries.map((entry) {
+              ...workExperience.asMap().entries.map((entry) {
                 final index = entry.key;
-                final edu = entry.value;
-                return _buildEducationCard(context, index, edu);
+                final experience = entry.value;
+                return _buildExperienceCard(
+                  context,
+                  index,
+                  experience,
+                );
               }),
             SizedBox(height: AppTheme.spacingLg.h),
             SizedBox(
               width: double.infinity,
               child: ElevatedButton.icon(
-                onPressed: () => _showAddEducationDialog(context),
+                onPressed: () => _showAddExperienceDialog(context),
                 icon: const Icon(Icons.add),
-                label: Text('Add Education'.tr()),
+                label: Text('Add Experience'.tr()),
               ),
             ),
           ],
@@ -81,20 +85,20 @@ class EducationStep extends StatelessWidget {
       child: Column(
         children: [
           Icon(
-            Icons.school_outlined,
+            Icons.group_outlined,
             size: 64.sp,
             color: theme.iconTheme.color?.withOpacity(0.3),
           ),
           SizedBox(height: AppTheme.spacingMd.h),
           Text(
-            'No education added yet'.tr(),
+            'No work experience added yet'.tr(),
             style: theme.textTheme.titleMedium?.copyWith(
               color: AppTheme.textMutedLight,
             ),
           ),
           SizedBox(height: AppTheme.spacingXs.h),
           Text(
-            'Add your first education'.tr(),
+            'Add your first work experience'.tr(),
             style: theme.textTheme.bodyMedium?.copyWith(
               color: AppTheme.textMutedLight,
             ),
@@ -104,17 +108,19 @@ class EducationStep extends StatelessWidget {
     );
   }
 
-  Widget _buildEducationCard(
+  Widget _buildExperienceCard(
     BuildContext context,
     int index,
-    Education edu,
+    WorkExperience experience,
   ) {
     final theme = Theme.of(context);
-    final startDate = edu.startDate != null
-        ? '${edu.startDate!.day}/${edu.startDate!.month}/${edu.startDate!.year}'
+    final startDate = experience.startDate != null
+        ? '${experience.startDate!.day}/${experience.startDate!.month}/${experience.startDate!.year}'
         : 'Not set'.tr();
-    final endDate = edu.endDate != null
-        ? '${edu.endDate!.day}/${edu.endDate!.month}/${edu.endDate!.year}'
+    final endDate = experience.isPresent
+        ? 'Present'.tr()
+        : experience.endDate != null
+        ? '${experience.endDate!.day}/${experience.endDate!.month}/${experience.endDate!.year}'
         : 'Not set'.tr();
 
     return Container(
@@ -140,13 +146,13 @@ class EducationStep extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      edu.degree ?? 'Degree Not Set'.tr(),
+                      experience.position ?? 'Position Not Set'.tr(),
                       style: theme.textTheme.titleLarge?.copyWith(
                         fontWeight: FontWeight.w600,
                       ),
                     ),
                     Text(
-                      edu.school ?? 'School Not Set'.tr(),
+                      experience.organization ?? 'Organization Not Set'.tr(),
                       style: theme.textTheme.bodyLarge?.copyWith(
                         color: AppTheme.textMutedLight,
                       ),
@@ -161,7 +167,7 @@ class EducationStep extends StatelessWidget {
                         ),
                         SizedBox(width: AppTheme.spacingXs.w),
                         Text(
-                          edu.city ?? 'Location not specified'.tr(),
+                          experience.city ?? 'Location not specified'.tr(),
                           style: theme.textTheme.bodySmall?.copyWith(
                             color: AppTheme.textMutedLight,
                           ),
@@ -191,25 +197,26 @@ class EducationStep extends StatelessWidget {
               PopupMenuButton<String>(
                 onSelected: (value) {
                   if (value == 'edit'.tr()) {
-                    _showEditEducationDialog(context, index, edu);
+                    _showEditExperienceDialog(context, index, experience);
                   } else if (value == 'delete'.tr()) {
                     _showDeleteConfirmation(context, index);
                   }
                 },
                 itemBuilder: (context) => [
                   PopupMenuItem(
-                    value: 'edit'.tr(),
+                    value: 'edit',
                     child: Text('Edit'.tr()),
                   ),
                   PopupMenuItem(
-                    value: 'delete'.tr(),
+                    value: 'delete',
                     child: Text('Delete'.tr()),
                   ),
                 ],
               ),
             ],
           ),
-          if (edu.description != null && edu.description!.isNotEmpty) ...[
+          if (experience.keyTasks != null &&
+              experience.keyTasks!.isNotEmpty) ...[
             SizedBox(height: AppTheme.spacingMd.h),
             Divider(
               color: theme.brightness == Brightness.light
@@ -218,14 +225,14 @@ class EducationStep extends StatelessWidget {
             ),
             SizedBox(height: AppTheme.spacingSm.h),
             Text(
-              'Description:'.tr(),
+              'Key Responsibilities:'.tr(),
               style: theme.textTheme.labelMedium?.copyWith(
                 fontWeight: FontWeight.w600,
               ),
             ),
             SizedBox(height: AppTheme.spacingXs.h),
             Text(
-              edu.description!,
+              experience.keyTasks!,
               style: theme.textTheme.bodyMedium,
             ),
           ],
@@ -234,7 +241,7 @@ class EducationStep extends StatelessWidget {
     );
   }
 
-  void _showAddEducationDialog(BuildContext context) {
+  void _showAddExperienceDialog(BuildContext context) {
     final formKey = GlobalKey<FormState>();
     final cubit = context.read<AiResumeBuilderCubit>();
 
@@ -242,11 +249,12 @@ class EducationStep extends StatelessWidget {
       context: context,
       builder: (context) => BlocProvider.value(
         value: cubit,
-        child: _EducationDialog(
+        child: _ExperienceDialog(
           formKey: formKey,
-          title: 'Add Education'.tr(),
-          onSave: (edu) {
-            cubit.addEducation(edu);
+          title: 'Add Leadership'.tr(),
+          onSave: (exp) {
+            final updated = [...cubit.state.resumeData.leadership, exp];
+            cubit.updateLeadership(updated);
             Navigator.pop(context);
           },
         ),
@@ -254,10 +262,10 @@ class EducationStep extends StatelessWidget {
     );
   }
 
-  void _showEditEducationDialog(
+  void _showEditExperienceDialog(
     BuildContext context,
     int index,
-    Education edu,
+    WorkExperience experience,
   ) {
     final formKey = GlobalKey<FormState>();
     final cubit = context.read<AiResumeBuilderCubit>();
@@ -266,15 +274,14 @@ class EducationStep extends StatelessWidget {
       context: context,
       builder: (context) => BlocProvider.value(
         value: cubit,
-        child: _EducationDialog(
+        child: _ExperienceDialog(
           formKey: formKey,
-          title: 'Edit Education'.tr(),
-          initialEducation: edu,
-          onSave: (updatedEdu) {
-            cubit.updateEducation(
-              index,
-              updatedEdu,
-            );
+          title: 'Edit Leadership'.tr(),
+          initialExperience: experience,
+          onSave: (exp) {
+            final updated = [...cubit.state.resumeData.leadership];
+            updated[index] = exp;
+            cubit.updateLeadership(updated);
             Navigator.pop(context);
           },
         ),
@@ -290,9 +297,9 @@ class EducationStep extends StatelessWidget {
       builder: (context) => BlocProvider.value(
         value: cubit,
         child: AlertDialog(
-          title: Text('Delete Education'.tr()),
+          title: Text('Delete Leadership'.tr()),
           content: Text(
-            'Are you sure you want to delete this education entry?'.tr(),
+            'Are you sure you want to delete this leadership role?'.tr(),
           ),
           actions: [
             TextButton(
@@ -301,7 +308,9 @@ class EducationStep extends StatelessWidget {
             ),
             ElevatedButton(
               onPressed: () {
-                cubit.removeEducation(index);
+                final updated = [...cubit.state.resumeData.leadership];
+                updated.removeAt(index);
+                cubit.updateLeadership(updated);
                 Navigator.pop(context);
               },
               style: ElevatedButton.styleFrom(
@@ -316,73 +325,65 @@ class EducationStep extends StatelessWidget {
   }
 }
 
-class _EducationDialog extends StatefulWidget {
-  const _EducationDialog({
+class _ExperienceDialog extends StatefulWidget {
+  const _ExperienceDialog({
     required this.formKey,
     required this.title,
     required this.onSave,
-    this.initialEducation,
+    this.initialExperience,
   });
   final GlobalKey<FormState> formKey;
   final String title;
-  final Education? initialEducation;
-  final Function(Education) onSave;
+  final WorkExperience? initialExperience;
+  final Function(WorkExperience) onSave;
 
   @override
-  State<_EducationDialog> createState() => _EducationDialogState();
+  State<_ExperienceDialog> createState() => _ExperienceDialogState();
 }
 
-class _EducationDialogState extends State<_EducationDialog> {
-  late TextEditingController schoolController;
-  late TextEditingController degreeController;
-  late TextEditingController majorController;
+class _ExperienceDialogState extends State<_ExperienceDialog> {
+  late TextEditingController positionController;
+  late TextEditingController organizationController;
   late TextEditingController cityController;
-  late TextEditingController gpaController;
-  late TextEditingController descriptionController;
+  late TextEditingController tasksController;
   late TextEditingController startDateController;
   late TextEditingController endDateController;
+  late bool isPresent;
 
   @override
   void initState() {
     super.initState();
-    schoolController = TextEditingController(
-      text: widget.initialEducation?.school ?? '',
+    positionController = TextEditingController(
+      text: widget.initialExperience?.position ?? '',
     );
-    degreeController = TextEditingController(
-      text: widget.initialEducation?.degree ?? '',
-    );
-    majorController = TextEditingController(
-      text: widget.initialEducation?.major ?? '',
+    organizationController = TextEditingController(
+      text: widget.initialExperience?.organization ?? '',
     );
     cityController = TextEditingController(
-      text: widget.initialEducation?.city ?? '',
+      text: widget.initialExperience?.city ?? '',
     );
-    gpaController = TextEditingController(
-      text: widget.initialEducation?.gpa ?? '',
-    );
-    descriptionController = TextEditingController(
-      text: widget.initialEducation?.description ?? '',
+    tasksController = TextEditingController(
+      text: widget.initialExperience?.keyTasks ?? '',
     );
     startDateController = TextEditingController(
-      text: widget.initialEducation?.startDate != null
-          ? '${widget.initialEducation!.startDate!.day}/${widget.initialEducation!.startDate!.month}/${widget.initialEducation!.startDate!.year}'
+      text: widget.initialExperience?.startDate != null
+          ? '${widget.initialExperience!.startDate!.day}/${widget.initialExperience!.startDate!.month}/${widget.initialExperience!.startDate!.year}'
           : '',
     );
     endDateController = TextEditingController(
-      text: widget.initialEducation?.endDate != null
-          ? '${widget.initialEducation!.endDate!.day}/${widget.initialEducation!.endDate!.month}/${widget.initialEducation!.endDate!.year}'
+      text: widget.initialExperience?.endDate != null
+          ? '${widget.initialExperience!.endDate!.day}/${widget.initialExperience!.endDate!.month}/${widget.initialExperience!.endDate!.year}'
           : '',
     );
+    isPresent = widget.initialExperience?.isPresent ?? false;
   }
 
   @override
   void dispose() {
-    schoolController.dispose();
-    degreeController.dispose();
-    majorController.dispose();
+    positionController.dispose();
+    organizationController.dispose();
     cityController.dispose();
-    gpaController.dispose();
-    descriptionController.dispose();
+    tasksController.dispose();
     startDateController.dispose();
     endDateController.dispose();
     super.dispose();
@@ -407,14 +408,14 @@ class _EducationDialogState extends State<_EducationDialog> {
                 Container(
                   padding: EdgeInsets.all(AppTheme.spacingMd.w),
                   decoration: BoxDecoration(
-                    color: Colors.orange.withOpacity(0.1),
+                    color: AppTheme.primaryColor.withOpacity(0.1),
                     borderRadius: BorderRadius.circular(
                       AppTheme.radiusDefault.r,
                     ),
                   ),
                   child: Icon(
-                    Icons.school_outlined,
-                    color: Colors.orange,
+                    Icons.group_outlined,
+                    color: AppTheme.primaryColor,
                     size: 24.sp,
                   ),
                 ),
@@ -438,75 +439,71 @@ class _EducationDialogState extends State<_EducationDialog> {
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      // Institution Section
+                      // Position/Role Section
                       _buildSectionHeader(
                         theme,
-                        Icons.account_balance_outlined,
-                        'Institution'.tr(),
+                        Icons.person_outline,
+                        'Position/Role',
                       ),
                       SizedBox(height: AppTheme.spacingMd.h),
                       AppTextField(
-                        label: 'School/University *',
-                        hint: 'e.g., Harvard University, MIT'.tr(),
-                        controller: schoolController,
+                        label: 'Job Title *'.tr(),
+                        hint: 'e.g., Software Engineer, Product Manager'.tr(),
+                        controller: positionController,
                         validator: (value) {
                           if (value == null || value.isEmpty) {
-                            return 'School is required'.tr();
+                            return 'Position is required'.tr();
                           }
                           return null;
                         },
                       ),
                       SizedBox(height: AppTheme.spacingLg.h),
-                      // Degree Section
+                      // Organization Section
                       _buildSectionHeader(
                         theme,
-                        Icons.school_outlined,
-                        'Degree'.tr(),
+                        Icons.business_outlined,
+                        'Organization'.tr(),
                       ),
                       SizedBox(height: AppTheme.spacingMd.h),
                       AppTextField(
-                        label: 'Degree *'.tr(),
-                        hint: 'e.g., Bachelor of Science'.tr(),
-                        controller: degreeController,
+                        label: 'Company Name *'.tr(),
+                        hint: 'e.g., Google, Microsoft, Startup Inc.'.tr(),
+                        controller: organizationController,
                         validator: (value) {
                           if (value == null || value.isEmpty) {
-                            return 'Degree is required'.tr();
+                            return 'Organization is required'.tr();
                           }
                           return null;
                         },
                       ),
                       SizedBox(height: AppTheme.spacingMd.h),
                       AppTextField(
-                        label: 'Major'.tr(),
-                        hint: 'e.g., Computer Science'.tr(),
-                        controller: majorController,
-                      ),
-                      SizedBox(height: AppTheme.spacingMd.h),
-                      Row(
-                        children: [
-                          Expanded(
-                            child: AppTextField(
-                              label: 'City'.tr(),
-                              hint: 'e.g., Cambridge, MA'.tr(),
-                              controller: cityController,
-                            ),
-                          ),
-                          SizedBox(width: AppTheme.spacingMd.w),
-                          Expanded(
-                            child: AppTextField(
-                              label: 'GPA'.tr(),
-                              hint: 'e.g., 3.8/4.0'.tr(),
-                              controller: gpaController,
-                            ),
-                          ),
-                        ],
+                        label: 'City'.tr(),
+                        hint: 'e.g., San Francisco, London'.tr(),
+                        controller: cityController,
                       ),
                       SizedBox(height: AppTheme.spacingLg.h),
-                      // Dates Section
+                      // Responsibilities Section
+                      _buildSectionHeader(
+                        theme,
+                        Icons.list_alt_outlined,
+                        'Key Responsibilities'.tr(),
+                      ),
+                      SizedBox(height: AppTheme.spacingMd.h),
+                      AppTextField(
+                        label: 'Key Tasks & Achievements'.tr(),
+                        hint:
+                            'Describe your main responsibilities and achievements'
+                                .tr(),
+                        controller: tasksController,
+                        maxLines: 4,
+                      ),
+                      SizedBox(height: AppTheme.spacingLg.h),
+                      // Employment Period Section
                       _buildSectionHeader(
                         theme,
                         Icons.calendar_today_outlined,
-                        'Attendance Period'.tr(),
+                        'Employment Period'.tr(),
                       ),
                       SizedBox(height: AppTheme.spacingMd.h),
                       Row(
@@ -529,32 +526,50 @@ class _EducationDialogState extends State<_EducationDialog> {
                           ),
                           SizedBox(width: AppTheme.spacingMd.w),
                           Expanded(
-                            child: AppDateField(
-                              label: 'End Date'.tr(),
-                              hint: 'Select end date'.tr(),
-                              onChanged: (date) {
-                                endDateController.text =
-                                    '${date.day}/${date.month}/${date.year}';
-                              },
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  'End Date'.tr(),
+                                  style: theme.textTheme.labelLarge?.copyWith(
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                                SizedBox(height: AppTheme.spacingXs.h),
+                                CheckboxListTile(
+                                  value: isPresent,
+                                  onChanged: (value) {
+                                    setState(() {
+                                      isPresent = value ?? false;
+                                      if (isPresent) endDateController.clear();
+                                    });
+                                  },
+                                  title: Text('Present'.tr()),
+                                  dense: true,
+                                  controlAffinity:
+                                      ListTileControlAffinity.leading,
+                                  contentPadding: EdgeInsets.zero,
+                                ),
+                                if (!isPresent)
+                                  AppDateField(
+                                    hint: 'Select end date'.tr(),
+                                    onChanged: (date) {
+                                      endDateController.text =
+                                          '${date.day}/${date.month}/${date.year}';
+                                    },
+                                    validator: (value) {
+                                      if (!isPresent &&
+                                          endDateController.text.isEmpty) {
+                                        return 'End date is required if not present'
+                                            .tr();
+                                      }
+                                      return null;
+                                    },
+                                  ),
+                              ],
                             ),
                           ),
                         ],
-                      ),
-                      SizedBox(height: AppTheme.spacingLg.h),
-                      // Description Section
-                      _buildSectionHeader(
-                        theme,
-                        Icons.description_outlined,
-                        'Additional Information'.tr(),
-                      ),
-                      SizedBox(height: AppTheme.spacingMd.h),
-                      AppTextField(
-                        label: 'Description / Coursework (Optional)'.tr(),
-                        hint:
-                            'Additional details about your education, coursework, honors, etc.'
-                                .tr(),
-                        controller: descriptionController,
-                        maxLines: 3,
                       ),
                       SizedBox(height: AppTheme.spacingLg.h),
                     ],
@@ -583,23 +598,20 @@ class _EducationDialogState extends State<_EducationDialog> {
                     onPressed: () {
                       if (widget.formKey.currentState!.validate()) {
                         widget.onSave(
-                          Education(
-                            school: schoolController.text,
-                            degree: degreeController.text,
-                            major: majorController.text.isEmpty
-                                ? null
-                                : majorController.text,
+                          WorkExperience(
+                            position: positionController.text,
+                            organization: organizationController.text,
                             city: cityController.text.isEmpty
                                 ? null
                                 : cityController.text,
-                            gpa: gpaController.text.isEmpty
+                            keyTasks: tasksController.text.isEmpty
                                 ? null
-                                : gpaController.text,
+                                : tasksController.text,
                             startDate: _parseDate(startDateController.text),
-                            endDate: _parseDate(endDateController.text),
-                            description: descriptionController.text.isEmpty
+                            endDate: isPresent
                                 ? null
-                                : descriptionController.text,
+                                : _parseDate(endDateController.text),
+                            isPresent: isPresent,
                           ),
                         );
                       }
@@ -621,14 +633,14 @@ class _EducationDialogState extends State<_EducationDialog> {
           Icon(
             icon,
             size: 20.sp,
-            color: Colors.orange,
+            color: AppTheme.primaryColor,
           ),
           SizedBox(width: AppTheme.spacingSm.w),
           Text(
             title,
             style: theme.textTheme.labelLarge?.copyWith(
               fontWeight: FontWeight.w600,
-              color: Colors.orange,
+              color: AppTheme.primaryColor,
             ),
           ),
         ],

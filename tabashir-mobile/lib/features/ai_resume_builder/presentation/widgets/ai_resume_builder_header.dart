@@ -96,6 +96,8 @@ class AiResumeBuilderHeader extends StatelessWidget {
       'Work Experience'.tr(),
       'Education'.tr(),
       'Skills'.tr(),
+      'Projects'.tr(),
+      'Leadership'.tr(),
       'Template'.tr(),
     ];
 

@@ -15,7 +15,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$ResumeData {
 
- int get currentStep; int get resumeScore;@JsonKey(name: 'header') PersonalDetails? get personalDetails;@JsonKey(name: 'objective') ProfessionalSummary? get professionalSummary;@JsonKey(name: 'work') List<WorkExperience> get workExperience; List<WorkExperience> get leadership; List<Education> get education; List<Skill> get skills; List<Project> get projects; List<Language> get languages;
+ int get currentStep; int get resumeScore;@JsonKey(name: 'header') PersonalDetails? get personalDetails;@JsonKey(name: 'objective') ProfessionalSummary? get professionalSummary;@JsonKey(name: 'work') List<WorkExperience> get workExperience; List<WorkExperience> get leadership; List<Education> get education; List<Skill> get skills; List<ResumeProject> get projects; List<Language> get languages;
 /// Create a copy of ResumeData
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -48,7 +48,7 @@ abstract mixin class $ResumeDataCopyWith<$Res>  {
   factory $ResumeDataCopyWith(ResumeData value, $Res Function(ResumeData) _then) = _$ResumeDataCopyWithImpl;
 @useResult
 $Res call({
- int currentStep, int resumeScore,@JsonKey(name: 'header') PersonalDetails? personalDetails,@JsonKey(name: 'objective') ProfessionalSummary? professionalSummary,@JsonKey(name: 'work') List<WorkExperience> workExperience, List<WorkExperience> leadership, List<Education> education, List<Skill> skills, List<Project> projects, List<Language> languages
+ int currentStep, int resumeScore,@JsonKey(name: 'header') PersonalDetails? personalDetails,@JsonKey(name: 'objective') ProfessionalSummary? professionalSummary,@JsonKey(name: 'work') List<WorkExperience> workExperience, List<WorkExperience> leadership, List<Education> education, List<Skill> skills, List<ResumeProject> projects, List<Language> languages
 });
 
 
@@ -76,7 +76,7 @@ as List<WorkExperience>,leadership: null == leadership ? _self.leadership : lead
 as List<WorkExperience>,education: null == education ? _self.education : education // ignore: cast_nullable_to_non_nullable
 as List<Education>,skills: null == skills ? _self.skills : skills // ignore: cast_nullable_to_non_nullable
 as List<Skill>,projects: null == projects ? _self.projects : projects // ignore: cast_nullable_to_non_nullable
-as List<Project>,languages: null == languages ? _self.languages : languages // ignore: cast_nullable_to_non_nullable
+as List<ResumeProject>,languages: null == languages ? _self.languages : languages // ignore: cast_nullable_to_non_nullable
 as List<Language>,
   ));
 }
@@ -183,7 +183,7 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( int currentStep,  int resumeScore, @JsonKey(name: 'header')  PersonalDetails? personalDetails, @JsonKey(name: 'objective')  ProfessionalSummary? professionalSummary, @JsonKey(name: 'work')  List<WorkExperience> workExperience,  List<WorkExperience> leadership,  List<Education> education,  List<Skill> skills,  List<Project> projects,  List<Language> languages)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( int currentStep,  int resumeScore, @JsonKey(name: 'header')  PersonalDetails? personalDetails, @JsonKey(name: 'objective')  ProfessionalSummary? professionalSummary, @JsonKey(name: 'work')  List<WorkExperience> workExperience,  List<WorkExperience> leadership,  List<Education> education,  List<Skill> skills,  List<ResumeProject> projects,  List<Language> languages)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _ResumeData() when $default != null:
 return $default(_that.currentStep,_that.resumeScore,_that.personalDetails,_that.professionalSummary,_that.workExperience,_that.leadership,_that.education,_that.skills,_that.projects,_that.languages);case _:
@@ -204,7 +204,7 @@ return $default(_that.currentStep,_that.resumeScore,_that.personalDetails,_that.
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( int currentStep,  int resumeScore, @JsonKey(name: 'header')  PersonalDetails? personalDetails, @JsonKey(name: 'objective')  ProfessionalSummary? professionalSummary, @JsonKey(name: 'work')  List<WorkExperience> workExperience,  List<WorkExperience> leadership,  List<Education> education,  List<Skill> skills,  List<Project> projects,  List<Language> languages)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( int currentStep,  int resumeScore, @JsonKey(name: 'header')  PersonalDetails? personalDetails, @JsonKey(name: 'objective')  ProfessionalSummary? professionalSummary, @JsonKey(name: 'work')  List<WorkExperience> workExperience,  List<WorkExperience> leadership,  List<Education> education,  List<Skill> skills,  List<ResumeProject> projects,  List<Language> languages)  $default,) {final _that = this;
 switch (_that) {
 case _ResumeData():
 return $default(_that.currentStep,_that.resumeScore,_that.personalDetails,_that.professionalSummary,_that.workExperience,_that.leadership,_that.education,_that.skills,_that.projects,_that.languages);}
@@ -221,7 +221,7 @@ return $default(_that.currentStep,_that.resumeScore,_that.personalDetails,_that.
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( int currentStep,  int resumeScore, @JsonKey(name: 'header')  PersonalDetails? personalDetails, @JsonKey(name: 'objective')  ProfessionalSummary? professionalSummary, @JsonKey(name: 'work')  List<WorkExperience> workExperience,  List<WorkExperience> leadership,  List<Education> education,  List<Skill> skills,  List<Project> projects,  List<Language> languages)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( int currentStep,  int resumeScore, @JsonKey(name: 'header')  PersonalDetails? personalDetails, @JsonKey(name: 'objective')  ProfessionalSummary? professionalSummary, @JsonKey(name: 'work')  List<WorkExperience> workExperience,  List<WorkExperience> leadership,  List<Education> education,  List<Skill> skills,  List<ResumeProject> projects,  List<Language> languages)?  $default,) {final _that = this;
 switch (_that) {
 case _ResumeData() when $default != null:
 return $default(_that.currentStep,_that.resumeScore,_that.personalDetails,_that.professionalSummary,_that.workExperience,_that.leadership,_that.education,_that.skills,_that.projects,_that.languages);case _:
@@ -236,7 +236,7 @@ return $default(_that.currentStep,_that.resumeScore,_that.personalDetails,_that.
 
 @JsonSerializable(fieldRename: FieldRename.snake)
 class _ResumeData implements ResumeData {
-  const _ResumeData({this.currentStep = 0, this.resumeScore = 0, @JsonKey(name: 'header') this.personalDetails, @JsonKey(name: 'objective') this.professionalSummary, @JsonKey(name: 'work') final  List<WorkExperience> workExperience = const [], final  List<WorkExperience> leadership = const [], final  List<Education> education = const [], final  List<Skill> skills = const [], final  List<Project> projects = const [], final  List<Language> languages = const []}): _workExperience = workExperience,_leadership = leadership,_education = education,_skills = skills,_projects = projects,_languages = languages;
+  const _ResumeData({this.currentStep = 0, this.resumeScore = 0, @JsonKey(name: 'header') this.personalDetails, @JsonKey(name: 'objective') this.professionalSummary, @JsonKey(name: 'work') final  List<WorkExperience> workExperience = const [], final  List<WorkExperience> leadership = const [], final  List<Education> education = const [], final  List<Skill> skills = const [], final  List<ResumeProject> projects = const [], final  List<Language> languages = const []}): _workExperience = workExperience,_leadership = leadership,_education = education,_skills = skills,_projects = projects,_languages = languages;
   factory _ResumeData.fromJson(Map<String, dynamic> json) => _$ResumeDataFromJson(json);
 
 @override@JsonKey() final  int currentStep;
@@ -271,8 +271,8 @@ class _ResumeData implements ResumeData {
   return EqualUnmodifiableListView(_skills);
 }
 
- final  List<Project> _projects;
-@override@JsonKey() List<Project> get projects {
+ final  List<ResumeProject> _projects;
+@override@JsonKey() List<ResumeProject> get projects {
   if (_projects is EqualUnmodifiableListView) return _projects;
   // ignore: implicit_dynamic_type
   return EqualUnmodifiableListView(_projects);
@@ -319,7 +319,7 @@ abstract mixin class _$ResumeDataCopyWith<$Res> implements $ResumeDataCopyWith<$
   factory _$ResumeDataCopyWith(_ResumeData value, $Res Function(_ResumeData) _then) = __$ResumeDataCopyWithImpl;
 @override @useResult
 $Res call({
- int currentStep, int resumeScore,@JsonKey(name: 'header') PersonalDetails? personalDetails,@JsonKey(name: 'objective') ProfessionalSummary? professionalSummary,@JsonKey(name: 'work') List<WorkExperience> workExperience, List<WorkExperience> leadership, List<Education> education, List<Skill> skills, List<Project> projects, List<Language> languages
+ int currentStep, int resumeScore,@JsonKey(name: 'header') PersonalDetails? personalDetails,@JsonKey(name: 'objective') ProfessionalSummary? professionalSummary,@JsonKey(name: 'work') List<WorkExperience> workExperience, List<WorkExperience> leadership, List<Education> education, List<Skill> skills, List<ResumeProject> projects, List<Language> languages
 });
 
 
@@ -347,7 +347,7 @@ as List<WorkExperience>,leadership: null == leadership ? _self._leadership : lea
 as List<WorkExperience>,education: null == education ? _self._education : education // ignore: cast_nullable_to_non_nullable
 as List<Education>,skills: null == skills ? _self._skills : skills // ignore: cast_nullable_to_non_nullable
 as List<Skill>,projects: null == projects ? _self._projects : projects // ignore: cast_nullable_to_non_nullable
-as List<Project>,languages: null == languages ? _self._languages : languages // ignore: cast_nullable_to_non_nullable
+as List<ResumeProject>,languages: null == languages ? _self._languages : languages // ignore: cast_nullable_to_non_nullable
 as List<Language>,
   ));
 }
@@ -1744,42 +1744,42 @@ as String?,
 
 
 /// @nodoc
-mixin _$Project {
+mixin _$ResumeProject {
 
- String? get name; String? get description; String? get url; List<String>? get highlights;
-/// Create a copy of Project
+ String? get name; String? get description; String? get url; List<String>? get highlights; String? get position;@JsonKey(name: 'location') String? get city; DateTime? get startDate; DateTime? get endDate;
+/// Create a copy of ResumeProject
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
 @pragma('vm:prefer-inline')
-$ProjectCopyWith<Project> get copyWith => _$ProjectCopyWithImpl<Project>(this as Project, _$identity);
+$ResumeProjectCopyWith<ResumeProject> get copyWith => _$ResumeProjectCopyWithImpl<ResumeProject>(this as ResumeProject, _$identity);
 
-  /// Serializes this Project to a JSON map.
+  /// Serializes this ResumeProject to a JSON map.
   Map<String, dynamic> toJson();
 
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is Project&&(identical(other.name, name) || other.name == name)&&(identical(other.description, description) || other.description == description)&&(identical(other.url, url) || other.url == url)&&const DeepCollectionEquality().equals(other.highlights, highlights));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is ResumeProject&&(identical(other.name, name) || other.name == name)&&(identical(other.description, description) || other.description == description)&&(identical(other.url, url) || other.url == url)&&const DeepCollectionEquality().equals(other.highlights, highlights)&&(identical(other.position, position) || other.position == position)&&(identical(other.city, city) || other.city == city)&&(identical(other.startDate, startDate) || other.startDate == startDate)&&(identical(other.endDate, endDate) || other.endDate == endDate));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,name,description,url,const DeepCollectionEquality().hash(highlights));
+int get hashCode => Object.hash(runtimeType,name,description,url,const DeepCollectionEquality().hash(highlights),position,city,startDate,endDate);
 
 @override
 String toString() {
-  return 'Project(name: $name, description: $description, url: $url, highlights: $highlights)';
+  return 'ResumeProject(name: $name, description: $description, url: $url, highlights: $highlights, position: $position, city: $city, startDate: $startDate, endDate: $endDate)';
 }
 
 
 }
 
 /// @nodoc
-abstract mixin class $ProjectCopyWith<$Res>  {
-  factory $ProjectCopyWith(Project value, $Res Function(Project) _then) = _$ProjectCopyWithImpl;
+abstract mixin class $ResumeProjectCopyWith<$Res>  {
+  factory $ResumeProjectCopyWith(ResumeProject value, $Res Function(ResumeProject) _then) = _$ResumeProjectCopyWithImpl;
 @useResult
 $Res call({
- String? name, String? description, String? url, List<String>? highlights
+ String? name, String? description, String? url, List<String>? highlights, String? position,@JsonKey(name: 'location') String? city, DateTime? startDate, DateTime? endDate
 });
 
 
@@ -1787,30 +1787,34 @@ $Res call({
 
 }
 /// @nodoc
-class _$ProjectCopyWithImpl<$Res>
-    implements $ProjectCopyWith<$Res> {
-  _$ProjectCopyWithImpl(this._self, this._then);
+class _$ResumeProjectCopyWithImpl<$Res>
+    implements $ResumeProjectCopyWith<$Res> {
+  _$ResumeProjectCopyWithImpl(this._self, this._then);
 
-  final Project _self;
-  final $Res Function(Project) _then;
+  final ResumeProject _self;
+  final $Res Function(ResumeProject) _then;
 
-/// Create a copy of Project
+/// Create a copy of ResumeProject
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? name = freezed,Object? description = freezed,Object? url = freezed,Object? highlights = freezed,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? name = freezed,Object? description = freezed,Object? url = freezed,Object? highlights = freezed,Object? position = freezed,Object? city = freezed,Object? startDate = freezed,Object? endDate = freezed,}) {
   return _then(_self.copyWith(
 name: freezed == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
 as String?,description: freezed == description ? _self.description : description // ignore: cast_nullable_to_non_nullable
 as String?,url: freezed == url ? _self.url : url // ignore: cast_nullable_to_non_nullable
 as String?,highlights: freezed == highlights ? _self.highlights : highlights // ignore: cast_nullable_to_non_nullable
-as List<String>?,
+as List<String>?,position: freezed == position ? _self.position : position // ignore: cast_nullable_to_non_nullable
+as String?,city: freezed == city ? _self.city : city // ignore: cast_nullable_to_non_nullable
+as String?,startDate: freezed == startDate ? _self.startDate : startDate // ignore: cast_nullable_to_non_nullable
+as DateTime?,endDate: freezed == endDate ? _self.endDate : endDate // ignore: cast_nullable_to_non_nullable
+as DateTime?,
   ));
 }
 
 }
 
 
-/// Adds pattern-matching-related methods to [Project].
-extension ProjectPatterns on Project {
+/// Adds pattern-matching-related methods to [ResumeProject].
+extension ResumeProjectPatterns on ResumeProject {
 /// A variant of `map` that fallback to returning `orElse`.
 ///
 /// It is equivalent to doing:
@@ -1823,10 +1827,10 @@ extension ProjectPatterns on Project {
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeMap<TResult extends Object?>(TResult Function( _Project value)?  $default,{required TResult orElse(),}){
+@optionalTypeArgs TResult maybeMap<TResult extends Object?>(TResult Function( _ResumeProject value)?  $default,{required TResult orElse(),}){
 final _that = this;
 switch (_that) {
-case _Project() when $default != null:
+case _ResumeProject() when $default != null:
 return $default(_that);case _:
   return orElse();
 
@@ -1845,10 +1849,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult map<TResult extends Object?>(TResult Function( _Project value)  $default,){
+@optionalTypeArgs TResult map<TResult extends Object?>(TResult Function( _ResumeProject value)  $default,){
 final _that = this;
 switch (_that) {
-case _Project():
+case _ResumeProject():
 return $default(_that);}
 }
 /// A variant of `map` that fallback to returning `null`.
@@ -1863,10 +1867,10 @@ return $default(_that);}
 /// }
 /// ```
 
-@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>(TResult? Function( _Project value)?  $default,){
+@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>(TResult? Function( _ResumeProject value)?  $default,){
 final _that = this;
 switch (_that) {
-case _Project() when $default != null:
+case _ResumeProject() when $default != null:
 return $default(_that);case _:
   return null;
 
@@ -1884,10 +1888,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String? name,  String? description,  String? url,  List<String>? highlights)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String? name,  String? description,  String? url,  List<String>? highlights,  String? position, @JsonKey(name: 'location')  String? city,  DateTime? startDate,  DateTime? endDate)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
-case _Project() when $default != null:
-return $default(_that.name,_that.description,_that.url,_that.highlights);case _:
+case _ResumeProject() when $default != null:
+return $default(_that.name,_that.description,_that.url,_that.highlights,_that.position,_that.city,_that.startDate,_that.endDate);case _:
   return orElse();
 
 }
@@ -1905,10 +1909,10 @@ return $default(_that.name,_that.description,_that.url,_that.highlights);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String? name,  String? description,  String? url,  List<String>? highlights)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String? name,  String? description,  String? url,  List<String>? highlights,  String? position, @JsonKey(name: 'location')  String? city,  DateTime? startDate,  DateTime? endDate)  $default,) {final _that = this;
 switch (_that) {
-case _Project():
-return $default(_that.name,_that.description,_that.url,_that.highlights);}
+case _ResumeProject():
+return $default(_that.name,_that.description,_that.url,_that.highlights,_that.position,_that.city,_that.startDate,_that.endDate);}
 }
 /// A variant of `when` that fallback to returning `null`
 ///
@@ -1922,10 +1926,10 @@ return $default(_that.name,_that.description,_that.url,_that.highlights);}
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String? name,  String? description,  String? url,  List<String>? highlights)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String? name,  String? description,  String? url,  List<String>? highlights,  String? position, @JsonKey(name: 'location')  String? city,  DateTime? startDate,  DateTime? endDate)?  $default,) {final _that = this;
 switch (_that) {
-case _Project() when $default != null:
-return $default(_that.name,_that.description,_that.url,_that.highlights);case _:
+case _ResumeProject() when $default != null:
+return $default(_that.name,_that.description,_that.url,_that.highlights,_that.position,_that.city,_that.startDate,_that.endDate);case _:
   return null;
 
 }
@@ -1936,9 +1940,9 @@ return $default(_that.name,_that.description,_that.url,_that.highlights);case _:
 /// @nodoc
 
 @JsonSerializable(fieldRename: FieldRename.snake)
-class _Project implements Project {
-  const _Project({this.name, this.description, this.url, final  List<String>? highlights}): _highlights = highlights;
-  factory _Project.fromJson(Map<String, dynamic> json) => _$ProjectFromJson(json);
+class _ResumeProject implements ResumeProject {
+  const _ResumeProject({this.name, this.description, this.url, final  List<String>? highlights, this.position, @JsonKey(name: 'location') this.city, this.startDate, this.endDate}): _highlights = highlights;
+  factory _ResumeProject.fromJson(Map<String, dynamic> json) => _$ResumeProjectFromJson(json);
 
 @override final  String? name;
 @override final  String? description;
@@ -1952,41 +1956,45 @@ class _Project implements Project {
   return EqualUnmodifiableListView(value);
 }
 
+@override final  String? position;
+@override@JsonKey(name: 'location') final  String? city;
+@override final  DateTime? startDate;
+@override final  DateTime? endDate;
 
-/// Create a copy of Project
+/// Create a copy of ResumeProject
 /// with the given fields replaced by the non-null parameter values.
 @override @JsonKey(includeFromJson: false, includeToJson: false)
 @pragma('vm:prefer-inline')
-_$ProjectCopyWith<_Project> get copyWith => __$ProjectCopyWithImpl<_Project>(this, _$identity);
+_$ResumeProjectCopyWith<_ResumeProject> get copyWith => __$ResumeProjectCopyWithImpl<_ResumeProject>(this, _$identity);
 
 @override
 Map<String, dynamic> toJson() {
-  return _$ProjectToJson(this, );
+  return _$ResumeProjectToJson(this, );
 }
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _Project&&(identical(other.name, name) || other.name == name)&&(identical(other.description, description) || other.description == description)&&(identical(other.url, url) || other.url == url)&&const DeepCollectionEquality().equals(other._highlights, _highlights));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _ResumeProject&&(identical(other.name, name) || other.name == name)&&(identical(other.description, description) || other.description == description)&&(identical(other.url, url) || other.url == url)&&const DeepCollectionEquality().equals(other._highlights, _highlights)&&(identical(other.position, position) || other.position == position)&&(identical(other.city, city) || other.city == city)&&(identical(other.startDate, startDate) || other.startDate == startDate)&&(identical(other.endDate, endDate) || other.endDate == endDate));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,name,description,url,const DeepCollectionEquality().hash(_highlights));
+int get hashCode => Object.hash(runtimeType,name,description,url,const DeepCollectionEquality().hash(_highlights),position,city,startDate,endDate);
 
 @override
 String toString() {
-  return 'Project(name: $name, description: $description, url: $url, highlights: $highlights)';
+  return 'ResumeProject(name: $name, description: $description, url: $url, highlights: $highlights, position: $position, city: $city, startDate: $startDate, endDate: $endDate)';
 }
 
 
 }
 
 /// @nodoc
-abstract mixin class _$ProjectCopyWith<$Res> implements $ProjectCopyWith<$Res> {
-  factory _$ProjectCopyWith(_Project value, $Res Function(_Project) _then) = __$ProjectCopyWithImpl;
+abstract mixin class _$ResumeProjectCopyWith<$Res> implements $ResumeProjectCopyWith<$Res> {
+  factory _$ResumeProjectCopyWith(_ResumeProject value, $Res Function(_ResumeProject) _then) = __$ResumeProjectCopyWithImpl;
 @override @useResult
 $Res call({
- String? name, String? description, String? url, List<String>? highlights
+ String? name, String? description, String? url, List<String>? highlights, String? position,@JsonKey(name: 'location') String? city, DateTime? startDate, DateTime? endDate
 });
 
 
@@ -1994,22 +2002,26 @@ $Res call({
 
 }
 /// @nodoc
-class __$ProjectCopyWithImpl<$Res>
-    implements _$ProjectCopyWith<$Res> {
-  __$ProjectCopyWithImpl(this._self, this._then);
+class __$ResumeProjectCopyWithImpl<$Res>
+    implements _$ResumeProjectCopyWith<$Res> {
+  __$ResumeProjectCopyWithImpl(this._self, this._then);
 
-  final _Project _self;
-  final $Res Function(_Project) _then;
+  final _ResumeProject _self;
+  final $Res Function(_ResumeProject) _then;
 
-/// Create a copy of Project
+/// Create a copy of ResumeProject
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? name = freezed,Object? description = freezed,Object? url = freezed,Object? highlights = freezed,}) {
-  return _then(_Project(
+@override @pragma('vm:prefer-inline') $Res call({Object? name = freezed,Object? description = freezed,Object? url = freezed,Object? highlights = freezed,Object? position = freezed,Object? city = freezed,Object? startDate = freezed,Object? endDate = freezed,}) {
+  return _then(_ResumeProject(
 name: freezed == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
 as String?,description: freezed == description ? _self.description : description // ignore: cast_nullable_to_non_nullable
 as String?,url: freezed == url ? _self.url : url // ignore: cast_nullable_to_non_nullable
 as String?,highlights: freezed == highlights ? _self._highlights : highlights // ignore: cast_nullable_to_non_nullable
-as List<String>?,
+as List<String>?,position: freezed == position ? _self.position : position // ignore: cast_nullable_to_non_nullable
+as String?,city: freezed == city ? _self.city : city // ignore: cast_nullable_to_non_nullable
+as String?,startDate: freezed == startDate ? _self.startDate : startDate // ignore: cast_nullable_to_non_nullable
+as DateTime?,endDate: freezed == endDate ? _self.endDate : endDate // ignore: cast_nullable_to_non_nullable
+as DateTime?,
   ));
 }
 
