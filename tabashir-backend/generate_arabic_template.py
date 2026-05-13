@@ -27,10 +27,16 @@ def add_horizontal_line(paragraph):
 def make_rtl(paragraph):
     p = paragraph._p
     pPr = p.get_or_add_pPr()
+    
+    # 1. Add bidi tag
     bidi = OxmlElement('w:bidi')
     bidi.set(qn('w:val'), '1')
     pPr.append(bidi)
-    paragraph.alignment = WD_ALIGN_PARAGRAPH.RIGHT
+    
+    # 2. Add right alignment
+    jc = OxmlElement('w:jc')
+    jc.set(qn('w:val'), 'right')
+    pPr.append(jc)
 
 doc = Document()
 
@@ -48,19 +54,20 @@ font = style.font
 font.name = 'Arial'
 font.size = Pt(11)
 
+# Modify default LTR so runs inherit RTL where possible
+# This is tricky in python-docx, we just rely on make_rtl.
+
 # --- HEADER ---
 name_p = doc.add_paragraph()
-name_p.alignment = WD_ALIGN_PARAGRAPH.CENTER
 make_rtl(name_p)
-name_p.alignment = WD_ALIGN_PARAGRAPH.CENTER # Re-center after make_rtl
+name_p.alignment = WD_ALIGN_PARAGRAPH.CENTER
 name_run = name_p.add_run("{{ header.name }}")
 name_run.bold = True
 name_run.font.size = Pt(16)
 
 contact_p = doc.add_paragraph()
-contact_p.alignment = WD_ALIGN_PARAGRAPH.CENTER
 make_rtl(contact_p)
-contact_p.alignment = WD_ALIGN_PARAGRAPH.CENTER # Re-center after make_rtl
+contact_p.alignment = WD_ALIGN_PARAGRAPH.CENTER
 contact_run = contact_p.add_run("{{ contact_info }}")
 contact_run.font.size = Pt(10)
 
@@ -71,6 +78,7 @@ p.style.font.bold = True
 p.style.font.size = Pt(12)
 make_rtl(p)
 add_horizontal_line(p)
+
 obj_p = doc.add_paragraph("{{ objective }}")
 make_rtl(obj_p)
 doc.add_paragraph("{% endif %}")
@@ -91,7 +99,7 @@ work_p.add_run("{% if work.company %} | {{ work.company }}{% endif %}").italic =
 work_p.add_run("{% if work.location %} | {{ work.location }}{% endif %}{% if work.date %} | {{ work.date }}{% endif %}")
 
 doc.add_paragraph("{% for detail in work.details %}")
-detail_p = doc.add_paragraph("{{ detail }}", style='List Bullet')
+detail_p = doc.add_paragraph("•  {{ detail }}")
 make_rtl(detail_p)
 doc.add_paragraph("{% endfor %}")
 doc.add_paragraph("{% endfor %}")
@@ -113,7 +121,7 @@ lship_p.add_run("{% if lship.company %} | {{ lship.company }}{% endif %}").itali
 lship_p.add_run("{% if lship.location %} | {{ lship.location }}{% endif %}{% if lship.date %} | {{ lship.date }}{% endif %}")
 
 doc.add_paragraph("{% for detail in lship.details %}")
-detail_p = doc.add_paragraph("{{ detail }}", style='List Bullet')
+detail_p = doc.add_paragraph("•  {{ detail }}")
 make_rtl(detail_p)
 doc.add_paragraph("{% endfor %}")
 doc.add_paragraph("{% endfor %}")
@@ -140,12 +148,12 @@ make_rtl(gpa_p)
 doc.add_paragraph("{% endif %}")
 
 doc.add_paragraph("{% for detail in edu.details %}")
-detail_p = doc.add_paragraph("{{ detail }}", style='List Bullet')
+detail_p = doc.add_paragraph("•  {{ detail }}")
 make_rtl(detail_p)
 doc.add_paragraph("{% endfor %}")
 
 doc.add_paragraph("{% for course in edu.coursework %}")
-course_p = doc.add_paragraph("الدورات: {{ course }}", style='List Bullet')
+course_p = doc.add_paragraph("•  الدورات: {{ course }}")
 make_rtl(course_p)
 doc.add_paragraph("{% endfor %}")
 
@@ -168,7 +176,7 @@ proj_p.add_run("{% if project.position %} | {{ project.position }}{% endif %}").
 proj_p.add_run("{% if project.location %} | {{ project.location }}{% endif %}{% if project.date %} | {{ project.date }}{% endif %}")
 
 doc.add_paragraph("{% for detail in project.details %}")
-detail_p = doc.add_paragraph("{{ detail }}", style='List Bullet')
+detail_p = doc.add_paragraph("•  {{ detail }}")
 make_rtl(detail_p)
 doc.add_paragraph("{% endfor %}")
 

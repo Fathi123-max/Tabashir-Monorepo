@@ -227,7 +227,7 @@ class SyncHybridResumeRepository implements ResumeVaultRepository {
         }
 
         return await uploadResume(
-          fileName: 'ATS_${outputFormat?.toUpperCase() ?? 'PDF'}_$cleanFileName.$ext',
+          fileName: '$cleanFileName - ATS Optimized.$ext',
           filePath: reformattedPath,
           fileType: ext,
           fileSize: response.data.length,

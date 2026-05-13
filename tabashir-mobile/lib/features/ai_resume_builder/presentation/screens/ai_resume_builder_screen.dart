@@ -53,6 +53,30 @@ class AiResumeBuilderView extends StatelessWidget {
           fontWeight: FontWeight.bold,
         ),
       ),
+      actions: [
+        PopupMenuButton<String>(
+          icon: const Icon(Icons.bug_report_outlined),
+          tooltip: 'Test Mock Data'.tr(),
+          onSelected: (value) {
+            final cubit = context.read<AiResumeBuilderCubit>();
+            if (value == 'english') {
+              cubit.loadEnglishSampleData();
+            } else if (value == 'arabic') {
+              cubit.loadArabicSampleData();
+            }
+          },
+          itemBuilder: (context) => [
+            PopupMenuItem(
+              value: 'english',
+              child: Text('Load English Mock Data'.tr()),
+            ),
+            PopupMenuItem(
+              value: 'arabic',
+              child: Text('Load Arabic Mock Data'.tr()),
+            ),
+          ],
+        ),
+      ],
       elevation: 0,
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       scrolledUnderElevation: 0,

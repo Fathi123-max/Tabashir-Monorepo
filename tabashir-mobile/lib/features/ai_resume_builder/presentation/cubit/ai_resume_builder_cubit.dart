@@ -13,7 +13,7 @@ part 'ai_resume_builder_cubit.freezed.dart';
 
 class AiResumeBuilderCubit extends Cubit<AiResumeBuilderState> {
   AiResumeBuilderCubit() : super(const AiResumeBuilderState()) {
-    _loadSampleData();
+    loadEnglishSampleData();
   }
 
   void updatePersonalDetails(PersonalDetails details) {
@@ -138,10 +138,14 @@ class AiResumeBuilderCubit extends Cubit<AiResumeBuilderState> {
 
     try {
       final apiService = getIt<ResumeApiService>();
+      final userName = state.resumeData.personalDetails?.fullName?.trim() ?? 'My';
+      final cleanUserName = userName.isEmpty ? 'My' : userName.replaceAll(RegExp(r'[^a-zA-Z0-9\s]'), '').trim();
+      final baseFileName = '$cleanUserName - AI Resume';
+
       final request = SaveAndGenerateRequest(
         resumeData: state.resumeData,
         templateId: state.selectedTemplateId,
-        filename: 'AI_Resume_${DateTime.now().millisecondsSinceEpoch}',
+        filename: baseFileName,
         paymentIntentId: paymentIntentId ?? state.paymentIntentId,
         outputFormat: outputFormat ?? 'pdf',
       );
@@ -246,7 +250,7 @@ class AiResumeBuilderCubit extends Cubit<AiResumeBuilderState> {
     return true;
   }
 
-  void _loadSampleData() {
+  void loadEnglishSampleData() {
     // Load sample personal details
     const samplePersonalDetails = PersonalDetails(
       fullName: 'John Doe',
@@ -381,6 +385,159 @@ class AiResumeBuilderCubit extends Cubit<AiResumeBuilderState> {
         startDate: DateTime(2017, 8),
         endDate: DateTime(2018, 5),
         keyTasks: '• Organized weekly coding workshops for 50+ students.\n• Hosted hackathons with industry sponsors.',
+      )
+    ];
+
+    // Create updated resume data with sample information
+    final updatedData = state.resumeData.copyWith(
+      personalDetails: samplePersonalDetails,
+      professionalSummary: sampleProfessionalSummary,
+      workExperience: sampleWorkExperience,
+      education: sampleEducation,
+      skills: sampleSkills,
+      projects: sampleResumeProjects,
+      leadership: sampleLeadership,
+    );
+
+    emit(state.copyWith(resumeData: updatedData));
+    _updateResumeScore();
+  }
+
+  void loadArabicSampleData() {
+    // Load sample personal details (Arabic)
+    const samplePersonalDetails = PersonalDetails(
+      fullName: 'أحمد محمود',
+      email: 'ahmed.mahmoud@example.com',
+      phoneNumber: '+971 50 123 4567',
+      country: 'AE',
+      city: 'دبي',
+      linkedin: 'https://linkedin.com/in/ahmedmahmoud',
+      github: 'https://github.com/ahmedmahmoud',
+      nationality: 'إماراتي',
+      socialLinks: [
+        SocialLink(
+          platform: 'محفظة الأعمال',
+          url: 'https://ahmedmahmoud.com',
+        ),
+      ],
+    );
+
+    // Load sample professional summary (Arabic)
+    const sampleProfessionalSummary = ProfessionalSummary(
+      summary:
+          'مهندس برمجيات أول يتمتع بخبرة تزيد عن 6 سنوات في تطوير تطبيقات الويب والحلول المحمولة القابلة للتطوير. سجل حافل في قيادة فرق متعددة التخصصات لتقديم مشاريع ذات تأثير عالٍ زادت من تفاعل المستخدمين بنسبة 40٪. شغوف بكتابة كود نظيف وتوجيه المطورين المبتدئين وتنفيذ تقنيات حديثة لحل مشاكل الأعمال المعقدة.',
+    );
+
+    // Load sample work experience (Arabic)
+    final sampleWorkExperience = [
+      WorkExperience(
+        position: 'مهندس برمجيات أول',
+        organization: 'شركة الابتكارات التقنية',
+        city: 'دبي، الإمارات',
+        keyTasks:
+            '• قيادة فريق من 5 مهندسين لتطوير بوابة عملاء مبنية على React تخدم أكثر من 100 ألف مستخدم\n• تنفيذ بنية الخدمات المصغرة (Microservices) مما قلل من وقت استجابة واجهة برمجة التطبيقات بنسبة 50٪\n• توجيه 3 مطورين مبتدئين وإجراء مراجعات الكود\n• التعاون مع مديري المنتجات لتحديد المتطلبات الفنية',
+        startDate: DateTime(2021, 3),
+        isPresent: true,
+      ),
+      WorkExperience(
+        position: 'مهندس برمجيات',
+        organization: 'الحلول الرقمية ذ.م.م',
+        city: 'أبوظبي، الإمارات',
+        keyTasks:
+            '• تطوير تطبيقات كاملة باستخدام React و Node.js و MongoDB\n• بناء واجهات برمجة تطبيقات RESTful تخدم أكثر من 10 آلاف طلب يومياً\n• تحسين استعلامات قاعدة البيانات مما حسن الأداء بنسبة 30٪',
+        startDate: DateTime(2019),
+        endDate: DateTime(2021, 2),
+      ),
+    ];
+
+    // Load sample education (Arabic)
+    final sampleEducation = [
+      Education(
+        school: 'جامعة الإمارات العربية المتحدة',
+        degree: 'بكالوريوس العلوم',
+        major: 'علوم الحاسوب',
+        gpa: '3.8/4.0',
+        city: 'العين، الإمارات',
+        startDate: DateTime(2015, 8),
+        endDate: DateTime(2018, 5),
+        description:
+            'تخرج بامتياز مع مرتبة الشرف. المقررات ذات الصلة: هياكل البيانات، الخوارزميات، هندسة البرمجيات، أنظمة قواعد البيانات.',
+      ),
+    ];
+
+    // Load sample skills (Arabic)
+    final sampleSkills = [
+      const Skill(
+        name: 'جافا سكريبت',
+        category: SkillCategory.technical,
+        proficiency: ProficiencyLevel.expert,
+      ),
+      const Skill(
+        name: 'رياكت (React)',
+        category: SkillCategory.technical,
+        proficiency: ProficiencyLevel.expert,
+      ),
+      const Skill(
+        name: 'نود جي إس (Node.js)',
+        category: SkillCategory.technical,
+        proficiency: ProficiencyLevel.advanced,
+      ),
+      const Skill(
+        name: 'بايثون (Python)',
+        category: SkillCategory.technical,
+        proficiency: ProficiencyLevel.advanced,
+      ),
+      const Skill(
+        name: 'القيادة',
+        category: SkillCategory.soft,
+        proficiency: ProficiencyLevel.advanced,
+      ),
+      const Skill(
+        name: 'التواصل',
+        category: SkillCategory.soft,
+        proficiency: ProficiencyLevel.advanced,
+      ),
+      const Skill(
+        name: 'حل المشكلات',
+        category: SkillCategory.soft,
+        proficiency: ProficiencyLevel.expert,
+      ),
+      const Skill(
+        name: 'العربية',
+        category: SkillCategory.languages,
+        proficiency: ProficiencyLevel.expert,
+      ),
+      const Skill(
+        name: 'الإنجليزية',
+        category: SkillCategory.languages,
+        proficiency: ProficiencyLevel.advanced,
+      ),
+      const Skill(
+        name: 'مهندس حلول معتمد من AWS',
+        category: SkillCategory.training,
+        proficiency: ProficiencyLevel.advanced,
+      ),
+    ];
+
+    final sampleResumeProjects = [
+      ResumeProject(
+        name: 'منصة التجارة الإلكترونية',
+        position: 'مطور الواجهة الخلفية الرئيسي',
+        city: 'عن بعد',
+        startDate: DateTime(2020, 5),
+        endDate: DateTime(2021, 1),
+        description: '• تصميم بنية الواجهة الخلفية باستخدام Node.js و Express.\n• دمج بوابة الدفع Stripe.',
+      )
+    ];
+
+    final sampleLeadership = [
+      WorkExperience(
+        position: 'رئيس النادي',
+        organization: 'نادي علوم الحاسوب',
+        city: 'العين، الإمارات',
+        startDate: DateTime(2017, 8),
+        endDate: DateTime(2018, 5),
+        keyTasks: '• تنظيم ورش عمل أسبوعية في البرمجة لأكثر من 50 طالباً.\n• استضافة هاكاثونات مع رعاة من القطاع التقني.',
       )
     ];
 
