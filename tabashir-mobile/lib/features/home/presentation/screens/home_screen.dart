@@ -199,8 +199,8 @@ class _HomeScreenState extends State<HomeScreen> {
               Expanded(
                 child: Text(
                   isPro
-                      ? 'Premium Member'
-                      : 'Welcome back! Ready to find your dream job?',
+                      ? 'premium_member'.tr()
+                      : 'welcome_back_subtitle'.tr(),
                   style: theme.textTheme.bodyMedium?.copyWith(
                     color: theme.colorScheme.onSurfaceVariant,
                     fontSize: 13.sp,
@@ -468,7 +468,11 @@ class _HomeScreenState extends State<HomeScreen> {
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Text('Error: ${state.errorMessage}'.tr()),
+                        Text(
+                          'error_with_message'.tr(
+                            namedArgs: {'message': state.errorMessage},
+                          ),
+                        ),
                         ElevatedButton(
                           onPressed: () => context
                               .read<AppInitializationCubit>()
@@ -566,7 +570,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                 // Stats Cards Section - MOVED UP (Before Matched Jobs)
                                 _buildSection(
                                   icon: Icons.analytics_rounded,
-                                  title: 'Your Stats',
+                                  title: 'your_stats'.tr(),
                                   iconColor: AppTheme.primaryColor,
                                   iconBgColor: AppTheme.primaryColor
                                       .withOpacity(0.1),
@@ -579,7 +583,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                 // UAE Cities Section - MOVED UP (Before Matched Jobs)
                                 _buildSection(
                                   icon: Icons.location_city_rounded,
-                                  title: 'Jobs by Location',
+                                  title: 'jobs_by_location'.tr(),
                                   iconColor: AppTheme.warningColor,
                                   iconBgColor: AppTheme.warningColor
                                       .withOpacity(0.1),
@@ -593,7 +597,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                 // Matched Jobs Section - Core value
                                 _buildSection(
                                   icon: Icons.auto_awesome_rounded,
-                                  title: 'Matched For You',
+                                  title: 'matched_for_you'.tr(),
                                   iconColor: AppTheme.successColor,
                                   iconBgColor: AppTheme.successColor
                                       .withOpacity(0.1),
@@ -612,7 +616,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                       );
                                     },
                                     child: Text(
-                                      'See All',
+                                      'see_all'.tr(),
                                       style: widgetTheme.textTheme.bodyMedium
                                           ?.copyWith(
                                             color: AppTheme.primaryColor,
@@ -626,7 +630,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                 // My Applications Section - Progress tracking
                                 _buildSection(
                                   icon: Icons.folder_shared_rounded,
-                                  title: 'My Applications',
+                                  title: 'my_applications'.tr(),
                                   iconColor: AppTheme.primaryColor,
                                   iconBgColor: AppTheme.primaryColor
                                       .withOpacity(0.1),
@@ -638,7 +642,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                       context.push('/applications');
                                     },
                                     child: Text(
-                                      'See All',
+                                      'see_all'.tr(),
                                       style: widgetTheme.textTheme.bodyMedium
                                           ?.copyWith(
                                             color: AppTheme.primaryColor,

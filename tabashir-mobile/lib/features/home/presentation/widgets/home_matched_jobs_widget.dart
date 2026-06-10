@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -22,9 +23,15 @@ class HomeMatchedJobsWidget extends StatelessWidget {
         final matchedJobs = state.matchedJobsList;
 
         AppLogger.debug('[HOME_MATCHED_WIDGET] Building widget', tag: 'Home');
-        AppLogger.debug('[HOME_MATCHED_WIDGET] Matched jobs count from state: ${matchedJobs.length}', tag: 'Home');
+        AppLogger.debug(
+          '[HOME_MATCHED_WIDGET] Matched jobs count from state: ${matchedJobs.length}',
+          tag: 'Home',
+        );
         if (matchedJobs.isNotEmpty) {
-          AppLogger.debug('[HOME_MATCHED_WIDGET] First job: ${matchedJobs.first.title}', tag: 'Home');
+          AppLogger.debug(
+            '[HOME_MATCHED_WIDGET] First job: ${matchedJobs.first.title}',
+            tag: 'Home',
+          );
         }
 
         return Column(
@@ -55,17 +62,17 @@ class HomeMatchedJobsWidget extends StatelessWidget {
                   }
                   // Add seniority tag based on title
                   if (job.title.contains('Senior')) {
-                    tags.add('Senior');
+                    tags.add('senior'.tr());
                   } else if (job.title.contains('Junior') ||
                       job.title.contains('Junior')) {
-                    tags.add('Junior');
+                    tags.add('junior'.tr());
                   }
 
                   // Build skills match text
                   final skillsMatch =
                       job.experience != null && job.experience!.isNotEmpty
-                      ? '${job.experience} experience'
-                      : 'AI Matched';
+                      ? 'experience_count'.tr(namedArgs: {'count': job.experience!})
+                      : 'ai_matched'.tr();
 
                   // Format salary
                   final salary = job.salary ?? 'AED ${_generateSalaryRange()}';
@@ -78,7 +85,10 @@ class HomeMatchedJobsWidget extends StatelessWidget {
                           pathParameters: {'jobId': job.id},
                         );
                       } else {
-                        AppLogger.debug('[HOME_MATCHED_WIDGET] Job ID is null or empty for job: ${job.title}', tag: 'Home');
+                        AppLogger.debug(
+                          '[HOME_MATCHED_WIDGET] Job ID is null or empty for job: ${job.title}',
+                          tag: 'Home',
+                        );
                       }
                     },
                     child: JobCard(
@@ -128,7 +138,7 @@ class HomeMatchedJobsWidget extends StatelessWidget {
         ),
         SizedBox(height: AppTheme.spacingLg.h),
         Text(
-          'No Matched Jobs Yet',
+          'no_matched_jobs_yet'.tr(),
           style: theme.textTheme.titleLarge?.copyWith(
             fontWeight: FontWeight.bold,
             color: AppTheme.zinc700,
@@ -138,7 +148,7 @@ class HomeMatchedJobsWidget extends StatelessWidget {
         ),
         SizedBox(height: AppTheme.spacingSm.h),
         Text(
-          "We're finding the best jobs for you based on your profile",
+          "finding_matches_description".tr(),
           style: theme.textTheme.bodyMedium?.copyWith(
             color: AppTheme.zinc500,
             fontSize: 14.sp,

@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
@@ -43,9 +44,9 @@ class ProQuickActionsWidget extends StatelessWidget {
             Text(
               'Pro Quick Actions',
               style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 20.sp,
-                  ),
+                fontWeight: FontWeight.bold,
+                fontSize: 20.sp,
+              ),
             ),
             SizedBox(width: AppTheme.spacingSm.w),
             Transform.scale(
@@ -73,32 +74,32 @@ class ProQuickActionsWidget extends StatelessWidget {
             // AI Resume Builder
             _ProActionCard(
               icon: Icons.smart_toy_rounded,
-              label: 'AI Resume',
-              subtitle: 'Build in seconds',
+              label: 'ai_resume'.tr(),
+              subtitle: 'build_in_seconds'.tr(),
               gradient: AppTheme.proGradient,
               onTap: () => context.push(RouteNames.aiResumeBuilder),
             ),
             // AI Cover Letter
             _ProActionCard(
               icon: Icons.edit_note_rounded,
-              label: 'Cover Letter',
-              subtitle: 'AI-powered',
+              label: 'cover_letter'.tr(),
+              subtitle: 'ai_powered'.tr(),
               gradient: AppTheme.goldGradient,
               onTap: () => context.push(RouteNames.services),
             ),
             // Priority Matches
             _ProActionCard(
               icon: Icons.star_rounded,
-              label: 'Priority',
-              subtitle: 'Top applicants',
+              label: 'priority'.tr(),
+              subtitle: 'top_applicants'.tr(),
               gradient: AppTheme.proGradient,
               onTap: () => context.push(RouteNames.jobs),
             ),
             // Salary Insights
             _ProActionCard(
               icon: Icons.analytics_rounded,
-              label: 'Salary Info',
-              subtitle: 'Market data',
+              label: 'salary_info'.tr(),
+              subtitle: 'market_data'.tr(),
               gradient: AppTheme.successGradient,
               onTap: () => context.push(RouteNames.services),
             ),
@@ -169,89 +170,90 @@ class _ProActionCardState extends State<_ProActionCard>
 
   @override
   Widget build(BuildContext context) => GestureDetector(
-        onTapDown: _onTapDown,
-        onTapUp: _onTapUp,
-        onTapCancel: _onTapCancel,
-        onTap: widget.onTap,
-        child: AnimatedBuilder(
-          animation: _scaleAnimation,
-          builder: (context, child) => Transform.scale(
-            scale: _scaleAnimation.value,
-            child: child,
-          ),
-          child: Container(
-            decoration: BoxDecoration(
-              gradient: widget.gradient,
-              borderRadius: BorderRadius.circular(AppTheme.radiusMedium.r),
-              boxShadow: [
-                BoxShadow(
-                  color: widget.gradient.colors.first.withOpacity(0.3),
-                  blurRadius: 12,
-                  offset: const Offset(0, 4),
-                ),
-              ],
+    onTapDown: _onTapDown,
+    onTapUp: _onTapUp,
+    onTapCancel: _onTapCancel,
+    onTap: widget.onTap,
+    child: AnimatedBuilder(
+      animation: _scaleAnimation,
+      builder: (context, child) => Transform.scale(
+        scale: _scaleAnimation.value,
+        child: child,
+      ),
+      child: Container(
+        decoration: BoxDecoration(
+          gradient: widget.gradient,
+          borderRadius: BorderRadius.circular(AppTheme.radiusMedium.r),
+          boxShadow: [
+            BoxShadow(
+              color: widget.gradient.colors.first.withOpacity(0.3),
+              blurRadius: 12,
+              offset: const Offset(0, 4),
             ),
-            child: Stack(
-              children: [
-                // Background pattern
-                Positioned(
-                  right: -10,
-                  bottom: -10,
-                  child: Icon(
-                    widget.icon,
-                    size: 80.sp,
-                    color: Colors.white.withOpacity(0.1),
+          ],
+        ),
+        child: Stack(
+          children: [
+            // Background pattern
+            Positioned(
+              right: -10,
+              bottom: -10,
+              child: Icon(
+                widget.icon,
+                size: 80.sp,
+                color: Colors.white.withOpacity(0.1),
+              ),
+            ),
+            // Content
+            Padding(
+              padding: EdgeInsets.all(AppTheme.spacingMd.w),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  // Icon
+                  Container(
+                    padding: EdgeInsets.all(AppTheme.spacingSm.w),
+                    decoration: BoxDecoration(
+                      color: Colors.white.withOpacity(0.2),
+                      borderRadius: BorderRadius.circular(
+                        AppTheme.radiusSmall.r,
+                      ),
+                    ),
+                    child: Icon(
+                      widget.icon,
+                      size: 24.sp,
+                      color: Colors.white,
+                    ),
                   ),
-                ),
-                // Content
-                Padding(
-                  padding: EdgeInsets.all(AppTheme.spacingMd.w),
-                  child: Column(
+                  // Text
+                  Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      // Icon
-                      Container(
-                        padding: EdgeInsets.all(AppTheme.spacingSm.w),
-                        decoration: BoxDecoration(
-                          color: Colors.white.withOpacity(0.2),
-                          borderRadius:
-                              BorderRadius.circular(AppTheme.radiusSmall.r),
-                        ),
-                        child: Icon(
-                          widget.icon,
-                          size: 24.sp,
+                      Text(
+                        widget.label,
+                        style: TextStyle(
+                          fontSize: 14.sp,
+                          fontWeight: FontWeight.bold,
                           color: Colors.white,
                         ),
                       ),
-                      // Text
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            widget.label,
-                            style: TextStyle(
-                              fontSize: 14.sp,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.white,
-                            ),
-                          ),
-                          SizedBox(height: 2.h),
-                          Text(
-                            widget.subtitle,
-                            style: TextStyle(
-                              fontSize: 11.sp,
-                              color: Colors.white.withOpacity(0.8),
-                            ),
-                          ),
-                        ],
+                      SizedBox(height: 2.h),
+                      Text(
+                        widget.subtitle,
+                        style: TextStyle(
+                          fontSize: 11.sp,
+                          color: Colors.white.withOpacity(0.8),
+                        ),
                       ),
                     ],
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
-          ),
+          ],
         ),
-      );
+      ),
+    ),
+  );
 }

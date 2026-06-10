@@ -29,7 +29,7 @@ class VisaToggle extends StatelessWidget {
       ),
       child: AnimatedAlign(
         duration: const Duration(milliseconds: 200),
-        alignment: value ? Alignment.centerRight : Alignment.centerLeft,
+        alignment: value ? AlignmentDirectional.centerEnd : AlignmentDirectional.centerStart,
         child: Container(
           width: 27.w,
           height: 27.w,

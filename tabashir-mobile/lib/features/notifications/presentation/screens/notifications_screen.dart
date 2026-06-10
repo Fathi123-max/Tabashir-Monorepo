@@ -71,7 +71,11 @@ class NotificationsScreen extends StatelessWidget {
                       builder: (context, state) {
                         if (state.notifications.isNotEmpty) {
                           return Text(
-                            '${state.notifications.length} notifications'.tr(),
+                            'notifications_count'.tr(
+                              namedArgs: {
+                                'count': state.notifications.length.toString(),
+                              },
+                            ),
                             style: systemTheme.textTheme.bodyMedium?.copyWith(
                               color: systemTheme.colorScheme.onSurfaceVariant,
                             ),
@@ -198,7 +202,7 @@ class EmptyNotificationsWidget extends StatelessWidget {
           ),
           SizedBox(height: AppTheme.spacingSm.h),
           Text(
-            "When you get notifications, they'.tr()ll appear here",
+            "When you get notifications, they'll appear here".tr(),
             style: systemTheme.textTheme.bodyMedium?.copyWith(
               color: systemTheme.colorScheme.onSurfaceVariant,
             ),

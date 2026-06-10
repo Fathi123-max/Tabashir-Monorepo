@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -75,7 +76,7 @@ class HomeAppliedJobsWidget extends StatelessWidget {
         ),
         SizedBox(height: AppTheme.spacingLg.h),
         Text(
-          'No Applications Yet',
+          'no_applications_yet'.tr(),
           style: theme.textTheme.titleLarge?.copyWith(
             fontWeight: FontWeight.bold,
             color: AppTheme.zinc700,
@@ -85,7 +86,7 @@ class HomeAppliedJobsWidget extends StatelessWidget {
         ),
         SizedBox(height: AppTheme.spacingSm.h),
         Text(
-          'Start applying to jobs to track your applications here',
+          'start_applying_description'.tr(),
           style: theme.textTheme.bodyMedium?.copyWith(
             color: AppTheme.zinc500,
             fontSize: 14.sp,
@@ -135,7 +136,7 @@ class HomeAppliedJobsWidget extends StatelessWidget {
                 ),
                 SizedBox(width: AppTheme.spacingSm.w),
                 Text(
-                  'Browse Jobs',
+                  'browse_jobs'.tr(),
                   style: theme.textTheme.labelLarge?.copyWith(
                     fontWeight: FontWeight.w600,
                     fontSize: 15.sp,

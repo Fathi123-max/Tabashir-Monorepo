@@ -44,7 +44,7 @@ class AiResumeBuilderView extends StatelessWidget {
     backgroundColor: Theme.of(context).scaffoldBackgroundColor,
     appBar: AppBar(
       leading: IconButton(
-        icon: const Icon(Icons.arrow_back_ios),
+        icon: Icon(Icons.adaptive.arrow_back),
         onPressed: () => context.pop(),
       ),
       title: Text(

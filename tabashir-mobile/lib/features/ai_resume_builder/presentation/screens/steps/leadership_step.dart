@@ -184,7 +184,10 @@ class LeadershipStep extends StatelessWidget {
                         ),
                         SizedBox(width: AppTheme.spacingXs.w),
                         Text(
-                          '$startDate - $endDate'.tr(),
+                          'date_range'.tr(namedArgs: {
+                            'startDate': startDate,
+                            'endDate': endDate,
+                          }),
                           style: theme.textTheme.bodySmall?.copyWith(
                             color: AppTheme.textMutedLight,
                           ),

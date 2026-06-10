@@ -85,10 +85,22 @@ class _AllMatchedJobsContent extends StatelessWidget {
           final hasMore = state.matchedJobsHasMore;
 
           AppLogger.debug('[ALL_MATCHED_SCREEN] Building screen', tag: 'Home');
-          AppLogger.debug('[ALL_MATCHED_SCREEN] All matched jobs count: ${allMatchedJobs.length}', tag: 'Home');
-          AppLogger.debug('[ALL_MATCHED_SCREEN] Is loading: $isLoading', tag: 'Home');
-          AppLogger.debug('[ALL_MATCHED_SCREEN] Is loading more: $isLoadingMore', tag: 'Home');
-          AppLogger.debug('[ALL_MATCHED_SCREEN] Has more: $hasMore', tag: 'Home');
+          AppLogger.debug(
+            '[ALL_MATCHED_SCREEN] All matched jobs count: ${allMatchedJobs.length}',
+            tag: 'Home',
+          );
+          AppLogger.debug(
+            '[ALL_MATCHED_SCREEN] Is loading: $isLoading',
+            tag: 'Home',
+          );
+          AppLogger.debug(
+            '[ALL_MATCHED_SCREEN] Is loading more: $isLoadingMore',
+            tag: 'Home',
+          );
+          AppLogger.debug(
+            '[ALL_MATCHED_SCREEN] Has more: $hasMore',
+            tag: 'Home',
+          );
 
           if (isLoading && allMatchedJobs.isEmpty) {
             return const Center(
@@ -167,7 +179,10 @@ class _AllMatchedJobsContent extends StatelessWidget {
                         pathParameters: {'jobId': job.id},
                       );
                     } else {
-                      AppLogger.debug('[ALL_MATCHED_SCREEN] Job ID is null or empty for job: ${job.title}', tag: 'Home');
+                      AppLogger.debug(
+                        '[ALL_MATCHED_SCREEN] Job ID is null or empty for job: ${job.title}',
+                        tag: 'Home',
+                      );
                     }
                   },
                   child: JobCard(
@@ -202,7 +217,7 @@ class _AllMatchedJobsContent extends StatelessWidget {
           ),
           SizedBox(height: AppTheme.spacingLg.h),
           Text(
-            'No Matched Jobs Found',
+            'no_matched_jobs_found'.tr(),
             style: theme.textTheme.headlineSmall?.copyWith(
               fontWeight: FontWeight.bold,
               color: AppTheme.zinc700,
@@ -211,7 +226,7 @@ class _AllMatchedJobsContent extends StatelessWidget {
           ),
           SizedBox(height: AppTheme.spacingMd.h),
           Text(
-            "We couldn't find any jobs matching your profile. Try updating your resume or profile to get better matches.",
+            "no_matched_jobs_desc".tr(),
             style: theme.textTheme.bodyMedium?.copyWith(
               color: AppTheme.zinc500,
             ),
@@ -219,17 +234,17 @@ class _AllMatchedJobsContent extends StatelessWidget {
           ),
           SizedBox(height: AppTheme.spacingLg.h),
           Text(
-            'Tips:',
+            'tips_header'.tr(),
             style: theme.textTheme.titleMedium?.copyWith(
               fontWeight: FontWeight.bold,
               color: AppTheme.primaryColor,
             ),
           ),
           SizedBox(height: AppTheme.spacingSm.h),
-          _buildTipItem(theme, '• Upload an updated resume'),
-          _buildTipItem(theme, '• Complete your profile details'),
-          _buildTipItem(theme, '• Specify your preferred locations'),
-          _buildTipItem(theme, '• Add relevant skills and experience'),
+          _buildTipItem(theme, 'tip_upload_resume'.tr()),
+          _buildTipItem(theme, 'tip_complete_profile'.tr()),
+          _buildTipItem(theme, 'tip_specify_locations'.tr()),
+          _buildTipItem(theme, 'tip_add_skills'.tr()),
         ],
       ),
     ),

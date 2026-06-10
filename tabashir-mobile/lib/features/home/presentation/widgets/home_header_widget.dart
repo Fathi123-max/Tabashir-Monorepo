@@ -87,7 +87,7 @@ class HomeHeaderWidget extends StatelessWidget {
                     ),
                     SizedBox(height: AppTheme.spacingXs.h),
                     Text(
-                      'Welcome back! Ready to find your dream job?',
+                      'welcome_back_subtitle'.tr(),
                       style: theme.textTheme.bodyMedium?.copyWith(
                         color: theme.colorScheme.onSurfaceVariant,
                         fontSize: 14.sp,

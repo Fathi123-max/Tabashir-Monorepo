@@ -51,7 +51,7 @@ class ResumeSelectionCard extends StatelessWidget {
           children: [
             // Radio button
             Padding(
-              padding: EdgeInsets.only(left: 15.w),
+              padding: EdgeInsetsDirectional.only(start: 15.w),
               child: Radio<String>(
                 value: resume.id,
                 groupValue: isSelected ? resume.id : null,
@@ -95,7 +95,7 @@ class ResumeSelectionCard extends StatelessWidget {
             // Check icon for selected state
             if (isSelected)
               Padding(
-                padding: EdgeInsets.only(right: 15.w),
+                padding: EdgeInsetsDirectional.only(end: 15.w),
                 child: Icon(
                   Icons.check_circle,
                   color: AppTheme.primaryColor,

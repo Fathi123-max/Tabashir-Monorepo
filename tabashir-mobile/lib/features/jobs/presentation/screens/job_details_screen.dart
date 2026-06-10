@@ -108,7 +108,7 @@ class _JobDetailScreenState extends State<JobDetailScreen> {
             actionsIconTheme: Theme.of(context).appBarTheme.actionsIconTheme,
             surfaceTintColor: Colors.transparent,
             leading: IconButton(
-              icon: const Icon(Icons.arrow_back_ios_new),
+              icon: Icon(Icons.adaptive.arrow_back),
               onPressed: () => Navigator.of(context).pop(),
               tooltip: 'Back'.tr(),
             ),
@@ -244,7 +244,11 @@ class _JobDetailScreenState extends State<JobDetailScreen> {
 
           // Job Tags
           Semantics(
-            label: 'Job tags: ${jobDetails.tags.join(", ")}'.tr(),
+            label: 'job_tags'.tr(
+              namedArgs: {
+                'tags': jobDetails.tags.join(", "),
+              },
+            ),
             child: JobTagsWidget(
               tags: jobDetails.tags,
             ),
@@ -287,22 +291,22 @@ class _JobDetailScreenState extends State<JobDetailScreen> {
                 if (jobDetails.employmentType != null)
                   _buildInfoChip(
                     icon: Icons.work_outline_rounded,
-                    label: jobDetails.employmentType!,
+                    label: jobDetails.employmentType!.tr(),
                   ),
                 if (jobDetails.experienceLevel != null)
                   _buildInfoChip(
                     icon: Icons.trending_up_rounded,
-                    label: jobDetails.experienceLevel!,
+                    label: jobDetails.experienceLevel!.tr(),
                   ),
                 if (jobDetails.workingHours != null)
                   _buildInfoChip(
                     icon: Icons.schedule_rounded,
-                    label: jobDetails.workingHours!,
+                    label: jobDetails.workingHours!.tr(),
                   ),
                 if (jobDetails.workingDays != null)
                   _buildInfoChip(
                     icon: Icons.calendar_today_rounded,
-                    label: jobDetails.workingDays!,
+                    label: jobDetails.workingDays!.tr(),
                   ),
               ],
             ),
@@ -594,31 +598,34 @@ class _JobDetailScreenState extends State<JobDetailScreen> {
         color: AppTheme.primaryColor,
       ),
       SizedBox(width: 8.w),
-      if (isLink) Expanded(
-              child: GestureDetector(
-                onTap: () {
-                  // TODO: Open URL
-                  AppLogger.debug('Open URL: $url', tag: 'Jobs');
-                },
-                child: Text(
-                  label,
-                  style: TextStyle(
-                    fontSize: 14.sp,
-                    color: AppTheme.primaryColor,
-                    fontWeight: FontWeight.w600,
-                    decoration: TextDecoration.underline,
-                  ),
-                ),
-              ),
-            ) else Expanded(
-              child: Text(
-                label,
-                style: TextStyle(
-                  fontSize: 14.sp,
-                  color: Theme.of(context).colorScheme.onSurface,
-                ),
+      if (isLink)
+        Expanded(
+          child: GestureDetector(
+            onTap: () {
+              // TODO: Open URL
+              AppLogger.debug('Open URL: $url', tag: 'Jobs');
+            },
+            child: Text(
+              label,
+              style: TextStyle(
+                fontSize: 14.sp,
+                color: AppTheme.primaryColor,
+                fontWeight: FontWeight.w600,
+                decoration: TextDecoration.underline,
               ),
             ),
+          ),
+        )
+      else
+        Expanded(
+          child: Text(
+            label,
+            style: TextStyle(
+              fontSize: 14.sp,
+              color: Theme.of(context).colorScheme.onSurface,
+            ),
+          ),
+        ),
     ],
   );
 
@@ -659,8 +666,6 @@ class _JobDetailScreenState extends State<JobDetailScreen> {
   void _onSave(BuildContext context, String jobId) {
     context.read<JobDetailsCubit>().toggleSaveJob(jobId);
   }
-
-
 
   Future<void> _onApply(BuildContext context) async {
     if (context.read<JobDetailsCubit>().state is JobDetailsLoaded) {
@@ -815,7 +820,7 @@ class _JobDetailScreenState extends State<JobDetailScreen> {
             SizedBox(width: 8.w),
             Expanded(
               child: Text(
-                'Contact Employer',
+                'contact_employer'.tr(),
                 style: TextStyle(
                   fontSize: 18.sp,
                   fontWeight: FontWeight.bold,

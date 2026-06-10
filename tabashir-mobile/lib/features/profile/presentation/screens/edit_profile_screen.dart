@@ -55,7 +55,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         surfaceTintColor: Colors.transparent,
         leading: IconButton(
           icon: Icon(
-            Icons.arrow_back_ios_new,
+            Icons.adaptive.arrow_back,
             size: 20.sp,
           ),
           onPressed: () => Navigator.of(context).pop(),

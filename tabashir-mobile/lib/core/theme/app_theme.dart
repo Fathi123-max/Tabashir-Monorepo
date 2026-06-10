@@ -773,15 +773,15 @@ class AppTheme {
 
   // Custom gradient colors
   static LinearGradient primaryGradient = LinearGradient(
-    begin: Alignment.topLeft,
-    end: Alignment.bottomRight,
+    begin: AlignmentDirectional.topStart,
+    end: AlignmentDirectional.bottomEnd,
     colors: [primaryFromColor, primaryToColor],
   );
 
   // Lighter onboarding gradient for better eye comfort
   static LinearGradient onboardingGradient = const LinearGradient(
-    begin: Alignment.topLeft,
-    end: Alignment.bottomRight,
+    begin: AlignmentDirectional.topStart,
+    end: AlignmentDirectional.bottomEnd,
     colors: [
       Color(0xFFF7FAFC), // Very light gray background (from)
       Color(0xFFEDF2F7), // Light gray background (to)
@@ -789,39 +789,39 @@ class AppTheme {
   );
 
   static LinearGradient accentGradient = LinearGradient(
-    begin: Alignment.topLeft,
-    end: Alignment.bottomRight,
+    begin: AlignmentDirectional.topStart,
+    end: AlignmentDirectional.bottomEnd,
     colors: [const Color(0xFF10B981), accentColor],
   );
 
   static LinearGradient successGradient = LinearGradient(
-    begin: Alignment.topLeft,
-    end: Alignment.bottomRight,
+    begin: AlignmentDirectional.topStart,
+    end: AlignmentDirectional.bottomEnd,
     colors: [const Color(0xFF059669), successColor],
   );
 
   static LinearGradient warningGradient = LinearGradient(
-    begin: Alignment.topLeft,
-    end: Alignment.bottomRight,
+    begin: AlignmentDirectional.topStart,
+    end: AlignmentDirectional.bottomEnd,
     colors: [const Color(0xFFD97706), warningColor],
   );
 
   // Pro/Premium gradients
   static LinearGradient goldGradient = LinearGradient(
-    begin: Alignment.topLeft,
-    end: Alignment.bottomRight,
+    begin: AlignmentDirectional.topStart,
+    end: AlignmentDirectional.bottomEnd,
     colors: [goldLight, goldColor, goldDark],
   );
 
   static LinearGradient proGradient = LinearGradient(
-    begin: Alignment.topLeft,
-    end: Alignment.bottomRight,
+    begin: AlignmentDirectional.topStart,
+    end: AlignmentDirectional.bottomEnd,
     colors: [purpleColor, purpleDark, goldColor],
   );
 
   static LinearGradient glassGradient = LinearGradient(
-    begin: Alignment.topLeft,
-    end: Alignment.bottomRight,
+    begin: AlignmentDirectional.topStart,
+    end: AlignmentDirectional.bottomEnd,
     colors: [
       Colors.white.withOpacity(0.1),
       Colors.white.withOpacity(0.05),

@@ -1358,7 +1358,11 @@ class _AiJobApplyUnifiedScreenState extends State<AiJobApplyUnifiedScreen> {
                 children: [
                   TextSpan(text: "I'm ".tr()),
                   TextSpan(
-                    text: '$confidence% confident'.tr(),
+                    text: 'confidence_level'.tr(
+                      namedArgs: {
+                        'confidence': confidence.toString(),
+                      },
+                    ),
                     style: const TextStyle(fontWeight: FontWeight.bold),
                   ),
                   TextSpan(text: ' these roles fit your profile.'.tr()),

@@ -90,7 +90,7 @@ class HomeActivityTimelineWidget extends StatelessWidget {
             ),
             SizedBox(height: AppTheme.spacingMd.h),
             Text(
-              'No recent activity'.tr(),
+              'no_recent_activity'.tr(),
               style: theme.textTheme.bodyLarge?.copyWith(
                 color: Colors.grey,
               ),

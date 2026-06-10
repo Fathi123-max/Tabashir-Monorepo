@@ -31,8 +31,12 @@ class HomeAIMatchBannerWidget extends StatelessWidget {
 
     // Generate dynamic message
     final message = count > 0
-        ? 'I matched $count new ${title}job${count > 1 ? 's' : ''} in $locationText'
-        : 'AI is finding the best job matches for you';
+        ? 'matched_jobs_in_cities'.tr(namedArgs: {
+            'count': count.toString(),
+            'jobTitle': title,
+            'cities': locationText,
+          })
+        : 'ai_finding_matches'.tr();
 
     return Container(
       decoration: BoxDecoration(
@@ -60,7 +64,7 @@ class HomeAIMatchBannerWidget extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  message.tr(),
+                  message,
                   style: theme.textTheme.titleMedium?.copyWith(
                     color: Colors.white,
                     fontWeight: FontWeight.bold,
@@ -90,7 +94,7 @@ class HomeAIMatchBannerWidget extends StatelessWidget {
                           ),
                         ),
                         child: Text(
-                          'View Jobs'.tr(),
+                          'view_jobs'.tr(),
                           style: TextStyle(
                             fontSize: 14.sp,
                             fontWeight: FontWeight.w600,
@@ -121,7 +125,7 @@ class HomeAIMatchBannerWidget extends StatelessWidget {
                           ),
                         ),
                         child: Text(
-                          'Auto Apply'.tr(),
+                          'auto_apply'.tr(),
                           style: TextStyle(
                             fontSize: 14.sp,
                             fontWeight: FontWeight.w600,

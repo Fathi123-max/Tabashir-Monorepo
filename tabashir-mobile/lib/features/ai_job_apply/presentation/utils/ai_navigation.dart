@@ -147,8 +147,8 @@ class AiNavigator {
     child: Container(
       decoration: BoxDecoration(
         gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
+          begin: AlignmentDirectional.topStart,
+          end: AlignmentDirectional.bottomEnd,
           colors: [
             AppTheme.primaryColor.withOpacity(0.3 * animation.value),
             AppTheme.blue900.withOpacity(0.5 * animation.value),

@@ -187,7 +187,12 @@ class _JobFilterBottomSheetState extends State<JobFilterBottomSheet> {
                         ),
                         SizedBox(width: AppTheme.spacingXs.w),
                         Text(
-                          '$activeFilterCount ${activeFilterCount > 1 ? "filters".tr() : "filter".tr()} ${"active".tr()}',
+                          'active_filters_count'.tr(namedArgs: {
+                            'count': activeFilterCount.toString(),
+                            'filters': activeFilterCount > 1
+                                ? 'filters'.tr()
+                                : 'filter'.tr(),
+                          }),
                           style: theme.textTheme.bodySmall?.copyWith(
                             color: AppTheme.primaryColor,
                             fontWeight: FontWeight.w600,
@@ -304,7 +309,7 @@ class _JobFilterBottomSheetState extends State<JobFilterBottomSheet> {
           children: options.map((option) {
             final isSelected = selectedItems.contains(option);
             return FilterChip(
-              label: option,
+              label: option.tr(),
               isSelected: isSelected,
               onTap: () => onTap(option),
             );

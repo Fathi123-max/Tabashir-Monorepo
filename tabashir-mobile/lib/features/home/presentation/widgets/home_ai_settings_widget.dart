@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -103,7 +104,7 @@ class HomeAISettingsWidget extends StatelessWidget {
                       Row(
                         children: [
                           Text(
-                            isPro ? 'AI Job Apply: Pro Plan' : 'AI Job Apply',
+                            isPro ? 'ai_job_apply_pro'.tr() : 'AI Job Apply'.tr(),
                             style: theme.textTheme.titleMedium?.copyWith(
                               fontWeight: FontWeight.bold,
                               color: isPro
@@ -193,14 +194,16 @@ class HomeAISettingsWidget extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  '$remainingApplies applies remaining',
+                  'applies_remaining'.tr(namedArgs: {
+                    'count': remainingApplies.toString(),
+                  }),
                   style: theme.textTheme.titleLarge?.copyWith(
                     fontWeight: FontWeight.bold,
                     color: AppTheme.zinc900,
                   ),
                 ),
                 Text(
-                  isPro ? 'Unlimited plan' : 'Free plan (10 applies)',
+                  isPro ? 'unlimited_plan'.tr() : 'free_plan_10'.tr(),
                   style: theme.textTheme.bodySmall?.copyWith(
                     color: AppTheme.zinc500,
                   ),
@@ -322,7 +325,7 @@ class HomeAISettingsWidget extends StatelessWidget {
             ),
             SizedBox(width: AppTheme.spacingSm.w),
             Text(
-              'Upgrade to Pro',
+              'upgrade_to_pro'.tr(),
               style: theme.textTheme.labelLarge?.copyWith(
                 fontWeight: FontWeight.w600,
                 color: Colors.white,

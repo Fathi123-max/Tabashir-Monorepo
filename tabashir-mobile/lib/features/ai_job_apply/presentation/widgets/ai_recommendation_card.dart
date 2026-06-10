@@ -22,8 +22,8 @@ class AIRecommendationCard extends StatelessWidget {
     decoration: BoxDecoration(
       borderRadius: BorderRadius.circular(12.r),
       gradient: LinearGradient(
-        begin: Alignment.topLeft,
-        end: Alignment.bottomRight,
+        begin: AlignmentDirectional.topStart,
+        end: AlignmentDirectional.bottomEnd,
         colors: [
           AppTheme.blue900, // #042052
           AppTheme.primaryColor, // #0D57E1

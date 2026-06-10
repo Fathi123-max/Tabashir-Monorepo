@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../../../core/theme/app_theme.dart';
@@ -45,13 +46,17 @@ class _SalaryRangeSliderState extends State<SalaryRangeSlider> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text(
-              'Min: AED ${(_minValue / 1000).round()}k',
+              'min_salary_label'.tr(
+                namedArgs: {'count': (_minValue / 1000).round().toString()},
+              ),
               style: theme.textTheme.bodyMedium?.copyWith(
                 fontWeight: FontWeight.w600,
               ),
             ),
             Text(
-              'Max: AED ${(_maxValue / 1000).round()}k',
+              'max_salary_label'.tr(
+                namedArgs: {'count': (_maxValue / 1000).round().toString()},
+              ),
               style: theme.textTheme.bodyMedium?.copyWith(
                 fontWeight: FontWeight.w600,
               ),
@@ -67,8 +72,12 @@ class _SalaryRangeSliderState extends State<SalaryRangeSlider> {
           activeColor: AppTheme.primaryColor,
           inactiveColor: theme.colorScheme.outline.withOpacity(0.2),
           labels: RangeLabels(
-            'AED ${(_minValue / 1000).round()}k',
-            'AED ${(_maxValue / 1000).round()}k',
+            'min_salary_label'.tr(
+              namedArgs: {'count': (_minValue / 1000).round().toString()},
+            ),
+            'max_salary_label'.tr(
+              namedArgs: {'count': (_maxValue / 1000).round().toString()},
+            ),
           ),
           onChanged: (values) {
             setState(() {
@@ -88,7 +97,12 @@ class _SalaryRangeSliderState extends State<SalaryRangeSlider> {
             borderRadius: BorderRadius.circular(AppTheme.radiusSmall.r),
           ),
           child: Text(
-            'Selected range: AED ${(_minValue / 1000).round()}k - AED ${(_maxValue / 1000).round()}k',
+            'selected_range_label'.tr(
+              namedArgs: {
+                'min': (_minValue / 1000).round().toString(),
+                'max': (_maxValue / 1000).round().toString(),
+              },
+            ),
             textAlign: TextAlign.center,
             style: theme.textTheme.bodySmall?.copyWith(
               color: AppTheme.primaryColor,

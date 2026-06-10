@@ -303,7 +303,7 @@ class JobTitleSection extends StatelessWidget {
           SizedBox(width: 4.w),
           Flexible(
             child: Text(
-              percentage.contains('Match'.tr()) ? percentage : '$percentage ${'Match'.tr()}',
+              'match_percentage_label'.tr(namedArgs: {'percentage': percentage.replaceAll('%', '')}),
               style: TextStyle(
                 fontSize: 12.sp,
                 fontWeight: FontWeight.w700,

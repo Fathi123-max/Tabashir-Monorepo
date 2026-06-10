@@ -33,7 +33,7 @@ class AiJobApplyResultsScreen extends StatelessWidget {
         elevation: 0,
         centerTitle: true,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios),
+          icon: Icon(Icons.adaptive.arrow_back),
           onPressed: () => Navigator.of(context).pop(),
         ),
       ),

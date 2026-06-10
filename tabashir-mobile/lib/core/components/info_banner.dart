@@ -26,8 +26,8 @@ class InfoBanner extends StatelessWidget {
       padding: EdgeInsets.all(AppTheme.spacingMd.w),
       decoration: BoxDecoration(
         gradient: const LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
+          begin: AlignmentDirectional.topStart,
+          end: AlignmentDirectional.bottomEnd,
           colors: [
             Color(0xFFDEEBFF),
             Color(0xFFE0E7FF),

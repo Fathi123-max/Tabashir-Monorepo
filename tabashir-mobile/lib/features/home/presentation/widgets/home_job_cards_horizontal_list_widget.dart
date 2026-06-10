@@ -67,7 +67,10 @@ class _HomeJobCardsHorizontalListWidgetState
         _appliedJobs = ids;
       });
     } catch (e) {
-      AppLogger.debug('[HOME_WIDGET] Failed to load applied jobs: $e', tag: 'Home');
+      AppLogger.debug(
+        '[HOME_WIDGET] Failed to load applied jobs: $e',
+        tag: 'Home',
+      );
     } finally {
       if (mounted) {
         setState(() {
@@ -91,7 +94,7 @@ class _HomeJobCardsHorizontalListWidgetState
             padding: EdgeInsets.all(16.w),
             child: Center(
               child: Text(
-                'No AI matches available yet'.tr(),
+                'no_ai_matches_available_yet'.tr(),
                 style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                   color: Theme.of(context).colorScheme.onSurfaceVariant,
                 ),

@@ -32,20 +32,20 @@ class ThemeConstants {
 
   // Gradients
   static const LinearGradient primaryGradient = LinearGradient(
-    begin: Alignment.topLeft,
-    end: Alignment.bottomRight,
+    begin: AlignmentDirectional.topStart,
+    end: AlignmentDirectional.bottomEnd,
     colors: [primaryFrom, primaryTo],
   );
 
   static const LinearGradient accentGradient = LinearGradient(
-    begin: Alignment.topLeft,
-    end: Alignment.bottomRight,
+    begin: AlignmentDirectional.topStart,
+    end: AlignmentDirectional.bottomEnd,
     colors: [Color(0xFF10B981), accent],
   );
 
   static const LinearGradient cardGradient = LinearGradient(
-    begin: Alignment.topLeft,
-    end: Alignment.bottomRight,
+    begin: AlignmentDirectional.topStart,
+    end: AlignmentDirectional.bottomEnd,
     colors: [Color(0xFF0D57E1), Color(0xFF042052)],
   );
 

@@ -161,7 +161,7 @@ class _ResumePreviewScreenState extends State<ResumePreviewScreen> {
           overflow: TextOverflow.ellipsis,
         ),
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios),
+          icon: Icon(Icons.adaptive.arrow_back),
           onPressed: () => context.pop(),
         ),
         actions: [

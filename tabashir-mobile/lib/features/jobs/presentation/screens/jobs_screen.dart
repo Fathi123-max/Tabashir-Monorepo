@@ -94,32 +94,56 @@ class _JobsViewState extends State<JobsView> {
 
     // Ensure profile has email before loading jobs (fixes race condition)
     var profile = _profileCubit.state.profile;
-    AppLogger.debug('[JOBS_SCREEN] Profile after first load: ${profile?.email ?? "null"}', tag: 'Jobs');
+    AppLogger.debug(
+      '[JOBS_SCREEN] Profile after first load: ${profile?.email ?? "null"}',
+      tag: 'Jobs',
+    );
 
     if (profile == null || profile.email.isEmpty) {
-      AppLogger.debug('[JOBS_SCREEN] Profile email not available, forcing reload...', tag: 'Jobs');
+      AppLogger.debug(
+        '[JOBS_SCREEN] Profile email not available, forcing reload...',
+        tag: 'Jobs',
+      );
       await _profileCubit.loadProfileData(force: true);
       profile = _profileCubit.state.profile;
-      AppLogger.debug('[JOBS_SCREEN] Profile after force reload: ${profile?.email ?? "null"}', tag: 'Jobs');
+      AppLogger.debug(
+        '[JOBS_SCREEN] Profile after force reload: ${profile?.email ?? "null"}',
+        tag: 'Jobs',
+      );
     }
 
     // Wait for email to be available (with timeout - max 5 seconds)
     // This ensures match percentages are calculated correctly on app restart
     var waitAttempts = 0;
     while ((profile == null || profile.email.isEmpty) && waitAttempts < 10) {
-      AppLogger.debug('[JOBS_SCREEN] Waiting for profile email... attempt ${waitAttempts + 1}/10', tag: 'Jobs');
+      AppLogger.debug(
+        '[JOBS_SCREEN] Waiting for profile email... attempt ${waitAttempts + 1}/10',
+        tag: 'Jobs',
+      );
       await Future.delayed(const Duration(milliseconds: 500));
       profile = _profileCubit.state.profile;
-      AppLogger.debug('[JOBS_SCREEN] Profile check: ${profile?.email ?? "null"}', tag: 'Jobs');
+      AppLogger.debug(
+        '[JOBS_SCREEN] Profile check: ${profile?.email ?? "null"}',
+        tag: 'Jobs',
+      );
       waitAttempts++;
     }
 
     final email = profile?.email;
     if (email == null || email.isEmpty) {
-      AppLogger.debug('[JOBS_SCREEN] ⚠️ Profile email still not available after waiting. Jobs will load without matching.', tag: 'Jobs');
+      AppLogger.debug(
+        '[JOBS_SCREEN] ⚠️ Profile email still not available after waiting. Jobs will load without matching.',
+        tag: 'Jobs',
+      );
     } else {
-      AppLogger.debug('[JOBS_SCREEN] ✅ Profile email available: $email', tag: 'Jobs');
-      AppLogger.debug('[JOBS_SCREEN] Will pass email to JobsCubit for matching', tag: 'Jobs');
+      AppLogger.debug(
+        '[JOBS_SCREEN] ✅ Profile email available: $email',
+        tag: 'Jobs',
+      );
+      AppLogger.debug(
+        '[JOBS_SCREEN] Will pass email to JobsCubit for matching',
+        tag: 'Jobs',
+      );
     }
 
     await _loadAppliedJobs();
@@ -127,14 +151,20 @@ class _JobsViewState extends State<JobsView> {
       // Pass email directly to ensure it's used for matching
       // Force reload to ensure jobs are loaded with email for matching
       final lang = context.locale.languageCode;
-      AppLogger.debug('[JOBS_SCREEN] Calling initializeState with email: $email, lang: $lang (force reload)', tag: 'Jobs');
+      AppLogger.debug(
+        '[JOBS_SCREEN] Calling initializeState with email: $email, lang: $lang (force reload)',
+        tag: 'Jobs',
+      );
       context.read<JobsCubit>().initializeState(
         email: email,
         lang: lang,
         forceReload: true,
       );
     } else {
-      AppLogger.debug('[JOBS_SCREEN] ⚠️ Widget not mounted, skipping initializeState', tag: 'Jobs');
+      AppLogger.debug(
+        '[JOBS_SCREEN] ⚠️ Widget not mounted, skipping initializeState',
+        tag: 'Jobs',
+      );
     }
   }
 
@@ -160,7 +190,10 @@ class _JobsViewState extends State<JobsView> {
         context.read<JobsCubit>().updateAppliedJobIds(ids);
       }
     } catch (e) {
-      AppLogger.debug('[JOBS_SCREEN] Failed to load applied jobs: $e', tag: 'Jobs');
+      AppLogger.debug(
+        '[JOBS_SCREEN] Failed to load applied jobs: $e',
+        tag: 'Jobs',
+      );
     } finally {
       if (mounted) {
         setState(() {
@@ -196,21 +229,39 @@ class _JobsViewState extends State<JobsView> {
       final profileState = _profileCubit.state;
 
       // Debug logging
-      AppLogger.debug('[JOBS_SCREEN] Profile status: ${profileState.status}', tag: 'Jobs');
-      AppLogger.debug('[JOBS_SCREEN] Profile data: ${profileState.profile}', tag: 'Jobs');
-      AppLogger.debug('[JOBS_SCREEN] Email: ${profileState.profile?.email}', tag: 'Jobs');
+      AppLogger.debug(
+        '[JOBS_SCREEN] Profile status: ${profileState.status}',
+        tag: 'Jobs',
+      );
+      AppLogger.debug(
+        '[JOBS_SCREEN] Profile data: ${profileState.profile}',
+        tag: 'Jobs',
+      );
+      AppLogger.debug(
+        '[JOBS_SCREEN] Email: ${profileState.profile?.email}',
+        tag: 'Jobs',
+      );
 
       // If profile is not loaded, try to load it
       if (profileState.status == ProfileStatus.initial) {
-        AppLogger.debug('[JOBS_SCREEN] Profile not loaded, loading now...', tag: 'Jobs');
+        AppLogger.debug(
+          '[JOBS_SCREEN] Profile not loaded, loading now...',
+          tag: 'Jobs',
+        );
         await _profileCubit.loadProfileData();
         // Wait a bit for the load to complete
         await Future<void>.delayed(const Duration(milliseconds: 500));
 
         // Check again after loading
         final updatedState = _profileCubit.state;
-        AppLogger.debug('[JOBS_SCREEN] Updated profile status: ${updatedState.status}', tag: 'Jobs');
-        AppLogger.debug('[JOBS_SCREEN] Updated profile data: ${updatedState.profile}', tag: 'Jobs');
+        AppLogger.debug(
+          '[JOBS_SCREEN] Updated profile status: ${updatedState.status}',
+          tag: 'Jobs',
+        );
+        AppLogger.debug(
+          '[JOBS_SCREEN] Updated profile data: ${updatedState.profile}',
+          tag: 'Jobs',
+        );
       }
 
       if (profileState.status != ProfileStatus.success ||
@@ -305,7 +356,12 @@ class _JobsViewState extends State<JobsView> {
           child: Column(
             children: [
               _buildHeader(context, Theme.of(context)),
-              _buildSearchBar(context, Theme.of(context), hasActiveFilters: false, activeFilterCount: 0),
+              _buildSearchBar(
+                context,
+                Theme.of(context),
+                hasActiveFilters: false,
+                activeFilterCount: 0,
+              ),
               const Expanded(child: Center(child: CircularProgressIndicator())),
             ],
           ),
@@ -321,13 +377,22 @@ class _JobsViewState extends State<JobsView> {
           child: Column(
             children: [
               _buildHeader(context, Theme.of(context)),
-              _buildSearchBar(context, Theme.of(context), hasActiveFilters: false, activeFilterCount: 0),
+              _buildSearchBar(
+                context,
+                Theme.of(context),
+                hasActiveFilters: false,
+                activeFilterCount: 0,
+              ),
               Expanded(
                 child: Center(
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      const Icon(Icons.error_outline, color: Colors.red, size: 60),
+                      const Icon(
+                        Icons.error_outline,
+                        color: Colors.red,
+                        size: 60,
+                      ),
                       const SizedBox(height: 16),
                       const Text('Something went wrong'),
                       const SizedBox(height: 16),
@@ -539,7 +604,7 @@ class _JobsViewState extends State<JobsView> {
           ),
           SizedBox(height: AppTheme.spacingLg.h),
           Text(
-            'No Jobs Found',
+            'no_jobs_found'.tr(),
             style: theme.textTheme.headlineSmall?.copyWith(
               fontWeight: FontWeight.bold,
               fontSize: 22.sp,
@@ -547,7 +612,7 @@ class _JobsViewState extends State<JobsView> {
           ),
           SizedBox(height: AppTheme.spacingSm.h),
           Text(
-            "Try adjusting your search or filters to find what you're looking for",
+            "adjust_filters_desc".tr(),
             style: theme.textTheme.bodyMedium?.copyWith(
               color: theme.colorScheme.onSurfaceVariant,
               fontSize: 14.sp,
@@ -573,7 +638,7 @@ class _JobsViewState extends State<JobsView> {
               ),
             ),
             child: Text(
-              'Clear Filters',
+              'clear_filters'.tr(),
               style: theme.textTheme.labelLarge?.copyWith(
                 fontWeight: FontWeight.w600,
                 fontSize: 14.sp,

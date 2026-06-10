@@ -173,8 +173,8 @@ class ProHeaderWidget extends StatelessWidget {
                         Expanded(
                           child: Text(
                             isPro
-                                ? 'Premium Member'
-                                : 'Welcome back!',
+                                ? 'premium_member'.tr()
+                                : 'welcome_back_subtitle'.tr(),
                             style: theme.textTheme.bodyMedium?.copyWith(
                               color: Colors.white.withOpacity(0.9),
                               fontSize: 13.sp,

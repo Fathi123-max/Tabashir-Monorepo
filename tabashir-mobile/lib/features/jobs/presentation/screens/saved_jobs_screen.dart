@@ -223,7 +223,7 @@ class SavedJobsView extends StatelessWidget {
   void _handleSalaryIconTap(BuildContext context, String jobTitle) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text('$jobTitle - Salary details'.tr()),
+        content: Text('job_salary_details'.tr(namedArgs: {'jobTitle': jobTitle})),
         duration: const Duration(seconds: 1),
       ),
     );

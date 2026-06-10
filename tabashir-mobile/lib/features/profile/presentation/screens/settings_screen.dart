@@ -85,7 +85,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
         scrolledUnderElevation: 0,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios),
+          icon: Icon(Icons.adaptive.arrow_back),
           onPressed: () => Navigator.of(context).pop(),
         ),
         title: Text(
@@ -534,7 +534,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(
-                      content: Text('Failed to delete account: $e'.tr()),
+                      content: Text(
+                        'failed_to_delete_account'.tr(
+                          namedArgs: {'error': e.toString()},
+                        ),
+                      ),
                       backgroundColor: AppTheme.errorColor,
                     ),
                   );

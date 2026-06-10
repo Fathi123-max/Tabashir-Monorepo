@@ -173,7 +173,7 @@ class HomeMarketInsightsWidget extends StatelessWidget {
               _buildSnapshotItem(
                 context,
                 totalJobs.toString(),
-                'Total Jobs',
+                'total_jobs'.tr(),
               ),
               Container(
                 width: 1,
@@ -183,7 +183,7 @@ class HomeMarketInsightsWidget extends StatelessWidget {
               _buildSnapshotItem(
                 context,
                 newJobsThisWeek.toString(),
-                'New This Week',
+                'new_this_week'.tr(),
               ),
             ],
           ),
