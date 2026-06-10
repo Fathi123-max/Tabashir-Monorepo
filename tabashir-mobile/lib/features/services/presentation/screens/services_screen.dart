@@ -247,7 +247,7 @@ class _ServicesScreenState extends State<ServicesScreen> {
                                           CrossAxisAlignment.start,
                                       children: [
                                         Text(
-                                          'AI Services',
+                                          'AI Services'.tr(),
                                           style: theme.textTheme.displayMedium
                                               ?.copyWith(
                                                 fontSize: 28.sp,
@@ -257,7 +257,8 @@ class _ServicesScreenState extends State<ServicesScreen> {
                                         ),
                                         SizedBox(height: AppTheme.spacingXs.h),
                                         Text(
-                                          'Boost your job search with smart tools.',
+                                          'Boost your job search with smart tools.'
+                                              .tr(),
                                           style: theme.textTheme.bodyMedium
                                               ?.copyWith(
                                                 color: theme
