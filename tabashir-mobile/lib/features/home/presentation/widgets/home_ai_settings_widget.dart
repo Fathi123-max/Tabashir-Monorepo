@@ -272,7 +272,7 @@ class HomeAISettingsWidget extends StatelessWidget {
           ),
           SizedBox(height: AppTheme.spacingMd.h),
           Text(
-            'No AI Applies Remaining',
+            'no_ai_applies_left'.tr(),
             style: theme.textTheme.titleMedium?.copyWith(
               fontWeight: FontWeight.bold,
               color: AppTheme.zinc700,
@@ -280,7 +280,7 @@ class HomeAISettingsWidget extends StatelessWidget {
           ),
           SizedBox(height: AppTheme.spacingXs.h),
           Text(
-            'Upgrade to continue using AI job apply',
+            'upgrade_to_continue'.tr(),
             style: theme.textTheme.bodySmall?.copyWith(
               color: AppTheme.zinc500,
             ),

@@ -312,7 +312,7 @@ class _ServicesScreenState extends State<ServicesScreen> {
                                     ),
                                     SizedBox(width: AppTheme.spacingXs.w),
                                     Text(
-                                      'Most Popular',
+                                      'most_popular'.tr(),
                                       style: theme.textTheme.labelLarge
                                           ?.copyWith(
                                             color: AppTheme.primaryColor,
@@ -326,13 +326,11 @@ class _ServicesScreenState extends State<ServicesScreen> {
 
                               ServiceCard(
                                 icon: Icons.workspace_premium_rounded,
-                                title: 'AI Job Apply Service - Premium'.tr(),
+                                title: 'ai_job_apply_premium_title'.tr(),
                                 description:
-                                    'Premium plan with 200 jobs matching and apply. '
-                                        .tr() +
-                                    'aiJobApplyNote'.tr(),
-                                price: 'AED 200',
-                                buttonText: 'Auto Apply'.tr(),
+                                    '${'ai_job_apply_premium_desc'.tr()} ${'aiJobApplyNote'.tr()}',
+                                price: 'aed_200'.tr(),
+                                buttonText: 'auto_apply'.tr(),
                                 isEnabled: true,
                                 isFeatured: true,
                                 onPressed: () {
@@ -340,7 +338,7 @@ class _ServicesScreenState extends State<ServicesScreen> {
                                     context,
                                     'ai_job_apply_premium',
                                     200,
-                                    'AI Job Apply Service - Premium',
+                                    'ai_job_apply_premium_title',
                                   );
                                 },
                               ),
@@ -348,35 +346,31 @@ class _ServicesScreenState extends State<ServicesScreen> {
 
                               ServiceCard(
                                 icon: Icons.flash_on_rounded,
-                                title: 'AI Job Apply Service - Basic'.tr(),
+                                title: 'ai_job_apply_basic_title'.tr(),
                                 description:
-                                    'Let our AI find and apply to the best jobs for you. '
-                                        .tr() +
-                                    'aiJobApplyNote'.tr(),
-                                price: 'AED 100',
-                                buttonText: 'Auto Apply'.tr(),
+                                    '${'ai_job_apply_basic_desc'.tr()} ${'aiJobApplyNote'.tr()}',
+                                price: 'aed_100'.tr(),
+                                buttonText: 'auto_apply'.tr(),
                                 isEnabled: true,
                                 onPressed: () {
                                   _onJobApplyServicePressed(
                                     context,
                                     'ai_job_apply_basic',
                                     100,
-                                    'AI Job Apply Service - Basic',
+                                    'ai_job_apply_basic_title',
                                   );
                                 },
                               ),
                               SizedBox(height: AppTheme.spacingMd.h),
 
-
                               ServiceCard(
                                 icon: Icons.link_rounded,
-                                title: 'AI LinkedIn Enhancement',
+                                title: 'ai_linkedin_enhancement_title'.tr(),
                                 description:
-                                    'Optimize your LinkedIn profile to attract more '
-                                        .tr() +
-                                    'recruiters and opportunities.'.tr(),
-                                price: 'AED 19',
-                                buttonText: 'Enhance Now'.tr(),
+                                    'ai_linkedin_enhancement_desc_1'.tr() +
+                                    'ai_linkedin_enhancement_desc_2'.tr(),
+                                price: 'aed_19'.tr(),
+                                buttonText: 'enhance_now'.tr(),
                                 isEnabled: true,
                                 onPressed: () {
                                   _onLinkedInEnhancerPressed(context);

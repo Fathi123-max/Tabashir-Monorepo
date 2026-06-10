@@ -186,15 +186,17 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 ),
                 onSelected: (locale) {
                   context.setLocale(locale);
+                  final languageName = locale.languageCode == 'en'
+                      ? 'English'
+                      : locale.languageCode == 'ar'
+                          ? 'العربية'
+                          : 'Español';
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(
                       content: Text(
-                        'Language changed to ${locale.languageCode == 'en'
-                                ? 'English'
-                                : locale.languageCode == 'ar'
-                                ? 'العربية'
-                                : 'Español'}'
-                            .tr(),
+                        'language_changed'.tr(namedArgs: {
+                          'language': languageName,
+                        }),
                       ),
                       backgroundColor: AppTheme.primaryColor,
                     ),
@@ -432,8 +434,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(
-          'Theme changed to ${isDarkMode ? '.tr()Dark' : '.tr()Light'} mode'
-              .tr(),
+          'theme_changed'.tr(namedArgs: {
+            'mode': isDarkMode ? 'dark'.tr() : 'light'.tr(),
+          }),
         ),
         backgroundColor: AppTheme.primaryColor,
       ),

@@ -500,7 +500,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error picking file: $e'.tr())),
+          SnackBar(content: Text('${'file_pick_error'.tr()}: $e')),
         );
       }
     }

@@ -943,7 +943,7 @@ class _JobDetailScreenState extends State<JobDetailScreen> {
           TextButton(
             onPressed: () => Navigator.of(context).pop(),
             child: Text(
-              'Close',
+              'close'.tr(),
               style: TextStyle(
                 fontSize: 14.sp,
                 color: theme.colorScheme.primary,

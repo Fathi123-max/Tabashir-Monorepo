@@ -69,12 +69,12 @@ class AddResumeOptionsSheet extends StatelessWidget {
               title: Text(
                 state.isUploading
                     ? 'Reformatting resume...'.tr()
-                    : 'Reformat to ATS'.tr(),
+                    : 'reformat_to_ats'.tr(),
               ),
               subtitle: Text(
                 state.isUploading
                     ? 'Please wait while we reformat your resume'.tr()
-                    : 'Upload existing resume to optimize for ATS'.tr(),
+                    : 'upload_existing_resume_desc'.tr(),
               ),
               onTap: state.isUploading
                   ? null
@@ -87,8 +87,8 @@ class AddResumeOptionsSheet extends StatelessWidget {
             ),
             ListTile(
               leading: const Icon(Icons.create_outlined),
-              title: Text('Build from Scratch'.tr()),
-              subtitle: Text('Generate a new resume with AI assistance'.tr()),
+              title: Text('build_from_scratch'.tr()),
+              subtitle: Text('generate_new_resume_desc'.tr()),
               onTap: state.isUploading
                   ? null
                   : () {

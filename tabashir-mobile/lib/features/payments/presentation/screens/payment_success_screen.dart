@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../../../core/theme/app_theme.dart';
@@ -38,7 +39,7 @@ class PaymentSuccessScreen extends StatelessWidget {
 
               // Success Title
               Text(
-                'Payment Successful!',
+                'payment_successful'.tr(),
                 style: theme.textTheme.displaySmall?.copyWith(
                   fontSize: 28.sp,
                   fontWeight: FontWeight.bold,
@@ -52,7 +53,7 @@ class PaymentSuccessScreen extends StatelessWidget {
               // Service Title
               if (serviceTitle != null)
                 Text(
-                  serviceTitle!,
+                  serviceTitle!.tr(),
                   style: theme.textTheme.titleLarge?.copyWith(
                     fontSize: 20.sp,
                     fontWeight: FontWeight.w600,
@@ -105,7 +106,7 @@ class PaymentSuccessScreen extends StatelessWidget {
                   child: Column(
                     children: [
                       Text(
-                        'Transaction ID',
+                        'transaction_id'.tr(),
                         style: theme.textTheme.labelSmall?.copyWith(
                           color: theme.colorScheme.onSurfaceVariant,
                         ),
@@ -150,7 +151,7 @@ class PaymentSuccessScreen extends StatelessWidget {
                     elevation: 0,
                   ),
                   child: Text(
-                    'OK',
+                    'ok'.tr(),
                     style: theme.textTheme.titleMedium?.copyWith(
                       fontSize: 18.sp,
                       fontWeight: FontWeight.bold,
@@ -211,7 +212,7 @@ class PaymentSuccessScreen extends StatelessWidget {
               ),
               SizedBox(width: AppTheme.spacingSm.w),
               Text(
-                "What's Next?",
+                "whats_next".tr(),
                 style: theme.textTheme.titleMedium?.copyWith(
                   fontSize: 18.sp,
                   fontWeight: FontWeight.bold,
@@ -222,22 +223,22 @@ class PaymentSuccessScreen extends StatelessWidget {
           SizedBox(height: AppTheme.spacingMd.h),
           _buildFeatureItem(
             icon: Icons.auto_awesome_rounded,
-            title: 'AI Job Apply Activated',
-            description: 'Your CV has been formatted and optimized',
+            title: 'ai_job_apply_activated'.tr(),
+            description: 'cv_optimized'.tr(),
             theme: theme,
           ),
           SizedBox(height: AppTheme.spacingSm.h),
           _buildFeatureItem(
             icon: Icons.numbers_rounded,
-            title: 'Job Credits Added',
-            description: '100-200 AI job applications ready to use',
+            title: 'job_credits_added'.tr(),
+            description: 'applies_ready'.tr(),
             theme: theme,
           ),
           SizedBox(height: AppTheme.spacingSm.h),
           _buildFeatureItem(
             icon: Icons.rocket_launch_rounded,
-            title: 'Start Applying',
-            description: 'Head to home to begin auto-applying',
+            title: 'start_applying'.tr(),
+            description: 'head_to_home'.tr(),
             theme: theme,
           ),
         ],

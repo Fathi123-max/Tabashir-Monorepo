@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../../../core/theme/app_theme.dart';
@@ -30,7 +31,7 @@ class ResumeVaultEmptyState extends StatelessWidget {
             ),
             SizedBox(height: AppTheme.spacingLg.h),
             Text(
-              'No Resumes Yet',
+              'no_resumes_yet'.tr(),
               style: theme.textTheme.headlineMedium?.copyWith(
                 fontWeight: FontWeight.bold,
               ),
@@ -38,7 +39,7 @@ class ResumeVaultEmptyState extends StatelessWidget {
             ),
             SizedBox(height: AppTheme.spacingMd.h),
             Text(
-              'Add your first resume to get started with job applications',
+              'add_first_resume_desc'.tr(),
               style: theme.textTheme.bodyLarge?.copyWith(
                 color: theme.brightness == Brightness.light
                     ? AppTheme.textMutedLight
@@ -50,7 +51,7 @@ class ResumeVaultEmptyState extends StatelessWidget {
             ElevatedButton.icon(
               onPressed: onAddResume,
               icon: const Icon(Icons.add_circle),
-              label: const Text('Add Your First Resume'),
+              label: Text('add_your_first_resume'.tr()),
               style: AppTheme.primaryButtonStyle,
             ),
           ],

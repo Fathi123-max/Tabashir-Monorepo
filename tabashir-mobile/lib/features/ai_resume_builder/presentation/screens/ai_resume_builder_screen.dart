@@ -389,7 +389,7 @@ class AiResumeBuilderView extends StatelessWidget {
                 if (context.mounted) {
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(
-                      content: Text('Payment initialization failed: $e'.tr()),
+                      content: Text('${'payment_init_failed'.tr()}: $e'),
                       backgroundColor: AppTheme.errorColor,
                     ),
                   );

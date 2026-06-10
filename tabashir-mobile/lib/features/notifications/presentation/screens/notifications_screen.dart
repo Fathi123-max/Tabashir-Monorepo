@@ -123,7 +123,9 @@ class NotificationsScreen extends StatelessWidget {
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Text('Error: ${state.errorMessage}'.tr()),
+                            Text('error_with_message'.tr(namedArgs: {
+                              'message': state.errorMessage,
+                            })),
                             ElevatedButton(
                               onPressed: () {
                                 context
@@ -337,17 +339,16 @@ class NotificationCard extends StatelessWidget {
   }
 
   String _formatTime(DateTime createdAt) {
-    // Simple time formatting - you might want to implement a more sophisticated version
     final now = DateTime.now();
     final difference = now.difference(createdAt);
 
     if (difference.inDays > 0) {
       if (difference.inDays == 1) return 'Yesterday'.tr();
-      return '${difference.inDays}d ago'.tr();
+      return 'days_ago'.tr(namedArgs: {'days': '${difference.inDays}'});
     } else if (difference.inHours > 0) {
-      return '${difference.inHours}h ago'.tr();
+      return 'hours_ago'.tr(namedArgs: {'hours': '${difference.inHours}'});
     } else {
-      return '${difference.inMinutes}m ago'.tr();
+      return 'minutes_ago'.tr(namedArgs: {'minutes': '${difference.inMinutes}'});
     }
   }
 

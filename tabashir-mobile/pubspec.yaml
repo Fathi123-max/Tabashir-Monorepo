@@ -52,6 +52,8 @@ dependencies:
 
   # Localization
   easy_localization: ^3.0.7
+  flutter_localizations:
+    sdk: flutter
 
   # Notifications
   flutter_local_notifications: ^19.5.0

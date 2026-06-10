@@ -173,11 +173,11 @@ class _ResumeVaultScreenState extends State<ResumeVaultScreen> {
                 size: 28.sp,
               ),
               label: Text(
-                'Add Resume'.tr(),
+                'add_resume_button'.tr(),
                 style: TextStyle(
                   fontSize: 17.sp,
                   fontWeight: FontWeight.w700,
-                  fontFamily: 'Inter'.tr(),
+                  fontFamily: 'Inter',
                 ),
               ),
               backgroundColor: AppTheme.primaryColor,
@@ -252,3 +252,4 @@ class _ResumeVaultScreenState extends State<ResumeVaultScreen> {
     await ResumeVaultOptionsSheet.show(context, resume, index, cubit);
   }
 }
+

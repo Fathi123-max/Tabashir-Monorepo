@@ -549,7 +549,7 @@ class _JobsViewState extends State<JobsView> {
               ),
               SizedBox(height: AppTheme.spacingXs.h),
               Text(
-                'Discover your dream career opportunities',
+                'discover_dream_career'.tr(),
                 style: theme.textTheme.bodyMedium?.copyWith(
                   color: theme.colorScheme.onSurfaceVariant,
                   fontSize: 14.sp,

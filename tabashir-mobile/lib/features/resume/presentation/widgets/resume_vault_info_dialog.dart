@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 
 /// Widget for displaying info dialog about Resume Vault
@@ -15,14 +16,14 @@ class ResumeVaultInfoDialog extends StatelessWidget {
 
     return AlertDialog(
       backgroundColor: theme.cardTheme.color,
-      title: const Text('Resume Vault'),
-      content: const Text(
-        'Your resume vault stores all your resume versions. You can add multiple resumes, set a default one, and manage them easily. Your resumes are private and only visible to you.',
+      title: Text('resume_vault_info_title'.tr()),
+      content: Text(
+        'resume_vault_info_content'.tr(),
       ),
       actions: [
         ElevatedButton(
           onPressed: () => Navigator.pop(context),
-          child: const Text('Got it'),
+          child: Text('got_it'.tr()),
         ),
       ],
     );
