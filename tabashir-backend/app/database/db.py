@@ -111,46 +111,82 @@ def get_table_columns(table_name, conn_type='main'):
             release_ai_db_connection(conn)
 
 
-def execute_ai_query(query, params=None, fetch_one=False, fetch_all=False, commit=False):
+def execute_ai_query(query, params=None, fetch_one=False, fetch_all=False, commit=False, retries=1):
     """Execute a query on the AI database."""
     conn = get_ai_db_connection()
-    cursor = conn.cursor(cursor_factory=RealDictCursor)
     try:
-        cursor.execute(query, params)
-        if commit:
-            conn.commit()
-        if fetch_one:
-            return cursor.fetchone()
-        if fetch_all:
-            return cursor.fetchall()
-        return None
-    except Exception as e:
-        conn.rollback()
-        raise e
+        cursor = conn.cursor(cursor_factory=RealDictCursor)
+        try:
+            cursor.execute(query, params)
+            if commit:
+                conn.commit()
+            if fetch_one:
+                return cursor.fetchone()
+            if fetch_all:
+                return cursor.fetchall()
+            return None
+        except psycopg2.OperationalError as e:
+            try:
+                conn.rollback()
+            except:
+                pass
+            if retries > 0:
+                cursor.close()
+                if ai_pool:
+                    ai_pool.putconn(conn, close=True)
+                return execute_ai_query(query, params, fetch_one, fetch_all, commit, retries - 1)
+            raise e
+        except Exception as e:
+            try:
+                conn.rollback()
+            except:
+                pass
+            raise e
+        finally:
+            if not cursor.closed:
+                cursor.close()
     finally:
-        cursor.close()
-        release_ai_db_connection(conn)
+        if conn and not conn.closed:
+            release_ai_db_connection(conn)
 
 
-def execute_query(query, params=None, fetch_one=False, fetch_all=False, commit=False):
+def execute_query(query, params=None, fetch_one=False, fetch_all=False, commit=False, retries=1):
     """Execute a query on the main database."""
     conn = get_db_connection()
-    cursor = conn.cursor()
     try:
-        cursor.execute(query, params)
-        if commit:
-            conn.commit()
-        if fetch_one:
-            return cursor.fetchone()
-        if fetch_all:
-            return cursor.fetchall()
-        return None
-    except Exception as e:
-        conn.rollback()
-        raise e
+        cursor = conn.cursor()
+        try:
+            cursor.execute(query, params)
+            if commit:
+                conn.commit()
+            if fetch_one:
+                return cursor.fetchone()
+            if fetch_all:
+                return cursor.fetchall()
+            return None
+        except psycopg2.OperationalError as e:
+            try:
+                conn.rollback()
+            except:
+                pass
+            if retries > 0:
+                cursor.close()
+                if main_pool:
+                    main_pool.putconn(conn, close=True)
+                return execute_query(query, params, fetch_one, fetch_all, commit, retries - 1)
+            raise e
+        except Exception as e:
+            try:
+                conn.rollback()
+            except:
+                pass
+            raise e
+        finally:
+            if not cursor.closed:
+                cursor.close()
     finally:
-        cursor.close()
-        release_db_connection(conn)
+        if conn and not conn.closed:
+            release_db_connection(conn)
 
 
 if __name__ == "__main__":

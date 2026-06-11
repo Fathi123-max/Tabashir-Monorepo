@@ -29,12 +29,12 @@ class _AllMatchedJobsScreenState extends State<AllMatchedJobsScreen> {
     _scrollController.addListener(_onScroll);
 
     // Load initial matched jobs on screen init
-    WidgetsBinding.instance.addPostFrameCallback((_) {
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
       final cubit = context.read<HomeCubit>();
       final email = cubit.state.user?.email ?? '';
       final lang = context.locale.languageCode;
       if (email.isNotEmpty && cubit.state.matchedJobsList.isEmpty) {
-        cubit.loadAllMatchedJobs(email: email, lang: lang);
+        await cubit.loadAllMatchedJobs(email: email, lang: lang);
       }
     });
   }

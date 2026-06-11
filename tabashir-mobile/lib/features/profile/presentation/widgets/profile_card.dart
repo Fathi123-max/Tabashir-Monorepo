@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../../../core/theme/app_theme.dart';
@@ -177,7 +178,7 @@ class ProfileCard extends StatelessWidget {
                           ),
                         ),
                         child: Text(
-                          userType!,
+                          userType!.tr(),
                           style: theme.textTheme.labelSmall?.copyWith(
                             color: _getUserTypeColor(userType!),
                             fontWeight: FontWeight.w600,
@@ -210,7 +211,7 @@ class ProfileCard extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      'Profile Strength',
+                      'profile_strength'.tr(),
                       style: theme.textTheme.titleSmall?.copyWith(
                         color: AppTheme.primaryColor,
                         fontWeight: FontWeight.w600,
@@ -229,7 +230,7 @@ class ProfileCard extends StatelessWidget {
                         ),
                       ),
                       child: Text(
-                        _getStrengthLevel(profileStrength),
+                        _getStrengthLevel(profileStrength).tr(),
                         style: theme.textTheme.labelSmall?.copyWith(
                           color: AppTheme.primaryColor,
                           fontWeight: FontWeight.bold,
@@ -274,7 +275,11 @@ class ProfileCard extends StatelessWidget {
                 ),
                 SizedBox(height: AppTheme.spacingXs.h),
                 Text(
-                  '$profileStrength% complete',
+                  'percent_complete'.tr(
+                    namedArgs: {
+                      'percent': profileStrength.toString(),
+                    },
+                  ),
                   style: theme.textTheme.bodySmall?.copyWith(
                     color: theme.colorScheme.onSurfaceVariant,
                     fontSize: 12.sp,
@@ -289,10 +294,10 @@ class ProfileCard extends StatelessWidget {
   }
 
   String _getStrengthLevel(int strength) {
-    if (strength >= 90) return 'Excellent!';
-    if (strength >= 70) return 'Good!';
-    if (strength >= 50) return 'Fair';
-    return 'Needs Improvement';
+    if (strength >= 90) return 'strength_excellent';
+    if (strength >= 70) return 'strength_good';
+    if (strength >= 50) return 'strength_fair';
+    return 'strength_needs_improvement';
   }
 
   Color _getUserTypeColor(String userType) {

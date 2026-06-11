@@ -175,7 +175,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
-                                  'My Profile'.tr(),
+                                  'my_profile'.tr(),
                                   style: theme.textTheme.displayMedium
                                       ?.copyWith(
                                         fontWeight: FontWeight.bold,
@@ -185,7 +185,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 ),
                                 SizedBox(height: AppTheme.spacingXs.h),
                                 Text(
-                                  'Manage your personal information',
+                                  'manage_personal_info'.tr(),
                                   style: theme.textTheme.bodyMedium?.copyWith(
                                     color: theme.colorScheme.onSurfaceVariant,
                                     fontSize: 14.sp,
@@ -254,7 +254,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     if (state.profile != null) ...[
                       _buildSectionHeader(
                         icon: Icons.badge_rounded,
-                        title: 'Personal Information',
+                        title: 'personal_info_section'.tr(),
                         iconColor: AppTheme.primaryColor,
                         iconBgColor: AppTheme.primaryColor.withOpacity(0.1),
                         iconBorderColor: AppTheme.primaryColor.withOpacity(0.2),
@@ -278,14 +278,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         icon: Icons.person_outline,
                         text: state.profile!.gender.isEmpty
                             ? 'Not specified'.tr()
-                            : state.profile!.gender,
+                            : state.profile!.gender.tr(),
                       ),
                       SizedBox(height: AppTheme.spacingMd.h),
 
                       // Target Details Section
                       _buildSectionHeader(
                         icon: Icons.work_rounded,
-                        title: 'Target Details',
+                        title: 'target_details_section'.tr(),
                         iconColor: AppTheme.accentColor,
                         iconBgColor: AppTheme.accentColor.withOpacity(0.1),
                         iconBorderColor: AppTheme.accentColor.withOpacity(0.2),
@@ -296,14 +296,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       InfoItem(
                         icon: Icons.location_on_outlined,
                         text: state.profile!.location.isEmpty
-                            ? 'Target locations not specified'.tr()
+                            ? 'target_locations_not_specified'.tr()
                             : state.profile!.location,
                       ),
                       SizedBox(height: AppTheme.spacingSm.h),
                       InfoItem(
                         icon: Icons.work_outline,
                         text: state.profile!.jobTitle.isEmpty
-                            ? 'Target roles not specified'.tr()
+                            ? 'target_roles_not_specified'.tr()
                             : state.profile!.jobTitle,
                       ),
                       SizedBox(height: AppTheme.spacingMd.h),
@@ -311,7 +311,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       // Resume Section
                       _buildSectionHeader(
                         icon: Icons.description_rounded,
-                        title: 'Resume / CV',
+                        title: 'resume_cv_section'.tr(),
                         iconColor: AppTheme.successColor,
                         iconBgColor: AppTheme.successColor.withOpacity(0.1),
                         iconBorderColor: AppTheme.successColor.withOpacity(0.2),
@@ -333,7 +333,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       else
                         InfoItem(
                           icon: Icons.description_outlined,
-                          text: 'No resume uploaded'.tr(),
+                          text: 'no_resume_uploaded'.tr(),
                           trailing: Icon(
                             Icons.error_outline_rounded,
                             color: AppTheme.warningColor,
@@ -345,7 +345,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       // Account Section
                       _buildSectionHeader(
                         icon: Icons.shield_rounded,
-                        title: 'Account',
+                        title: 'account_section'.tr(),
                         iconColor: AppTheme.warningColor,
                         iconBgColor: AppTheme.warningColor.withOpacity(0.1),
                         iconBorderColor: AppTheme.warningColor.withOpacity(0.2),
