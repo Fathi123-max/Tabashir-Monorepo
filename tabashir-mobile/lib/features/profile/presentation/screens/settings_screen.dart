@@ -233,21 +233,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       ],
                     ),
                   ),
-                  PopupMenuItem<Locale>(
-                    value: const Locale('es'),
-                    child: Row(
-                      children: [
-                        const Text('Español'),
-                        const Spacer(),
-                        if (context.locale.languageCode == 'es')
-                          Icon(
-                            Icons.check_circle,
-                            color: AppTheme.primaryColor,
-                            size: 20.sp,
-                          ),
-                      ],
-                    ),
-                  ),
                 ],
               ),
               onTap: () {

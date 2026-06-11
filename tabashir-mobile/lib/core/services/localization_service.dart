@@ -7,8 +7,7 @@ import 'ai_job_apply_config_service.dart';
 /// Supported languages for the app
 enum SupportedLanguage {
   english('en', 'English'),
-  arabic('ar', 'العربية'),
-  spanish('es', 'Español');
+  arabic('ar', 'العربية');
 
   const SupportedLanguage(this.code, this.displayName);
   final String code;
@@ -176,24 +175,6 @@ class LocalizationService {
       'Cloud Architect': 'مهندس معمارية سحابية',
       'Cybersecurity Specialist': 'أمن سيبراني',
     },
-    // Spanish translations
-    SupportedLanguage.spanish.code: {
-      'Software Engineer': 'Ingeniero de Software',
-      'Frontend Developer': 'Desarrollador Frontend',
-      'Backend Developer': 'Desarrollador Backend',
-      'Full Stack Developer': 'Desarrollador Full Stack',
-      'Mobile Developer': 'Desarrollador Móvil',
-      'Data Scientist': 'Científico de Datos',
-      'Product Manager': 'Gerente de Producto',
-      'UI/UX Designer': 'Diseñador UI/UX',
-      'DevOps Engineer': 'Ingeniero DevOps',
-      'Project Manager': 'Gerente de Proyecto',
-      'Business Analyst': 'Analista de Negocios',
-      'QA Engineer': 'Ingeniero de Calidad',
-      'Machine Learning Engineer': 'Ingeniero de ML',
-      'Cloud Architect': 'Arquitecto de Nube',
-      'Cybersecurity Specialist': 'Especialista en Ciberseguridad',
-    },
   };
 
   /// Get location translations
@@ -209,18 +190,6 @@ class LocalizationService {
       'Fujairah': 'الفجيرة',
       'Remote': 'عن بُعد',
       'Hybrid': 'هجين',
-    },
-    // Spanish translations
-    SupportedLanguage.spanish.code: {
-      'Dubai': 'Dubái',
-      'Abu Dhabi': 'Abu Dabi',
-      'Sharjah': 'Sharjah',
-      'Ajman': 'Ajman',
-      'Ras Al Khaimah': 'Ras Al Khaima',
-      'Umm Al Quwain': 'Umm Al Quwain',
-      'Fujairah': 'Fuyaira',
-      'Remote': 'Remoto',
-      'Hybrid': 'Híbrido',
     },
   };
 
@@ -244,24 +213,6 @@ class LocalizationService {
       'Bangladesh': 'بنغلاديش',
       'Sri Lanka': 'سريلانكا',
     },
-    // Spanish translations
-    SupportedLanguage.spanish.code: {
-      'United Arab Emirates': 'Emiratos Árabes Unidos',
-      'Saudi Arabia': 'Arabia Saudí',
-      'Egypt': 'Egipto',
-      'India': 'India',
-      'Pakistan': 'Pakistán',
-      'Philippines': 'Filipinas',
-      'United Kingdom': 'Reino Unido',
-      'United States': 'Estados Unidos',
-      'Canada': 'Canadá',
-      'Australia': 'Australia',
-      'Jordan': 'Jordania',
-      'Lebanon': 'Líbano',
-      'Nigeria': 'Nigeria',
-      'Bangladesh': 'Bangladés',
-      'Sri Lanka': 'Sri Lanka',
-    },
   };
 
   /// Get localized strings for UI elements
@@ -283,24 +234,6 @@ class LocalizationService {
       'nationality': 'الجنسية',
       'resume': 'السيرة الذاتية',
       'review': 'مراجعة',
-    },
-    // Spanish UI translations
-    SupportedLanguage.spanish.code: {
-      'next': 'Siguiente',
-      'back': 'Atrás',
-      'submit': 'Enviar',
-      'cancel': 'Cancelar',
-      'save': 'Guardar',
-      'loading': 'Cargando...',
-      'error': 'Error',
-      'success': 'Éxito',
-      'select': 'Seleccionar',
-      'selected': 'Seleccionado',
-      'role': 'Rol',
-      'location': 'Ubicación',
-      'nationality': 'Nacionalidad',
-      'resume': 'Currículum',
-      'review': 'Revisar',
     },
   };
 

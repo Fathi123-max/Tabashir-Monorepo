@@ -8,7 +8,6 @@ class AppLocalization {
   static const List<Locale> supportedLocales = <Locale>[
     Locale('en'), // English
     Locale('ar'), // Arabic
-    Locale('es'), // Spanish
   ];
 
   /// Fallback locale when translation is not available
