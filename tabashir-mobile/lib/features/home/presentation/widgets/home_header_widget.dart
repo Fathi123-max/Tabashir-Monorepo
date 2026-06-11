@@ -128,8 +128,8 @@ class HomeHeaderWidget extends StatelessWidget {
                       padding: EdgeInsets.zero,
                     ),
                   ),
-                  Positioned(
-                    right: 10.w,
+                  PositionedDirectional(
+                    end: 10.w,
                     top: 8.h,
                     child: Container(
                       width: 10.w,

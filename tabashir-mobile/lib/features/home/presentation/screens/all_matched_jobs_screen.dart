@@ -251,7 +251,7 @@ class _AllMatchedJobsContent extends StatelessWidget {
   );
 
   Widget _buildTipItem(ThemeData theme, String tip) => Align(
-    alignment: Alignment.centerLeft,
+    alignment: AlignmentDirectional.centerStart,
     child: Padding(
       padding: EdgeInsets.only(bottom: AppTheme.spacingSm.h),
       child: Text(

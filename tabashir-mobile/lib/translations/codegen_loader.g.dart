@@ -16,16 +16,6 @@ class CodegenLoader extends AssetLoader{
 
   static const Map<String,dynamic> _en = {
   "Apply": "Apply",
-  " : ": " : ",
-  " these roles fit your profile.": " these roles fit your profile.",
-  "#042052": "#042052",
-  "#0D57E1": "#0D57E1",
-  "#ffffff": "#ffffff",
-  "$confidence% confident": "$confidence% confident",
-  "+1 (555) 123-4567": "+1 (555) 123-4567",
-  ", ": ", ",
-  "123456": "123456",
-  "^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$": "^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$",
   "About Tabashir": "About Tabashir",
   "About the Role": "About the Role",
   "Account": "Account",
@@ -802,16 +792,6 @@ class CodegenLoader extends AssetLoader{
 };
 static const Map<String,dynamic> _ar = {
   "Apply": "تقديم",
-  " : ": " : ",
-  " these roles fit your profile.": " هذه الأدوار تناسب ملفك الشخصي.",
-  "#042052": "#042052",
-  "#0D57E1": "#0D57E1",
-  "#ffffff": "#ffffff",
-  "$confidence% confident": "$confidence% واثق",
-  "+1 (555) 123-4567": "+1 (555) 123-4567",
-  ", ": "، ",
-  "123456": "123456",
-  "^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$": "^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$",
   "About Tabashir": "نبذة عن تباشير",
   "About the Role": "عن الوظيفة",
   "Account": "الحساب",

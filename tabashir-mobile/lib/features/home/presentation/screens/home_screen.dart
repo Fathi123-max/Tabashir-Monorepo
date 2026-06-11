@@ -133,14 +133,14 @@ class _HomeScreenState extends State<HomeScreen> {
               // without expanding the actual layout constraints of the hero card.
               Expanded(
                 child: Align(
-                  alignment: Alignment.centerLeft,
+                  alignment: AlignmentDirectional.centerStart,
                   child: Transform.scale(
                     scale: 1.4, // 40% visual size increase
-                    alignment: Alignment.centerLeft,
+                    alignment: AlignmentDirectional.centerStart,
                     child: AppLogo(
                       height: 80
                           .h, // Locks the hero card's layout to be extremely compact
-                      alignment: Alignment.centerLeft,
+                      alignment: AlignmentDirectional.centerStart,
                       fit: BoxFit.contain,
                     ),
                   ),
@@ -258,8 +258,8 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
                 // Notification Badge with Count
                 if (hasNotifications)
-                  Positioned(
-                    right: 8.w,
+                  PositionedDirectional(
+                    end: 8.w,
                     top: 6.h,
                     child: Container(
                       constraints: BoxConstraints(
@@ -305,8 +305,8 @@ class _HomeScreenState extends State<HomeScreen> {
                   )
                 else
                   // Unread indicator dot
-                  Positioned(
-                    right: 10.w,
+                  PositionedDirectional(
+                    end: 10.w,
                     top: 8.h,
                     child: Container(
                       width: 7.w,
