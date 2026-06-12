@@ -46,7 +46,7 @@ class _ServicesScreenState extends State<ServicesScreen> {
     final userEmail = profile?.email ?? 'Not specified';
 
     // WhatsApp number (format: country code + number without + or spaces)
-    const whatsappNumber = '971529983824';
+    const whatsappNumber = '971548881800';
 
     // Construct a professional message with user information
     final message =

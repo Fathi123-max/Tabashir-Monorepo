@@ -45,7 +45,7 @@ class _SubscriptionsScreenState extends State<SubscriptionsScreen> {
     final userEmail = profile?.email ?? 'Not specified';
 
     // WhatsApp number (format: country code + number without + or spaces)
-    const whatsappNumber = '971529983824';
+    const whatsappNumber = '971548881800';
 
     // Construct a professional message with user information
     final message = 'Hello Tabashir Support, my name is $userName ($userEmail). '
