@@ -53,6 +53,12 @@
 	<string>908457286237-beupfsr9oo6nqbeau81rtgmvpm0f3f73.apps.googleusercontent.com</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
+	<key>LSApplicationQueriesSchemes</key>
+	<array>
+		<string>whatsapp</string>
+		<string>https</string>
+		<string>http</string>
+	</array>
 	<key>NSCameraUsageDescription</key>
 	<string>Tabashir needs access to your camera to take profile photos</string>
 	<key>NSLocationWhenInUseUsageDescription</key>

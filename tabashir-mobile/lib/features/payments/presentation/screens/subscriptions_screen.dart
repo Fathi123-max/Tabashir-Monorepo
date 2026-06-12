@@ -4,6 +4,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:in_app_purchase/in_app_purchase.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../../../../core/di/injection.dart';
 import '../../../../core/services/apple_iap_service.dart';
@@ -33,6 +34,48 @@ class _SubscriptionsScreenState extends State<SubscriptionsScreen> {
     super.initState();
     _paymentCubit = getIt<PaymentCubit>();
     _profileCubit = getIt<ProfileCubit>();
+  }
+
+  Future<void> _redirectToWhatsApp({
+    required String planName,
+    required String price,
+  }) async {
+    final profile = _profileCubit.state.profile;
+    final userName = profile?.name ?? 'Candidate';
+    final userEmail = profile?.email ?? 'Not specified';
+
+    // WhatsApp number (format: country code + number without + or spaces)
+    const whatsappNumber = '971529983824';
+
+    // Construct a professional message with user information
+    final message = 'Hello Tabashir Support, my name is $userName ($userEmail). '
+        'I would like to upgrade my subscription to the "$planName" plan ($price). '
+        'Please guide me on how to complete the payment.';
+
+    final whatsappUrl = Uri.parse(
+      'https://wa.me/$whatsappNumber?text=${Uri.encodeComponent(message)}',
+    );
+
+    AppLogger.debug(
+      '[SubscriptionsScreen] Redirecting to WhatsApp for iOS: $message',
+      tag: 'Subscriptions',
+    );
+
+    if (await canLaunchUrl(whatsappUrl)) {
+      await launchUrl(
+        whatsappUrl,
+        mode: LaunchMode.externalApplication,
+      );
+    } else {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Could not open WhatsApp'.tr()),
+            backgroundColor: AppTheme.errorColor,
+          ),
+        );
+      }
+    }
   }
 
   Future<void> _restorePurchases() async {
@@ -345,6 +388,15 @@ class _SubscriptionsScreenState extends State<SubscriptionsScreen> {
     );
 
   void _handleUpgradeToPro() {
+    // On iOS, we redirect to WhatsApp as per business requirements
+    if (Platform.isIOS) {
+      _redirectToWhatsApp(
+        planName: 'Pro',
+        price: 'AED 49/month',
+      );
+      return;
+    }
+
     // Trigger payment through PaymentCubit
     // The actual service ID and amount should come from backend config
     _paymentCubit.onPaymentSuccess = (_) async {

@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -33,11 +35,32 @@ class _ServicesScreenState extends State<ServicesScreen> {
   String? _pendingServiceTitle;
   double? _pendingAmount;
 
-  Future<void> _onLinkedInEnhancerPressed(BuildContext context) async {
+  Future<void> _redirectToWhatsApp({
+    required BuildContext context,
+    required String serviceTitle,
+    required double amount,
+  }) async {
+    final profileCubit = getIt<ProfileCubit>();
+    final profile = profileCubit.state.profile;
+    final userName = profile?.name ?? 'Candidate';
+    final userEmail = profile?.email ?? 'Not specified';
+
     // WhatsApp number (format: country code + number without + or spaces)
     const whatsappNumber = '971529983824';
+
+    // Construct a professional message with user information
+    final message =
+        'Hello Tabashir Support, my name is $userName ($userEmail). '
+        'I would like to purchase the "${serviceTitle.tr()}" service for $amount AED. '
+        'Please guide me on how to complete the payment.';
+
     final whatsappUrl = Uri.parse(
-      'https://wa.me/$whatsappNumber?text=${Uri.encodeComponent('Hello, I am interested in LinkedIn Enhancement service')}',
+      'https://wa.me/$whatsappNumber?text=${Uri.encodeComponent(message)}',
+    );
+
+    AppLogger.debug(
+      '[ServicesScreen] Redirecting to WhatsApp for iOS: $message',
+      tag: 'Services',
     );
 
     if (await canLaunchUrl(whatsappUrl)) {
@@ -57,12 +80,31 @@ class _ServicesScreenState extends State<ServicesScreen> {
     }
   }
 
+  Future<void> _onLinkedInEnhancerPressed(BuildContext context) async {
+    // For LinkedIn enhancement, we use the same WhatsApp redirection pattern
+    await _redirectToWhatsApp(
+      context: context,
+      serviceTitle: 'ai_linkedin_enhancement_title',
+      amount: 19,
+    );
+  }
+
   Future<void> _onJobApplyServicePressed(
     BuildContext context,
     String serviceId,
     double amount,
     String serviceTitle,
   ) async {
+    // On iOS, we redirect to WhatsApp as per business requirements
+    if (Platform.isIOS) {
+      await _redirectToWhatsApp(
+        context: context,
+        serviceTitle: serviceTitle,
+        amount: amount,
+      );
+      return;
+    }
+
     final paymentCubit = context.read<PaymentCubit>();
 
     // Store service info for success screen
@@ -331,7 +373,7 @@ class _ServicesScreenState extends State<ServicesScreen> {
                                 description:
                                     '${'ai_job_apply_premium_desc'.tr()} ${'aiJobApplyNote'.tr()}',
                                 price: 'aed_200'.tr(),
-                                buttonText: 'auto_apply'.tr(),
+                                buttonText: 'Contact Support'.tr(),
                                 isEnabled: true,
                                 isFeatured: true,
                                 onPressed: () {
@@ -351,7 +393,7 @@ class _ServicesScreenState extends State<ServicesScreen> {
                                 description:
                                     '${'ai_job_apply_basic_desc'.tr()} ${'aiJobApplyNote'.tr()}',
                                 price: 'aed_100'.tr(),
-                                buttonText: 'auto_apply'.tr(),
+                                buttonText: 'Contact Support'.tr(),
                                 isEnabled: true,
                                 onPressed: () {
                                   _onJobApplyServicePressed(

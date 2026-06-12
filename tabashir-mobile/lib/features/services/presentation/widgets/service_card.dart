@@ -187,7 +187,7 @@ class ServiceCard extends StatelessWidget {
                           child: Text(
                             buttonText,
                             style: TextStyle(
-                              fontSize: 14.sp,
+                              fontSize: 12.sp,
                               fontWeight: FontWeight.w600,
                             ),
                           ),
@@ -210,7 +210,7 @@ class ServiceCard extends StatelessWidget {
                           child: Text(
                             buttonText,
                             style: TextStyle(
-                              fontSize: 14.sp,
+                              fontSize: 12.sp,
                               fontWeight: FontWeight.w600,
                             ),
                           ),
