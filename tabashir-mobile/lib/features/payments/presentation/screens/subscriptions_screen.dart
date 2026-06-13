@@ -47,17 +47,17 @@ class _SubscriptionsScreenState extends State<SubscriptionsScreen> {
     // WhatsApp number (format: country code + number without + or spaces)
     const whatsappNumber = '971548881800';
 
-    // Construct a professional message with user information
+    // Construct a professional inquiry message
     final message = 'Hello Tabashir Support, my name is $userName ($userEmail). '
-        'I would like to upgrade my subscription to the "$planName" plan ($price). '
-        'Please guide me on how to complete the payment.';
+        'I am interested in learning more about the "$planName" plan. '
+        'Could you please provide more information on the benefits and how I can get started with a consultation?';
 
     final whatsappUrl = Uri.parse(
       'https://wa.me/$whatsappNumber?text=${Uri.encodeComponent(message)}',
     );
 
     AppLogger.debug(
-      '[SubscriptionsScreen] Redirecting to WhatsApp for iOS: $message',
+      '[SubscriptionsScreen] Redirecting to WhatsApp: $message',
       tag: 'Subscriptions',
     );
 
@@ -388,8 +388,8 @@ class _SubscriptionsScreenState extends State<SubscriptionsScreen> {
     );
 
   void _handleUpgradeToPro() {
-    // On iOS, we redirect to WhatsApp as per business requirements
-    if (Platform.isIOS) {
+    // On mobile platforms, we redirect to WhatsApp as per business requirements
+    if (Platform.isIOS || Platform.isAndroid) {
       _redirectToWhatsApp(
         planName: 'Pro',
         price: 'AED 49/month',

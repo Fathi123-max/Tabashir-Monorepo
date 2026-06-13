@@ -48,18 +48,18 @@ class _ServicesScreenState extends State<ServicesScreen> {
     // WhatsApp number (format: country code + number without + or spaces)
     const whatsappNumber = '971548881800';
 
-    // Construct a professional message with user information
+    // Construct a professional inquiry message
     final message =
         'Hello Tabashir Support, my name is $userName ($userEmail). '
-        'I would like to purchase the "${serviceTitle.tr()}" service for $amount AED. '
-        'Please guide me on how to complete the payment.';
+        'I am interested in the "${serviceTitle.tr()}" service and would like to get more information and consultation on how it can help my career. '
+        'Could you please provide more details?';
 
     final whatsappUrl = Uri.parse(
       'https://wa.me/$whatsappNumber?text=${Uri.encodeComponent(message)}',
     );
 
     AppLogger.debug(
-      '[ServicesScreen] Redirecting to WhatsApp for iOS: $message',
+      '[ServicesScreen] Redirecting to WhatsApp: $message',
       tag: 'Services',
     );
 
@@ -95,8 +95,8 @@ class _ServicesScreenState extends State<ServicesScreen> {
     double amount,
     String serviceTitle,
   ) async {
-    // On iOS, we redirect to WhatsApp as per business requirements
-    if (Platform.isIOS) {
+    // On mobile platforms, we redirect to WhatsApp as per business requirements
+    if (Platform.isIOS || Platform.isAndroid) {
       await _redirectToWhatsApp(
         context: context,
         serviceTitle: serviceTitle,
