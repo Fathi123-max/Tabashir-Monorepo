@@ -56,9 +56,12 @@ class AppBootstrap {
       ),
     );
 
-    // Initialize Stripe
+    // Initialize Stripe (only on web or non-mobile if applicable)
+    // Disabled on mobile for store compliance (using WhatsApp consultation instead)
+    /*
     Stripe.publishableKey = dotenv.get('STRIPE_PUBLISHABLE_KEY', fallback: '');
     await Stripe.instance.applySettings();
+    */
 
     // Set global Bloc observer for error handling
     Bloc.observer = GlobalBlocObserver();

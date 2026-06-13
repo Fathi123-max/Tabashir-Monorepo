@@ -50,9 +50,6 @@ android {
         
         versionCode = versionProperties.getProperty("version.code")?.toInt() ?: flutter.versionCode
         versionName = versionProperties.getProperty("version.name") ?: flutter.versionName
-        
-        // Manifest placeholders for Stripe
-        manifestPlaceholders["STRIPE_PUBLISHABLE_KEY"] = System.getenv("STRIPE_PUBLISHABLE_KEY") ?: "pk_test_replace_before_release"
     }
 
     signingConfigs {

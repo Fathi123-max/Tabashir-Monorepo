@@ -16,6 +16,8 @@ class StripeService {
 
   /// Initialize Stripe with publishable key from environment
   Future<void> _initializeStripe() async {
+    // Disabled on mobile for store compliance
+    /*
     try {
       final publishableKey = dotenv.env['STRIPE_PUBLISHABLE_KEY'];
       if (publishableKey == null || publishableKey.isEmpty) {
@@ -32,12 +34,13 @@ class StripeService {
       if (defaultTargetPlatform == TargetPlatform.iOS) {
         await Stripe.instance.applySettings();
       }
-      
+
       AppLogger.info('Stripe initialized successfully', tag: 'Service');
     } catch (e) {
       AppLogger.error('Error initializing Stripe: $e', tag: 'Service');
       rethrow;
     }
+    */
   }
 
   /// Set publishable key dynamically

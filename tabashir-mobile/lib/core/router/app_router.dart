@@ -47,14 +47,22 @@ import 'route_names.dart';
 class StreamListenable extends ChangeNotifier {
   StreamListenable(Stream stream) {
     _subscription = stream.listen((_) {
-      notifyListeners();
+      if (!_disposed) {
+        scheduleMicrotask(() {
+          if (!_disposed) {
+            notifyListeners();
+          }
+        });
+      }
     });
   }
 
   late final StreamSubscription _subscription;
+  bool _disposed = false;
 
   @override
   void dispose() {
+    _disposed = true;
     _subscription.cancel();
     super.dispose();
   }
