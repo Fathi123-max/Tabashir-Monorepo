@@ -286,11 +286,11 @@
 				97C146EB1CF9000F007C117D /* Frameworks */,
 				97C146EC1CF9000F007C117D /* Resources */,
 				9705A1C41CF9048500538489 /* Embed Frameworks */,
-				3B06AD1E1E4923F5004D2608 /* Thin Binary */,
 				B73390955C0CE6C0C6AB31EA /* [CP] Embed Pods Frameworks */,
 				3BEC28307A2B56E0F4E6509A /* [CP] Copy Pods Resources */,
-				A06C2000C2CB888FF138926C /* FlutterFire: "flutterfire upload-crashlytics-symbols" */,
 				182326592FDD99000094FE26 /* Embed Foundation Extensions */,
+				3B06AD1E1E4923F5004D2608 /* Thin Binary */,
+				A06C2000C2CB888FF138926C /* FlutterFire: "flutterfire upload-crashlytics-symbols" */,
 			);
 			buildRules = (
 			);
