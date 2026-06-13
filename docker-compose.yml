@@ -1,0 +1,37 @@
+version: "3.9"
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: tabashir-db
+    restart: unless-stopped
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: Apple
+      POSTGRES_PASSWORD: tabashir_dev
+      POSTGRES_DB: tabashir_hr
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U Apple -d tabashir_hr"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    build:
+      context: ./tabashir-backend
+      dockerfile: Dockerfile
+    container_name: tabashir-backend
+    restart: unless-stopped
+    ports:
+      - "5050:5050"
+    env_file:
+      - ./tabashir-backend/.env
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+volumes:
+  pgdata:

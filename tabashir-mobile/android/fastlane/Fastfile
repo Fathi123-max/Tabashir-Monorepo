@@ -1,0 +1,28 @@
+default_platform(:android)
+
+platform :android do
+  desc "Runs all the tests"
+  lane :test do
+    gradle(task: "test")
+  end
+
+  desc "Submit a new Internal Build to Play Store"
+  lane :deploy_internal do
+    # build_app(scheme: "Release") # For iOS
+    # For Android/Flutter, we usually build with flutter CLI before calling fastlane
+    # or use gradle task here.
+    
+    upload_to_play_store(
+      track: 'internal',
+      aab: '../build/app/outputs/bundle/release/app-release.aab'
+    )
+  end
+
+  desc "Promote Internal to Production"
+  lane :promote_to_production do
+    upload_to_play_store(
+      track: 'internal',
+      track_promote_to: 'production'
+    )
+  end
+end

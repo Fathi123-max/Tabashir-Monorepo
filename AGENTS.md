@@ -6,18 +6,28 @@ This document provides instructions for AI agents working on the Tabashir monore
 
 ```
 tabashir/
-├── tabashir-frontend/    # Next.js web app (also serves as API backend)
+├── tabashir-frontend/    # Next.js web app + API backend for mobile
 ├── tabashir-mobile/      # Flutter mobile app (iOS/Android)
-└── tabashir-backend/    # Additional backend services
+└── tabashir-backend/     # Flask (Python) API service
 ```
 
 ## Project Overview
 
 - **Domain**: HR Consulting Platform (Job matching, Resume optimization, Application tracking)
-- **Structure**:
-  - `tabashir-mobile/`: Flutter (iOS/Android)
-  - `tabashir-frontend/`: Next.js (Web App + Admin Dashboard + Backend API)
-- **Shared Context**: The Web App serves as the backend for the Mobile App via `/api/mobile/*` routes
+- **Shared Context**: The Next.js Web App serves as the backend for the Mobile App via `/api/mobile/*` routes. The Flask backend is a separate service.
+
+## Quick Start (Makefile)
+
+```bash
+make dev-web        # Start Next.js dev server
+make dev-backend    # Start Flask dev server
+make dev-mobile     # Run Flutter app
+make up             # Start PostgreSQL via Docker
+make db-push        # Push Prisma schema changes
+make test-web       # Run frontend tests
+make test-mobile    # Run Flutter tests
+make test-backend   # Run pytest
+```
 
 ## Build Commands
 
@@ -27,10 +37,11 @@ tabashir/
 cd tabashir-frontend
 
 # Development
-pnpm dev              # Start dev server (http://localhost:3000)
+pnpm dev              # Start dev server (http://localhost:3001)
 pnpm build            # Production build
 pnpm start            # Start production server
 pnpm lint             # Run ESLint
+pnpm typecheck        # Run TypeScript type checking
 
 # Database
 pnpm prisma generate   # Generate Prisma client
@@ -41,8 +52,9 @@ pnpm seed             # Seed database
 # Testing
 pnpm test             # Run all tests
 pnpm test path/to/file # Run specific test file
-pnpm typecheck        # Run TypeScript type checking
 ```
+
+**⚠️ WARNING**: `next.config.mjs` has `ignoreBuildErrors: true` and `ignoreDuringBuilds: true`. The `pnpm build` command will succeed even with TypeScript and ESLint errors. Always run `pnpm typecheck` and `pnpm lint` separately to catch real issues.
 
 ### Mobile (tabashir-mobile)
 
@@ -68,6 +80,19 @@ dart format .           # Format code
 # Testing
 flutter test             # Run all tests
 flutter test test/file.dart # Run specific test
+```
+
+### Backend (tabashir-backend)
+
+```bash
+cd tabashir-backend
+
+# Development
+python run.py           # Start Flask dev server (http://localhost:5050)
+
+# Testing
+pytest                  # Run all tests
+pytest -m database      # Run only database-dependent tests
 ```
 
 ## General Rules
@@ -163,9 +188,18 @@ dart run build_runner build --delete-conflicting-outputs
 - Map network errors using `DioException` handler in repository
 - Surface errors via BLoC state: `AuthState.failure(message: String)`
 
+## Backend Code Style (Python/Flask)
+
+- **Framework**: Flask with flask-restx for API docs
+- **Entry point**: `run.py` → starts on port 5050
+- **Routes**: Organized as flask-restx namespaces in `app/routes/`
+- **Database**: Direct PostgreSQL connection via `psycopg2` (NOT Prisma)
+- **Auth**: JWT-based (PyJWT)
+- **AI**: OpenAI integration for resume processing
+
 ## Critical Instructions
 
-1. **Database Changes**: If you change the Prisma schema, you MUST consider the impact on both Web and Mobile (since Mobile relies on the API which relies on the DB).
+1. **Database Changes**: If you change the Prisma schema, you MUST consider the impact on both Web and Mobile (since Mobile relies on the API which relies on the DB). The Flask backend has its own DB connection — verify compatibility.
 
 2. **Mobile API**: Do NOT break existing `/api/mobile/*` endpoints. The mobile app is sensitive to contract changes.
 

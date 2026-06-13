@@ -21,6 +21,13 @@ val keystoreProperties = if (keystorePropertiesFile.exists()) {
     null
 }
 
+// Load version properties
+val versionPropertiesFile = rootProject.file("version.properties")
+val versionProperties = Properties()
+if (versionPropertiesFile.exists()) {
+    FileInputStream(versionPropertiesFile).use { versionProperties.load(it) }
+}
+
 android {
     namespace = "ae.tabashir"
     compileSdk = flutter.compileSdkVersion
@@ -40,8 +47,9 @@ android {
         applicationId = "ae.tabashir"
         minSdk = flutter.minSdkVersion
         targetSdk = flutter.targetSdkVersion
-        versionCode = flutter.versionCode
-        versionName = flutter.versionName
+        
+        versionCode = versionProperties.getProperty("version.code")?.toInt() ?: flutter.versionCode
+        versionName = versionProperties.getProperty("version.name") ?: flutter.versionName
         
         // Manifest placeholders for Stripe
         manifestPlaceholders["STRIPE_PUBLISHABLE_KEY"] = System.getenv("STRIPE_PUBLISHABLE_KEY") ?: "pk_test_replace_before_release"
@@ -66,6 +74,13 @@ android {
                 // Fallback to debug signing if keystore not configured (dev only)
                 signingConfig = signingConfigs.getByName("debug")
             }
+            
+            isMinifyEnabled = true
+            isShrinkResources = true
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro"
+            )
         }
     }
 }

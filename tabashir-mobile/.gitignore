@@ -117,5 +117,14 @@ Icon?
 ehthumbs.db
 Thumbs.db
 
+# Android signing
+**/android/keystores/*.jks
+**/android/keystores/*.txt
+**/android/key.properties
+android/key.properties
+**/android/keystore.properties
+**/android/*.json
+android/service-account.json
+
 # Env files
 .env

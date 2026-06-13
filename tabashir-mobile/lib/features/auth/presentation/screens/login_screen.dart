@@ -38,8 +38,6 @@ class _LoginScreenState extends State<LoginScreen> {
   void initState() {
     super.initState();
     _authCubit = getIt<AuthCubit>();
-    _emailController.text = 'profiletest@tabashir.com';
-    _passwordController.text = 'password123';
   }
 
   @override

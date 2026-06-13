@@ -1,0 +1,44 @@
+name: Mobile CI
+
+on:
+  push:
+    paths:
+      - 'tabashir-mobile/**'
+  pull_request:
+    paths:
+      - 'tabashir-mobile/**'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    
+    defaults:
+      run:
+        working-directory: tabashir-mobile
+
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'zulu'
+          java-version: '17'
+          
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.9.2'
+          channel: 'stable'
+          
+      - name: Install dependencies
+        run: flutter pub get
+        
+      - name: Run build_runner
+        run: dart run build_runner build --delete-conflicting-outputs
+        
+      - name: Run tests
+        run: flutter test
+        
+      - name: Build APK (Debug)
+        run: flutter build apk --debug

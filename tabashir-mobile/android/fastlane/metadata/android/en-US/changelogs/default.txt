@@ -1,0 +1,1 @@
+Initial release of Tabashir. AI-powered resume building and job search.

@@ -1,0 +1,2 @@
+json_key_file("service-account.json") # Path to the service account JSON file
+package_name("ae.tabashir") # Your app identifier, as defined in build.gradle.kts

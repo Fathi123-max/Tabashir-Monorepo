@@ -1,0 +1,84 @@
+name: Mobile Release Internal
+
+on:
+  workflow_dispatch:
+    inputs:
+      version_bump:
+        description: 'Version bump type'
+        required: true
+        default: 'patch'
+        type: choice
+        options:
+          - patch
+          - minor
+          - major
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    
+    defaults:
+      run:
+        working-directory: tabashir-mobile
+
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'zulu'
+          java-version: '17'
+          
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.9.2'
+          channel: 'stable'
+          
+      - name: Setup Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.2'
+          bundler-cache: true
+          working-directory: tabashir-mobile/android
+          
+      - name: Install dependencies
+        run: flutter pub get
+        
+      - name: Run build_runner
+        run: dart run build_runner build --delete-conflicting-outputs
+
+      - name: Decode Keystore
+        run: |
+          echo "${{ secrets.SIGNING_KEY_STORE_BASE64 }}" | base64 --decode > android/keystores/production-release.jks
+        
+      - name: Create key.properties
+        run: |
+          echo "storePassword=${{ secrets.SIGNING_STORE_PASSWORD }}" > android/key.properties
+          echo "keyPassword=${{ secrets.SIGNING_KEY_PASSWORD }}" >> android/key.properties
+          echo "keyAlias=${{ secrets.SIGNING_KEY_ALIAS }}" >> android/key.properties
+          echo "storeFile=keystores/production-release.jks" >> android/key.properties
+
+      - name: Create Service Account JSON
+        run: |
+          echo "${{ secrets.SERVICE_ACCOUNT_JSON_PLAINTEXT }}" > android/service-account.json
+
+      - name: Bump Version
+        run: ./scripts/gradle-version.sh generate ${{ github.event.inputs.version_bump }}
+        
+      - name: Build App Bundle
+        run: flutter build appbundle --release
+        
+      - name: Deploy to Play Store (Internal)
+        run: |
+          cd android
+          bundle exec fastlane deploy_internal
+        
+      - name: Commit version bump
+        run: |
+          git config --global user.name "GitHub Action"
+          git config --global user.email "action@github.com"
+          git add android/version.properties
+          git commit -m "chore: bump mobile version [skip ci]"
+          git push

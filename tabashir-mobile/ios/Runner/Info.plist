@@ -51,14 +51,14 @@
 	<string>$(FLUTTER_BUILD_NUMBER)</string>
 	<key>GIDClientID</key>
 	<string>908457286237-beupfsr9oo6nqbeau81rtgmvpm0f3f73.apps.googleusercontent.com</string>
-	<key>LSRequiresIPhoneOS</key>
-	<true/>
 	<key>LSApplicationQueriesSchemes</key>
 	<array>
 		<string>whatsapp</string>
 		<string>https</string>
 		<string>http</string>
 	</array>
+	<key>LSRequiresIPhoneOS</key>
+	<true/>
 	<key>NSCameraUsageDescription</key>
 	<string>Tabashir needs access to your camera to take profile photos</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
@@ -71,9 +71,6 @@
 	<string>Tabashir needs permission to send you notifications about job matches and application updates</string>
 	<key>OneSignalAppIDKey</key>
 	<string>bf2fbe39-0ab0-41e1-a9cb-1ecefe72474c</string>
-	<!-- Stripe Publishable Key - Configure in Xcode Build Settings before release -->
-	<!-- <key>StripePublishableKey</key>
-	<string>YOUR_STRIPE_PUBLISHABLE_KEY</string> -->
 	<key>UIApplicationSceneManifest</key>
 	<dict>
 		<key>UIApplicationSupportsMultipleScenes</key>
@@ -97,6 +94,10 @@
 	</dict>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
+	<key>UIBackgroundModes</key>
+	<array>
+		<string>remote-notification</string>
+	</array>
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>
 	<key>UIMainStoryboardFile</key>
@@ -118,5 +119,7 @@
 	<array>
 		<string>Default</string>
 	</array>
+	<key>ITSAppUsesNonExemptEncryption</key>
+	<false/>
 </dict>
 </plist>

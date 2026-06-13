@@ -1,0 +1,45 @@
+# Dependencies
+node_modules/
+
+# Build outputs
+.next/
+build/
+dist/
+out/
+
+# Generated files
+*.g.dart
+*.freezed.dart
+*.config.dart
+*.gen.dart
+
+# Lock files
+pnpm-lock.yaml
+package-lock.json
+pubspec.lock
+
+# Flutter
+.dart_tool/
+.flutter-plugins-dependencies
+
+# Python
+venv/
+__pycache__/
+*.pyc
+
+# IDE
+.idea/
+.vscode/
+*.iml
+
+# OS
+.DS_Store
+Thumbs.db
+
+# env files
+.env
+.env.local
+
+# Misc
+*.log
+coverage/

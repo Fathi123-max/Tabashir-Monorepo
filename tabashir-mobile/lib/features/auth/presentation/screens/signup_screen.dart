@@ -1,4 +1,3 @@
-import 'dart:math';
 
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
@@ -32,39 +31,6 @@ class SignupScreen extends StatefulWidget {
 
 class _SignupScreenState extends State<SignupScreen> {
   late final AuthCubit _authCubit;
-  final _random = Random();
-
-  static const _dummyFirstNames = [
-    'John',
-    'Jane',
-    'Alex',
-    'Maria',
-    'Chris',
-    'Nadia',
-    'Omar',
-    'Sara',
-    'Leo',
-    'Layla',
-  ];
-  static const _dummyLastNames = [
-    'Doe',
-    'Smith',
-    'Johnson',
-    'Hassan',
-    'Williams',
-    'Brown',
-    'Khan',
-    'Ibrahim',
-    'Martinez',
-    'Chen',
-  ];
-  static const _dummyEmailDomains = [
-    'example.com',
-    'mail.com',
-    'test.dev',
-    'demo.io',
-  ];
-  static const _dummyPasswordSpecials = ['!', '@', '#', r'$'];
 
   @override
   void initState() {
@@ -91,39 +57,6 @@ class _SignupScreenState extends State<SignupScreen> {
     super.dispose();
   }
 
-  String _generateDummyFullName() {
-    final firstName =
-        _dummyFirstNames[_random.nextInt(_dummyFirstNames.length)];
-    final lastName = _dummyLastNames[_random.nextInt(_dummyLastNames.length)];
-    return '$firstName $lastName';
-  }
-
-  String _generateDummyEmail(String fullName) {
-    final base = fullName
-        .toLowerCase()
-        .replaceAll(RegExp('[^a-z ]'), '')
-        .trim()
-        .replaceAll(' ', '.');
-    final suffix = 10 + _random.nextInt(90);
-    final domain =
-        _dummyEmailDomains[_random.nextInt(_dummyEmailDomains.length)];
-    return '$base$suffix@$domain';
-  }
-
-  String _generateDummyPassword() {
-    final number = 1000 + _random.nextInt(9000);
-    final special =
-        _dummyPasswordSpecials[_random.nextInt(_dummyPasswordSpecials.length)];
-    final letters = String.fromCharCodes(
-      List.generate(
-        4,
-        (_) => _random.nextBool()
-            ? 65 + _random.nextInt(26)
-            : 97 + _random.nextInt(26),
-      ),
-    );
-    return 'Pa$letters$number$special';
-  }
 
   Future<void> _createAccount() async {
     if (!_formKey.currentState!.validate()) return;
@@ -164,19 +97,6 @@ class _SignupScreenState extends State<SignupScreen> {
     }
   }
 
-  void _fillDummyData() {
-    final fullName = _generateDummyFullName();
-    final email = _generateDummyEmail(fullName);
-    final password = _generateDummyPassword();
-    setState(() {
-      _fullNameController.text = fullName;
-      _emailController.text = email;
-      _passwordController.text = password;
-      _confirmPasswordController.text = password;
-      _agreedToTerms = true;
-    });
-    _formKey.currentState?.validate();
-  }
 
   void _showMessage(String message) {
     ScaffoldMessenger.of(context).showSnackBar(
@@ -423,21 +343,6 @@ class _SignupScreenState extends State<SignupScreen> {
                               ),
                               SizedBox(height: AppTheme.spacingSm.h),
 
-                              // Demo Data Button - Compact
-                              OutlinedButton.icon(
-                                onPressed: _fillDummyData,
-                                icon: const Icon(Icons.auto_fix_high_outlined),
-                                label: Text('Fill demo data'.tr()),
-                                style: OutlinedButton.styleFrom(
-                                  foregroundColor: theme.colorScheme.primary,
-                                  side: BorderSide(
-                                    color: theme.colorScheme.primary,
-                                  ),
-                                  padding: EdgeInsets.symmetric(
-                                    vertical: AppTheme.spacingSm.h,
-                                  ),
-                                ),
-                              ),
                               SizedBox(height: AppTheme.spacingMd.h),
 
                               // Create Account Button
