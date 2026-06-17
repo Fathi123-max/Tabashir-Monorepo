@@ -33,6 +33,10 @@
 
         <!-- OneSignal App ID -->
         <meta-data android:name="com.onesignal.AppId" android:value="bf2fbe39-0ab0-41e1-a9cb-1ecefe72474c"/>
+
+        <!-- Disable Advertising ID collection for Firebase Analytics -->
+        <meta-data android:name="google_analytics_adid_collection_enabled" android:value="false" />
+        <meta-data android:name="google_analytics_ssaid_collection_enabled" android:value="false" />
     </application>
     <!-- Required to query activities that can process text, see:
          https://developer.android.com/training/package-visibility and
