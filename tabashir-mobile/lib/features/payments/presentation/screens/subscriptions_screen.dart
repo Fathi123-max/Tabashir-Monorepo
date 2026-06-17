@@ -48,7 +48,8 @@ class _SubscriptionsScreenState extends State<SubscriptionsScreen> {
     const whatsappNumber = '971548881800';
 
     // Construct a professional inquiry message
-    final message = 'Hello Tabashir Support, my name is $userName ($userEmail). '
+    final message =
+        'Hello Tabashir Support, my name is $userName ($userEmail). '
         'I am interested in learning more about the "$planName" plan. '
         'Could you please provide more information on the benefits and how I can get started with a consultation?';
 
@@ -284,108 +285,108 @@ class _SubscriptionsScreenState extends State<SubscriptionsScreen> {
     required VoidCallback onTap,
     bool isCurrentPlan = false,
   }) => GestureDetector(
-      onTap: isCurrentPlan ? null : onTap,
-      child: Container(
-        padding: EdgeInsets.all(AppTheme.spacingMd.w),
-        decoration: BoxDecoration(
+    onTap: isCurrentPlan ? null : onTap,
+    child: Container(
+      padding: EdgeInsets.all(AppTheme.spacingMd.w),
+      decoration: BoxDecoration(
+        color: isCurrentPlan
+            ? AppTheme.primaryColor.withValues(alpha: 0.1)
+            : theme.colorScheme.surface,
+        borderRadius: BorderRadius.circular(AppTheme.radiusMedium.r),
+        border: Border.all(
           color: isCurrentPlan
-              ? AppTheme.primaryColor.withValues(alpha: 0.1)
-              : theme.colorScheme.surface,
-          borderRadius: BorderRadius.circular(AppTheme.radiusMedium.r),
-          border: Border.all(
-            color: isCurrentPlan
-                ? AppTheme.primaryColor
-                : theme.colorScheme.outline,
-            width: isCurrentPlan ? 2 : 1,
-          ),
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  planName,
-                  style: TextStyle(
-                    fontSize: 18.sp,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                if (isCurrentPlan)
-                  Container(
-                    padding: EdgeInsets.symmetric(
-                      horizontal: AppTheme.spacingSm.w,
-                      vertical: AppTheme.spacingXs.h,
-                    ),
-                    decoration: BoxDecoration(
-                      color: AppTheme.primaryColor,
-                      borderRadius: BorderRadius.circular(
-                        AppTheme.radiusSmall.r,
-                      ),
-                    ),
-                    child: Text(
-                      'Current Plan'.tr(),
-                      style: TextStyle(
-                        fontSize: 10.sp,
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-              ],
-            ),
-            SizedBox(height: AppTheme.spacingXs.h),
-            Text(
-              price,
-              style: TextStyle(
-                fontSize: 16.sp,
-                fontWeight: FontWeight.w600,
-                color: theme.colorScheme.primary,
-              ),
-            ),
-            SizedBox(height: AppTheme.spacingSm.h),
-            ...features.map(
-              (feature) => Padding(
-                padding: EdgeInsets.only(bottom: AppTheme.spacingXs.h),
-                child: Row(
-                  children: [
-                    Icon(
-                      Icons.check_circle,
-                      size: 16.sp,
-                      color: AppTheme.successColor,
-                    ),
-                    SizedBox(width: AppTheme.spacingXs.w),
-                    Text(
-                      feature,
-                      style: TextStyle(fontSize: 13.sp),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ],
+              ? AppTheme.primaryColor
+              : theme.colorScheme.outline,
+          width: isCurrentPlan ? 2 : 1,
         ),
       ),
-    );
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                planName,
+                style: TextStyle(
+                  fontSize: 18.sp,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              if (isCurrentPlan)
+                Container(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: AppTheme.spacingSm.w,
+                    vertical: AppTheme.spacingXs.h,
+                  ),
+                  decoration: BoxDecoration(
+                    color: AppTheme.primaryColor,
+                    borderRadius: BorderRadius.circular(
+                      AppTheme.radiusSmall.r,
+                    ),
+                  ),
+                  child: Text(
+                    'Current Plan'.tr(),
+                    style: TextStyle(
+                      fontSize: 10.sp,
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+            ],
+          ),
+          SizedBox(height: AppTheme.spacingXs.h),
+          Text(
+            price,
+            style: TextStyle(
+              fontSize: 16.sp,
+              fontWeight: FontWeight.w600,
+              color: theme.colorScheme.primary,
+            ),
+          ),
+          SizedBox(height: AppTheme.spacingSm.h),
+          ...features.map(
+            (feature) => Padding(
+              padding: EdgeInsets.only(bottom: AppTheme.spacingXs.h),
+              child: Row(
+                children: [
+                  Icon(
+                    Icons.check_circle,
+                    size: 16.sp,
+                    color: AppTheme.successColor,
+                  ),
+                  SizedBox(width: AppTheme.spacingXs.w),
+                  Text(
+                    feature,
+                    style: TextStyle(fontSize: 13.sp),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    ),
+  );
 
   Widget _buildRestorePurchasesButton(ThemeData theme) => OutlinedButton.icon(
-      onPressed: _isRestoring ? null : _restorePurchases,
-      icon: _isRestoring
-          ? SizedBox(
-              width: 16.w,
-              height: 16.h,
-              child: CircularProgressIndicator(
-                strokeWidth: 2,
-                color: theme.colorScheme.primary,
-              ),
-            )
-          : const Icon(Icons.restore),
-      label: Text('Restore Purchases'.tr()),
-      style: OutlinedButton.styleFrom(
-        padding: EdgeInsets.symmetric(vertical: AppTheme.spacingMd.h),
-      ),
-    );
+    onPressed: _isRestoring ? null : _restorePurchases,
+    icon: _isRestoring
+        ? SizedBox(
+            width: 16.w,
+            height: 16.h,
+            child: CircularProgressIndicator(
+              strokeWidth: 2,
+              color: theme.colorScheme.primary,
+            ),
+          )
+        : const Icon(Icons.restore),
+    label: Text('Restore Purchases'.tr()),
+    style: OutlinedButton.styleFrom(
+      padding: EdgeInsets.symmetric(vertical: AppTheme.spacingMd.h),
+    ),
+  );
 
   void _handleUpgradeToPro() {
     // On mobile platforms, we redirect to WhatsApp as per business requirements

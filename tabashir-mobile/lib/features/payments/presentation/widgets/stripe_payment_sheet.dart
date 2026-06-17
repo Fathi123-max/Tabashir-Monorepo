@@ -71,10 +71,10 @@ class _StripePaymentSheetWidgetState extends State<StripePaymentSheetWidget> {
                       });
 
                       context.read<PaymentCubit>().processPayment(
-                            serviceId: widget.serviceId,
-                            amount: widget.amount,
-                            resumeId: widget.resumeId,
-                          );
+                        serviceId: widget.serviceId,
+                        amount: widget.amount,
+                        resumeId: widget.resumeId,
+                      );
                     },
               style: ElevatedButton.styleFrom(
                 backgroundColor: AppTheme.primaryColor,

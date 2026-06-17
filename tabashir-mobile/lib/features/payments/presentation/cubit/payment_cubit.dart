@@ -40,20 +40,24 @@ class PaymentCubit extends Cubit<PaymentState> {
     String? resumeId,
   }) async {
     if (_isProcessing) {
-      emit(state.copyWith(
-        status: PaymentStatus.failed,
-        errorMessage: 'Payment already in progress',
-      ));
+      emit(
+        state.copyWith(
+          status: PaymentStatus.failed,
+          errorMessage: 'Payment already in progress',
+        ),
+      );
       return;
     }
     _isProcessing = true;
 
     final userId = _currentUserId;
 
-    emit(state.copyWith(
-      status: PaymentStatus.loading,
-      errorMessage: '',
-    ));
+    emit(
+      state.copyWith(
+        status: PaymentStatus.loading,
+        errorMessage: '',
+      ),
+    );
 
     try {
       final result = await _platform.processPayment(
@@ -69,10 +73,12 @@ class PaymentCubit extends Cubit<PaymentState> {
         failed: _handlePaymentFailed,
       );
     } on Exception catch (e) {
-      emit(state.copyWith(
-        status: PaymentStatus.failed,
-        errorMessage: e.toString(),
-      ));
+      emit(
+        state.copyWith(
+          status: PaymentStatus.failed,
+          errorMessage: e.toString(),
+        ),
+      );
     } finally {
       _isProcessing = false;
     }
@@ -125,54 +131,68 @@ class PaymentCubit extends Cubit<PaymentState> {
 
   Future<void> _handlePaymentSuccess(PaymentResult result) async {
     await _refreshAfterPayment();
-    emit(state.copyWith(
-      status: PaymentStatus.success,
-      paymentSuccessful: true,
-    ));
+    emit(
+      state.copyWith(
+        status: PaymentStatus.success,
+        paymentSuccessful: true,
+      ),
+    );
     await onPaymentSuccess?.call(result);
     onPaymentSuccess = null;
   }
 
   void _handlePaymentCancelled() {
-    emit(state.copyWith(
-      status: PaymentStatus.canceled,
-      errorMessage: 'Payment was canceled',
-    ));
+    emit(
+      state.copyWith(
+        status: PaymentStatus.canceled,
+        errorMessage: 'Payment was canceled',
+      ),
+    );
   }
 
   void _handlePaymentFailed(String message) {
-    emit(state.copyWith(
-      status: PaymentStatus.failed,
-      errorMessage: message,
-    ));
+    emit(
+      state.copyWith(
+        status: PaymentStatus.failed,
+        errorMessage: message,
+      ),
+    );
   }
 
   /// Load latest payment (kept for backwards compatibility).
   Future<void> loadLatestPayment() async {
-    emit(state.copyWith(
-      status: PaymentStatus.loading,
-      errorMessage: '',
-    ));
+    emit(
+      state.copyWith(
+        status: PaymentStatus.loading,
+        errorMessage: '',
+      ),
+    );
     try {
       final response = await getIt<PaymentRepository>().getLatestPayment();
-      emit(state.copyWith(
-        status: PaymentStatus.success,
-        latestPayment: response,
-      ));
+      emit(
+        state.copyWith(
+          status: PaymentStatus.success,
+          latestPayment: response,
+        ),
+      );
     } on Exception catch (e) {
-      emit(state.copyWith(
-        status: PaymentStatus.failed,
-        errorMessage: e.toString(),
-      ));
+      emit(
+        state.copyWith(
+          status: PaymentStatus.failed,
+          errorMessage: e.toString(),
+        ),
+      );
     }
   }
 
   /// Clear error.
   void clearError() {
-    emit(state.copyWith(
-      errorMessage: '',
-      status: PaymentStatus.initial,
-    ));
+    emit(
+      state.copyWith(
+        errorMessage: '',
+        status: PaymentStatus.initial,
+      ),
+    );
   }
 
   /// Reset to initial state.

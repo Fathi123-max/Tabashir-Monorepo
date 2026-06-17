@@ -634,7 +634,8 @@ class SkillsStep extends StatelessWidget {
                       child: Text('Training & Certifications'.tr()),
                     ),
                   ],
-                  onChanged: (value) => category = value ?? SkillCategory.technical,
+                  onChanged: (value) =>
+                      category = value ?? SkillCategory.technical,
                   validator: (value) {
                     if (value == null) {
                       return 'Category is required'.tr();
@@ -664,7 +665,8 @@ class SkillsStep extends StatelessWidget {
                       child: Text('Expert'.tr()),
                     ),
                   ],
-                  onChanged: (value) => proficiency = value ?? ProficiencyLevel.intermediate,
+                  onChanged: (value) =>
+                      proficiency = value ?? ProficiencyLevel.intermediate,
                 ),
               ],
             ),

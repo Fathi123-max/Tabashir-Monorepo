@@ -13,7 +13,11 @@ class NotificationsRepositoryImpl implements NotificationsRepository {
       final response = await _apiService.getNotifications();
       return response.data.notifications;
     } catch (e) {
-      AppLogger.error('Error fetching notifications: $e', tag: 'Notifications', error: e);
+      AppLogger.error(
+        'Error fetching notifications: $e',
+        tag: 'Notifications',
+        error: e,
+      );
       return [];
     }
   }
@@ -23,7 +27,11 @@ class NotificationsRepositoryImpl implements NotificationsRepository {
     try {
       await _apiService.markAsRead(body: {'notificationId': id});
     } catch (e) {
-      AppLogger.error('Error marking notification as read: $e', tag: 'Notifications', error: e);
+      AppLogger.error(
+        'Error marking notification as read: $e',
+        tag: 'Notifications',
+        error: e,
+      );
       rethrow;
     }
   }
@@ -33,7 +41,11 @@ class NotificationsRepositoryImpl implements NotificationsRepository {
     try {
       await _apiService.markAsRead(body: {});
     } catch (e) {
-      AppLogger.error('Error marking all notifications as read: $e', tag: 'Notifications', error: e);
+      AppLogger.error(
+        'Error marking all notifications as read: $e',
+        tag: 'Notifications',
+        error: e,
+      );
       rethrow;
     }
   }

@@ -23,7 +23,10 @@ class AppInitializationCubit extends Cubit<AppInitializationState> {
   /// Call this once after login
   Future<void> initialize({String? lang}) async {
     if (state.isInitialized && state.errorMessage == null) {
-      AppLogger.debug('[APP_INIT] Already initialized successfully, skipping', tag: 'Home');
+      AppLogger.debug(
+        '[APP_INIT] Already initialized successfully, skipping',
+        tag: 'Home',
+      );
       return;
     }
 
@@ -40,17 +43,23 @@ class AppInitializationCubit extends Cubit<AppInitializationState> {
       bool usedCache = false;
 
       if (cachedProfile != null) {
-        AppLogger.debug('[APP_INIT] ✅ Using cached profile for fast startup', tag: 'Home');
+        AppLogger.debug(
+          '[APP_INIT] ✅ Using cached profile for fast startup',
+          tag: 'Home',
+        );
         userProfile = cachedProfile;
         usedCache = true;
       } else {
         userProfile = await _profileRepository.getUserProfile();
       }
-      
+
       AppLogger.debug('[APP_INIT] ✅ User profile loaded', tag: 'Home');
 
       // 2. Initialize other cubits with shared data
-      AppLogger.debug('[APP_INIT] 2/2 Initializing cubits with shared data...', tag: 'Home');
+      AppLogger.debug(
+        '[APP_INIT] 2/2 Initializing cubits with shared data...',
+        tag: 'Home',
+      );
       await _initializeCubits(userProfile, lang: lang);
       AppLogger.debug('[APP_INIT] ✅ Cubits initialized', tag: 'Home');
 
@@ -69,15 +78,25 @@ class AppInitializationCubit extends Cubit<AppInitializationState> {
 
       // 3. Background refresh if we used cache
       if (usedCache) {
-        AppLogger.debug('[APP_INIT] Triggering background refresh of profile data...', tag: 'Home');
-        getIt<ProfileCubit>().loadProfileData(force: true).then((_) {
-          final freshProfile = getIt<ProfileCubit>().state.userProfileResponse;
-          if (freshProfile != null && !isClosed) {
-            emit(state.copyWith(userProfile: freshProfile));
-          }
-        }).catchError((e) {
-          AppLogger.error('[APP_INIT] Background profile refresh failed: $e', tag: 'Home');
-        });
+        AppLogger.debug(
+          '[APP_INIT] Triggering background refresh of profile data...',
+          tag: 'Home',
+        );
+        getIt<ProfileCubit>()
+            .loadProfileData(force: true)
+            .then((_) {
+              final freshProfile =
+                  getIt<ProfileCubit>().state.userProfileResponse;
+              if (freshProfile != null && !isClosed) {
+                emit(state.copyWith(userProfile: freshProfile));
+              }
+            })
+            .catchError((e) {
+              AppLogger.error(
+                '[APP_INIT] Background profile refresh failed: $e',
+                tag: 'Home',
+              );
+            });
       }
     } catch (e) {
       // If authentication failed and logged the user out, we shouldn't show an error.
@@ -89,7 +108,10 @@ class AppInitializationCubit extends Cubit<AppInitializationState> {
       );
 
       if (isUnauthenticated) {
-        AppLogger.error('[APP_INIT] Authentication failed during initialization. User is logged out. Continuing gracefully.', tag: 'Home');
+        AppLogger.error(
+          '[APP_INIT] Authentication failed during initialization. User is logged out. Continuing gracefully.',
+          tag: 'Home',
+        );
         if (!isClosed) {
           emit(
             state.copyWith(
@@ -102,7 +124,11 @@ class AppInitializationCubit extends Cubit<AppInitializationState> {
         return;
       }
 
-      AppLogger.error('[APP_INIT] ❌ Initialization failed: $e', tag: 'Home', error: e);
+      AppLogger.error(
+        '[APP_INIT] ❌ Initialization failed: $e',
+        tag: 'Home',
+        error: e,
+      );
       if (!isClosed) {
         emit(
           state.copyWith(
@@ -135,16 +161,26 @@ class AppInitializationCubit extends Cubit<AppInitializationState> {
         lang: lang,
       );
 
-      AppLogger.debug('[APP_INIT] ✅ All cubits initialized with shared data', tag: 'Home');
+      AppLogger.debug(
+        '[APP_INIT] ✅ All cubits initialized with shared data',
+        tag: 'Home',
+      );
     } catch (e) {
-      AppLogger.error('[APP_INIT] ⚠️ Error initializing cubits: $e', tag: 'Home', error: e);
+      AppLogger.error(
+        '[APP_INIT] ⚠️ Error initializing cubits: $e',
+        tag: 'Home',
+        error: e,
+      );
       // Don't fail the whole initialization if cubit init fails
     }
   }
 
   /// Reset initialization (for logout/session change)
   void reset() {
-    AppLogger.debug('[APP_INIT] Resetting app initialization and sub-cubits...', tag: 'Home');
+    AppLogger.debug(
+      '[APP_INIT] Resetting app initialization and sub-cubits...',
+      tag: 'Home',
+    );
 
     // Reset sub-cubits that hold session data
     try {
@@ -152,7 +188,11 @@ class AppInitializationCubit extends Cubit<AppInitializationState> {
       getIt<ResumeVaultCubit>().reset();
       getIt<ProfileCubit>().reset();
     } catch (e) {
-      AppLogger.error('[APP_INIT] ⚠️ Error resetting sub-cubits: $e', tag: 'Home', error: e);
+      AppLogger.error(
+        '[APP_INIT] ⚠️ Error resetting sub-cubits: $e',
+        tag: 'Home',
+        error: e,
+      );
     }
 
     if (!isClosed) {

@@ -20,7 +20,9 @@ class CompanyRepositoryImpl implements CompanyRepository {
     required String companyId,
   }) async {
     try {
-      final jsonString = _persistenceService.prefs.getString('company_$companyId');
+      final jsonString = _persistenceService.prefs.getString(
+        'company_$companyId',
+      );
       if (jsonString == null) {
         throw Exception('Company profile not found');
       }
@@ -37,7 +39,10 @@ class CompanyRepositoryImpl implements CompanyRepository {
   }) async {
     try {
       final jsonString = jsonEncode(profile.toJson());
-      await _persistenceService.prefs.setString('company_${profile.id}', jsonString);
+      await _persistenceService.prefs.setString(
+        'company_${profile.id}',
+        jsonString,
+      );
       return profile;
     } catch (e) {
       throw Exception('Failed to create company profile: $e');
@@ -51,7 +56,10 @@ class CompanyRepositoryImpl implements CompanyRepository {
   }) async {
     try {
       final jsonString = jsonEncode(profile.toJson());
-      await _persistenceService.prefs.setString('company_$companyId', jsonString);
+      await _persistenceService.prefs.setString(
+        'company_$companyId',
+        jsonString,
+      );
       return profile;
     } catch (e) {
       throw Exception('Failed to update company profile: $e');
@@ -170,7 +178,10 @@ class CompanyRepositoryImpl implements CompanyRepository {
   }) async {
     try {
       final jsonString = jsonEncode(review.toJson());
-      await _persistenceService.prefs.setString('review_${review.id}', jsonString);
+      await _persistenceService.prefs.setString(
+        'review_${review.id}',
+        jsonString,
+      );
       return review;
     } catch (e) {
       throw Exception('Failed to create review: $e');

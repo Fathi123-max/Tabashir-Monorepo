@@ -28,7 +28,10 @@ class SessionCubit extends Cubit<SessionState> {
     _authSubscription = AuthSessionService.instance.authStateStream.listen((
       isLoggedIn,
     ) {
-      AppLogger.debug('Auth state changed: isLoggedIn=$isLoggedIn', tag: 'Session');
+      AppLogger.debug(
+        'Auth state changed: isLoggedIn=$isLoggedIn',
+        tag: 'Session',
+      );
       if (!isClosed) {
         if (isLoggedIn) {
           emit(const SessionState.authenticated());

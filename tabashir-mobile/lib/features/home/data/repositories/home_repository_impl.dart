@@ -319,7 +319,11 @@ class HomeRepositoryImpl implements HomeRepository {
       }
       return {};
     } catch (e) {
-      AppLogger.error('Error getting client profile: $e', tag: 'Home', error: e);
+      AppLogger.error(
+        'Error getting client profile: $e',
+        tag: 'Home',
+        error: e,
+      );
       return {};
     }
   }
@@ -332,7 +336,11 @@ class HomeRepositoryImpl implements HomeRepository {
       );
       return response.data.appliedJobsCount;
     } catch (e) {
-      AppLogger.error('Error getting applied jobs count: $e', tag: 'Home', error: e);
+      AppLogger.error(
+        'Error getting applied jobs count: $e',
+        tag: 'Home',
+        error: e,
+      );
       return 0;
     }
   }
@@ -345,24 +353,50 @@ class HomeRepositoryImpl implements HomeRepository {
     String? lang,
   }) async {
     try {
-      AppLogger.debug('[HOME_REPO] Fetching matched jobs for email: $email', tag: 'Home');
-      AppLogger.debug('[HOME_REPO] API params: email=$email, limit=$limit, page=$page, lang=$lang', tag: 'Home');
+      AppLogger.debug(
+        '[HOME_REPO] Fetching matched jobs for email: $email',
+        tag: 'Home',
+      );
+      AppLogger.debug(
+        '[HOME_REPO] API params: email=$email, limit=$limit, page=$page, lang=$lang',
+        tag: 'Home',
+      );
 
-      final response = await _tabashirApiService.getJobMatches(email, limit, page, lang);
+      final response = await _tabashirApiService.getJobMatches(
+        email,
+        limit,
+        page,
+        lang,
+      );
       final jobs = response.data.matchedJobs;
 
       AppLogger.debug('[HOME_REPO] API response received', tag: 'Home');
-      AppLogger.debug('[HOME_REPO] Matched jobs count: ${jobs.length}', tag: 'Home');
+      AppLogger.debug(
+        '[HOME_REPO] Matched jobs count: ${jobs.length}',
+        tag: 'Home',
+      );
 
       if (jobs.isEmpty) {
-        AppLogger.debug('[HOME_REPO] WARNING: No matched jobs returned from API', tag: 'Home');
-        AppLogger.debug('[HOME_REPO] This means the backend rankings table has no entries for this user', tag: 'Home');
-        AppLogger.debug('[HOME_REPO] User needs to upload resume for AI matching', tag: 'Home');
+        AppLogger.debug(
+          '[HOME_REPO] WARNING: No matched jobs returned from API',
+          tag: 'Home',
+        );
+        AppLogger.debug(
+          '[HOME_REPO] This means the backend rankings table has no entries for this user',
+          tag: 'Home',
+        );
+        AppLogger.debug(
+          '[HOME_REPO] User needs to upload resume for AI matching',
+          tag: 'Home',
+        );
       } else {
         AppLogger.debug('[HOME_REPO] Jobs returned:', tag: 'Home');
         for (var i = 0; i < jobs.length; i++) {
           final job = jobs[i];
-          AppLogger.debug('[HOME_REPO] [$i] JobID: ${job.jobId}, Title: ${job.jobTitle}, Match: ${job.matchPercentage}', tag: 'Home');
+          AppLogger.debug(
+            '[HOME_REPO] [$i] JobID: ${job.jobId}, Title: ${job.jobTitle}, Match: ${job.matchPercentage}',
+            tag: 'Home',
+          );
         }
       }
 
@@ -405,10 +439,16 @@ class HomeRepositoryImpl implements HomeRepository {
         );
       }).toList();
 
-      AppLogger.debug('[HOME_REPO] Processed ${result.length} JobRecommendation objects', tag: 'Home');
+      AppLogger.debug(
+        '[HOME_REPO] Processed ${result.length} JobRecommendation objects',
+        tag: 'Home',
+      );
       return result;
     } catch (e, stackTrace) {
-      AppLogger.debug('[HOME_REPO] ERROR getting matched jobs: $e', tag: 'Home');
+      AppLogger.debug(
+        '[HOME_REPO] ERROR getting matched jobs: $e',
+        tag: 'Home',
+      );
       AppLogger.debug('[HOME_REPO] Stack trace: $stackTrace', tag: 'Home');
       return [];
     }
@@ -458,8 +498,14 @@ class HomeRepositoryImpl implements HomeRepository {
     int limit = 20,
   }) async {
     try {
-      AppLogger.debug('[HOME_REPO] Fetching applied jobs for email: $email', tag: 'Home');
-      AppLogger.debug('[HOME_REPO] Pagination params - Page: $page, Limit: $limit', tag: 'Home');
+      AppLogger.debug(
+        '[HOME_REPO] Fetching applied jobs for email: $email',
+        tag: 'Home',
+      );
+      AppLogger.debug(
+        '[HOME_REPO] Pagination params - Page: $page, Limit: $limit',
+        tag: 'Home',
+      );
 
       final response = await _tabashirApiService.getAppliedJobs(
         email,
@@ -467,7 +513,10 @@ class HomeRepositoryImpl implements HomeRepository {
         limit: limit,
       );
 
-      AppLogger.debug('[HOME_REPO] Applied jobs response: ${response.data.jobs.length} jobs', tag: 'Home');
+      AppLogger.debug(
+        '[HOME_REPO] Applied jobs response: ${response.data.jobs.length} jobs',
+        tag: 'Home',
+      );
       return response.data.jobs;
     } catch (e) {
       AppLogger.error('Error getting applied jobs: $e', tag: 'Home', error: e);

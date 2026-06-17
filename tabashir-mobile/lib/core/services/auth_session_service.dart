@@ -52,7 +52,11 @@ class AuthSessionService {
     try {
       return await _secureStorage.read(key: StorageKeys.accessToken);
     } on Exception catch (e) {
-      AppLogger.error('ERROR reading access token', tag: 'AuthSession', error: e);
+      AppLogger.error(
+        'ERROR reading access token',
+        tag: 'AuthSession',
+        error: e,
+      );
       return null;
     }
   }
@@ -65,7 +69,11 @@ class AuthSessionService {
       final token = await _secureStorage.read(key: StorageKeys.refreshToken);
       return token;
     } on Exception catch (e) {
-      AppLogger.error('ERROR reading refresh token', tag: 'AuthSession', error: e);
+      AppLogger.error(
+        'ERROR reading refresh token',
+        tag: 'AuthSession',
+        error: e,
+      );
       return null;
     }
   }
@@ -106,7 +114,10 @@ class AuthSessionService {
   /// Set user as logged out and clear all auth data
   /// Clears both secure storage (tokens) and SharedPreferences (flags)
   Future<void> setLoggedOut() async {
-    AppLogger.info('setLoggedOut() - Clearing all auth data', tag: 'AuthSession');
+    AppLogger.info(
+      'setLoggedOut() - Clearing all auth data',
+      tag: 'AuthSession',
+    );
     final prefs = await SharedPreferences.getInstance();
     await prefs.setBool(StorageKeys.isLoggedIn, false);
     // Keep synchronous AppState in sync so GoRouter redirect reads correct value
@@ -138,7 +149,10 @@ class AuthSessionService {
   Future<String?> refreshAccessToken() async {
     // If a refresh is already in progress, wait for it
     if (_isRefreshing) {
-      AppLogger.debug('Refresh already in progress, waiting...', tag: 'AuthSession');
+      AppLogger.debug(
+        'Refresh already in progress, waiting...',
+        tag: 'AuthSession',
+      );
       return _refreshCompleter?.future;
     }
 
@@ -191,14 +205,20 @@ class AuthSessionService {
           key: StorageKeys.accessToken,
           value: newAccessToken,
         );
-        AppLogger.info('Successfully refreshed access token', tag: 'AuthSession');
+        AppLogger.info(
+          'Successfully refreshed access token',
+          tag: 'AuthSession',
+        );
 
         _isRefreshing = false;
         _refreshCompleter?.complete(newAccessToken);
         return newAccessToken;
       }
 
-      AppLogger.warning('Unexpected status code: ${response.statusCode}', tag: 'AuthSession');
+      AppLogger.warning(
+        'Unexpected status code: ${response.statusCode}',
+        tag: 'AuthSession',
+      );
       _isRefreshing = false;
       final error = Exception(
         'Failed to refresh token: Status ${response.statusCode}',
@@ -206,7 +226,11 @@ class AuthSessionService {
       _refreshCompleter?.completeError(error);
       throw error;
     } on DioException catch (e) {
-      AppLogger.error('DioException during refresh: ${e.message}', tag: 'AuthSession', error: e);
+      AppLogger.error(
+        'DioException during refresh: ${e.message}',
+        tag: 'AuthSession',
+        error: e,
+      );
       _isRefreshing = false;
 
       final statusCode = e.response?.statusCode;
@@ -228,7 +252,11 @@ class AuthSessionService {
       _refreshCompleter?.completeError(e);
       rethrow;
     } catch (e) {
-      AppLogger.error('Generic error during refresh: $e', tag: 'AuthSession', error: e);
+      AppLogger.error(
+        'Generic error during refresh: $e',
+        tag: 'AuthSession',
+        error: e,
+      );
       _isRefreshing = false;
       _refreshCompleter?.completeError(e);
       rethrow;

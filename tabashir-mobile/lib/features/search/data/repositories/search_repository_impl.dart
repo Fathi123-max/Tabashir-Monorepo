@@ -132,7 +132,10 @@ class SearchRepositoryImpl implements SearchRepository {
       final updatedJsonString = jsonEncode(
         limitedHistory.map((e) => e.toJson()).toList(),
       );
-      await _persistenceService.prefs.setString(_searchHistoryKey, updatedJsonString);
+      await _persistenceService.prefs.setString(
+        _searchHistoryKey,
+        updatedJsonString,
+      );
     } catch (e) {
       throw Exception('Failed to save to history: $e');
     }

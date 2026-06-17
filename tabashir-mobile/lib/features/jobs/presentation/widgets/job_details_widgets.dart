@@ -201,7 +201,9 @@ class JobTitleSection extends StatelessWidget {
                 icon: Icons.location_on_rounded,
                 label: location,
                 color: theme.colorScheme.onSurfaceVariant,
-                bgColor: theme.colorScheme.surfaceContainerHighest.withOpacity(0.5),
+                bgColor: theme.colorScheme.surfaceContainerHighest.withOpacity(
+                  0.5,
+                ),
               ),
               _buildMatchChip(percentage: matchPercentage, context: context),
               _buildInfoChip(
@@ -222,51 +224,53 @@ class JobTitleSection extends StatelessWidget {
     required String label,
     required Color color,
     required Color bgColor,
-  }) =>
-      Container(
-        padding: EdgeInsets.symmetric(
-          horizontal: AppTheme.spacingMd.w,
-          vertical: AppTheme.spacingXs.h,
+  }) => Container(
+    padding: EdgeInsets.symmetric(
+      horizontal: AppTheme.spacingMd.w,
+      vertical: AppTheme.spacingXs.h,
+    ),
+    decoration: BoxDecoration(
+      color: bgColor,
+      borderRadius: BorderRadius.circular(AppTheme.radiusFull.r),
+      border: Border.all(
+        color: color.withOpacity(0.2),
+      ),
+    ),
+    child: Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Icon(
+          icon,
+          size: 14.sp,
+          color: color,
         ),
-        decoration: BoxDecoration(
-          color: bgColor,
-          borderRadius: BorderRadius.circular(AppTheme.radiusFull.r),
-          border: Border.all(
-            color: color.withOpacity(0.2),
-          ),
-        ),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(
-              icon,
-              size: 14.sp,
+        SizedBox(width: 4.w),
+        Flexible(
+          child: Text(
+            label,
+            style: TextStyle(
+              fontSize: 12.sp,
+              fontWeight: FontWeight.w600,
               color: color,
             ),
-            SizedBox(width: 4.w),
-            Flexible(
-              child: Text(
-                label,
-                style: TextStyle(
-                  fontSize: 12.sp,
-                  fontWeight: FontWeight.w600,
-                  color: color,
-                ),
-                overflow: TextOverflow.ellipsis,
-              ),
-            ),
-          ],
+            overflow: TextOverflow.ellipsis,
+          ),
         ),
-      );
+      ],
+    ),
+  );
 
-  Widget _buildMatchChip({required String percentage, required BuildContext context}) {
+  Widget _buildMatchChip({
+    required String percentage,
+    required BuildContext context,
+  }) {
     final theme = Theme.of(context);
     final matchValue = int.tryParse(percentage.replaceAll('%', '')) ?? 0;
     final matchColor = matchValue >= 80
         ? AppTheme.successColor
         : matchValue >= 60
-            ? AppTheme.warningColor
-            : AppTheme.errorColor;
+        ? AppTheme.warningColor
+        : AppTheme.errorColor;
 
     return Container(
       padding: EdgeInsets.symmetric(
@@ -303,7 +307,9 @@ class JobTitleSection extends StatelessWidget {
           SizedBox(width: 4.w),
           Flexible(
             child: Text(
-              'match_percentage_label'.tr(namedArgs: {'percentage': percentage.replaceAll('%', '')}),
+              'match_percentage_label'.tr(
+                namedArgs: {'percentage': percentage.replaceAll('%', '')},
+              ),
               style: TextStyle(
                 fontSize: 12.sp,
                 fontWeight: FontWeight.w700,
@@ -392,78 +398,78 @@ class CompanyDetailsWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Container(
-      width: double.infinity,
-      padding: EdgeInsets.all(AppTheme.spacingMd.w),
-      decoration: BoxDecoration(
-        color: Theme.of(context).cardColor,
-        borderRadius: BorderRadius.circular(AppTheme.radiusMedium.r),
-        border: Border.all(
-          color: Theme.of(context).colorScheme.outline.withOpacity(0.1),
-        ),
-        boxShadow: [
-          BoxShadow(
-            color: Theme.of(context).shadowColor.withOpacity(0.08),
-            blurRadius: 12,
-            offset: const Offset(0, 4),
-          ),
-        ],
+    width: double.infinity,
+    padding: EdgeInsets.all(AppTheme.spacingMd.w),
+    decoration: BoxDecoration(
+      color: Theme.of(context).cardColor,
+      borderRadius: BorderRadius.circular(AppTheme.radiusMedium.r),
+      border: Border.all(
+        color: Theme.of(context).colorScheme.outline.withOpacity(0.1),
       ),
-      child: Row(
-        children: [
-          Container(
-            height: 56.w,
-            width: 56.w,
-            decoration: BoxDecoration(
-              color: Theme.of(context).colorScheme.primaryContainer,
-              borderRadius: BorderRadius.circular(AppTheme.radiusMedium.r),
-            ),
-            child: Center(
-              child: Text(
-                companyName.substring(0, 2).toUpperCase(),
-                style: TextStyle(
-                  fontSize: 20.sp,
-                  fontWeight: FontWeight.bold,
-                  color: Theme.of(context).colorScheme.onPrimaryContainer,
-                ),
+      boxShadow: [
+        BoxShadow(
+          color: Theme.of(context).shadowColor.withOpacity(0.08),
+          blurRadius: 12,
+          offset: const Offset(0, 4),
+        ),
+      ],
+    ),
+    child: Row(
+      children: [
+        Container(
+          height: 56.w,
+          width: 56.w,
+          decoration: BoxDecoration(
+            color: Theme.of(context).colorScheme.primaryContainer,
+            borderRadius: BorderRadius.circular(AppTheme.radiusMedium.r),
+          ),
+          child: Center(
+            child: Text(
+              companyName.substring(0, 2).toUpperCase(),
+              style: TextStyle(
+                fontSize: 20.sp,
+                fontWeight: FontWeight.bold,
+                color: Theme.of(context).colorScheme.onPrimaryContainer,
               ),
             ),
           ),
-          SizedBox(width: AppTheme.spacingMd.w),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  companyName,
-                  style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                    fontWeight: FontWeight.bold,
-                    color: Theme.of(context).colorScheme.onSurface,
+        ),
+        SizedBox(width: AppTheme.spacingMd.w),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                companyName,
+                style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                  fontWeight: FontWeight.bold,
+                  color: Theme.of(context).colorScheme.onSurface,
+                ),
+              ),
+              SizedBox(height: AppTheme.spacingXs.h),
+              Row(
+                children: [
+                  Icon(
+                    Icons.verified_rounded,
+                    size: 14.sp,
+                    color: AppTheme.successColor,
                   ),
-                ),
-                SizedBox(height: AppTheme.spacingXs.h),
-                Row(
-                  children: [
-                    Icon(
-                      Icons.verified_rounded,
-                      size: 14.sp,
+                  SizedBox(width: 4.w),
+                  Text(
+                    'Verified Employer'.tr(),
+                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
                       color: AppTheme.successColor,
+                      fontWeight: FontWeight.w600,
                     ),
-                    SizedBox(width: 4.w),
-                    Text(
-                      'Verified Employer'.tr(),
-                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        color: AppTheme.successColor,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
+                  ),
+                ],
+              ),
+            ],
           ),
-        ],
-      ),
-    );
+        ),
+      ],
+    ),
+  );
 }
 
 // Job Tags Widget

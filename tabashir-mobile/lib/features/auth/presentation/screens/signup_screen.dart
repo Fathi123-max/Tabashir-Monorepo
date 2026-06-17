@@ -1,4 +1,3 @@
-
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -57,7 +56,6 @@ class _SignupScreenState extends State<SignupScreen> {
     super.dispose();
   }
 
-
   Future<void> _createAccount() async {
     if (!_formKey.currentState!.validate()) return;
     if (!_agreedToTerms) {
@@ -96,7 +94,6 @@ class _SignupScreenState extends State<SignupScreen> {
       _showMessage('Registration failed: $e'.tr());
     }
   }
-
 
   void _showMessage(String message) {
     ScaffoldMessenger.of(context).showSnackBar(
@@ -203,7 +200,8 @@ class _SignupScreenState extends State<SignupScreen> {
                                   text: 'Sign up with Apple'.tr(),
                                   onPressed: () async {
                                     try {
-                                      await AppleSignInService.instance.signIn();
+                                      await AppleSignInService.instance
+                                          .signIn();
                                       if (mounted) {
                                         Future.delayed(
                                           const Duration(milliseconds: 150),

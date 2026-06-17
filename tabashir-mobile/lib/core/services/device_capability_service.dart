@@ -67,7 +67,11 @@ class DeviceCapabilityService {
       return DeviceTier.medium;
     } catch (e) {
       if (kDebugMode) {
-        AppLogger.error('[DeviceCapability] Error detecting device tier: $e', tag: 'Service', error: e);
+        AppLogger.error(
+          '[DeviceCapability] Error detecting device tier: $e',
+          tag: 'Service',
+          error: e,
+        );
       }
       return DeviceTier.medium; // Default to medium tier
     }

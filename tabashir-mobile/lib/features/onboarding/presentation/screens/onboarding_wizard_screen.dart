@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -13,6 +14,8 @@ import '../../../ai_job_apply/presentation/widgets/location_chip.dart';
 import '../../../ai_job_apply/presentation/widgets/role_chip.dart';
 import '../cubit/onboarding_wizard_cubit.dart';
 import '../cubit/onboarding_wizard_state.dart';
+import '../../../../core/router/app_state.dart';
+import '../../../../shared/widgets/ai_consent_bottom_sheet.dart';
 
 class OnboardingWizardScreen extends StatefulWidget {
   const OnboardingWizardScreen({super.key});
@@ -119,7 +122,29 @@ class _OnboardingWizardScreenState extends State<OnboardingWizardScreen> {
           ),
         ),
         const Spacer(),
-        const SizedBox(width: 48), // To balance the back button
+        BlocBuilder<OnboardingWizardCubit, OnboardingWizardState>(
+          builder: (context, state) {
+            if (state.currentStep < 5) {
+              return TextButton(
+                onPressed: () async {
+                  await AppState.instance.setSetupComplete();
+                  if (context.mounted) {
+                    context.go('/');
+                  }
+                },
+                child: Text(
+                  'Skip'.tr(),
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 16.sp,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              );
+            }
+            return const SizedBox(width: 48);
+          },
+        ),
       ],
     ),
   );
@@ -272,8 +297,14 @@ class _ResumeUploadStep extends StatelessWidget {
                       borderRadius: BorderRadius.circular(12.r),
                     ),
                   ),
-                  onPressed: () =>
-                      context.read<OnboardingWizardCubit>().pickFile(),
+                  onPressed: () async {
+                    final consented = await AiConsentBottomSheet.ensureConsent(
+                      context,
+                    );
+                    if (consented && context.mounted) {
+                      context.read<OnboardingWizardCubit>().pickFile();
+                    }
+                  },
                   icon: const Icon(Icons.attach_file),
                   label: Text(
                     state.fileName ?? 'Choose File',

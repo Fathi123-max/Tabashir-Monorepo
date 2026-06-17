@@ -164,9 +164,7 @@ final GoRouter appRouter = GoRouter(
     // This fires on every restart until addClient succeeds.
     // ------------------------------------------------------------------
     final isSetupRoute = setupRoutes.contains(currentPath);
-    if (appState.isLoggedIn &&
-        !appState.hasCompletedSetup &&
-        !isSetupRoute) {
+    if (appState.isLoggedIn && !appState.hasCompletedSetup && !isSetupRoute) {
       return RouteNames.onboardingWizard;
     }
 

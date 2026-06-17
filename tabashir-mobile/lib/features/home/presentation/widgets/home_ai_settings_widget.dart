@@ -104,7 +104,9 @@ class HomeAISettingsWidget extends StatelessWidget {
                       Row(
                         children: [
                           Text(
-                            isPro ? 'ai_job_apply_pro'.tr() : 'AI Job Apply'.tr(),
+                            isPro
+                                ? 'ai_job_apply_pro'.tr()
+                                : 'AI Job Apply'.tr(),
                             style: theme.textTheme.titleMedium?.copyWith(
                               fontWeight: FontWeight.bold,
                               color: isPro
@@ -194,9 +196,11 @@ class HomeAISettingsWidget extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'applies_remaining'.tr(namedArgs: {
-                    'count': remainingApplies.toString(),
-                  }),
+                  'applies_remaining'.tr(
+                    namedArgs: {
+                      'count': remainingApplies.toString(),
+                    },
+                  ),
                   style: theme.textTheme.titleLarge?.copyWith(
                     fontWeight: FontWeight.bold,
                     color: AppTheme.zinc900,

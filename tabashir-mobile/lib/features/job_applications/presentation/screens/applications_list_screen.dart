@@ -73,11 +73,26 @@ class _ApplicationsListContent extends StatelessWidget {
           final isLoadingMore = state.isLoadingMoreApplied;
           final hasMore = state.appliedJobsHasMore;
 
-          AppLogger.debug('[APPLICATIONS_SCREEN] Building screen', tag: 'Applications');
-          AppLogger.debug('[APPLICATIONS_SCREEN] Total applications: $totalCount', tag: 'Applications');
-          AppLogger.debug('[APPLICATIONS_SCREEN] Applied jobs count: ${appliedJobs.length}', tag: 'Applications');
-          AppLogger.debug('[APPLICATIONS_SCREEN] Is loading more: $isLoadingMore', tag: 'Applications');
-          AppLogger.debug('[APPLICATIONS_SCREEN] Has more: $hasMore', tag: 'Applications');
+          AppLogger.debug(
+            '[APPLICATIONS_SCREEN] Building screen',
+            tag: 'Applications',
+          );
+          AppLogger.debug(
+            '[APPLICATIONS_SCREEN] Total applications: $totalCount',
+            tag: 'Applications',
+          );
+          AppLogger.debug(
+            '[APPLICATIONS_SCREEN] Applied jobs count: ${appliedJobs.length}',
+            tag: 'Applications',
+          );
+          AppLogger.debug(
+            '[APPLICATIONS_SCREEN] Is loading more: $isLoadingMore',
+            tag: 'Applications',
+          );
+          AppLogger.debug(
+            '[APPLICATIONS_SCREEN] Has more: $hasMore',
+            tag: 'Applications',
+          );
 
           if (appliedJobs.isEmpty && !isLoadingMore) {
             return _buildEmptyState(theme, context);

@@ -73,7 +73,9 @@ class PaymentSuccessScreen extends StatelessWidget {
                   ),
                   decoration: BoxDecoration(
                     color: AppTheme.primaryColor.withOpacity(0.1),
-                    borderRadius: BorderRadius.circular(AppTheme.radiusMedium.r),
+                    borderRadius: BorderRadius.circular(
+                      AppTheme.radiusMedium.r,
+                    ),
                     border: Border.all(
                       color: AppTheme.primaryColor.withOpacity(0.2),
                     ),
@@ -100,8 +102,11 @@ class PaymentSuccessScreen extends StatelessWidget {
                 Container(
                   padding: EdgeInsets.all(AppTheme.spacingMd.w),
                   decoration: BoxDecoration(
-                    color: theme.colorScheme.surfaceContainerHighest.withOpacity(0.5),
-                    borderRadius: BorderRadius.circular(AppTheme.radiusMedium.r),
+                    color: theme.colorScheme.surfaceContainerHighest
+                        .withOpacity(0.5),
+                    borderRadius: BorderRadius.circular(
+                      AppTheme.radiusMedium.r,
+                    ),
                   ),
                   child: Column(
                     children: [
@@ -131,11 +136,17 @@ class PaymentSuccessScreen extends StatelessWidget {
                 width: double.infinity,
                 child: ElevatedButton(
                   onPressed: () async {
-                    AppLogger.debug('[PaymentSuccessScreen] OK button pressed', tag: 'Payments');
+                    AppLogger.debug(
+                      '[PaymentSuccessScreen] OK button pressed',
+                      tag: 'Payments',
+                    );
                     if (onOkPressed != null) {
                       await onOkPressed!();
                     }
-                    AppLogger.debug('[PaymentSuccessScreen] Popping back to home', tag: 'Payments');
+                    AppLogger.debug(
+                      '[PaymentSuccessScreen] Popping back to home',
+                      tag: 'Payments',
+                    );
                     if (context.mounted) {
                       // Since we pushed with Navigator, we pop with Navigator
                       Navigator.of(context).popUntil((route) => route.isFirst);
@@ -146,7 +157,9 @@ class PaymentSuccessScreen extends StatelessWidget {
                     foregroundColor: Colors.white,
                     padding: EdgeInsets.symmetric(vertical: 16.h),
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(AppTheme.radiusLarge.r),
+                      borderRadius: BorderRadius.circular(
+                        AppTheme.radiusLarge.r,
+                      ),
                     ),
                     elevation: 0,
                   ),
@@ -170,80 +183,80 @@ class PaymentSuccessScreen extends StatelessWidget {
   }
 
   Widget _buildSuccessAnimation() => Container(
-      width: 120.w,
-      height: 120.h,
-      decoration: BoxDecoration(
-        shape: BoxShape.circle,
-        gradient: AppTheme.successGradient,
-        boxShadow: [
-          BoxShadow(
-            color: AppTheme.successColor.withOpacity(0.3),
-            blurRadius: 20,
-            offset: const Offset(0, 8),
-          ),
-        ],
-      ),
-      child: Icon(
-        Icons.check_circle_rounded,
-        size: 64.sp,
-        color: Colors.white,
-      ),
-    );
+    width: 120.w,
+    height: 120.h,
+    decoration: BoxDecoration(
+      shape: BoxShape.circle,
+      gradient: AppTheme.successGradient,
+      boxShadow: [
+        BoxShadow(
+          color: AppTheme.successColor.withOpacity(0.3),
+          blurRadius: 20,
+          offset: const Offset(0, 8),
+        ),
+      ],
+    ),
+    child: Icon(
+      Icons.check_circle_rounded,
+      size: 64.sp,
+      color: Colors.white,
+    ),
+  );
 
   Widget _buildWhatsNextSection(ThemeData theme) => Container(
-      width: double.infinity,
-      padding: EdgeInsets.all(AppTheme.spacingLg.w),
-      decoration: BoxDecoration(
-        color: theme.colorScheme.surfaceContainerHighest.withOpacity(0.3),
-        borderRadius: BorderRadius.circular(AppTheme.radiusLarge.r),
-        border: Border.all(
-          color: AppTheme.primaryColor.withOpacity(0.1),
+    width: double.infinity,
+    padding: EdgeInsets.all(AppTheme.spacingLg.w),
+    decoration: BoxDecoration(
+      color: theme.colorScheme.surfaceContainerHighest.withOpacity(0.3),
+      borderRadius: BorderRadius.circular(AppTheme.radiusLarge.r),
+      border: Border.all(
+        color: AppTheme.primaryColor.withOpacity(0.1),
+      ),
+    ),
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            Icon(
+              Icons.lightbulb_outline_rounded,
+              color: AppTheme.primaryColor,
+              size: 24.sp,
+            ),
+            SizedBox(width: AppTheme.spacingSm.w),
+            Text(
+              "whats_next".tr(),
+              style: theme.textTheme.titleMedium?.copyWith(
+                fontSize: 18.sp,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ],
         ),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Icon(
-                Icons.lightbulb_outline_rounded,
-                color: AppTheme.primaryColor,
-                size: 24.sp,
-              ),
-              SizedBox(width: AppTheme.spacingSm.w),
-              Text(
-                "whats_next".tr(),
-                style: theme.textTheme.titleMedium?.copyWith(
-                  fontSize: 18.sp,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ],
-          ),
-          SizedBox(height: AppTheme.spacingMd.h),
-          _buildFeatureItem(
-            icon: Icons.auto_awesome_rounded,
-            title: 'ai_job_apply_activated'.tr(),
-            description: 'cv_optimized'.tr(),
-            theme: theme,
-          ),
-          SizedBox(height: AppTheme.spacingSm.h),
-          _buildFeatureItem(
-            icon: Icons.numbers_rounded,
-            title: 'job_credits_added'.tr(),
-            description: 'applies_ready'.tr(),
-            theme: theme,
-          ),
-          SizedBox(height: AppTheme.spacingSm.h),
-          _buildFeatureItem(
-            icon: Icons.rocket_launch_rounded,
-            title: 'start_applying'.tr(),
-            description: 'head_to_home'.tr(),
-            theme: theme,
-          ),
-        ],
-      ),
-    );
+        SizedBox(height: AppTheme.spacingMd.h),
+        _buildFeatureItem(
+          icon: Icons.auto_awesome_rounded,
+          title: 'ai_job_apply_activated'.tr(),
+          description: 'cv_optimized'.tr(),
+          theme: theme,
+        ),
+        SizedBox(height: AppTheme.spacingSm.h),
+        _buildFeatureItem(
+          icon: Icons.numbers_rounded,
+          title: 'job_credits_added'.tr(),
+          description: 'applies_ready'.tr(),
+          theme: theme,
+        ),
+        SizedBox(height: AppTheme.spacingSm.h),
+        _buildFeatureItem(
+          icon: Icons.rocket_launch_rounded,
+          title: 'start_applying'.tr(),
+          description: 'head_to_home'.tr(),
+          theme: theme,
+        ),
+      ],
+    ),
+  );
 
   Widget _buildFeatureItem({
     required IconData icon,
@@ -251,43 +264,43 @@ class PaymentSuccessScreen extends StatelessWidget {
     required String description,
     required ThemeData theme,
   }) => Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Container(
-          padding: EdgeInsets.all(AppTheme.spacingXs.w),
-          decoration: BoxDecoration(
-            color: AppTheme.primaryColor.withOpacity(0.1),
-            borderRadius: BorderRadius.circular(AppTheme.radiusSmall.r),
-          ),
-          child: Icon(
-            icon,
-            size: 20.sp,
-            color: AppTheme.primaryColor,
-          ),
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      Container(
+        padding: EdgeInsets.all(AppTheme.spacingXs.w),
+        decoration: BoxDecoration(
+          color: AppTheme.primaryColor.withOpacity(0.1),
+          borderRadius: BorderRadius.circular(AppTheme.radiusSmall.r),
         ),
-        SizedBox(width: AppTheme.spacingMd.w),
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                title,
-                style: theme.textTheme.titleSmall?.copyWith(
-                  fontSize: 15.sp,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-              SizedBox(height: 4.h),
-              Text(
-                description,
-                style: theme.textTheme.bodySmall?.copyWith(
-                  fontSize: 13.sp,
-                  color: theme.colorScheme.onSurfaceVariant,
-                ),
-              ),
-            ],
-          ),
+        child: Icon(
+          icon,
+          size: 20.sp,
+          color: AppTheme.primaryColor,
         ),
-      ],
-    );
+      ),
+      SizedBox(width: AppTheme.spacingMd.w),
+      Expanded(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              title,
+              style: theme.textTheme.titleSmall?.copyWith(
+                fontSize: 15.sp,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+            SizedBox(height: 4.h),
+            Text(
+              description,
+              style: theme.textTheme.bodySmall?.copyWith(
+                fontSize: 13.sp,
+                color: theme.colorScheme.onSurfaceVariant,
+              ),
+            ),
+          ],
+        ),
+      ),
+    ],
+  );
 }

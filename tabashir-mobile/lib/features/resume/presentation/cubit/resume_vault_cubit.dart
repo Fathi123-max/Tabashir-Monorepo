@@ -15,7 +15,10 @@ part 'resume_vault_state.dart';
 class ResumeVaultCubit extends Cubit<ResumeVaultState> {
   ResumeVaultCubit(this._repository) : super(const ResumeVaultState()) {
     // Removed auto-load - resumes will be loaded when needed
-    AppLogger.debug('🔵 [RESUME_VAULT_CUBIT] Cubit created (no auto-load)', tag: 'Resume');
+    AppLogger.debug(
+      '🔵 [RESUME_VAULT_CUBIT] Cubit created (no auto-load)',
+      tag: 'Resume',
+    );
   }
 
   final ResumeVaultRepository _repository;
@@ -25,11 +28,17 @@ class ResumeVaultCubit extends Cubit<ResumeVaultState> {
   /// Initialize resumes (called once, typically from AppInitializationCubit)
   Future<void> initializeWithResumes(List<ResumeItem> resumes) async {
     if (_isInitialized) {
-      AppLogger.debug('🔵 [RESUME_VAULT_CUBIT] Already initialized, skipping', tag: 'Resume');
+      AppLogger.debug(
+        '🔵 [RESUME_VAULT_CUBIT] Already initialized, skipping',
+        tag: 'Resume',
+      );
       return;
     }
 
-    AppLogger.debug('🔵 [RESUME_VAULT_CUBIT] Initializing with ${resumes.length} resumes from shared data', tag: 'Resume');
+    AppLogger.debug(
+      '🔵 [RESUME_VAULT_CUBIT] Initializing with ${resumes.length} resumes from shared data',
+      tag: 'Resume',
+    );
     if (!isClosed) {
       emit(
         state.copyWith(
@@ -39,13 +48,19 @@ class ResumeVaultCubit extends Cubit<ResumeVaultState> {
       );
     }
     _isInitialized = true;
-    AppLogger.debug('🔵 [RESUME_VAULT_CUBIT] ✅ Resume vault initialized with shared data', tag: 'Resume');
+    AppLogger.debug(
+      '🔵 [RESUME_VAULT_CUBIT] ✅ Resume vault initialized with shared data',
+      tag: 'Resume',
+    );
   }
 
   Future<void> loadResumes({bool force = false}) async {
     // Prevent duplicate concurrent loads
     if (_isLoading && !force) {
-      AppLogger.debug('🔵 [RESUME_VAULT_CUBIT] Already loading, skipping duplicate call', tag: 'Resume');
+      AppLogger.debug(
+        '🔵 [RESUME_VAULT_CUBIT] Already loading, skipping duplicate call',
+        tag: 'Resume',
+      );
       return;
     }
 
@@ -53,23 +68,44 @@ class ResumeVaultCubit extends Cubit<ResumeVaultState> {
     if (!force &&
         state.status == ResumeVaultStatus.success &&
         state.resumes.isNotEmpty) {
-      AppLogger.debug('🔵 [RESUME_VAULT_CUBIT] Already loaded, skipping', tag: 'Resume');
+      AppLogger.debug(
+        '🔵 [RESUME_VAULT_CUBIT] Already loaded, skipping',
+        tag: 'Resume',
+      );
       return;
     }
 
     _isLoading = true;
-    AppLogger.debug('🔵 [RESUME_VAULT_CUBIT] loadResumes() called', tag: 'Resume');
-    AppLogger.debug('🔵 [RESUME_VAULT_CUBIT] Current state: ${state.status}', tag: 'Resume');
+    AppLogger.debug(
+      '🔵 [RESUME_VAULT_CUBIT] loadResumes() called',
+      tag: 'Resume',
+    );
+    AppLogger.debug(
+      '🔵 [RESUME_VAULT_CUBIT] Current state: ${state.status}',
+      tag: 'Resume',
+    );
     if (!isClosed) {
       emit(state.copyWith(status: ResumeVaultStatus.loading));
     }
-    AppLogger.debug('🔵 [RESUME_VAULT_CUBIT] Emitted loading state', tag: 'Resume');
+    AppLogger.debug(
+      '🔵 [RESUME_VAULT_CUBIT] Emitted loading state',
+      tag: 'Resume',
+    );
 
     try {
-      AppLogger.debug('🔵 [RESUME_VAULT_CUBIT] Fetching resumes from repository...', tag: 'Resume');
+      AppLogger.debug(
+        '🔵 [RESUME_VAULT_CUBIT] Fetching resumes from repository...',
+        tag: 'Resume',
+      );
       final resumes = await _repository.getUserResumes();
-      AppLogger.debug('🔵 [RESUME_VAULT_CUBIT] ✅ Fetched ${resumes.length} resumes from repository', tag: 'Resume');
-      AppLogger.debug('🔵 [RESUME_VAULT_CUBIT] Resume IDs: ${resumes.map((r) => r.id).join(', ')}', tag: 'Resume');
+      AppLogger.debug(
+        '🔵 [RESUME_VAULT_CUBIT] ✅ Fetched ${resumes.length} resumes from repository',
+        tag: 'Resume',
+      );
+      AppLogger.debug(
+        '🔵 [RESUME_VAULT_CUBIT] Resume IDs: ${resumes.map((r) => r.id).join(', ')}',
+        tag: 'Resume',
+      );
 
       if (!isClosed) {
         emit(
@@ -79,9 +115,17 @@ class ResumeVaultCubit extends Cubit<ResumeVaultState> {
           ),
         );
       }
-      AppLogger.debug('🔵 [RESUME_VAULT_CUBIT] ✅ Emitted success state with ${resumes.length} resumes', tag: 'Resume');
+      AppLogger.debug(
+        '🔵 [RESUME_VAULT_CUBIT] ✅ Emitted success state with ${resumes.length} resumes',
+        tag: 'Resume',
+      );
     } catch (e, stackTrace) {
-      AppLogger.error('🔴 [RESUME_VAULT_CUBIT]', tag: 'Resume', error: e, stackTrace: stackTrace);
+      AppLogger.error(
+        '🔴 [RESUME_VAULT_CUBIT]',
+        tag: 'Resume',
+        error: e,
+        stackTrace: stackTrace,
+      );
       if (!isClosed) {
         emit(
           state.copyWith(
@@ -90,24 +134,36 @@ class ResumeVaultCubit extends Cubit<ResumeVaultState> {
           ),
         );
       }
-      AppLogger.debug('🔵 [RESUME_VAULT_CUBIT] Emitted failure state', tag: 'Resume');
+      AppLogger.debug(
+        '🔵 [RESUME_VAULT_CUBIT] Emitted failure state',
+        tag: 'Resume',
+      );
     } finally {
       _isLoading = false;
     }
   }
 
   Future<void> deleteResume(String id) async {
-    AppLogger.debug('🔵 [RESUME_VAULT_CUBIT] deleteResume() called for ID: $id', tag: 'Resume');
+    AppLogger.debug(
+      '🔵 [RESUME_VAULT_CUBIT] deleteResume() called for ID: $id',
+      tag: 'Resume',
+    );
     if (!isClosed) {
       emit(state.copyWith(status: ResumeVaultStatus.deleting));
     }
 
     try {
       await _repository.deleteResume(resumeId: id);
-      AppLogger.debug('🔵 [RESUME_VAULT_CUBIT] ✅ Repository delete successful', tag: 'Resume');
+      AppLogger.debug(
+        '🔵 [RESUME_VAULT_CUBIT] ✅ Repository delete successful',
+        tag: 'Resume',
+      );
 
       final updatedResumes = state.resumes.where((r) => r.id != id).toList();
-      AppLogger.debug('🔵 [RESUME_VAULT_CUBIT] Updated resumes count: ${updatedResumes.length}', tag: 'Resume');
+      AppLogger.debug(
+        '🔵 [RESUME_VAULT_CUBIT] Updated resumes count: ${updatedResumes.length}',
+        tag: 'Resume',
+      );
 
       if (!isClosed) {
         emit(
@@ -117,9 +173,17 @@ class ResumeVaultCubit extends Cubit<ResumeVaultState> {
           ),
         );
       }
-      AppLogger.debug('🔵 [RESUME_VAULT_CUBIT] ✅ Emitted success state after delete', tag: 'Resume');
+      AppLogger.debug(
+        '🔵 [RESUME_VAULT_CUBIT] ✅ Emitted success state after delete',
+        tag: 'Resume',
+      );
     } catch (e, stackTrace) {
-      AppLogger.error('🔴 [RESUME_VAULT_CUBIT]', tag: 'Resume', error: e, stackTrace: stackTrace);
+      AppLogger.error(
+        '🔴 [RESUME_VAULT_CUBIT]',
+        tag: 'Resume',
+        error: e,
+        stackTrace: stackTrace,
+      );
       if (!isClosed) {
         emit(
           state.copyWith(
@@ -132,10 +196,16 @@ class ResumeVaultCubit extends Cubit<ResumeVaultState> {
   }
 
   Future<void> setDefaultResume(String id) async {
-    AppLogger.debug('🔵 [RESUME_VAULT_CUBIT] setDefaultResume() called for ID: $id', tag: 'Resume');
+    AppLogger.debug(
+      '🔵 [RESUME_VAULT_CUBIT] setDefaultResume() called for ID: $id',
+      tag: 'Resume',
+    );
     try {
       await _repository.setDefaultResume(resumeId: id);
-      AppLogger.debug('🔵 [RESUME_VAULT_CUBIT] ✅ Repository setDefault successful', tag: 'Resume');
+      AppLogger.debug(
+        '🔵 [RESUME_VAULT_CUBIT] ✅ Repository setDefault successful',
+        tag: 'Resume',
+      );
 
       final updatedResumes = state.resumes
           .map(
@@ -146,9 +216,17 @@ class ResumeVaultCubit extends Cubit<ResumeVaultState> {
       if (!isClosed) {
         emit(state.copyWith(resumes: updatedResumes));
       }
-      AppLogger.debug('🔵 [RESUME_VAULT_CUBIT] ✅ Emitted state with updated default', tag: 'Resume');
+      AppLogger.debug(
+        '🔵 [RESUME_VAULT_CUBIT] ✅ Emitted state with updated default',
+        tag: 'Resume',
+      );
     } catch (e, stackTrace) {
-      AppLogger.error('🔴 [RESUME_VAULT_CUBIT]', tag: 'Resume', error: e, stackTrace: stackTrace);
+      AppLogger.error(
+        '🔴 [RESUME_VAULT_CUBIT]',
+        tag: 'Resume',
+        error: e,
+        stackTrace: stackTrace,
+      );
       if (!isClosed) {
         emit(
           state.copyWith(
@@ -161,20 +239,37 @@ class ResumeVaultCubit extends Cubit<ResumeVaultState> {
   }
 
   Future<void> duplicateResume(String id) async {
-    AppLogger.debug('🔵 [RESUME_VAULT_CUBIT] duplicateResume() called for ID: $id', tag: 'Resume');
+    AppLogger.debug(
+      '🔵 [RESUME_VAULT_CUBIT] duplicateResume() called for ID: $id',
+      tag: 'Resume',
+    );
     try {
       final duplicatedResume = await _repository.duplicateResume(resumeId: id);
-      AppLogger.debug('🔵 [RESUME_VAULT_CUBIT] ✅ Duplicated resume: ${duplicatedResume.id}', tag: 'Resume');
+      AppLogger.debug(
+        '🔵 [RESUME_VAULT_CUBIT] ✅ Duplicated resume: ${duplicatedResume.id}',
+        tag: 'Resume',
+      );
 
       final updatedResumes = [duplicatedResume, ...state.resumes];
-      AppLogger.debug('🔵 [RESUME_VAULT_CUBIT] Total resumes after duplicate: ${updatedResumes.length}', tag: 'Resume');
+      AppLogger.debug(
+        '🔵 [RESUME_VAULT_CUBIT] Total resumes after duplicate: ${updatedResumes.length}',
+        tag: 'Resume',
+      );
 
       if (!isClosed) {
         emit(state.copyWith(resumes: updatedResumes));
       }
-      AppLogger.debug('🔵 [RESUME_VAULT_CUBIT] ✅ Emitted state with duplicated resume', tag: 'Resume');
+      AppLogger.debug(
+        '🔵 [RESUME_VAULT_CUBIT] ✅ Emitted state with duplicated resume',
+        tag: 'Resume',
+      );
     } catch (e, stackTrace) {
-      AppLogger.error('🔴 [RESUME_VAULT_CUBIT]', tag: 'Resume', error: e, stackTrace: stackTrace);
+      AppLogger.error(
+        '🔴 [RESUME_VAULT_CUBIT]',
+        tag: 'Resume',
+        error: e,
+        stackTrace: stackTrace,
+      );
       if (!isClosed) {
         emit(
           state.copyWith(
@@ -187,13 +282,19 @@ class ResumeVaultCubit extends Cubit<ResumeVaultState> {
   }
 
   Future<void> renameResume(String id, String newName) async {
-    AppLogger.debug('🔵 [RESUME_VAULT_CUBIT] renameResume() called for ID: $id to name: $newName', tag: 'Resume');
+    AppLogger.debug(
+      '🔵 [RESUME_VAULT_CUBIT] renameResume() called for ID: $id to name: $newName',
+      tag: 'Resume',
+    );
     try {
       final updatedResume = await _repository.renameResume(
         resumeId: id,
         newName: newName,
       );
-      AppLogger.debug('🔵 [RESUME_VAULT_CUBIT] ✅ Renamed resume to: ${updatedResume.name}', tag: 'Resume');
+      AppLogger.debug(
+        '🔵 [RESUME_VAULT_CUBIT] ✅ Renamed resume to: ${updatedResume.name}',
+        tag: 'Resume',
+      );
 
       final updatedResumes = state.resumes.map((resume) {
         if (resume.id == id) {
@@ -205,9 +306,17 @@ class ResumeVaultCubit extends Cubit<ResumeVaultState> {
       if (!isClosed) {
         emit(state.copyWith(resumes: updatedResumes));
       }
-      AppLogger.debug('🔵 [RESUME_VAULT_CUBIT] ✅ Emitted state with renamed resume', tag: 'Resume');
+      AppLogger.debug(
+        '🔵 [RESUME_VAULT_CUBIT] ✅ Emitted state with renamed resume',
+        tag: 'Resume',
+      );
     } catch (e, stackTrace) {
-      AppLogger.error('🔴 [RESUME_VAULT_CUBIT]', tag: 'Resume', error: e, stackTrace: stackTrace);
+      AppLogger.error(
+        '🔴 [RESUME_VAULT_CUBIT]',
+        tag: 'Resume',
+        error: e,
+        stackTrace: stackTrace,
+      );
       if (!isClosed) {
         emit(
           state.copyWith(
@@ -225,8 +334,14 @@ class ResumeVaultCubit extends Cubit<ResumeVaultState> {
     required String fileType,
     required int fileSize,
   }) async {
-    AppLogger.debug('🔵 [RESUME_VAULT_CUBIT] uploadResume() called', tag: 'Resume');
-    AppLogger.debug('🔵 [RESUME_VAULT_CUBIT] File: $fileName, Path: $filePath, Size: $fileSize bytes', tag: 'Resume');
+    AppLogger.debug(
+      '🔵 [RESUME_VAULT_CUBIT] uploadResume() called',
+      tag: 'Resume',
+    );
+    AppLogger.debug(
+      '🔵 [RESUME_VAULT_CUBIT] File: $fileName, Path: $filePath, Size: $fileSize bytes',
+      tag: 'Resume',
+    );
     if (!isClosed) {
       emit(state.copyWith(status: ResumeVaultStatus.uploading));
     }
@@ -238,10 +353,16 @@ class ResumeVaultCubit extends Cubit<ResumeVaultState> {
         fileType: fileType,
         fileSize: fileSize,
       );
-      AppLogger.debug('🔵 [RESUME_VAULT_CUBIT] ✅ Uploaded resume: ${newResume.id}', tag: 'Resume');
+      AppLogger.debug(
+        '🔵 [RESUME_VAULT_CUBIT] ✅ Uploaded resume: ${newResume.id}',
+        tag: 'Resume',
+      );
 
       final updatedResumes = [newResume, ...state.resumes];
-      AppLogger.debug('🔵 [RESUME_VAULT_CUBIT] Total resumes after upload: ${updatedResumes.length}', tag: 'Resume');
+      AppLogger.debug(
+        '🔵 [RESUME_VAULT_CUBIT] Total resumes after upload: ${updatedResumes.length}',
+        tag: 'Resume',
+      );
 
       if (!isClosed) {
         emit(
@@ -251,17 +372,32 @@ class ResumeVaultCubit extends Cubit<ResumeVaultState> {
           ),
         );
       }
-      AppLogger.debug('🔵 [RESUME_VAULT_CUBIT] ✅ Emitted success state with new resume', tag: 'Resume');
+      AppLogger.debug(
+        '🔵 [RESUME_VAULT_CUBIT] ✅ Emitted success state with new resume',
+        tag: 'Resume',
+      );
 
       // Trigger AI Dashboard Refresh
       try {
-        AppLogger.debug('🔵 [RESUME_VAULT_CUBIT] Triggering HomeCubit refresh...', tag: 'Resume');
+        AppLogger.debug(
+          '🔵 [RESUME_VAULT_CUBIT] Triggering HomeCubit refresh...',
+          tag: 'Resume',
+        );
         getIt<HomeCubit>().refreshHomeData();
       } catch (e) {
-        AppLogger.error('🔵 [RESUME_VAULT_CUBIT] Failed to trigger HomeCubit refresh: $e', tag: 'Resume', error: e);
+        AppLogger.error(
+          '🔵 [RESUME_VAULT_CUBIT] Failed to trigger HomeCubit refresh: $e',
+          tag: 'Resume',
+          error: e,
+        );
       }
     } catch (e, stackTrace) {
-      AppLogger.error('🔴 [RESUME_VAULT_CUBIT]', tag: 'Resume', error: e, stackTrace: stackTrace);
+      AppLogger.error(
+        '🔴 [RESUME_VAULT_CUBIT]',
+        tag: 'Resume',
+        error: e,
+        stackTrace: stackTrace,
+      );
       if (!isClosed) {
         emit(
           state.copyWith(
@@ -280,7 +416,10 @@ class ResumeVaultCubit extends Cubit<ResumeVaultState> {
     required int fileSize,
     String? outputFormat,
   }) async {
-    AppLogger.debug('🔵 [RESUME_VAULT_CUBIT] reformatResume() called', tag: 'Resume');
+    AppLogger.debug(
+      '🔵 [RESUME_VAULT_CUBIT] reformatResume() called',
+      tag: 'Resume',
+    );
     if (!isClosed) {
       emit(state.copyWith(status: ResumeVaultStatus.uploading));
     }
@@ -293,7 +432,10 @@ class ResumeVaultCubit extends Cubit<ResumeVaultState> {
         fileSize: fileSize,
         outputFormat: outputFormat,
       );
-      AppLogger.debug('🔵 [RESUME_VAULT_CUBIT] ✅ Reformatted resume: ${newResume.id}', tag: 'Resume');
+      AppLogger.debug(
+        '🔵 [RESUME_VAULT_CUBIT] ✅ Reformatted resume: ${newResume.id}',
+        tag: 'Resume',
+      );
 
       final updatedResumes = [newResume, ...state.resumes];
 
@@ -305,13 +447,18 @@ class ResumeVaultCubit extends Cubit<ResumeVaultState> {
           ),
         );
       }
-      
+
       // Trigger AI Dashboard Refresh
       try {
         getIt<HomeCubit>().refreshHomeData();
       } catch (_) {}
     } catch (e, stackTrace) {
-      AppLogger.error('🔴 [RESUME_VAULT_CUBIT]', tag: 'Resume', error: e, stackTrace: stackTrace);
+      AppLogger.error(
+        '🔴 [RESUME_VAULT_CUBIT]',
+        tag: 'Resume',
+        error: e,
+        stackTrace: stackTrace,
+      );
       if (!isClosed) {
         emit(
           state.copyWith(
@@ -325,7 +472,10 @@ class ResumeVaultCubit extends Cubit<ResumeVaultState> {
 
   /// Reset the cubit state (for logout/session change)
   void reset() {
-    AppLogger.debug('[RESUME_VAULT_CUBIT] Resetting resume data...', tag: 'Resume');
+    AppLogger.debug(
+      '[RESUME_VAULT_CUBIT] Resetting resume data...',
+      tag: 'Resume',
+    );
     _isInitialized = false;
     if (!isClosed) {
       emit(const ResumeVaultState());

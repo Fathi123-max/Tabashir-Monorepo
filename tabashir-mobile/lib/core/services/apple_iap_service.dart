@@ -7,7 +7,6 @@ import '../utils/app_logger.dart';
 
 /// Service for handling Apple In-App Purchases (StoreKit 2).
 class AppleIAPService {
-
   /// Creates an instance with the given Dio client.
   AppleIAPService(this._dio);
   final InAppPurchase _iap = InAppPurchase.instance;

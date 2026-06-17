@@ -189,14 +189,16 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   final languageName = locale.languageCode == 'en'
                       ? 'English'
                       : locale.languageCode == 'ar'
-                          ? 'العربية'
-                          : 'Español';
+                      ? 'العربية'
+                      : 'Español';
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(
                       content: Text(
-                        'language_changed'.tr(namedArgs: {
-                          'language': languageName,
-                        }),
+                        'language_changed'.tr(
+                          namedArgs: {
+                            'language': languageName,
+                          },
+                        ),
                       ),
                       backgroundColor: AppTheme.primaryColor,
                     ),
@@ -419,9 +421,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(
-          'theme_changed'.tr(namedArgs: {
-            'mode': isDarkMode ? 'dark'.tr() : 'light'.tr(),
-          }),
+          'theme_changed'.tr(
+            namedArgs: {
+              'mode': isDarkMode ? 'dark'.tr() : 'light'.tr(),
+            },
+          ),
         ),
         backgroundColor: AppTheme.primaryColor,
       ),
@@ -468,7 +472,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
   void _showDeleteAccountDialog() {
     final profileCubit = getIt<ProfileCubit>();
-    
+
     showDialog<void>(
       context: context,
       builder: (context) => AlertDialog(
@@ -490,7 +494,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
           ElevatedButton(
             onPressed: () async {
               Navigator.pop(context);
-              
+
               // Show loading
               showDialog<void>(
                 context: context,
@@ -499,27 +503,27 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   child: CircularProgressIndicator(),
                 ),
               );
-              
+
               try {
                 await profileCubit.deleteAccount();
-                
+
                 if (mounted) {
                   Navigator.pop(context); // Close loading
-                  
+
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(
                       content: Text('Account deleted successfully'.tr()),
                       backgroundColor: AppTheme.successColor,
                     ),
                   );
-                  
+
                   // Navigate to login/logout
                   context.go('/${RouteNames.login}');
                 }
               } catch (e) {
                 if (mounted) {
                   Navigator.pop(context); // Close loading
-                  
+
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(
                       content: Text(

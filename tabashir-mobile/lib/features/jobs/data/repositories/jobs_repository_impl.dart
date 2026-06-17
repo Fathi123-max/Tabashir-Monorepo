@@ -33,8 +33,14 @@ class JobsRepositoryImpl implements JobsRepository {
     String? email,
     String? lang,
   }) async {
-    AppLogger.debug('\n\n########## [JOBS_REPO] GET JOBS CALLED ##########', tag: 'Jobs');
-    AppLogger.debug('[JOBS_REPO] Pagination params - Page: $page, Limit: $limit', tag: 'Jobs');
+    AppLogger.debug(
+      '\n\n########## [JOBS_REPO] GET JOBS CALLED ##########',
+      tag: 'Jobs',
+    );
+    AppLogger.debug(
+      '[JOBS_REPO] Pagination params - Page: $page, Limit: $limit',
+      tag: 'Jobs',
+    );
     if (email != null) {
       AppLogger.debug('[JOBS_REPO] User Email: $email', tag: 'Jobs');
     }
@@ -42,16 +48,28 @@ class JobsRepositoryImpl implements JobsRepository {
       AppLogger.debug('[JOBS_REPO] Search query: $search', tag: 'Jobs');
     }
     if (locations != null && locations.isNotEmpty) {
-      AppLogger.debug('[JOBS_REPO] Filters - Locations: $locations', tag: 'Jobs');
+      AppLogger.debug(
+        '[JOBS_REPO] Filters - Locations: $locations',
+        tag: 'Jobs',
+      );
     }
     if (jobTypes != null && jobTypes.isNotEmpty) {
-      AppLogger.debug('[JOBS_REPO] Filters - Job Types: $jobTypes', tag: 'Jobs');
+      AppLogger.debug(
+        '[JOBS_REPO] Filters - Job Types: $jobTypes',
+        tag: 'Jobs',
+      );
     }
     if (experienceLevels != null && experienceLevels.isNotEmpty) {
-      AppLogger.debug('[JOBS_REPO] Filters - Experience Levels: $experienceLevels', tag: 'Jobs');
+      AppLogger.debug(
+        '[JOBS_REPO] Filters - Experience Levels: $experienceLevels',
+        tag: 'Jobs',
+      );
     }
     if (minSalary != null || maxSalary != null) {
-      AppLogger.debug('[JOBS_REPO] Filters - Salary range: $minSalary - $maxSalary', tag: 'Jobs');
+      AppLogger.debug(
+        '[JOBS_REPO] Filters - Salary range: $minSalary - $maxSalary',
+        tag: 'Jobs',
+      );
     }
     if (skills != null && skills.isNotEmpty) {
       AppLogger.debug('[JOBS_REPO] Filters - Skills: $skills', tag: 'Jobs');
@@ -78,23 +96,44 @@ class JobsRepositoryImpl implements JobsRepository {
       );
 
       AppLogger.debug('\n[JOBS_REPO] ✅ API call completed', tag: 'Jobs');
-      AppLogger.debug('[JOBS_REPO] Response status: ${response.response.statusCode}', tag: 'Jobs');
-      AppLogger.debug('[JOBS_REPO] Response data: ${response.data}', tag: 'Jobs');
+      AppLogger.debug(
+        '[JOBS_REPO] Response status: ${response.response.statusCode}',
+        tag: 'Jobs',
+      );
+      AppLogger.debug(
+        '[JOBS_REPO] Response data: ${response.data}',
+        tag: 'Jobs',
+      );
 
       if (response.response.statusCode == 200 ||
           response.response.statusCode == 201) {
         final jobsList = response.data.jobs ?? [];
         final pagination = response.data.pagination;
 
-        AppLogger.debug('[JOBS_REPO] ✅ Extracted ${jobsList.length} jobs from response', tag: 'Jobs');
+        AppLogger.debug(
+          '[JOBS_REPO] ✅ Extracted ${jobsList.length} jobs from response',
+          tag: 'Jobs',
+        );
         if (pagination != null) {
-          AppLogger.debug('[JOBS_REPO] Pagination info: $pagination', tag: 'Jobs');
+          AppLogger.debug(
+            '[JOBS_REPO] Pagination info: $pagination',
+            tag: 'Jobs',
+          );
         }
-        AppLogger.debug('[JOBS_REPO] First job: ${jobsList.isNotEmpty ? jobsList.first : "none"}', tag: 'Jobs');
-        AppLogger.debug('########## [JOBS_REPO] SUCCESS ##########\n\n', tag: 'Jobs');
+        AppLogger.debug(
+          '[JOBS_REPO] First job: ${jobsList.isNotEmpty ? jobsList.first : "none"}',
+          tag: 'Jobs',
+        );
+        AppLogger.debug(
+          '########## [JOBS_REPO] SUCCESS ##########\n\n',
+          tag: 'Jobs',
+        );
         return jobsList;
       } else {
-        AppLogger.error('[JOBS_REPO] ❌ API returned error status: ${response.response.statusCode}', tag: 'Jobs');
+        AppLogger.error(
+          '[JOBS_REPO] ❌ API returned error status: ${response.response.statusCode}',
+          tag: 'Jobs',
+        );
         throw Exception(
           'Failed to get jobs with status: ${response.response.statusCode}',
         );
@@ -104,14 +143,30 @@ class JobsRepositoryImpl implements JobsRepository {
       AppLogger.debug('[JOBS_REPO] Type: ${e.type}', tag: 'Jobs');
       AppLogger.debug('[JOBS_REPO] Message: ${e.message}', tag: 'Jobs');
       if (e.response != null) {
-        AppLogger.debug('[JOBS_REPO] Response status: ${e.response?.statusCode}', tag: 'Jobs');
-        AppLogger.debug('[JOBS_REPO] Response data: ${e.response?.data}', tag: 'Jobs');
+        AppLogger.debug(
+          '[JOBS_REPO] Response status: ${e.response?.statusCode}',
+          tag: 'Jobs',
+        );
+        AppLogger.debug(
+          '[JOBS_REPO] Response data: ${e.response?.data}',
+          tag: 'Jobs',
+        );
       }
-      AppLogger.error('########## [JOBS_REPO] FAILED ##########\n\n', tag: 'Jobs');
+      AppLogger.error(
+        '########## [JOBS_REPO] FAILED ##########\n\n',
+        tag: 'Jobs',
+      );
       throw _handleDioError(e);
     } catch (e) {
-      AppLogger.error('\n[JOBS_REPO] ❌ Unexpected exception: $e', tag: 'Jobs', error: e);
-      AppLogger.error('########## [JOBS_REPO] FAILED ##########\n\n', tag: 'Jobs');
+      AppLogger.error(
+        '\n[JOBS_REPO] ❌ Unexpected exception: $e',
+        tag: 'Jobs',
+        error: e,
+      );
+      AppLogger.error(
+        '########## [JOBS_REPO] FAILED ##########\n\n',
+        tag: 'Jobs',
+      );
       throw Exception('Failed to get jobs: $e');
     }
   }
@@ -122,21 +177,36 @@ class JobsRepositoryImpl implements JobsRepository {
     String? email,
   }) async {
     try {
-      AppLogger.debug('[JOBS_REPO] getJobById called with jobId: $jobId, email: $email', tag: 'Jobs');
+      AppLogger.debug(
+        '[JOBS_REPO] getJobById called with jobId: $jobId, email: $email',
+        tag: 'Jobs',
+      );
       final response = await _tabashirApiService.getJobById(jobId, null, email);
 
-      AppLogger.debug('[JOBS_REPO] API response status: ${response.response.statusCode}', tag: 'Jobs');
-      AppLogger.debug('[JOBS_REPO] API response data: ${response.data}', tag: 'Jobs');
+      AppLogger.debug(
+        '[JOBS_REPO] API response status: ${response.response.statusCode}',
+        tag: 'Jobs',
+      );
+      AppLogger.debug(
+        '[JOBS_REPO] API response data: ${response.data}',
+        tag: 'Jobs',
+      );
 
       if (response.response.statusCode == 200 ||
           response.response.statusCode == 201) {
         // Unwrap the job data from the API response
         final jobData = response.data.job;
         if (jobData != null) {
-          AppLogger.debug('[JOBS_REPO] Successfully unwrapped job data: $jobData', tag: 'Jobs');
+          AppLogger.debug(
+            '[JOBS_REPO] Successfully unwrapped job data: $jobData',
+            tag: 'Jobs',
+          );
           return jobData;
         } else {
-          AppLogger.debug('[JOBS_REPO] Job data is null in response', tag: 'Jobs');
+          AppLogger.debug(
+            '[JOBS_REPO] Job data is null in response',
+            tag: 'Jobs',
+          );
           throw Exception('Job not found in response');
         }
       } else {

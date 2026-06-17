@@ -11,7 +11,8 @@ class ProfessionalSummaryStep extends StatefulWidget {
   const ProfessionalSummaryStep({super.key});
 
   @override
-  State<ProfessionalSummaryStep> createState() => _ProfessionalSummaryStepState();
+  State<ProfessionalSummaryStep> createState() =>
+      _ProfessionalSummaryStepState();
 }
 
 class _ProfessionalSummaryStepState extends State<ProfessionalSummaryStep> {
@@ -21,7 +22,11 @@ class _ProfessionalSummaryStepState extends State<ProfessionalSummaryStep> {
   @override
   void initState() {
     super.initState();
-    final summary = context.read<AiResumeBuilderCubit>().state.resumeData.professionalSummary;
+    final summary = context
+        .read<AiResumeBuilderCubit>()
+        .state
+        .resumeData
+        .professionalSummary;
     summaryController = TextEditingController(text: summary?.summary);
   }
 
@@ -134,14 +139,16 @@ class _ProfessionalSummaryStepState extends State<ProfessionalSummaryStep> {
                         ),
                         contentPadding: EdgeInsets.all(AppTheme.spacingMd.w),
                         hintStyle: TextStyle(
-                          color: Theme.of(context).brightness == Brightness.light
+                          color:
+                              Theme.of(context).brightness == Brightness.light
                               ? const Color(0xFF64748B)
                               : const Color(0xFF94A3B8),
                           fontFamily: 'Inter'.tr(),
                           height: 1.5,
                         ),
                         counterStyle: TextStyle(
-                          color: Theme.of(context).brightness == Brightness.light
+                          color:
+                              Theme.of(context).brightness == Brightness.light
                               ? const Color(0xFF64748B)
                               : const Color(0xFF94A3B8),
                           fontSize: 12.sp,
@@ -161,11 +168,14 @@ class _ProfessionalSummaryStepState extends State<ProfessionalSummaryStep> {
                         ),
                         Text(
                           '${summaryController.text.length}/$maxLength',
-                          style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                            color: summaryController.text.length > maxLength * 0.9
-                                ? AppTheme.warningColor
-                                : AppTheme.textMutedLight,
-                          ),
+                          style: Theme.of(context).textTheme.bodySmall
+                              ?.copyWith(
+                                color:
+                                    summaryController.text.length >
+                                        maxLength * 0.9
+                                    ? AppTheme.warningColor
+                                    : AppTheme.textMutedLight,
+                              ),
                         ),
                       ],
                     ),

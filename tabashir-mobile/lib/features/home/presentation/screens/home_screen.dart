@@ -198,9 +198,7 @@ class _HomeScreenState extends State<HomeScreen> {
               ],
               Expanded(
                 child: Text(
-                  isPro
-                      ? 'premium_member'.tr()
-                      : 'welcome_back_subtitle'.tr(),
+                  isPro ? 'premium_member'.tr() : 'welcome_back_subtitle'.tr(),
                   style: theme.textTheme.bodyMedium?.copyWith(
                     color: theme.colorScheme.onSurfaceVariant,
                     fontSize: 13.sp,

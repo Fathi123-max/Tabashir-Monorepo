@@ -131,7 +131,10 @@ class AuthCubit extends Cubit<AuthState> {
 
       // Debug: Print the full response to see the structure
       AppLogger.debug('Register response: $response', tag: 'Auth');
-      AppLogger.debug('Token in response.token: ${response.token}', tag: 'Auth');
+      AppLogger.debug(
+        'Token in response.token: ${response.token}',
+        tag: 'Auth',
+      );
 
       // Store the token in AuthSessionService
       // API returns token in 'accessToken' field
@@ -148,7 +151,10 @@ class AuthCubit extends Cubit<AuthState> {
         AppLogger.warning('WARNING - No token found in response!', tag: 'Auth');
         // If no token was returned from registration, try to log the user in
         // to obtain the necessary tokens
-        AppLogger.debug('Attempting to login after registration...', tag: 'Auth');
+        AppLogger.debug(
+          'Attempting to login after registration...',
+          tag: 'Auth',
+        );
         await _attemptLoginAfterRegistration(email, password);
       }
 
@@ -310,7 +316,10 @@ class AuthCubit extends Cubit<AuthState> {
           refreshToken: refreshTokenToStore,
         );
       } else {
-        AppLogger.warning('WARNING - No token obtained even after login attempt!', tag: 'Auth');
+        AppLogger.warning(
+          'WARNING - No token obtained even after login attempt!',
+          tag: 'Auth',
+        );
       }
     } catch (e) {
       AppLogger.debug('Login after registration failed: $e', tag: 'Auth');

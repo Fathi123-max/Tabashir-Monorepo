@@ -277,69 +277,68 @@ class ProHeaderWidget extends StatelessWidget {
     String? total,
     bool isHighlighted = false,
     String? subtitle,
-  }) =>
-      Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(
-            icon,
-            size: 18.sp,
-            color: isHighlighted ? AppTheme.goldLight : Colors.white,
+  }) => Column(
+    mainAxisSize: MainAxisSize.min,
+    children: [
+      Icon(
+        icon,
+        size: 18.sp,
+        color: isHighlighted ? AppTheme.goldLight : Colors.white,
+      ),
+      SizedBox(height: AppTheme.spacingXs.h),
+      Text(
+        value,
+        style: TextStyle(
+          fontSize: 16.sp,
+          fontWeight: FontWeight.bold,
+          color: Colors.white,
+        ),
+      ),
+      if (total != null) ...[
+        Text(
+          '/ $total',
+          style: TextStyle(
+            fontSize: 11.sp,
+            color: Colors.white.withOpacity(0.7),
           ),
-          SizedBox(height: AppTheme.spacingXs.h),
-          Text(
-            value,
+        ),
+      ],
+      SizedBox(height: 2.h),
+      Text(
+        label,
+        style: TextStyle(
+          fontSize: 10.sp,
+          color: Colors.white.withOpacity(0.8),
+        ),
+        textAlign: TextAlign.center,
+      ),
+      if (subtitle != null) ...[
+        SizedBox(height: 2.h),
+        Container(
+          padding: EdgeInsets.symmetric(
+            horizontal: 4.w,
+            vertical: 1.h,
+          ),
+          decoration: BoxDecoration(
+            color: AppTheme.goldColor.withOpacity(0.3),
+            borderRadius: BorderRadius.circular(AppTheme.radiusFull.r),
+          ),
+          child: Text(
+            subtitle,
             style: TextStyle(
-              fontSize: 16.sp,
+              fontSize: 9.sp,
               fontWeight: FontWeight.bold,
               color: Colors.white,
             ),
           ),
-          if (total != null) ...[
-            Text(
-              '/ $total',
-              style: TextStyle(
-                fontSize: 11.sp,
-                color: Colors.white.withOpacity(0.7),
-              ),
-            ),
-          ],
-          SizedBox(height: 2.h),
-          Text(
-            label,
-            style: TextStyle(
-              fontSize: 10.sp,
-              color: Colors.white.withOpacity(0.8),
-            ),
-            textAlign: TextAlign.center,
-          ),
-          if (subtitle != null) ...[
-            SizedBox(height: 2.h),
-            Container(
-              padding: EdgeInsets.symmetric(
-                horizontal: 4.w,
-                vertical: 1.h,
-              ),
-              decoration: BoxDecoration(
-                color: AppTheme.goldColor.withOpacity(0.3),
-                borderRadius: BorderRadius.circular(AppTheme.radiusFull.r),
-              ),
-              child: Text(
-                subtitle,
-                style: TextStyle(
-                  fontSize: 9.sp,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white,
-                ),
-              ),
-            ),
-          ],
-        ],
-      );
+        ),
+      ],
+    ],
+  );
 
   Widget _buildDivider() => Container(
-        height: 32.h,
-        width: 1,
-        color: Colors.white.withOpacity(0.2),
-      );
+    height: 32.h,
+    width: 1,
+    color: Colors.white.withOpacity(0.2),
+  );
 }

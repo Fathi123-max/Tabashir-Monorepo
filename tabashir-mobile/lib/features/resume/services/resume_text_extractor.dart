@@ -29,7 +29,11 @@ class ResumeTextExtractor {
       }
     } catch (e) {
       // Intentionally swallow exceptions to allow server-side fallback later.
-      AppLogger.error('⚠️ [RESUME_TEXT_EXTRACTOR] Failed to extract text: $e', tag: 'Resume', error: e);
+      AppLogger.error(
+        '⚠️ [RESUME_TEXT_EXTRACTOR] Failed to extract text: $e',
+        tag: 'Resume',
+        error: e,
+      );
     }
 
     return '';

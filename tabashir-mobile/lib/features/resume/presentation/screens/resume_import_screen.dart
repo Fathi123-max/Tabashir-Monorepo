@@ -10,6 +10,7 @@ import '../../../../core/services/auth_session_service.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../cubit/resume_import_cubit.dart';
 import '../widgets/resume_import_option_card.dart';
+import '../../../../shared/widgets/ai_consent_bottom_sheet.dart';
 
 class ResumeImportScreen extends StatelessWidget {
   const ResumeImportScreen({super.key});
@@ -236,8 +237,13 @@ class ResumeImportScreen extends StatelessWidget {
             ),
             SizedBox(height: AppTheme.spacingSm.h),
             TextButton(
-              onPressed: () {
-                context.read<ResumeImportCubit>().pickResumeFile();
+              onPressed: () async {
+                final consented = await AiConsentBottomSheet.ensureConsent(
+                  context,
+                );
+                if (consented && context.mounted) {
+                  context.read<ResumeImportCubit>().pickResumeFile();
+                }
               },
               child: const Text('Upload a different file'),
             ),
@@ -293,8 +299,11 @@ class ResumeImportScreen extends StatelessWidget {
           icon: Icons.upload_file_outlined,
           title: 'Upload File'.tr(),
           subtitle: 'Upload your resume from your device (PDF, DOCX).'.tr(),
-          onTap: () {
-            context.read<ResumeImportCubit>().pickResumeFile();
+          onTap: () async {
+            final consented = await AiConsentBottomSheet.ensureConsent(context);
+            if (consented && context.mounted) {
+              context.read<ResumeImportCubit>().pickResumeFile();
+            }
           },
         ),
         SizedBox(height: AppTheme.spacingSm.h),

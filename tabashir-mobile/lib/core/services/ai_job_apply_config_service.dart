@@ -214,7 +214,10 @@ class AiJobApplyConfigService {
       final isExpired = await _isCacheExpired();
       if (!forceRefresh && !isExpired) {
         if (kDebugMode) {
-          AppLogger.debug('[AiJobApplyConfig] Using cached configuration', tag: 'Service');
+          AppLogger.debug(
+            '[AiJobApplyConfig] Using cached configuration',
+            tag: 'Service',
+          );
         }
         await PerformanceMonitoringService.trackCacheOperation('hit', 10);
         return;
@@ -237,7 +240,10 @@ class AiJobApplyConfigService {
         await PerformanceMonitoringService.trackCacheOperation('miss', 500);
 
         if (kDebugMode) {
-          AppLogger.debug('[AiJobApplyConfig] Configuration updated from backend', tag: 'Service');
+          AppLogger.debug(
+            '[AiJobApplyConfig] Configuration updated from backend',
+            tag: 'Service',
+          );
         }
       } else {
         throw Exception(
@@ -252,7 +258,11 @@ class AiJobApplyConfigService {
       );
 
       if (kDebugMode) {
-        AppLogger.error('[AiJobApplyConfig] Error fetching configuration: $e', tag: 'Service', error: e);
+        AppLogger.error(
+          '[AiJobApplyConfig] Error fetching configuration: $e',
+          tag: 'Service',
+          error: e,
+        );
       }
       // On error, keep using existing cached/default configuration
     } finally {
@@ -303,7 +313,11 @@ class AiJobApplyConfigService {
       );
     } catch (e) {
       if (kDebugMode) {
-        AppLogger.error('[AiJobApplyConfig] Error saving to cache: $e', tag: 'Service', error: e);
+        AppLogger.error(
+          '[AiJobApplyConfig] Error saving to cache: $e',
+          tag: 'Service',
+          error: e,
+        );
       }
     }
   }
@@ -318,12 +332,19 @@ class AiJobApplyConfigService {
         // Parse JSON and update config
         // Note: This is a simplified version
         if (kDebugMode) {
-          AppLogger.debug('[AiJobApplyConfig] Configuration loaded from cache', tag: 'Service');
+          AppLogger.debug(
+            '[AiJobApplyConfig] Configuration loaded from cache',
+            tag: 'Service',
+          );
         }
       }
     } catch (e) {
       if (kDebugMode) {
-        AppLogger.error('[AiJobApplyConfig] Error loading from cache: $e', tag: 'Service', error: e);
+        AppLogger.error(
+          '[AiJobApplyConfig] Error loading from cache: $e',
+          tag: 'Service',
+          error: e,
+        );
       }
     }
   }
@@ -345,7 +366,10 @@ class AiJobApplyConfigService {
       await fetchConfigFromBackend();
 
       if (kDebugMode) {
-        AppLogger.debug('[AiJobApplyConfig] Configuration initialized with Phase 3 services', tag: 'Service');
+        AppLogger.debug(
+          '[AiJobApplyConfig] Configuration initialized with Phase 3 services',
+          tag: 'Service',
+        );
       }
     } finally {
       PerformanceMonitoringService.endTracking('config_initialize');
@@ -373,7 +397,11 @@ class AiJobApplyConfigService {
       }
     } catch (e) {
       if (kDebugMode) {
-        AppLogger.error('[AiJobApplyConfig] Error clearing cache: $e', tag: 'Service', error: e);
+        AppLogger.error(
+          '[AiJobApplyConfig] Error clearing cache: $e',
+          tag: 'Service',
+          error: e,
+        );
       }
     }
   }

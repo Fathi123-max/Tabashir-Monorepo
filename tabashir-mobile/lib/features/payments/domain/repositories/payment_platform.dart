@@ -1,6 +1,8 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
-import '../../data/repositories/apple_payment_platform.dart' show ApplePaymentPlatform;
-import '../../data/repositories/stripe_payment_platform.dart' show StripePaymentPlatform;
+import '../../data/repositories/apple_payment_platform.dart'
+    show ApplePaymentPlatform;
+import '../../data/repositories/stripe_payment_platform.dart'
+    show StripePaymentPlatform;
 
 part 'payment_platform.freezed.dart';
 
@@ -26,7 +28,8 @@ abstract class PaymentPlatform {
 /// Result of a payment attempt.
 @freezed
 class PaymentResult with _$PaymentResult {
-  const factory PaymentResult.success({String? transactionId}) = _PaymentSuccess;
+  const factory PaymentResult.success({String? transactionId}) =
+      _PaymentSuccess;
   const factory PaymentResult.cancelled() = _PaymentCancelled;
   const factory PaymentResult.failed(String message) = _PaymentFailed;
 }

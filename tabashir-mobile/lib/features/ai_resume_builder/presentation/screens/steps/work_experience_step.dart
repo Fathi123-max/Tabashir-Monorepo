@@ -184,10 +184,12 @@ class WorkExperienceStep extends StatelessWidget {
                         ),
                         SizedBox(width: AppTheme.spacingXs.w),
                         Text(
-                          'date_range'.tr(namedArgs: {
-                            'startDate': startDate,
-                            'endDate': endDate,
-                          }),
+                          'date_range'.tr(
+                            namedArgs: {
+                              'startDate': startDate,
+                              'endDate': endDate,
+                            },
+                          ),
                           style: theme.textTheme.bodySmall?.copyWith(
                             color: AppTheme.textMutedLight,
                           ),

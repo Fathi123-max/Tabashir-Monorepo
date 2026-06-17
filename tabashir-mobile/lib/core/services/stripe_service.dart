@@ -175,7 +175,10 @@ class StripeService {
     try {
       return await Stripe.instance.isPlatformPaySupported();
     } catch (e) {
-      AppLogger.debug('Error checking Platform Pay availability: $e', tag: 'Service');
+      AppLogger.debug(
+        'Error checking Platform Pay availability: $e',
+        tag: 'Service',
+      );
       return false;
     }
   }

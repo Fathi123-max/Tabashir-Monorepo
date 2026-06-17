@@ -51,7 +51,8 @@ class OnboardingRepositoryImpl implements OnboardingRepository {
   @override
   Future<bool> isOnboardingCompleted() async {
     try {
-      return _persistenceService.prefs.getBool(_onboardingCompletedKey) ?? false;
+      return _persistenceService.prefs.getBool(_onboardingCompletedKey) ??
+          false;
     } catch (e) {
       return false;
     }

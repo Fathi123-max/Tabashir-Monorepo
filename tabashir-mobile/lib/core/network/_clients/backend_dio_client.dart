@@ -18,13 +18,25 @@ class BackendDioClient {
         onRequest: (options, handler) async {
           // Add the user's access token to the request headers
           final token = await AuthSessionService.instance.accessToken;
-          AppLogger.debug('[BACKEND_DIO] Request to: ${options.uri}', tag: 'Network');
-          AppLogger.debug('[BACKEND_DIO] Token available: ${token != null}', tag: 'Network');
+          AppLogger.debug(
+            '[BACKEND_DIO] Request to: ${options.uri}',
+            tag: 'Network',
+          );
+          AppLogger.debug(
+            '[BACKEND_DIO] Token available: ${token != null}',
+            tag: 'Network',
+          );
           if (token != null) {
             options.headers['Authorization'] = 'Bearer $token';
-            AppLogger.debug('[BACKEND_DIO] Added Authorization header', tag: 'Network');
+            AppLogger.debug(
+              '[BACKEND_DIO] Added Authorization header',
+              tag: 'Network',
+            );
           } else {
-            AppLogger.debug('[BACKEND_DIO] ⚠️ No token available - request will be unauthenticated', tag: 'Network');
+            AppLogger.debug(
+              '[BACKEND_DIO] ⚠️ No token available - request will be unauthenticated',
+              tag: 'Network',
+            );
           }
           _logRequest(
             options.method,
@@ -39,31 +51,50 @@ class BackendDioClient {
         },
         onError: (error, handler) async {
           final requestPath = error.requestOptions.path;
-          AppLogger.error('[BACKEND_DIO] ❌ Request to $requestPath failed: ${error.response?.statusCode}', tag: 'Network', error: requestPath);
+          AppLogger.error(
+            '[BACKEND_DIO] ❌ Request to $requestPath failed: ${error.response?.statusCode}',
+            tag: 'Network',
+            error: requestPath,
+          );
 
           if (error.response?.data != null) {
-            AppLogger.error('[BACKEND_DIO] Error response: ${error.response?.data}', tag: 'Network');
+            AppLogger.error(
+              '[BACKEND_DIO] Error response: ${error.response?.data}',
+              tag: 'Network',
+            );
           }
 
           // Handle 401 Unauthorized errors
           if (error.response?.statusCode == 401) {
-            AppLogger.debug('[BACKEND_DIO] 401 Unauthorized for path: $requestPath', tag: 'Network');
+            AppLogger.debug(
+              '[BACKEND_DIO] 401 Unauthorized for path: $requestPath',
+              tag: 'Network',
+            );
 
             // If it's a refresh endpoint itself that failed with 401, it's a fatal session expiry
             if (requestPath.contains('/auth/refresh')) {
-              AppLogger.debug('[BACKEND_DIO] 401 on refresh endpoint - SESSION EXPIRED', tag: 'Network');
+              AppLogger.debug(
+                '[BACKEND_DIO] 401 on refresh endpoint - SESSION EXPIRED',
+                tag: 'Network',
+              );
               await AuthSessionService.instance.setLoggedOut();
               return handler.next(error);
             }
 
             // For non-auth endpoints, try to refresh the token
-            AppLogger.debug('[BACKEND_DIO] Attempting token refresh...', tag: 'Network');
+            AppLogger.debug(
+              '[BACKEND_DIO] Attempting token refresh...',
+              tag: 'Network',
+            );
             try {
               final newToken = await AuthSessionService.instance
                   .refreshAccessToken();
 
               if (newToken != null) {
-                AppLogger.debug('[BACKEND_DIO] Token refreshed successfully, retrying original request...', tag: 'Network');
+                AppLogger.debug(
+                  '[BACKEND_DIO] Token refreshed successfully, retrying original request...',
+                  tag: 'Network',
+                );
 
                 // Clone the original request with the new token
                 final opts = error.requestOptions;
@@ -74,16 +105,29 @@ class BackendDioClient {
                   final response = await _dio.fetch(opts);
                   return handler.resolve(response);
                 } on DioException catch (retryError) {
-                  AppLogger.error('[BACKEND_DIO] ❌ Retry failed with error: ${retryError.message}', tag: 'Network');
+                  AppLogger.error(
+                    '[BACKEND_DIO] ❌ Retry failed with error: ${retryError.message}',
+                    tag: 'Network',
+                  );
                   return handler.next(retryError);
                 }
               } else {
-                AppLogger.error('[BACKEND_DIO] ❌ Token refresh returned null (Unauthorized) - SESSION EXPIRED', tag: 'Network');
+                AppLogger.error(
+                  '[BACKEND_DIO] ❌ Token refresh returned null (Unauthorized) - SESSION EXPIRED',
+                  tag: 'Network',
+                );
                 await AuthSessionService.instance.setLoggedOut();
               }
             } catch (e) {
-              AppLogger.error('[BACKEND_DIO] ❌ Token refresh failed with exception: $e', tag: 'Network', error: e);
-              AppLogger.error('[BACKEND_DIO] ⚠️ Network or server error - KEEPING SESSION ALIVE', tag: 'Network');
+              AppLogger.error(
+                '[BACKEND_DIO] ❌ Token refresh failed with exception: $e',
+                tag: 'Network',
+                error: e,
+              );
+              AppLogger.error(
+                '[BACKEND_DIO] ⚠️ Network or server error - KEEPING SESSION ALIVE',
+                tag: 'Network',
+              );
               // Don't call setLoggedOut() here for network errors
               // This allows the user to retry later when they have connection
               return handler.next(error);
@@ -109,18 +153,30 @@ class BackendDioClient {
   );
 
   void _logRequest(String method, String url, Map<String, dynamic>? headers) {
-    AppLogger.debug('\n========== [BACKEND_DIO] API REQUEST ==========', tag: 'Network');
+    AppLogger.debug(
+      '\n========== [BACKEND_DIO] API REQUEST ==========',
+      tag: 'Network',
+    );
     AppLogger.debug('Method: $method', tag: 'Network');
     AppLogger.debug('URL: $url', tag: 'Network');
     AppLogger.debug('Headers: $headers', tag: 'Network');
-    AppLogger.debug('===============================================\n', tag: 'Network');
+    AppLogger.debug(
+      '===============================================\n',
+      tag: 'Network',
+    );
   }
 
   void _logResponse(int? statusCode, dynamic data) {
-    AppLogger.debug('\n========== [BACKEND_DIO] API RESPONSE ==========', tag: 'Network');
+    AppLogger.debug(
+      '\n========== [BACKEND_DIO] API RESPONSE ==========',
+      tag: 'Network',
+    );
     AppLogger.debug('Status: $statusCode', tag: 'Network');
     AppLogger.debug('Data: $data', tag: 'Network');
-    AppLogger.debug('===============================================\n', tag: 'Network');
+    AppLogger.debug(
+      '===============================================\n',
+      tag: 'Network',
+    );
   }
 
   Dio get dio => _dio;

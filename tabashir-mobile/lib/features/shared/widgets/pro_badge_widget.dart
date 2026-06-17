@@ -64,75 +64,75 @@ class _ProBadgeWidgetState extends State<ProBadgeWidget>
   }
 
   Widget _buildBadge(double size, double iconSize) => AnimatedBuilder(
-        animation: _shimmerAnimation,
-        builder: (context, child) => Container(
-          width: size,
-          height: size * 0.75,
-          decoration: BoxDecoration(
-            gradient: AppTheme.goldGradient,
-            borderRadius: BorderRadius.circular(size * 0.25),
-            border: Border.all(
-              color: Colors.white.withOpacity(0.3),
-              width: 1.5,
-            ),
-            boxShadow: [
-              BoxShadow(
-                color: AppTheme.goldColor.withOpacity(0.4),
-                blurRadius: 12,
-                offset: const Offset(0, 4),
-              ),
-              BoxShadow(
-                color: Colors.white.withOpacity(0.2),
-                blurRadius: 8,
-                offset: const Offset(0, -2),
-              ),
-            ],
+    animation: _shimmerAnimation,
+    builder: (context, child) => Container(
+      width: size,
+      height: size * 0.75,
+      decoration: BoxDecoration(
+        gradient: AppTheme.goldGradient,
+        borderRadius: BorderRadius.circular(size * 0.25),
+        border: Border.all(
+          color: Colors.white.withOpacity(0.3),
+          width: 1.5,
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: AppTheme.goldColor.withOpacity(0.4),
+            blurRadius: 12,
+            offset: const Offset(0, 4),
           ),
-          child: Stack(
-            children: [
-              // Shimmer effect overlay
-              Positioned.fill(
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(size * 0.25),
-                  child: Transform.translate(
-                    offset: Offset(_shimmerAnimation.value * size, 0),
-                    child: Container(
-                      decoration: BoxDecoration(
-                        gradient: AppTheme.shimmerGradient,
-                      ),
-                    ),
+          BoxShadow(
+            color: Colors.white.withOpacity(0.2),
+            blurRadius: 8,
+            offset: const Offset(0, -2),
+          ),
+        ],
+      ),
+      child: Stack(
+        children: [
+          // Shimmer effect overlay
+          Positioned.fill(
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(size * 0.25),
+              child: Transform.translate(
+                offset: Offset(_shimmerAnimation.value * size, 0),
+                child: Container(
+                  decoration: BoxDecoration(
+                    gradient: AppTheme.shimmerGradient,
                   ),
                 ),
               ),
-              // Crown icon and PRO text
-              Center(
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Icon(
-                      Icons.workspace_premium_rounded,
-                      size: iconSize,
-                      color: Colors.white,
-                    ),
-                    if (widget.size != ProBadgeSize.small) ...[
-                      SizedBox(width: size * 0.1),
-                      Text(
-                        'PRO',
-                        style: TextStyle(
-                          fontSize: iconSize * 0.9,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white,
-                          letterSpacing: 1,
-                        ),
-                      ),
-                    ],
-                  ],
-                ),
-              ),
-            ],
+            ),
           ),
-        ),
-      );
+          // Crown icon and PRO text
+          Center(
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(
+                  Icons.workspace_premium_rounded,
+                  size: iconSize,
+                  color: Colors.white,
+                ),
+                if (widget.size != ProBadgeSize.small) ...[
+                  SizedBox(width: size * 0.1),
+                  Text(
+                    'PRO',
+                    style: TextStyle(
+                      fontSize: iconSize * 0.9,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                      letterSpacing: 1,
+                    ),
+                  ),
+                ],
+              ],
+            ),
+          ),
+        ],
+      ),
+    ),
+  );
 
   double _getSize() {
     switch (widget.size) {

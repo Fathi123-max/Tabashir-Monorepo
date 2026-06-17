@@ -42,7 +42,10 @@ class AnalyticsService {
         await prefs.setString(_roleSelectionsKey, _serializeJson(selections));
 
         if (kDebugMode) {
-          AppLogger.debug('[Analytics] Role selected: $role (total: ${selections[role]})', tag: 'Service');
+          AppLogger.debug(
+            '[Analytics] Role selected: $role (total: ${selections[role]})',
+            tag: 'Service',
+          );
         }
       } else {
         final selections = <String, int>{role: 1};
@@ -52,7 +55,11 @@ class AnalyticsService {
       await _trackEvent(AnalyticsEvent.roleSelected, {'role': role});
     } catch (e) {
       if (kDebugMode) {
-        AppLogger.error('[Analytics] Error tracking role selection: $e', tag: 'Service', error: e);
+        AppLogger.error(
+          '[Analytics] Error tracking role selection: $e',
+          tag: 'Service',
+          error: e,
+        );
       }
     }
   }
@@ -72,7 +79,10 @@ class AnalyticsService {
         );
 
         if (kDebugMode) {
-          AppLogger.debug('[Analytics] Location selected: $location (total: ${selections[location]})', tag: 'Service');
+          AppLogger.debug(
+            '[Analytics] Location selected: $location (total: ${selections[location]})',
+            tag: 'Service',
+          );
         }
       } else {
         final selections = <String, int>{location: 1};
@@ -87,7 +97,11 @@ class AnalyticsService {
       });
     } catch (e) {
       if (kDebugMode) {
-        AppLogger.error('[Analytics] Error tracking location selection: $e', tag: 'Service', error: e);
+        AppLogger.error(
+          '[Analytics] Error tracking location selection: $e',
+          tag: 'Service',
+          error: e,
+        );
       }
     }
   }
@@ -109,7 +123,10 @@ class AnalyticsService {
         );
 
         if (kDebugMode) {
-          AppLogger.debug('[Analytics] Nationality selected: $nationality (total: ${selections[nationality]})', tag: 'Service');
+          AppLogger.debug(
+            '[Analytics] Nationality selected: $nationality (total: ${selections[nationality]})',
+            tag: 'Service',
+          );
         }
       } else {
         final selections = <String, int>{nationality: 1};
@@ -124,7 +141,11 @@ class AnalyticsService {
       });
     } catch (e) {
       if (kDebugMode) {
-        AppLogger.error('[Analytics] Error tracking nationality selection: $e', tag: 'Service', error: e);
+        AppLogger.error(
+          '[Analytics] Error tracking nationality selection: $e',
+          tag: 'Service',
+          error: e,
+        );
       }
     }
   }
@@ -161,7 +182,11 @@ class AnalyticsService {
       return sortedRoles.take(limit).toList();
     } catch (e) {
       if (kDebugMode) {
-        AppLogger.error('[Analytics] Error getting popular roles: $e', tag: 'Service', error: e);
+        AppLogger.error(
+          '[Analytics] Error getting popular roles: $e',
+          tag: 'Service',
+          error: e,
+        );
       }
       return [];
     }
@@ -191,7 +216,11 @@ class AnalyticsService {
       return sortedLocations.take(limit).toList();
     } catch (e) {
       if (kDebugMode) {
-        AppLogger.error('[Analytics] Error getting popular locations: $e', tag: 'Service', error: e);
+        AppLogger.error(
+          '[Analytics] Error getting popular locations: $e',
+          tag: 'Service',
+          error: e,
+        );
       }
       return [];
     }
@@ -221,7 +250,11 @@ class AnalyticsService {
       return sortedNationalities.take(limit).toList();
     } catch (e) {
       if (kDebugMode) {
-        AppLogger.error('[Analytics] Error getting popular nationalities: $e', tag: 'Service', error: e);
+        AppLogger.error(
+          '[Analytics] Error getting popular nationalities: $e',
+          tag: 'Service',
+          error: e,
+        );
       }
       return [];
     }
@@ -270,7 +303,11 @@ class AnalyticsService {
       };
     } catch (e) {
       if (kDebugMode) {
-        AppLogger.error('[Analytics] Error getting total counts: $e', tag: 'Service', error: e);
+        AppLogger.error(
+          '[Analytics] Error getting total counts: $e',
+          tag: 'Service',
+          error: e,
+        );
       }
       return {'roles': 0, 'locations': 0, 'nationalities': 0, 'total': 0};
     }
@@ -293,7 +330,11 @@ class AnalyticsService {
       };
     } catch (e) {
       if (kDebugMode) {
-        AppLogger.error('[Analytics] Error getting all analytics: $e', tag: 'Service', error: e);
+        AppLogger.error(
+          '[Analytics] Error getting all analytics: $e',
+          tag: 'Service',
+          error: e,
+        );
       }
       return {};
     }
@@ -309,11 +350,18 @@ class AnalyticsService {
       await prefs.remove(_eventHistoryKey);
 
       if (kDebugMode) {
-        AppLogger.debug('[Analytics] All analytics data cleared', tag: 'Service');
+        AppLogger.debug(
+          '[Analytics] All analytics data cleared',
+          tag: 'Service',
+        );
       }
     } catch (e) {
       if (kDebugMode) {
-        AppLogger.error('[Analytics] Error clearing analytics: $e', tag: 'Service', error: e);
+        AppLogger.error(
+          '[Analytics] Error clearing analytics: $e',
+          tag: 'Service',
+          error: e,
+        );
       }
     }
   }
@@ -350,7 +398,11 @@ class AnalyticsService {
       await prefs.setString(_eventHistoryKey, _serializeJson(events));
     } catch (e) {
       if (kDebugMode) {
-        AppLogger.error('[Analytics] Error tracking event: $e', tag: 'Service', error: e);
+        AppLogger.error(
+          '[Analytics] Error tracking event: $e',
+          tag: 'Service',
+          error: e,
+        );
       }
     }
   }

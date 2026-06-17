@@ -16,7 +16,10 @@ part 'saved_jobs_state.dart';
 class SavedJobsCubit extends Cubit<SavedJobsState> {
   SavedJobsCubit(this._repository) : super(const SavedJobsState.initial()) {
     _savedJobsSubscription = _repository.savedJobsStream.listen((savedIds) {
-      AppLogger.debug('[SAVED_JOBS_CUBIT] Received saved jobs update: ${savedIds.length} IDs', tag: 'Jobs');
+      AppLogger.debug(
+        '[SAVED_JOBS_CUBIT] Received saved jobs update: ${savedIds.length} IDs',
+        tag: 'Jobs',
+      );
       if (state is SavedJobsStateLoaded) {
         final loadedState = state as SavedJobsStateLoaded;
         emit(loadedState.copyWith(savedJobs: savedIds));
@@ -44,26 +47,44 @@ class SavedJobsCubit extends Cubit<SavedJobsState> {
       orElse: () => <String>{},
     );
 
-    AppLogger.debug('[SAVED_JOBS] Using ${savedJobIds.length} saved job IDs', tag: 'Jobs');
+    AppLogger.debug(
+      '[SAVED_JOBS] Using ${savedJobIds.length} saved job IDs',
+      tag: 'Jobs',
+    );
 
     // Get current jobs from JobsCubit
     final currentJobs = <JobUI>[];
     final currentState = jobsCubit.state;
-    AppLogger.debug('[SAVED_JOBS] JobsCubit state type: ${currentState.runtimeType}', tag: 'Jobs');
+    AppLogger.debug(
+      '[SAVED_JOBS] JobsCubit state type: ${currentState.runtimeType}',
+      tag: 'Jobs',
+    );
 
     if (currentState is JobsStateLoaded) {
-      AppLogger.debug('[SAVED_JOBS] JobsCubit is JobsStateLoaded, jobs count: ${currentState.jobs.length ?? 0}', tag: 'Jobs');
+      AppLogger.debug(
+        '[SAVED_JOBS] JobsCubit is JobsStateLoaded, jobs count: ${currentState.jobs.length ?? 0}',
+        tag: 'Jobs',
+      );
       currentJobs.addAll(
         currentState.jobs.where((job) => savedJobIds.contains(job.id)),
       );
-      AppLogger.debug('[SAVED_JOBS] Added ${currentJobs.length} jobs to currentJobs', tag: 'Jobs');
+      AppLogger.debug(
+        '[SAVED_JOBS] Added ${currentJobs.length} jobs to currentJobs',
+        tag: 'Jobs',
+      );
     } else {
-      AppLogger.debug('[SAVED_JOBS] JobsCubit is NOT JobsStateLoaded, current state: ${currentState.runtimeType}', tag: 'Jobs');
+      AppLogger.debug(
+        '[SAVED_JOBS] JobsCubit is NOT JobsStateLoaded, current state: ${currentState.runtimeType}',
+        tag: 'Jobs',
+      );
     }
 
     // Convert jobs to Map format expected by the UI
     final jobsMap = currentJobs.map((job) => job.toJson()).toList();
-    AppLogger.debug('[SAVED_JOBS] Converted ${jobsMap.length} jobs to Map format', tag: 'Jobs');
+    AppLogger.debug(
+      '[SAVED_JOBS] Converted ${jobsMap.length} jobs to Map format',
+      tag: 'Jobs',
+    );
 
     emit(
       SavedJobsState.loaded(
@@ -80,7 +101,10 @@ class SavedJobsCubit extends Cubit<SavedJobsState> {
   Future<void> loadSavedIds() async {
     try {
       final savedJobIds = await _repository.getAllSavedJobIds();
-      AppLogger.debug('[SAVED_JOBS] Fetched ${savedJobIds.length} saved job IDs from API', tag: 'Jobs');
+      AppLogger.debug(
+        '[SAVED_JOBS] Fetched ${savedJobIds.length} saved job IDs from API',
+        tag: 'Jobs',
+      );
 
       // If state is already loaded, just update the IDs
       if (state is SavedJobsStateLoaded) {
@@ -100,7 +124,11 @@ class SavedJobsCubit extends Cubit<SavedJobsState> {
         );
       }
     } catch (e) {
-      AppLogger.error('[SAVED_JOBS] Error loading saved IDs: $e', tag: 'Jobs', error: e);
+      AppLogger.error(
+        '[SAVED_JOBS] Error loading saved IDs: $e',
+        tag: 'Jobs',
+        error: e,
+      );
       // Don't emit error state here to avoid blocking the whole app if this fails in background
     }
   }
@@ -146,7 +174,10 @@ class SavedJobsCubit extends Cubit<SavedJobsState> {
 
   // Save/Unsave methods
   Future<void> saveJob(String jobId) async {
-    AppLogger.debug('[SAVED_JOBS_CUBIT] saveJob() called for jobId: $jobId', tag: 'Jobs');
+    AppLogger.debug(
+      '[SAVED_JOBS_CUBIT] saveJob() called for jobId: $jobId',
+      tag: 'Jobs',
+    );
     if (state is SavedJobsStateLoaded) {
       final loadedState = state as SavedJobsStateLoaded;
 
@@ -164,7 +195,10 @@ class SavedJobsCubit extends Cubit<SavedJobsState> {
   }
 
   Future<void> unsaveJob(String jobId) async {
-    AppLogger.debug('[SAVED_JOBS_CUBIT] unsaveJob() called for jobId: $jobId', tag: 'Jobs');
+    AppLogger.debug(
+      '[SAVED_JOBS_CUBIT] unsaveJob() called for jobId: $jobId',
+      tag: 'Jobs',
+    );
     if (state is SavedJobsStateLoaded) {
       final loadedState = state as SavedJobsStateLoaded;
 
@@ -190,7 +224,10 @@ class SavedJobsCubit extends Cubit<SavedJobsState> {
   }
 
   Future<void> toggleSaveJob(String jobId) async {
-    AppLogger.debug('[SAVED_JOBS_CUBIT] toggleSaveJob() called for jobId: $jobId', tag: 'Jobs');
+    AppLogger.debug(
+      '[SAVED_JOBS_CUBIT] toggleSaveJob() called for jobId: $jobId',
+      tag: 'Jobs',
+    );
     if (state is SavedJobsStateLoaded) {
       final loadedState = state as SavedJobsStateLoaded;
       if (loadedState.savedJobs.contains(jobId)) {

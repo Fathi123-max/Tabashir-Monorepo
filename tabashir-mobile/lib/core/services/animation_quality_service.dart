@@ -62,7 +62,11 @@ class AnimationQualityService {
       return _parseQualityString(qualityString);
     } catch (e) {
       if (kDebugMode) {
-        AppLogger.error('[AnimationQuality] Error getting preference: $e', tag: 'Service', error: e);
+        AppLogger.error(
+          '[AnimationQuality] Error getting preference: $e',
+          tag: 'Service',
+          error: e,
+        );
       }
       return null;
     }
@@ -85,11 +89,18 @@ class AnimationQualityService {
       }
 
       if (kDebugMode) {
-        AppLogger.debug('[AnimationQuality] Quality preference set to: ${quality ?? 'auto-detect'}', tag: 'Service');
+        AppLogger.debug(
+          '[AnimationQuality] Quality preference set to: ${quality ?? 'auto-detect'}',
+          tag: 'Service',
+        );
       }
     } catch (e) {
       if (kDebugMode) {
-        AppLogger.error('[AnimationQuality] Error setting preference: $e', tag: 'Service', error: e);
+        AppLogger.error(
+          '[AnimationQuality] Error setting preference: $e',
+          tag: 'Service',
+          error: e,
+        );
       }
     }
   }

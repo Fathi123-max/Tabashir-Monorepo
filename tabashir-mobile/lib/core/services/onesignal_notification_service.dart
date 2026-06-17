@@ -51,7 +51,10 @@ class OneSignalNotificationService implements OneSignalNotificationServiceBase {
     // Foreground notification display listener
     OneSignal.Notifications.addForegroundWillDisplayListener(
       (event) {
-        AppLogger.debug('OneSignal: Notification will show in foreground: ${event.notification.title}', tag: 'Service');
+        AppLogger.debug(
+          'OneSignal: Notification will show in foreground: ${event.notification.title}',
+          tag: 'Service',
+        );
         // Prevent default to handle manually if needed
         // event.preventDefault();
         // Display the notification
@@ -62,8 +65,14 @@ class OneSignalNotificationService implements OneSignalNotificationServiceBase {
     // Notification click listener
     OneSignal.Notifications.addClickListener(
       (event) {
-        AppLogger.debug('OneSignal: Notification opened: ${event.notification.title}', tag: 'Service');
-        AppLogger.debug('OneSignal: Notification data: ${event.notification.additionalData}', tag: 'Service');
+        AppLogger.debug(
+          'OneSignal: Notification opened: ${event.notification.title}',
+          tag: 'Service',
+        );
+        AppLogger.debug(
+          'OneSignal: Notification data: ${event.notification.additionalData}',
+          tag: 'Service',
+        );
         _handleNotificationTap(event.notification.additionalData);
       },
     );
@@ -71,7 +80,10 @@ class OneSignalNotificationService implements OneSignalNotificationServiceBase {
     // Permission observer
     OneSignal.Notifications.addPermissionObserver(
       (state) {
-        AppLogger.debug('OneSignal: Permission state changed: $state', tag: 'Service');
+        AppLogger.debug(
+          'OneSignal: Permission state changed: $state',
+          tag: 'Service',
+        );
       },
     );
 
@@ -79,7 +91,10 @@ class OneSignalNotificationService implements OneSignalNotificationServiceBase {
     OneSignal.User.pushSubscription.addObserver(
       (state) {
         AppLogger.debug('OneSignal: Push subscription changed', tag: 'Service');
-        AppLogger.debug('OneSignal: Current opted in: ${state.current.optedIn}', tag: 'Service');
+        AppLogger.debug(
+          'OneSignal: Current opted in: ${state.current.optedIn}',
+          tag: 'Service',
+        );
       },
     );
   }
@@ -91,7 +106,10 @@ class OneSignalNotificationService implements OneSignalNotificationServiceBase {
     // Handle different notification types based on data
     if (additionalData.containsKey('screen')) {
       final screen = additionalData['screen'];
-      AppLogger.debug('OneSignal: Should navigate to screen: $screen', tag: 'Service');
+      AppLogger.debug(
+        'OneSignal: Should navigate to screen: $screen',
+        tag: 'Service',
+      );
       // You can add navigation logic here
     }
   }
@@ -130,7 +148,10 @@ class OneSignalNotificationService implements OneSignalNotificationServiceBase {
   @override
   Future<void> setExternalUserId(String userId) async {
     await OneSignal.login(userId);
-    AppLogger.debug('OneSignal: External user ID set - $userId', tag: 'Service');
+    AppLogger.debug(
+      'OneSignal: External user ID set - $userId',
+      tag: 'Service',
+    );
   }
 
   /// Remove external user ID
@@ -144,7 +165,10 @@ class OneSignalNotificationService implements OneSignalNotificationServiceBase {
   @override
   Future<bool> requestPermission() async {
     final granted = await OneSignal.Notifications.requestPermission(true);
-    AppLogger.debug('OneSignal: Permission request result: $granted', tag: 'Service');
+    AppLogger.debug(
+      'OneSignal: Permission request result: $granted',
+      tag: 'Service',
+    );
     return granted;
   }
 
@@ -152,7 +176,10 @@ class OneSignalNotificationService implements OneSignalNotificationServiceBase {
   @override
   Future<bool> canRequestPermission() async {
     final canRequest = await OneSignal.Notifications.canRequest();
-    AppLogger.debug('OneSignal: Can request permission: $canRequest', tag: 'Service');
+    AppLogger.debug(
+      'OneSignal: Can request permission: $canRequest',
+      tag: 'Service',
+    );
     return canRequest;
   }
 
@@ -160,14 +187,20 @@ class OneSignalNotificationService implements OneSignalNotificationServiceBase {
   @override
   Future<void> optIn() async {
     await OneSignal.User.pushSubscription.optIn();
-    AppLogger.debug('OneSignal: Opted in to push notifications', tag: 'Service');
+    AppLogger.debug(
+      'OneSignal: Opted in to push notifications',
+      tag: 'Service',
+    );
   }
 
   /// Opt out from push notifications
   @override
   Future<void> optOut() async {
     await OneSignal.User.pushSubscription.optOut();
-    AppLogger.debug('OneSignal: Opted out from push notifications', tag: 'Service');
+    AppLogger.debug(
+      'OneSignal: Opted out from push notifications',
+      tag: 'Service',
+    );
   }
 
   /// Check if opted in
@@ -190,7 +223,10 @@ class OneSignalNotificationService implements OneSignalNotificationServiceBase {
   @override
   Future<void> setLocationShared(bool shared) async {
     await OneSignal.Location.setShared(shared);
-    AppLogger.debug('OneSignal: Location sharing set to: $shared', tag: 'Service');
+    AppLogger.debug(
+      'OneSignal: Location sharing set to: $shared',
+      tag: 'Service',
+    );
   }
 
   /// Request location permission

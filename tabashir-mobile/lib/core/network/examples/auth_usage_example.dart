@@ -44,7 +44,10 @@ Future<void> loginExample(ApiClient apiClient) async {
       AppLogger.info('Token: ${authResponse.token}', tag: 'AuthExample');
       AppLogger.info('User: ${authResponse.data?.name}', tag: 'AuthExample');
     } else {
-      AppLogger.warning('Login failed: ${authResponse.message}', tag: 'AuthExample');
+      AppLogger.warning(
+        'Login failed: ${authResponse.message}',
+        tag: 'AuthExample',
+      );
     }
   } on DioException catch (error) {
     final errorMessage = DioErrorMapper.mapDioError(error);
@@ -77,7 +80,10 @@ Future<void> registerExample(ApiClient apiClient) async {
       AppLogger.info('User: ${authResponse.data?.name}', tag: 'AuthExample');
       AppLogger.info('Email: ${authResponse.data?.email}', tag: 'AuthExample');
     } else {
-      AppLogger.warning('Registration failed: ${authResponse.message}', tag: 'AuthExample');
+      AppLogger.warning(
+        'Registration failed: ${authResponse.message}',
+        tag: 'AuthExample',
+      );
     }
   } on DioException catch (error) {
     final errorMessage = DioErrorMapper.mapDioError(error);

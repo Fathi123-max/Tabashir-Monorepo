@@ -63,7 +63,9 @@ class AddResumeOptionsSheet extends StatelessWidget {
             SizedBox(height: AppTheme.spacingLg.h),
             ListTile(
               leading: Icon(
-                state.isUploading ? Icons.hourglass_top : Icons.document_scanner_outlined,
+                state.isUploading
+                    ? Icons.hourglass_top
+                    : Icons.document_scanner_outlined,
                 color: state.isUploading ? AppTheme.primaryColor : null,
               ),
               title: Text(
@@ -125,8 +127,14 @@ class AddResumeOptionsSheet extends StatelessWidget {
     );
   }
 
-  Future<void> _uploadFromDevice(BuildContext context, {bool isReformat = false}) async {
-    AppLogger.debug('🟢 [ADD_RESUME_SHEET] _uploadFromDevice() called (isReformat: $isReformat)', tag: 'Resume');
+  Future<void> _uploadFromDevice(
+    BuildContext context, {
+    bool isReformat = false,
+  }) async {
+    AppLogger.debug(
+      '🟢 [ADD_RESUME_SHEET] _uploadFromDevice() called (isReformat: $isReformat)',
+      tag: 'Resume',
+    );
     try {
       final cubit = context.read<ResumeVaultCubit>();
 
@@ -142,7 +150,10 @@ class AddResumeOptionsSheet extends StatelessWidget {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   ListTile(
-                    leading: const Icon(Icons.picture_as_pdf, color: Colors.red),
+                    leading: const Icon(
+                      Icons.picture_as_pdf,
+                      color: Colors.red,
+                    ),
                     title: const Text('PDF Document'),
                     onTap: () => Navigator.pop(context, 'pdf'),
                   ),
@@ -166,12 +177,15 @@ class AddResumeOptionsSheet extends StatelessWidget {
         if (outputFormat == null) return; // User cancelled
       }
 
-      AppLogger.debug('🟢 [ADD_RESUME_SHEET] Opening file picker...', tag: 'Resume');
+      AppLogger.debug(
+        '🟢 [ADD_RESUME_SHEET] Opening file picker...',
+        tag: 'Resume',
+      );
       final result = await FilePicker.platform.pickFiles(
         type: FileType.custom,
         allowedExtensions: ['pdf', 'docx'],
       );
-      
+
       if (result == null || result.files.isEmpty) return;
 
       final file = result.files.single;
@@ -204,7 +218,11 @@ class AddResumeOptionsSheet extends StatelessWidget {
         );
       }
     } catch (e) {
-      AppLogger.error('🟢 [ADD_RESUME_SHEET] ❌ Exception: $e', tag: 'Resume', error: e);
+      AppLogger.error(
+        '🟢 [ADD_RESUME_SHEET] ❌ Exception: $e',
+        tag: 'Resume',
+        error: e,
+      );
     }
   }
 

@@ -271,7 +271,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         icon: Icons.public_outlined,
                         text: state.profile!.nationality.isEmpty
                             ? 'Not specified'.tr()
-                            : (worldCountries[state.profile!.nationality.toLowerCase()] ?? state.profile!.nationality),
+                            : (worldCountries[state.profile!.nationality
+                                      .toLowerCase()] ??
+                                  state.profile!.nationality),
                       ),
                       SizedBox(height: AppTheme.spacingSm.h),
                       InfoItem(

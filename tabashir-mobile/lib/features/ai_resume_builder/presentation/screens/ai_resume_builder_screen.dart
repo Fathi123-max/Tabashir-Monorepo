@@ -21,6 +21,7 @@ import 'steps/template_selection_step.dart';
 import 'steps/work_experience_step.dart';
 import 'steps/projects_step.dart';
 import 'steps/leadership_step.dart';
+import '../../../../shared/widgets/ai_consent_bottom_sheet.dart';
 
 class AiResumeBuilderScreen extends StatelessWidget {
   const AiResumeBuilderScreen({super.key});
@@ -36,8 +37,24 @@ class AiResumeBuilderScreen extends StatelessWidget {
   );
 }
 
-class AiResumeBuilderView extends StatelessWidget {
+class AiResumeBuilderView extends StatefulWidget {
   const AiResumeBuilderView({super.key});
+
+  @override
+  State<AiResumeBuilderView> createState() => _AiResumeBuilderViewState();
+}
+
+class _AiResumeBuilderViewState extends State<AiResumeBuilderView> {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      final consented = await AiConsentBottomSheet.ensureConsent(context);
+      if (!consented && mounted) {
+        Navigator.of(context).pop();
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) => Scaffold(

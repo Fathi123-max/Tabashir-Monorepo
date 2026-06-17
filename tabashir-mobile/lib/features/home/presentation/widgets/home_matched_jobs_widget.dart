@@ -71,7 +71,9 @@ class HomeMatchedJobsWidget extends StatelessWidget {
                   // Build skills match text
                   final skillsMatch =
                       job.experience != null && job.experience!.isNotEmpty
-                      ? 'experience_count'.tr(namedArgs: {'count': job.experience!})
+                      ? 'experience_count'.tr(
+                          namedArgs: {'count': job.experience!},
+                        )
                       : 'ai_matched'.tr();
 
                   // Format salary

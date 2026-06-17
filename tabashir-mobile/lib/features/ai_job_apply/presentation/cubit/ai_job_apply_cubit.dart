@@ -163,11 +163,17 @@ class AiJobApplyCubit extends Cubit<AiJobApplyState> {
       if (selectedResume.originalUrl != null &&
           selectedResume.originalUrl!.isNotEmpty) {
         // Cloud resume - download from URL
-        AppLogger.debug('🌐 [AI_JOB_APPLY] Downloading cloud resume from: ${selectedResume.originalUrl}', tag: 'AIApply');
+        AppLogger.debug(
+          '🌐 [AI_JOB_APPLY] Downloading cloud resume from: ${selectedResume.originalUrl}',
+          tag: 'AIApply',
+        );
         fileBytes = await _repository.downloadResumeFromCloud(
           resumeUrl: selectedResume.originalUrl!,
         );
-        AppLogger.debug('✅ [AI_JOB_APPLY] Downloaded ${fileBytes.length} bytes from cloud', tag: 'AIApply');
+        AppLogger.debug(
+          '✅ [AI_JOB_APPLY] Downloaded ${fileBytes.length} bytes from cloud',
+          tag: 'AIApply',
+        );
       } else {
         // Local resume - read from file path
         final file = File(selectedResume.filePath);
@@ -198,7 +204,10 @@ class AiJobApplyCubit extends Cubit<AiJobApplyState> {
         } else {
           fileBytes = await file.readAsBytes();
         }
-        AppLogger.debug('📁 [AI_JOB_APPLY] Read ${fileBytes.length} bytes from local file', tag: 'AIApply');
+        AppLogger.debug(
+          '📁 [AI_JOB_APPLY] Read ${fileBytes.length} bytes from local file',
+          tag: 'AIApply',
+        );
       }
 
       // 3. Prepare data

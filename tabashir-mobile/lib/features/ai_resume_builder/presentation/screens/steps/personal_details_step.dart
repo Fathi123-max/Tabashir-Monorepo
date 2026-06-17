@@ -27,7 +27,11 @@ class _PersonalDetailsStepState extends State<PersonalDetailsStep> {
   @override
   void initState() {
     super.initState();
-    final details = context.read<AiResumeBuilderCubit>().state.resumeData.personalDetails;
+    final details = context
+        .read<AiResumeBuilderCubit>()
+        .state
+        .resumeData
+        .personalDetails;
     fullNameController = TextEditingController(text: details?.fullName);
     emailController = TextEditingController(text: details?.email);
     phoneController = TextEditingController(text: details?.phoneNumber);
@@ -51,8 +55,9 @@ class _PersonalDetailsStepState extends State<PersonalDetailsStep> {
 
   void _updateCubit() {
     final cubit = context.read<AiResumeBuilderCubit>();
-    final currentDetails = cubit.state.resumeData.personalDetails ?? const PersonalDetails();
-    
+    final currentDetails =
+        cubit.state.resumeData.personalDetails ?? const PersonalDetails();
+
     cubit.updatePersonalDetails(
       currentDetails.copyWith(
         fullName: fullNameController.text,
@@ -60,7 +65,9 @@ class _PersonalDetailsStepState extends State<PersonalDetailsStep> {
         phoneNumber: phoneController.text,
         city: cityController.text,
         nationality: nationalityController.text,
-        linkedin: linkedinController.text.isNotEmpty ? linkedinController.text : null,
+        linkedin: linkedinController.text.isNotEmpty
+            ? linkedinController.text
+            : null,
         github: githubController.text.isNotEmpty ? githubController.text : null,
       ),
     );
@@ -140,17 +147,39 @@ class _PersonalDetailsStepState extends State<PersonalDetailsStep> {
                       hint: 'Select your country'.tr(),
                       value: details?.country,
                       items: [
-                        DropdownMenuItem(value: 'AE', child: Text('United Arab Emirates'.tr())),
-                        DropdownMenuItem(value: 'SA', child: Text('Saudi Arabia'.tr())),
-                        DropdownMenuItem(value: 'QA', child: Text('Qatar'.tr())),
-                        DropdownMenuItem(value: 'KW', child: Text('Kuwait'.tr())),
-                        DropdownMenuItem(value: 'US', child: Text('United States'.tr())),
-                        DropdownMenuItem(value: 'UK', child: Text('United Kingdom'.tr())),
+                        DropdownMenuItem(
+                          value: 'AE',
+                          child: Text('United Arab Emirates'.tr()),
+                        ),
+                        DropdownMenuItem(
+                          value: 'SA',
+                          child: Text('Saudi Arabia'.tr()),
+                        ),
+                        DropdownMenuItem(
+                          value: 'QA',
+                          child: Text('Qatar'.tr()),
+                        ),
+                        DropdownMenuItem(
+                          value: 'KW',
+                          child: Text('Kuwait'.tr()),
+                        ),
+                        DropdownMenuItem(
+                          value: 'US',
+                          child: Text('United States'.tr()),
+                        ),
+                        DropdownMenuItem(
+                          value: 'UK',
+                          child: Text('United Kingdom'.tr()),
+                        ),
                       ],
                       onChanged: (value) {
                         final cubit = context.read<AiResumeBuilderCubit>();
-                        final currentDetails = cubit.state.resumeData.personalDetails ?? const PersonalDetails();
-                        cubit.updatePersonalDetails(currentDetails.copyWith(country: value));
+                        final currentDetails =
+                            cubit.state.resumeData.personalDetails ??
+                            const PersonalDetails();
+                        cubit.updatePersonalDetails(
+                          currentDetails.copyWith(country: value),
+                        );
                       },
                     ),
                     SizedBox(height: AppTheme.spacingMd.h),
@@ -354,10 +383,22 @@ class _PersonalDetailsStepState extends State<PersonalDetailsStep> {
                         label: 'Select Platform *'.tr(),
                         hint: 'Choose platform'.tr(),
                         items: [
-                          DropdownMenuItem(value: 'LinkedIn', child: Text('LinkedIn'.tr())),
-                          DropdownMenuItem(value: 'GitHub', child: Text('GitHub'.tr())),
-                          DropdownMenuItem(value: 'Twitter', child: Text('Twitter'.tr())),
-                          DropdownMenuItem(value: 'Portfolio', child: Text('Portfolio'.tr())),
+                          DropdownMenuItem(
+                            value: 'LinkedIn',
+                            child: Text('LinkedIn'.tr()),
+                          ),
+                          DropdownMenuItem(
+                            value: 'GitHub',
+                            child: Text('GitHub'.tr()),
+                          ),
+                          DropdownMenuItem(
+                            value: 'Twitter',
+                            child: Text('Twitter'.tr()),
+                          ),
+                          DropdownMenuItem(
+                            value: 'Portfolio',
+                            child: Text('Portfolio'.tr()),
+                          ),
                         ],
                         onChanged: (value) => platform = value ?? '',
                         validator: (value) {
@@ -426,7 +467,8 @@ class _PersonalDetailsStepState extends State<PersonalDetailsStep> {
 
   void _removeSocialLink(BuildContext context, int index) {
     final cubit = context.read<AiResumeBuilderCubit>();
-    final currentDetails = cubit.state.resumeData.personalDetails ?? const PersonalDetails();
+    final currentDetails =
+        cubit.state.resumeData.personalDetails ?? const PersonalDetails();
     final updatedLinks = [...currentDetails.socialLinks];
     updatedLinks.removeAt(index);
     cubit.updatePersonalDetails(

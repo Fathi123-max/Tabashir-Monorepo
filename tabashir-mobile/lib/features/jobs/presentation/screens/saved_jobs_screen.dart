@@ -43,7 +43,10 @@ class SavedJobsScreen extends StatelessWidget {
         listenWhen: (previous, current) =>
             previous is! JobsStateLoaded && current is JobsStateLoaded,
         listener: (context, state) {
-          AppLogger.debug('[SAVED_JOBS] JobsCubit loaded, initializing saved jobs...', tag: 'Jobs');
+          AppLogger.debug(
+            '[SAVED_JOBS] JobsCubit loaded, initializing saved jobs...',
+            tag: 'Jobs',
+          );
           // Get JobsCubit from the widget tree to ensure we have the correct instance
           final jobsCubit = context.read<JobsCubit>();
           savedJobsCubit.initializeSavedJobs(jobsCubit);
@@ -79,7 +82,8 @@ class SavedJobsView extends StatelessWidget {
           cardStyle = state.cardStyle;
           isGridView = state.isGridView;
           searchQuery = state.searchQuery;
-        } else if (state is SavedJobsStateInitial || state is SavedJobsStateLoading ||
+        } else if (state is SavedJobsStateInitial ||
+            state is SavedJobsStateLoading ||
             state is SavedJobsStateLoading) {
           return const Scaffold(
             body: Center(child: CircularProgressIndicator()),
@@ -223,7 +227,9 @@ class SavedJobsView extends StatelessWidget {
   void _handleSalaryIconTap(BuildContext context, String jobTitle) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text('job_salary_details'.tr(namedArgs: {'jobTitle': jobTitle})),
+        content: Text(
+          'job_salary_details'.tr(namedArgs: {'jobTitle': jobTitle}),
+        ),
         duration: const Duration(seconds: 1),
       ),
     );

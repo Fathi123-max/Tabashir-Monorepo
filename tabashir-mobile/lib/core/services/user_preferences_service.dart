@@ -14,6 +14,7 @@ class UserPreferencesService {
   static const String _nationalityKey = 'ai_job_apply_nationality';
   static const String _selectedRolesKey = 'ai_job_apply_selected_roles';
   static const String _selectedLocationsKey = 'ai_job_apply_selected_locations';
+  static const String _aiConsentKey = 'has_consented_to_ai_sharing';
 
   /// Save user's nationality preference for AI job apply
   /// Also updates user profile if available
@@ -26,7 +27,10 @@ class UserPreferencesService {
       await prefs.setString(_nationalityKey, nationality);
 
       if (kDebugMode) {
-        AppLogger.debug('[UserPreferences] Nationality saved: $nationality', tag: 'Service');
+        AppLogger.debug(
+          '[UserPreferences] Nationality saved: $nationality',
+          tag: 'Service',
+        );
       }
 
       // TODO: Sync to user profile if syncToProfile is true
@@ -36,7 +40,11 @@ class UserPreferencesService {
       }
     } catch (e) {
       if (kDebugMode) {
-        AppLogger.error('[UserPreferences] Error saving nationality: $e', tag: 'Service', error: e);
+        AppLogger.error(
+          '[UserPreferences] Error saving nationality: $e',
+          tag: 'Service',
+          error: e,
+        );
       }
     }
   }
@@ -49,7 +57,11 @@ class UserPreferencesService {
       return prefs.getString(_nationalityKey);
     } catch (e) {
       if (kDebugMode) {
-        AppLogger.error('[UserPreferences] Error getting nationality: $e', tag: 'Service', error: e);
+        AppLogger.error(
+          '[UserPreferences] Error getting nationality: $e',
+          tag: 'Service',
+          error: e,
+        );
       }
       return null;
     }
@@ -63,11 +75,18 @@ class UserPreferencesService {
       await prefs.setString(_selectedRolesKey, rolesJson.toString());
 
       if (kDebugMode) {
-        AppLogger.debug('[UserPreferences] Saved ${roles.length} selected roles', tag: 'Service');
+        AppLogger.debug(
+          '[UserPreferences] Saved ${roles.length} selected roles',
+          tag: 'Service',
+        );
       }
     } catch (e) {
       if (kDebugMode) {
-        AppLogger.error('[UserPreferences] Error saving selected roles: $e', tag: 'Service', error: e);
+        AppLogger.error(
+          '[UserPreferences] Error saving selected roles: $e',
+          tag: 'Service',
+          error: e,
+        );
       }
     }
   }
@@ -86,13 +105,20 @@ class UserPreferencesService {
       // Parse JSON and convert to TargetRoleModel
       // This is a simplified version - actual implementation would parse JSON properly
       if (kDebugMode) {
-        AppLogger.debug('[UserPreferences] Loaded selected roles from cache', tag: 'Service');
+        AppLogger.debug(
+          '[UserPreferences] Loaded selected roles from cache',
+          tag: 'Service',
+        );
       }
 
       return [];
     } catch (e) {
       if (kDebugMode) {
-        AppLogger.error('[UserPreferences] Error getting selected roles: $e', tag: 'Service', error: e);
+        AppLogger.error(
+          '[UserPreferences] Error getting selected roles: $e',
+          tag: 'Service',
+          error: e,
+        );
       }
       return [];
     }
@@ -108,11 +134,18 @@ class UserPreferencesService {
       await prefs.setString(_selectedLocationsKey, locationsJson.toString());
 
       if (kDebugMode) {
-        AppLogger.debug('[UserPreferences] Saved ${locations.length} selected locations', tag: 'Service');
+        AppLogger.debug(
+          '[UserPreferences] Saved ${locations.length} selected locations',
+          tag: 'Service',
+        );
       }
     } catch (e) {
       if (kDebugMode) {
-        AppLogger.error('[UserPreferences] Error saving selected locations: $e', tag: 'Service', error: e);
+        AppLogger.error(
+          '[UserPreferences] Error saving selected locations: $e',
+          tag: 'Service',
+          error: e,
+        );
       }
     }
   }
@@ -131,13 +164,20 @@ class UserPreferencesService {
       // Parse JSON and convert to LocationPreferenceModel
       // This is a simplified version - actual implementation would parse JSON properly
       if (kDebugMode) {
-        AppLogger.debug('[UserPreferences] Loaded selected locations from cache', tag: 'Service');
+        AppLogger.debug(
+          '[UserPreferences] Loaded selected locations from cache',
+          tag: 'Service',
+        );
       }
 
       return [];
     } catch (e) {
       if (kDebugMode) {
-        AppLogger.error('[UserPreferences] Error getting selected locations: $e', tag: 'Service', error: e);
+        AppLogger.error(
+          '[UserPreferences] Error getting selected locations: $e',
+          tag: 'Service',
+          error: e,
+        );
       }
       return [];
     }
@@ -152,11 +192,18 @@ class UserPreferencesService {
       await prefs.remove(_selectedLocationsKey);
 
       if (kDebugMode) {
-        AppLogger.debug('[UserPreferences] All preferences cleared', tag: 'Service');
+        AppLogger.debug(
+          '[UserPreferences] All preferences cleared',
+          tag: 'Service',
+        );
       }
     } catch (e) {
       if (kDebugMode) {
-        AppLogger.error('[UserPreferences] Error clearing preferences: $e', tag: 'Service', error: e);
+        AppLogger.error(
+          '[UserPreferences] Error clearing preferences: $e',
+          tag: 'Service',
+          error: e,
+        );
       }
     }
   }
@@ -190,7 +237,10 @@ class UserPreferencesService {
   static Future<String?> syncNationalityFromProfile() async {
     try {
       if (kDebugMode) {
-        AppLogger.debug('[UserPreferences] Syncing nationality from profile...', tag: 'Service');
+        AppLogger.debug(
+          '[UserPreferences] Syncing nationality from profile...',
+          tag: 'Service',
+        );
       }
 
       // TODO: Implement actual API call to fetch user profile
@@ -205,7 +255,11 @@ class UserPreferencesService {
       return null;
     } catch (e) {
       if (kDebugMode) {
-        AppLogger.error('[UserPreferences] Error syncing from profile: $e', tag: 'Service', error: e);
+        AppLogger.error(
+          '[UserPreferences] Error syncing from profile: $e',
+          tag: 'Service',
+          error: e,
+        );
       }
       return null;
     }
@@ -216,7 +270,10 @@ class UserPreferencesService {
   static Future<bool> syncNationalityToProfile(String nationality) async {
     try {
       if (kDebugMode) {
-        AppLogger.debug('[UserPreferences] Syncing nationality to profile...', tag: 'Service');
+        AppLogger.debug(
+          '[UserPreferences] Syncing nationality to profile...',
+          tag: 'Service',
+        );
       }
 
       // TODO: Implement actual API call to update user profile
@@ -228,7 +285,11 @@ class UserPreferencesService {
       return true;
     } catch (e) {
       if (kDebugMode) {
-        AppLogger.error('[UserPreferences] Error syncing to profile: $e', tag: 'Service', error: e);
+        AppLogger.error(
+          '[UserPreferences] Error syncing to profile: $e',
+          tag: 'Service',
+          error: e,
+        );
       }
       return false;
     }
@@ -246,13 +307,59 @@ class UserPreferencesService {
           syncToProfile: false,
         );
         if (kDebugMode) {
-          AppLogger.debug('[UserPreferences] Initialized from profile: $profileNationality', tag: 'Service');
+          AppLogger.debug(
+            '[UserPreferences] Initialized from profile: $profileNationality',
+            tag: 'Service',
+          );
         }
       }
     } catch (e) {
       if (kDebugMode) {
-        AppLogger.error('[UserPreferences] Error initializing from profile: $e', tag: 'Service', error: e);
+        AppLogger.error(
+          '[UserPreferences] Error initializing from profile: $e',
+          tag: 'Service',
+          error: e,
+        );
       }
+    }
+  }
+
+  /// Save user's consent to share data with third-party AI processors
+  static Future<void> saveAiConsent({required bool consented}) async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setBool(_aiConsentKey, consented);
+      if (kDebugMode) {
+        AppLogger.debug(
+          '[UserPreferences] AI Consent saved: $consented',
+          tag: 'Service',
+        );
+      }
+    } catch (e) {
+      if (kDebugMode) {
+        AppLogger.error(
+          '[UserPreferences] Error saving AI consent: $e',
+          tag: 'Service',
+          error: e,
+        );
+      }
+    }
+  }
+
+  /// Get user's AI sharing consent status
+  static Future<bool> getAiConsent() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      return prefs.getBool(_aiConsentKey) ?? false;
+    } catch (e) {
+      if (kDebugMode) {
+        AppLogger.error(
+          '[UserPreferences] Error getting AI consent: $e',
+          tag: 'Service',
+          error: e,
+        );
+      }
+      return false;
     }
   }
 }

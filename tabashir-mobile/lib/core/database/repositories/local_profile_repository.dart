@@ -37,7 +37,11 @@ class LocalProfileRepository {
 
       return profile;
     } catch (e) {
-      AppLogger.error('[LocalProfileRepository] Error parsing cached profile: $e', tag: 'Database', error: e);
+      AppLogger.error(
+        '[LocalProfileRepository] Error parsing cached profile: $e',
+        tag: 'Database',
+        error: e,
+      );
       return null;
     }
   }

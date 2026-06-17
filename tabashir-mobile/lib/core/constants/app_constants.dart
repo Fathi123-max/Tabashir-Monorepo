@@ -37,9 +37,10 @@ class AppConstants {
       'assets/images/company_placeholder.png';
 
   /// URLs
-  static const String privacyPolicyUrl = 'https://tabashir.com/privacy-policy';
+  static const String privacyPolicyUrl =
+      'https://www.tabashir.ae/en/privacy-policy';
   static const String termsOfServiceUrl =
-      'https://tabashir.com/terms-of-service';
+      'https://www.tabashir.ae/en/terms-and-condition';
   static const String supportEmail = 'support@tabashir.com';
 
   /// Notifications
@@ -59,6 +60,7 @@ class AppConstants {
   /// Google Sign-In Configuration
   static const String googleSignInServerClientId = String.fromEnvironment(
     'GOOGLE_SIGN_IN_SERVER_CLIENT_ID',
-    defaultValue: '908457286237-sl5h3g85uf350uje8k39f55t6ankopjc.apps.googleusercontent.com',
+    defaultValue:
+        '908457286237-sl5h3g85uf350uje8k39f55t6ankopjc.apps.googleusercontent.com',
   );
 }

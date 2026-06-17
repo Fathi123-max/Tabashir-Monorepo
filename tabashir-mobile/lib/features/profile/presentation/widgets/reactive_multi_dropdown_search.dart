@@ -56,7 +56,7 @@ class ReactiveMultiDropdownSearch<T> extends ReactiveFormField<String, String> {
                  // Clear search when opening
                  filteredItems.clear();
                  var hasSearched = false;
-                 
+
                  await showModalBottomSheet<void>(
                    context: context,
                    isScrollControlled: true,
@@ -78,11 +78,14 @@ class ReactiveMultiDropdownSearch<T> extends ReactiveFormField<String, String> {
                              Container(
                                padding: EdgeInsets.all(AppTheme.spacingMd.w),
                                child: Row(
-                                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                 mainAxisAlignment:
+                                     MainAxisAlignment.spaceBetween,
                                  children: [
                                    Text(
                                      labelText ?? 'Select',
-                                     style: Theme.of(context).textTheme.titleLarge
+                                     style: Theme.of(context)
+                                         .textTheme
+                                         .titleLarge
                                          ?.copyWith(
                                            fontWeight: FontWeight.bold,
                                          ),
@@ -106,7 +109,7 @@ class ReactiveMultiDropdownSearch<T> extends ReactiveFormField<String, String> {
                                      border: OutlineInputBorder(),
                                    ),
                                    onChanged: (query) {
-                                       setModalState(() {
+                                     setModalState(() {
                                        hasSearched = query.isNotEmpty;
                                        filteredItems
                                          ..clear()
@@ -116,7 +119,9 @@ class ReactiveMultiDropdownSearch<T> extends ReactiveFormField<String, String> {
                                                  filterFn?.call(item, query) ??
                                                  itemAsString(
                                                    item,
-                                                 ).toLowerCase().contains(query.toLowerCase());
+                                                 ).toLowerCase().contains(
+                                                   query.toLowerCase(),
+                                                 );
                                              return matches;
                                            }).toList(),
                                          );
@@ -124,23 +129,33 @@ class ReactiveMultiDropdownSearch<T> extends ReactiveFormField<String, String> {
                                    },
                                  ),
                                ),
-                             if (showSearch) SizedBox(height: AppTheme.spacingMd.h),
+                             if (showSearch)
+                               SizedBox(height: AppTheme.spacingMd.h),
                              Expanded(
                                child: ListView.builder(
-                                 itemCount: filteredItems.isEmpty && !hasSearched
+                                 itemCount:
+                                     filteredItems.isEmpty && !hasSearched
                                      ? items.length
                                      : filteredItems.length,
                                  itemBuilder: (context, index) {
-                                   final item = filteredItems.isEmpty && !hasSearched
+                                   final item =
+                                       filteredItems.isEmpty && !hasSearched
                                        ? items[index]
                                        : filteredItems[index];
                                    final itemStr = itemAsString(item);
-                                   final isSelected = selectedItems.contains(itemStr);
+                                   final isSelected = selectedItems.contains(
+                                     itemStr,
+                                   );
 
                                    return ListTile(
                                      title: Text(itemStr),
-                                     trailing: isSelected 
-                                         ? Icon(Icons.check, color: Theme.of(context).colorScheme.primary) 
+                                     trailing: isSelected
+                                         ? Icon(
+                                             Icons.check,
+                                             color: Theme.of(
+                                               context,
+                                             ).colorScheme.primary,
+                                           )
                                          : null,
                                      onTap: () {
                                        if (isSelected) {
@@ -148,7 +163,9 @@ class ReactiveMultiDropdownSearch<T> extends ReactiveFormField<String, String> {
                                        } else {
                                          selectedItems.add(itemStr);
                                        }
-                                       field.didChange(selectedItems.join(', '));
+                                       field.didChange(
+                                         selectedItems.join(', '),
+                                       );
                                        setModalState(() {});
                                        setState(() {});
                                      },

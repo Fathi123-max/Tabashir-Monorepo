@@ -63,11 +63,17 @@ class ProfileCubit extends Cubit<ProfileState> {
     UserProfileResponse profileData,
   ) async {
     if (_isInitialized) {
-      AppLogger.debug('[PROFILE_CUBIT] Already initialized, skipping', tag: 'Profile');
+      AppLogger.debug(
+        '[PROFILE_CUBIT] Already initialized, skipping',
+        tag: 'Profile',
+      );
       return;
     }
 
-    AppLogger.debug('[PROFILE_CUBIT] Initializing with shared profile data...', tag: 'Profile');
+    AppLogger.debug(
+      '[PROFILE_CUBIT] Initializing with shared profile data...',
+      tag: 'Profile',
+    );
 
     final baseProfile = _mapUserProfileToUI(profileData);
     if (isClosed) return;
@@ -81,19 +87,28 @@ class ProfileCubit extends Cubit<ProfileState> {
 
     _isInitialized = true;
     _isDataLoaded = true;
-    AppLogger.debug('[PROFILE_CUBIT] ✅ Profile initialized with shared data', tag: 'Profile');
+    AppLogger.debug(
+      '[PROFILE_CUBIT] ✅ Profile initialized with shared data',
+      tag: 'Profile',
+    );
   }
 
   Future<void> loadProfileData({bool force = false}) async {
     // Prevent duplicate loads unless forced
     if (!force && _isDataLoaded && state.profile != null) {
-      AppLogger.debug('[PROFILE_CUBIT] Data already loaded, skipping duplicate load', tag: 'Profile');
+      AppLogger.debug(
+        '[PROFILE_CUBIT] Data already loaded, skipping duplicate load',
+        tag: 'Profile',
+      );
       return;
     }
 
     // If not initialized yet, don't auto-load - wait for initializeWithProfileData
     if (!_isInitialized && !force) {
-      AppLogger.debug('[PROFILE_CUBIT] Not initialized yet, skipping auto-load. Call initializeWithProfileData() first.', tag: 'Profile');
+      AppLogger.debug(
+        '[PROFILE_CUBIT] Not initialized yet, skipping auto-load. Call initializeWithProfileData() first.',
+        tag: 'Profile',
+      );
       return;
     }
 
@@ -117,7 +132,10 @@ class ProfileCubit extends Cubit<ProfileState> {
 
       // Mark data as loaded
       _isDataLoaded = true;
-      AppLogger.debug('[PROFILE_CUBIT] Profile data loaded successfully', tag: 'Profile');
+      AppLogger.debug(
+        '[PROFILE_CUBIT] Profile data loaded successfully',
+        tag: 'Profile',
+      );
     } on Exception catch (e) {
       final errorMessage = e.toString();
 
@@ -237,7 +255,10 @@ class ProfileCubit extends Cubit<ProfileState> {
 
   /// Pre-fill profile data from parsed resume
   Future<void> prefillFromParsedResume(Map<String, dynamic> parsedData) async {
-    AppLogger.debug('\n\n########## [PROFILE_CUBIT] PREFILL FROM PARSED RESUME CALLED ##########', tag: 'Profile');
+    AppLogger.debug(
+      '\n\n########## [PROFILE_CUBIT] PREFILL FROM PARSED RESUME CALLED ##########',
+      tag: 'Profile',
+    );
     AppLogger.debug('[PROFILE_CUBIT] Parsed data: $parsedData', tag: 'Profile');
 
     if (isClosed) return;
@@ -250,7 +271,10 @@ class ProfileCubit extends Cubit<ProfileState> {
         StorageKeys.resumeParsedPrefill,
         jsonEncode(parsedData),
       );
-      AppLogger.debug('[PROFILE_CUBIT] 1/5 Parsed data saved to SharedPreferences', tag: 'Profile');
+      AppLogger.debug(
+        '[PROFILE_CUBIT] 1/5 Parsed data saved to SharedPreferences',
+        tag: 'Profile',
+      );
 
       // 2. Create profile update request (Basic Info)
       final experienceList = (parsedData['experience'] as List?)
@@ -288,18 +312,27 @@ class ProfileCubit extends Cubit<ProfileState> {
         linkedin: (parsedData['linkedin'] as String? ?? '').trim(),
       );
 
-      AppLogger.debug('[PROFILE_CUBIT] 2/5 Updating Basic Profile: ${updateRequest.toJson()}', tag: 'Profile');
+      AppLogger.debug(
+        '[PROFILE_CUBIT] 2/5 Updating Basic Profile: ${updateRequest.toJson()}',
+        tag: 'Profile',
+      );
 
       // Try to update profile, but handle email conflict gracefully
       try {
         await _repository.updateProfile(profileUpdate: updateRequest);
-        AppLogger.debug('[PROFILE_CUBIT] ✅ Basic profile updated', tag: 'Profile');
+        AppLogger.debug(
+          '[PROFILE_CUBIT] ✅ Basic profile updated',
+          tag: 'Profile',
+        );
       } catch (e) {
         // Check if it's an email conflict error
         if (e.toString().contains('Email already in use') ||
             e.toString().contains('duplicate') ||
             e.toString().contains('unique constraint')) {
-          AppLogger.debug('[PROFILE_CUBIT] ⚠️ Email already in use, updating profile without email', tag: 'Profile');
+          AppLogger.debug(
+            '[PROFILE_CUBIT] ⚠️ Email already in use, updating profile without email',
+            tag: 'Profile',
+          );
           // Create a new request without the email
           final updateRequestWithoutEmail = ProfileUpdateRequest(
             name: updateRequest.name,
@@ -316,7 +349,10 @@ class ProfileCubit extends Cubit<ProfileState> {
           await _repository.updateProfile(
             profileUpdate: updateRequestWithoutEmail,
           );
-          AppLogger.debug('[PROFILE_CUBIT] ✅ Basic profile updated (without email)', tag: 'Profile');
+          AppLogger.debug(
+            '[PROFILE_CUBIT] ✅ Basic profile updated (without email)',
+            tag: 'Profile',
+          );
         } else {
           // Re-throw if it's a different error
           rethrow;
@@ -364,7 +400,10 @@ class ProfileCubit extends Cubit<ProfileState> {
         jobType: experience?['position'] as String?,
       );
 
-      AppLogger.debug('[PROFILE_CUBIT] 3/5 Updating Professional Info: ${professionalInfo.toJson()}', tag: 'Profile');
+      AppLogger.debug(
+        '[PROFILE_CUBIT] 3/5 Updating Professional Info: ${professionalInfo.toJson()}',
+        tag: 'Profile',
+      );
 
       // Try to update professional info, but don't fail if it errors
       // This allows basic profile data to be saved even if professional info fails
@@ -373,18 +412,38 @@ class ProfileCubit extends Cubit<ProfileState> {
         await _repository.updateProfessionalInfo(
           professionalInfo: professionalInfo,
         );
-        AppLogger.debug('[PROFILE_CUBIT] ✅ Professional info updated', tag: 'Profile');
+        AppLogger.debug(
+          '[PROFILE_CUBIT] ✅ Professional info updated',
+          tag: 'Profile',
+        );
       } catch (e) {
-        AppLogger.error('[PROFILE_CUBIT] ⚠️ Professional info update failed (non-critical): $e', tag: 'Profile', error: e);
+        AppLogger.error(
+          '[PROFILE_CUBIT] ⚠️ Professional info update failed (non-critical): $e',
+          tag: 'Profile',
+          error: e,
+        );
       }
 
       // 4. Reload profile data to get the updated values
-      AppLogger.debug('[PROFILE_CUBIT] 4/5 Reloading profile data...', tag: 'Profile');
+      AppLogger.debug(
+        '[PROFILE_CUBIT] 4/5 Reloading profile data...',
+        tag: 'Profile',
+      );
       await loadProfileData(force: true); // Force reload after update
-      AppLogger.debug('[PROFILE_CUBIT] ✅✅ All updates completed successfully', tag: 'Profile');
+      AppLogger.debug(
+        '[PROFILE_CUBIT] ✅✅ All updates completed successfully',
+        tag: 'Profile',
+      );
     } catch (e, stackTrace) {
-      AppLogger.error('[PROFILE_CUBIT] ❌ Error pre-filling from parsed resume: $e', tag: 'Profile', error: e);
-      AppLogger.debug('[PROFILE_CUBIT] Stack trace: $stackTrace', tag: 'Profile');
+      AppLogger.error(
+        '[PROFILE_CUBIT] ❌ Error pre-filling from parsed resume: $e',
+        tag: 'Profile',
+        error: e,
+      );
+      AppLogger.debug(
+        '[PROFILE_CUBIT] Stack trace: $stackTrace',
+        tag: 'Profile',
+      );
 
       // Extract meaningful error message
       var errorMessage = e.toString();
@@ -424,12 +483,19 @@ class ProfileCubit extends Cubit<ProfileState> {
         await prefs.remove(StorageKeys.resumeParsedPrefill);
       }
     } catch (e) {
-      AppLogger.error('[PROFILE_CUBIT] Error loading stored parsed resume: $e', tag: 'Profile', error: e);
+      AppLogger.error(
+        '[PROFILE_CUBIT] Error loading stored parsed resume: $e',
+        tag: 'Profile',
+        error: e,
+      );
     }
   }
 
   FormGroup getEditForm(ProfileData profile) {
-    AppLogger.debug('[PROFILE_CUBIT] getEditForm() called with profile: ${profile.name}', tag: 'Profile');
+    AppLogger.debug(
+      '[PROFILE_CUBIT] getEditForm() called with profile: ${profile.name}',
+      tag: 'Profile',
+    );
 
     /// Clean "Not specified" values to empty strings
     String cleanValue(String? value) {
@@ -640,7 +706,10 @@ class ProfileCubit extends Cubit<ProfileState> {
 
   /// Reset the cubit state (for logout/session change)
   void reset() {
-    AppLogger.debug('[PROFILE_CUBIT] Resetting profile data...', tag: 'Profile');
+    AppLogger.debug(
+      '[PROFILE_CUBIT] Resetting profile data...',
+      tag: 'Profile',
+    );
     _isInitialized = false;
     _isDataLoaded = false;
     if (!isClosed) {

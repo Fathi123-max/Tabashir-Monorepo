@@ -25,12 +25,20 @@ class GlobalBlocObserver extends BlocObserver {
   @override
   void onTransition(Bloc bloc, Transition transition) {
     super.onTransition(bloc, transition);
-    AppLogger.debug('onTransition -- ${bloc.runtimeType}, $transition', tag: 'Bloc');
+    AppLogger.debug(
+      'onTransition -- ${bloc.runtimeType}, $transition',
+      tag: 'Bloc',
+    );
   }
 
   @override
   void onError(BlocBase bloc, Object error, StackTrace stackTrace) {
-    AppLogger.error('onError -- ${bloc.runtimeType}, $error', tag: 'Bloc', error: error, stackTrace: stackTrace);
+    AppLogger.error(
+      'onError -- ${bloc.runtimeType}, $error',
+      tag: 'Bloc',
+      error: error,
+      stackTrace: stackTrace,
+    );
     // Report error to Crashlytics
     FirebaseCrashlytics.instance.recordError(error, stackTrace);
     super.onError(bloc, error, stackTrace);

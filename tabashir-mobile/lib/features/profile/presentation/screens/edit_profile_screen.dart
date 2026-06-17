@@ -90,7 +90,10 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                   await cubit.updateProfile(_form!);
                                   if (mounted) Navigator.of(context).pop();
                                 } catch (e) {
-                                  AppLogger.debug('Profile update error: $e', tag: 'Profile');
+                                  AppLogger.debug(
+                                    'Profile update error: $e',
+                                    tag: 'Profile',
+                                  );
                                 } finally {
                                   if (mounted) {
                                     setState(() => _isUpdating = false);
@@ -167,22 +170,28 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                       ReactiveTextField<String>(
                         formControlName: 'email',
                         readOnly: true,
-                        decoration: _buildInputDecoration(
-                          theme,
-                          'Email'.tr(),
-                          Icons.email_outlined,
-                        ).copyWith(
-                          suffixIcon: Icon(
-                            Icons.lock_outline,
-                            size: 18.sp,
-                            color: theme.colorScheme.onSurface.withValues(alpha: 0.3),
-                          ),
-                          helperText: 'Email address cannot be changed'.tr(),
-                          helperStyle: TextStyle(
-                            fontSize: 11.sp,
-                            color: theme.colorScheme.onSurface.withValues(alpha: 0.4),
-                          ),
-                        ),
+                        decoration:
+                            _buildInputDecoration(
+                              theme,
+                              'Email'.tr(),
+                              Icons.email_outlined,
+                            ).copyWith(
+                              suffixIcon: Icon(
+                                Icons.lock_outline,
+                                size: 18.sp,
+                                color: theme.colorScheme.onSurface.withValues(
+                                  alpha: 0.3,
+                                ),
+                              ),
+                              helperText: 'Email address cannot be changed'
+                                  .tr(),
+                              helperStyle: TextStyle(
+                                fontSize: 11.sp,
+                                color: theme.colorScheme.onSurface.withValues(
+                                  alpha: 0.4,
+                                ),
+                              ),
+                            ),
                         keyboardType: TextInputType.emailAddress,
                       ),
                       SizedBox(height: AppTheme.spacingMd.h),
@@ -477,7 +486,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     form.control('name').value = _cleanValue(profile.name);
     form.control('email').value = _cleanValue(profile.email);
     form.control('nationality').value = _cleanValue(
-        worldCountries[profile.nationality.toLowerCase()] ?? profile.nationality);
+      worldCountries[profile.nationality.toLowerCase()] ?? profile.nationality,
+    );
     form.control('gender').value = _cleanValue(profile.gender);
     form.control('location').value = _cleanValue(profile.location);
     form.control('jobTitle').value = _cleanValue(profile.jobTitle);

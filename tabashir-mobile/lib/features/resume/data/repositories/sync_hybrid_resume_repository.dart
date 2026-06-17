@@ -32,12 +32,18 @@ class SyncHybridResumeRepository implements ResumeVaultRepository {
 
   @override
   Future<List<ResumeItem>> getUserResumes() async {
-    AppLogger.debug('🔄 [SYNC_REPO] getUserResumes() - Fetching from backend...', tag: 'Resume');
+    AppLogger.debug(
+      '🔄 [SYNC_REPO] getUserResumes() - Fetching from backend...',
+      tag: 'Resume',
+    );
 
     try {
       // Try to fetch from backend first
       final response = await _apiService.getResumes();
-      AppLogger.debug('✅ [SYNC_REPO] ✅ Fetched ${response.resumes.length} resumes from backend', tag: 'Resume');
+      AppLogger.debug(
+        '✅ [SYNC_REPO] ✅ Fetched ${response.resumes.length} resumes from backend',
+        tag: 'Resume',
+      );
 
       // Enrich backend resumes with UI-specific properties
       final enrichedResumes = response.resumes.map((backendResume) {
@@ -63,17 +69,30 @@ class SyncHybridResumeRepository implements ResumeVaultRepository {
 
       // Cache locally for offline access
       await _cacheResumesLocally(enrichedResumes);
-      AppLogger.debug('💾 [SYNC_REPO] ✅ Cached ${enrichedResumes.length} resumes locally', tag: 'Resume');
+      AppLogger.debug(
+        '💾 [SYNC_REPO] ✅ Cached ${enrichedResumes.length} resumes locally',
+        tag: 'Resume',
+      );
 
       return enrichedResumes;
     } catch (e) {
-      AppLogger.error('⚠️  [SYNC_REPO] ⚠️  Backend error: $e', tag: 'Resume', error: e);
-      AppLogger.debug('🔄 [SYNC_REPO] 🔄 Falling back to local cache...', tag: 'Resume');
+      AppLogger.error(
+        '⚠️  [SYNC_REPO] ⚠️  Backend error: $e',
+        tag: 'Resume',
+        error: e,
+      );
+      AppLogger.debug(
+        '🔄 [SYNC_REPO] 🔄 Falling back to local cache...',
+        tag: 'Resume',
+      );
 
       // Fallback to local cache - convert to backend ResumeItem format
       try {
         final localResumes = await _localRepository.getAllResumes();
-        AppLogger.debug('✅ [SYNC_REPO] ✅ Loaded ${localResumes.length} resumes from local cache', tag: 'Resume');
+        AppLogger.debug(
+          '✅ [SYNC_REPO] ✅ Loaded ${localResumes.length} resumes from local cache',
+          tag: 'Resume',
+        );
 
         // Convert local resumes to backend ResumeItem format for compatibility
         return localResumes
@@ -98,7 +117,10 @@ class SyncHybridResumeRepository implements ResumeVaultRepository {
             )
             .toList();
       } catch (localError) {
-        AppLogger.error('❌ [SYNC_REPO] ❌ Both backend and local failed', tag: 'Resume');
+        AppLogger.error(
+          '❌ [SYNC_REPO] ❌ Both backend and local failed',
+          tag: 'Resume',
+        );
         // If both fail, rethrow the original error but with more context
         if (e is DioException) {
           final statusCode = e.response?.statusCode;
@@ -117,7 +139,10 @@ class SyncHybridResumeRepository implements ResumeVaultRepository {
     required String fileType,
     required int fileSize,
   }) async {
-    AppLogger.debug('🔄 [SYNC_REPO] uploadResume() - Uploading to backend...', tag: 'Resume');
+    AppLogger.debug(
+      '🔄 [SYNC_REPO] uploadResume() - Uploading to backend...',
+      tag: 'Resume',
+    );
 
     try {
       // Copy temporary file to permanent location first
@@ -135,7 +160,10 @@ class SyncHybridResumeRepository implements ResumeVaultRepository {
       final permanentFileName = 'resume_$timestamp.$fileType';
       final permanentFilePath = '${resumeDir.path}/$permanentFileName';
 
-      AppLogger.debug('🔄 [SYNC_REPO] Copying temporary file to: $permanentFilePath', tag: 'Resume');
+      AppLogger.debug(
+        '🔄 [SYNC_REPO] Copying temporary file to: $permanentFilePath',
+        tag: 'Resume',
+      );
       await originalFile.copy(permanentFilePath);
 
       // Verify the permanent file exists
@@ -152,7 +180,10 @@ class SyncHybridResumeRepository implements ResumeVaultRepository {
 
       // Upload to backend
       final response = await _apiService.uploadResume(multipartFile);
-      AppLogger.debug('✅ [SYNC_REPO] ✅ Uploaded resume to backend: ${response.resume.filename}', tag: 'Resume');
+      AppLogger.debug(
+        '✅ [SYNC_REPO] ✅ Uploaded resume to backend: ${response.resume.filename}',
+        tag: 'Resume',
+      );
 
       // Cache locally using permanent path
       await _localRepository.addResume(
@@ -179,7 +210,11 @@ class SyncHybridResumeRepository implements ResumeVaultRepository {
 
       return enrichedResume;
     } catch (e) {
-      AppLogger.error('❌ [SYNC_REPO] ❌ Upload failed: $e', tag: 'Resume', error: e);
+      AppLogger.error(
+        '❌ [SYNC_REPO] ❌ Upload failed: $e',
+        tag: 'Resume',
+        error: e,
+      );
       rethrow;
     }
   }
@@ -192,7 +227,10 @@ class SyncHybridResumeRepository implements ResumeVaultRepository {
     required int fileSize,
     String? outputFormat,
   }) async {
-    AppLogger.debug('🔄 [SYNC_REPO] reformatResume() - Sending to ATS formatter...', tag: 'Resume');
+    AppLogger.debug(
+      '🔄 [SYNC_REPO] reformatResume() - Sending to ATS formatter...',
+      tag: 'Resume',
+    );
 
     try {
       final multipartFile = await MultipartFile.fromFile(
@@ -211,19 +249,26 @@ class SyncHybridResumeRepository implements ResumeVaultRepository {
         // The backend returns bytes for the formatted file.
         // For a full implementation, we'd save these bytes and create a ResumeItem.
         // For now, we'll upload the reformatted version to the vault to get a ResumeItem.
-        
+
         final tempDir = await getTemporaryDirectory();
         final ext = outputFormat == 'docx' ? 'docx' : 'pdf';
-        final reformattedPath = '${tempDir.path}/reformatted_${DateTime.now().millisecondsSinceEpoch}.$ext';
+        final reformattedPath =
+            '${tempDir.path}/reformatted_${DateTime.now().millisecondsSinceEpoch}.$ext';
         final file = File(reformattedPath);
         await file.writeAsBytes(response.data);
 
-        AppLogger.debug('🔄 [SYNC_REPO] Reformatted file saved locally. Uploading to vault...', tag: 'Resume');
-        
+        AppLogger.debug(
+          '🔄 [SYNC_REPO] Reformatted file saved locally. Uploading to vault...',
+          tag: 'Resume',
+        );
+
         // Remove old extension from fileName if it exists
         var cleanFileName = fileName;
         if (cleanFileName.contains('.')) {
-          cleanFileName = cleanFileName.substring(0, cleanFileName.lastIndexOf('.'));
+          cleanFileName = cleanFileName.substring(
+            0,
+            cleanFileName.lastIndexOf('.'),
+          );
         }
 
         return await uploadResume(
@@ -233,26 +278,41 @@ class SyncHybridResumeRepository implements ResumeVaultRepository {
           fileSize: response.data.length,
         );
       } else {
-        throw Exception('Failed to reformat CV: ${response.response.statusMessage}');
+        throw Exception(
+          'Failed to reformat CV: ${response.response.statusMessage}',
+        );
       }
     } catch (e) {
       if (e is DioException) {
         String? serverMessage;
         if (e.response?.data is Map) {
-          serverMessage = (e.response?.data['error'] ?? e.response?.data['message']) as String?;
+          serverMessage =
+              (e.response?.data['error'] ?? e.response?.data['message'])
+                  as String?;
         }
         final finalMessage = serverMessage ?? e.message;
-        AppLogger.error('❌ [SYNC_REPO] ❌ Reformat failed: $finalMessage', tag: 'Resume', error: e);
+        AppLogger.error(
+          '❌ [SYNC_REPO] ❌ Reformat failed: $finalMessage',
+          tag: 'Resume',
+          error: e,
+        );
         throw Exception('Server error: $finalMessage');
       }
-      AppLogger.error('❌ [SYNC_REPO] ❌ Reformat failed: $e', tag: 'Resume', error: e);
+      AppLogger.error(
+        '❌ [SYNC_REPO] ❌ Reformat failed: $e',
+        tag: 'Resume',
+        error: e,
+      );
       rethrow;
     }
   }
 
   @override
   Future<void> deleteResume({required String resumeId}) async {
-    AppLogger.debug('🔄 [SYNC_REPO] deleteResume() for ID: $resumeId', tag: 'Resume');
+    AppLogger.debug(
+      '🔄 [SYNC_REPO] deleteResume() for ID: $resumeId',
+      tag: 'Resume',
+    );
 
     try {
       // Delete from backend
@@ -261,39 +321,65 @@ class SyncHybridResumeRepository implements ResumeVaultRepository {
 
       // Delete from local cache
       await _localRepository.deleteResume(resumeId);
-      AppLogger.debug('💾 [SYNC_REPO] ✅ Deleted from local cache', tag: 'Resume');
+      AppLogger.debug(
+        '💾 [SYNC_REPO] ✅ Deleted from local cache',
+        tag: 'Resume',
+      );
     } catch (e) {
-      AppLogger.error('❌ [SYNC_REPO] ❌ Delete failed: $e', tag: 'Resume', error: e);
+      AppLogger.error(
+        '❌ [SYNC_REPO] ❌ Delete failed: $e',
+        tag: 'Resume',
+        error: e,
+      );
       rethrow;
     }
   }
 
   @override
   Future<void> setDefaultResume({required String resumeId}) async {
-    AppLogger.debug('🔄 [SYNC_REPO] setDefaultResume() for ID: $resumeId', tag: 'Resume');
+    AppLogger.debug(
+      '🔄 [SYNC_REPO] setDefaultResume() for ID: $resumeId',
+      tag: 'Resume',
+    );
 
     try {
       // Update local cache (backend doesn't track default status)
       await _localRepository.setDefaultResume(resumeId);
-      AppLogger.debug('💾 [SYNC_REPO] ✅ Updated default in local cache', tag: 'Resume');
+      AppLogger.debug(
+        '💾 [SYNC_REPO] ✅ Updated default in local cache',
+        tag: 'Resume',
+      );
     } catch (e) {
-      AppLogger.error('❌ [SYNC_REPO] ❌ Set default failed: $e', tag: 'Resume', error: e);
+      AppLogger.error(
+        '❌ [SYNC_REPO] ❌ Set default failed: $e',
+        tag: 'Resume',
+        error: e,
+      );
       rethrow;
     }
   }
 
   @override
   Future<ResumeItem> duplicateResume({required String resumeId}) async {
-    AppLogger.debug('🔄 [SYNC_REPO] duplicateResume() for ID: $resumeId', tag: 'Resume');
+    AppLogger.debug(
+      '🔄 [SYNC_REPO] duplicateResume() for ID: $resumeId',
+      tag: 'Resume',
+    );
 
     try {
       // Duplicate on backend
       final response = await _apiService.duplicateResume(resumeId);
-      AppLogger.debug('✅ [SYNC_REPO] ✅ Duplicated on backend: ${response.resume.filename}', tag: 'Resume');
+      AppLogger.debug(
+        '✅ [SYNC_REPO] ✅ Duplicated on backend: ${response.resume.filename}',
+        tag: 'Resume',
+      );
 
       // Cache locally (copy file)
       final localResume = await _localRepository.duplicateResume(resumeId);
-      AppLogger.debug('💾 [SYNC_REPO] ✅ Cached locally with ID: ${localResume.id}', tag: 'Resume');
+      AppLogger.debug(
+        '💾 [SYNC_REPO] ✅ Cached locally with ID: ${localResume.id}',
+        tag: 'Resume',
+      );
 
       // Enrich with UI-specific properties
       final enrichedResume = response.resume.copyWith(
@@ -308,7 +394,11 @@ class SyncHybridResumeRepository implements ResumeVaultRepository {
 
       return enrichedResume;
     } catch (e) {
-      AppLogger.error('❌ [SYNC_REPO] ❌ Duplicate failed: $e', tag: 'Resume', error: e);
+      AppLogger.error(
+        '❌ [SYNC_REPO] ❌ Duplicate failed: $e',
+        tag: 'Resume',
+        error: e,
+      );
       rethrow;
     }
   }
@@ -318,7 +408,10 @@ class SyncHybridResumeRepository implements ResumeVaultRepository {
     required String resumeId,
     required String newName,
   }) async {
-    AppLogger.debug('🔄 [SYNC_REPO] renameResume() for ID: $resumeId to name: $newName', tag: 'Resume');
+    AppLogger.debug(
+      '🔄 [SYNC_REPO] renameResume() for ID: $resumeId to name: $newName',
+      tag: 'Resume',
+    );
 
     try {
       // Note: Backend API doesn't have a rename endpoint
@@ -356,7 +449,11 @@ class SyncHybridResumeRepository implements ResumeVaultRepository {
         title: updatedLocal.title,
       );
     } catch (e) {
-      AppLogger.error('❌ [SYNC_REPO] ❌ Rename failed: $e', tag: 'Resume', error: e);
+      AppLogger.error(
+        '❌ [SYNC_REPO] ❌ Rename failed: $e',
+        tag: 'Resume',
+        error: e,
+      );
       rethrow;
     }
   }
@@ -370,10 +467,17 @@ class SyncHybridResumeRepository implements ResumeVaultRepository {
     try {
       // For now, we only cache metadata
       // Files are downloaded on-demand from backend.originalUrl
-      AppLogger.debug('💾 [SYNC_REPO] Caching ${backendResumes.length} resumes locally', tag: 'Resume');
+      AppLogger.debug(
+        '💾 [SYNC_REPO] Caching ${backendResumes.length} resumes locally',
+        tag: 'Resume',
+      );
       // In the future, we could download and cache files here
     } catch (e) {
-      AppLogger.error('⚠️  [SYNC_REPO] Failed to cache resumes: $e', tag: 'Resume', error: e);
+      AppLogger.error(
+        '⚠️  [SYNC_REPO] Failed to cache resumes: $e',
+        tag: 'Resume',
+        error: e,
+      );
     }
   }
 
@@ -453,8 +557,9 @@ class SyncHybridResumeRepository implements ResumeVaultRepository {
   /// Extract file type from filename
   String _extractFileType(String fileName) {
     final lowerName = fileName.toLowerCase();
-    if (lowerName.contains('ats_docx') || lowerName.endsWith('.docx')) return 'DOCX';
-    
+    if (lowerName.contains('ats_docx') || lowerName.endsWith('.docx'))
+      return 'DOCX';
+
     final parts = fileName.split('.');
     if (parts.length > 1) {
       final ext = parts.last.toUpperCase();

@@ -61,7 +61,6 @@ class _JobFilterBottomSheetState extends State<JobFilterBottomSheet> {
     });
   }
 
-
   void _applyFilters() {
     widget.jobsCubit.applyFilters(
       locations: selectedLocations,
@@ -71,7 +70,6 @@ class _JobFilterBottomSheetState extends State<JobFilterBottomSheet> {
     );
     Navigator.of(context).pop();
   }
-
 
   void _clearAllFilters() {
     setState(() {
@@ -187,12 +185,14 @@ class _JobFilterBottomSheetState extends State<JobFilterBottomSheet> {
                         ),
                         SizedBox(width: AppTheme.spacingXs.w),
                         Text(
-                          'active_filters_count'.tr(namedArgs: {
-                            'count': activeFilterCount.toString(),
-                            'filters': activeFilterCount > 1
-                                ? 'filters'.tr()
-                                : 'filter'.tr(),
-                          }),
+                          'active_filters_count'.tr(
+                            namedArgs: {
+                              'count': activeFilterCount.toString(),
+                              'filters': activeFilterCount > 1
+                                  ? 'filters'.tr()
+                                  : 'filter'.tr(),
+                            },
+                          ),
                           style: theme.textTheme.bodySmall?.copyWith(
                             color: AppTheme.primaryColor,
                             fontWeight: FontWeight.w600,
@@ -220,7 +220,6 @@ class _JobFilterBottomSheetState extends State<JobFilterBottomSheet> {
                   _toggleJobType,
                 ),
                 SizedBox(height: AppTheme.spacingLg.h),
-
 
                 // Salary Range Filter
                 Text(

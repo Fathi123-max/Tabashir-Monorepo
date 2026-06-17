@@ -262,7 +262,7 @@ class MessagesView extends StatelessWidget {
     String? messageId,
   }) {
     final reasonController = TextEditingController();
-    
+
     showDialog(
       context: context,
       builder: (context) => AlertDialog(

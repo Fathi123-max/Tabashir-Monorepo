@@ -50,7 +50,11 @@ class FileService {
       );
       return images.take(maxImages).toList();
     } catch (e) {
-      AppLogger.error('Error picking multiple images: $e', tag: 'Service', error: e);
+      AppLogger.error(
+        'Error picking multiple images: $e',
+        tag: 'Service',
+        error: e,
+      );
       return [];
     }
   }
@@ -192,7 +196,11 @@ class FileService {
       final file = File(filePath);
       return await file.exists();
     } catch (e) {
-      AppLogger.error('Error checking file existence: $e', tag: 'Service', error: e);
+      AppLogger.error(
+        'Error checking file existence: $e',
+        tag: 'Service',
+        error: e,
+      );
       return false;
     }
   }

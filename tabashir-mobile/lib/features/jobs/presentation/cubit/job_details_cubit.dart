@@ -146,11 +146,15 @@ class JobDetailsCubit extends Cubit<JobDetailsState> {
       // Note: CandidateProfileData does NOT have subscriptionPlan field
       // Use profile.subscriptionPlan which comes from UserProfileResponse.subscription.plan
       final subscriptionPlan = profile.subscriptionPlan ?? '';
-      final isPro = subscriptionPlan.toUpperCase().contains('PRO') ||
-                    profile.userType?.toUpperCase() == 'PRO';
+      final isPro =
+          subscriptionPlan.toUpperCase().contains('PRO') ||
+          profile.userType?.toUpperCase() == 'PRO';
 
       if (!isPro) {
-        AppLogger.debug('[JOB_DETAILS_CUBIT] User is not Pro. Subscription plan: $subscriptionPlan', tag: 'Jobs');
+        AppLogger.debug(
+          '[JOB_DETAILS_CUBIT] User is not Pro. Subscription plan: $subscriptionPlan',
+          tag: 'Jobs',
+        );
         return false;
       }
 
@@ -182,10 +186,17 @@ class JobDetailsCubit extends Cubit<JobDetailsState> {
         );
       }
 
-      AppLogger.debug('[JOB_DETAILS_CUBIT] Successfully applied to job $jobId', tag: 'Jobs');
+      AppLogger.debug(
+        '[JOB_DETAILS_CUBIT] Successfully applied to job $jobId',
+        tag: 'Jobs',
+      );
       return response.success;
     } catch (e) {
-      AppLogger.error('[JOB_DETAILS_CUBIT] Error applying to job: $e', tag: 'Jobs', error: e);
+      AppLogger.error(
+        '[JOB_DETAILS_CUBIT] Error applying to job: $e',
+        tag: 'Jobs',
+        error: e,
+      );
       emit(JobDetailsState.error('Failed to apply: $e'));
       return false;
     }

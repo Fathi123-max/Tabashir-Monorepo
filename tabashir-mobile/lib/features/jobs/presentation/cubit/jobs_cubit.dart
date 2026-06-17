@@ -29,7 +29,10 @@ class JobsCubit extends Cubit<JobsState> {
     _savedJobsSubscription = _savedJobsRepository.savedJobsStream.listen((
       savedIds,
     ) {
-      AppLogger.debug('[JOBS_CUBIT] Received saved jobs update: ${savedIds.length} IDs', tag: 'Jobs');
+      AppLogger.debug(
+        '[JOBS_CUBIT] Received saved jobs update: ${savedIds.length} IDs',
+        tag: 'Jobs',
+      );
       _updateJobsWithSavedStatus(savedIds);
     });
     _seedAppliedJobsFromCache();
@@ -77,10 +80,16 @@ class JobsCubit extends Cubit<JobsState> {
         );
         loadJobs(email: email);
       }
-      AppLogger.debug('[JOBS_CUBIT] Already initialized, skipping duplicate load', tag: 'Jobs');
+      AppLogger.debug(
+        '[JOBS_CUBIT] Already initialized, skipping duplicate load',
+        tag: 'Jobs',
+      );
       return;
     }
-    AppLogger.debug('[JOBS_CUBIT] initializeState() called - Will load jobs', tag: 'Jobs');
+    AppLogger.debug(
+      '[JOBS_CUBIT] initializeState() called - Will load jobs',
+      tag: 'Jobs',
+    );
     _isInitialized = true;
 
     if (initialCity != null) {
@@ -119,7 +128,10 @@ class JobsCubit extends Cubit<JobsState> {
     String? lang,
   }) async {
     try {
-      AppLogger.debug('[JOBS_CUBIT] loadJobs() called - Page: $page, Limit: $limit, Email: ${email ?? "from profile"}', tag: 'Jobs');
+      AppLogger.debug(
+        '[JOBS_CUBIT] loadJobs() called - Page: $page, Limit: $limit, Email: ${email ?? "from profile"}',
+        tag: 'Jobs',
+      );
       AppLogger.debug('[JOBS_CUBIT] Current state: $state', tag: 'Jobs');
 
       // Get current filters from state BEFORE emitting loading
@@ -133,12 +145,22 @@ class JobsCubit extends Cubit<JobsState> {
 
       if (state is JobsStateLoaded) {
         final loadedState = state as JobsStateLoaded;
-        search = loadedState.searchQuery.isNotEmpty ? loadedState.searchQuery : null;
-        locations = loadedState.selectedLocations.isNotEmpty ? loadedState.selectedLocations : null;
-        jobTypes = loadedState.selectedJobTypes.isNotEmpty ? loadedState.selectedJobTypes : null;
-        experienceLevels = loadedState.selectedExperienceLevels.isNotEmpty ? loadedState.selectedExperienceLevels : null;
+        search = loadedState.searchQuery.isNotEmpty
+            ? loadedState.searchQuery
+            : null;
+        locations = loadedState.selectedLocations.isNotEmpty
+            ? loadedState.selectedLocations
+            : null;
+        jobTypes = loadedState.selectedJobTypes.isNotEmpty
+            ? loadedState.selectedJobTypes
+            : null;
+        experienceLevels = loadedState.selectedExperienceLevels.isNotEmpty
+            ? loadedState.selectedExperienceLevels
+            : null;
         minSalary = loadedState.minSalary > 0 ? loadedState.minSalary : null;
-        maxSalary = loadedState.maxSalary < 100000 ? loadedState.maxSalary : null;
+        maxSalary = loadedState.maxSalary < 100000
+            ? loadedState.maxSalary
+            : null;
         sort = loadedState.selectedSort;
       }
 
@@ -155,10 +177,19 @@ class JobsCubit extends Cubit<JobsState> {
       // Use provided email, cached email, or get from profile cubit
       final userEmail = _cachedEmail ?? _profileCubit.state.profile?.email;
       if (userEmail != null && userEmail.isNotEmpty) {
-        AppLogger.debug('[JOBS_CUBIT] ✅ Using email for matching: $userEmail', tag: 'Jobs');
+        AppLogger.debug(
+          '[JOBS_CUBIT] ✅ Using email for matching: $userEmail',
+          tag: 'Jobs',
+        );
       } else {
-        AppLogger.debug('[JOBS_CUBIT] ⚠️ No email available - jobs will load without match percentages', tag: 'Jobs');
-        AppLogger.debug('[JOBS_CUBIT] Profile state: ${_profileCubit.state.profile?.email ?? "null"}', tag: 'Jobs');
+        AppLogger.debug(
+          '[JOBS_CUBIT] ⚠️ No email available - jobs will load without match percentages',
+          tag: 'Jobs',
+        );
+        AppLogger.debug(
+          '[JOBS_CUBIT] Profile state: ${_profileCubit.state.profile?.email ?? "null"}',
+          tag: 'Jobs',
+        );
       }
 
       // Get jobs from repository with pagination, search, and filters
@@ -176,7 +207,10 @@ class JobsCubit extends Cubit<JobsState> {
         lang: lang,
       );
 
-      AppLogger.debug('[JOBS_CUBIT] API response received - ${jobs.length} jobs', tag: 'Jobs');
+      AppLogger.debug(
+        '[JOBS_CUBIT] API response received - ${jobs.length} jobs',
+        tag: 'Jobs',
+      );
 
       // Sync jobs to local database
       try {
@@ -193,14 +227,24 @@ class JobsCubit extends Cubit<JobsState> {
             .where((job) => job['id'] != null)
             .toList();
         await _savedJobsRepository.syncJobs(jobsToSync);
-        AppLogger.debug('[JOBS_CUBIT] Synced ${jobsToSync.length} jobs to local database', tag: 'Jobs');
+        AppLogger.debug(
+          '[JOBS_CUBIT] Synced ${jobsToSync.length} jobs to local database',
+          tag: 'Jobs',
+        );
       } catch (e) {
-        AppLogger.error('[JOBS_CUBIT] Failed to sync jobs: $e', tag: 'Jobs', error: e);
+        AppLogger.error(
+          '[JOBS_CUBIT] Failed to sync jobs: $e',
+          tag: 'Jobs',
+          error: e,
+        );
       }
 
       // Load saved job IDs
       final savedJobIds = await _savedJobsRepository.getAllSavedJobIds();
-      AppLogger.debug('[JOBS_CUBIT] Loaded ${savedJobIds.length} saved job IDs', tag: 'Jobs');
+      AppLogger.debug(
+        '[JOBS_CUBIT] Loaded ${savedJobIds.length} saved job IDs',
+        tag: 'Jobs',
+      );
       final savedJobsSet = savedJobIds.toSet();
 
       // Convert API response to UI format
@@ -208,7 +252,10 @@ class JobsCubit extends Cubit<JobsState> {
           .map((job) => _mapJobToUI(job, savedJobsSet))
           .toList();
 
-      AppLogger.debug('[JOBS_CUBIT] Mapped ${jobsForUI.length} jobs for UI', tag: 'Jobs');
+      AppLogger.debug(
+        '[JOBS_CUBIT] Mapped ${jobsForUI.length} jobs for UI',
+        tag: 'Jobs',
+      );
 
       // Calculate pagination info
       final hasMore = jobs.length == limit;
@@ -251,9 +298,17 @@ class JobsCubit extends Cubit<JobsState> {
         );
       }
 
-      AppLogger.debug('[JOBS_CUBIT] Successfully emitted JobsState.loaded with pagination - Page: $page, HasMore: $hasMore, Total: $totalJobs', tag: 'Jobs');
+      AppLogger.debug(
+        '[JOBS_CUBIT] Successfully emitted JobsState.loaded with pagination - Page: $page, HasMore: $hasMore, Total: $totalJobs',
+        tag: 'Jobs',
+      );
     } catch (e, stackTrace) {
-      AppLogger.error('[JOBS_CUBIT]', tag: 'Jobs', error: e, stackTrace: stackTrace);
+      AppLogger.error(
+        '[JOBS_CUBIT]',
+        tag: 'Jobs',
+        error: e,
+        stackTrace: stackTrace,
+      );
       AppLogger.debug('[JOBS_CUBIT] Current state: $state', tag: 'Jobs');
 
       // Emit loading state for initial page load
@@ -282,11 +337,17 @@ class JobsCubit extends Cubit<JobsState> {
 
     // Don't load more if already loading or no more data
     if (loadedState.isLoadingMore || !loadedState.hasMoreData) {
-      AppLogger.debug('[JOBS_CUBIT] loadMoreJobs() skipped - LoadingMore: ${loadedState.isLoadingMore}, HasMore: ${loadedState.hasMoreData}', tag: 'Jobs');
+      AppLogger.debug(
+        '[JOBS_CUBIT] loadMoreJobs() skipped - LoadingMore: ${loadedState.isLoadingMore}, HasMore: ${loadedState.hasMoreData}',
+        tag: 'Jobs',
+      );
       return;
     }
 
-    AppLogger.debug('[JOBS_CUBIT] loadMoreJobs() called - Current page: ${loadedState.currentPage}', tag: 'Jobs');
+    AppLogger.debug(
+      '[JOBS_CUBIT] loadMoreJobs() called - Current page: ${loadedState.currentPage}',
+      tag: 'Jobs',
+    );
 
     // Set loading state
     emit(loadedState.copyWith(isLoadingMore: true));
@@ -301,7 +362,10 @@ class JobsCubit extends Cubit<JobsState> {
   /// Refresh jobs by reloading from page 0
   /// This is used for pull-to-refresh functionality
   Future<void> refreshJobs() async {
-    AppLogger.debug('[JOBS_CUBIT] refreshJobs() called - Reloading from page 0', tag: 'Jobs');
+    AppLogger.debug(
+      '[JOBS_CUBIT] refreshJobs() called - Reloading from page 0',
+      tag: 'Jobs',
+    );
     await loadJobs();
   }
 
@@ -410,7 +474,10 @@ class JobsCubit extends Cubit<JobsState> {
       // Debounce search to avoid too many API calls
       _searchDebounceTimer?.cancel();
       _searchDebounceTimer = Timer(const Duration(milliseconds: 500), () {
-        AppLogger.debug('[JOBS_CUBIT] Debounced search triggered for: $query', tag: 'Jobs');
+        AppLogger.debug(
+          '[JOBS_CUBIT] Debounced search triggered for: $query',
+          tag: 'Jobs',
+        );
         loadJobs();
       });
     }
@@ -511,7 +578,10 @@ class JobsCubit extends Cubit<JobsState> {
 
   // Save/Unsave methods
   Future<void> saveJob(String jobId) async {
-    AppLogger.debug('[JOBS_CUBIT] saveJob() called for jobId: $jobId', tag: 'Jobs');
+    AppLogger.debug(
+      '[JOBS_CUBIT] saveJob() called for jobId: $jobId',
+      tag: 'Jobs',
+    );
     if (state is JobsStateLoaded) {
       final loadedState = state as JobsStateLoaded;
       final updatedSavedJobs = Set<String>.from(loadedState.savedJobs)
@@ -524,7 +594,10 @@ class JobsCubit extends Cubit<JobsState> {
   }
 
   Future<void> unsaveJob(String jobId) async {
-    AppLogger.debug('[JOBS_CUBIT] unsaveJob() called for jobId: $jobId', tag: 'Jobs');
+    AppLogger.debug(
+      '[JOBS_CUBIT] unsaveJob() called for jobId: $jobId',
+      tag: 'Jobs',
+    );
     if (state is JobsStateLoaded) {
       final loadedState = state as JobsStateLoaded;
       final updatedSavedJobs = Set<String>.from(loadedState.savedJobs)
@@ -537,7 +610,10 @@ class JobsCubit extends Cubit<JobsState> {
   }
 
   Future<void> toggleSaveJob(String jobId) async {
-    AppLogger.debug('[JOBS_CUBIT] toggleSaveJob() called for jobId: $jobId', tag: 'Jobs');
+    AppLogger.debug(
+      '[JOBS_CUBIT] toggleSaveJob() called for jobId: $jobId',
+      tag: 'Jobs',
+    );
     if (state is JobsStateLoaded) {
       final loadedState = state as JobsStateLoaded;
       if (loadedState.savedJobs.contains(jobId)) {

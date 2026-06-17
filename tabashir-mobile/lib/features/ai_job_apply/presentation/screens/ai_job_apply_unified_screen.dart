@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../../core/di/injection.dart';
+import '../../../../shared/widgets/ai_consent_bottom_sheet.dart';
 import '../../../../core/services/ai_job_apply_config_service.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../shared/widgets/cv_required_blur.dart';
@@ -57,6 +58,14 @@ class _AiJobApplyUnifiedScreenState extends State<AiJobApplyUnifiedScreen> {
     _customRoleController = TextEditingController();
     // Load initial data asynchronously
     _loadInitialData();
+
+    // Check AI consent and pop if denied
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      final consented = await AiConsentBottomSheet.ensureConsent(context);
+      if (!consented && mounted) {
+        Navigator.of(context).pop();
+      }
+    });
   }
 
   Future<void> _loadInitialData() async {

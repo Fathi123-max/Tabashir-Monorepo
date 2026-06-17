@@ -61,7 +61,8 @@ class _HomeLatestJobsFeedWidgetState extends State<HomeLatestJobsFeedWidget> {
                 (job['employmentType'] ?? job['job_type']) as String? ??
                 'Full-time'.tr(),
             level:
-                (job['level'] ?? 'not_specified'.tr()) as String? ?? 'not_specified'.tr(),
+                (job['level'] ?? 'not_specified'.tr()) as String? ??
+                'not_specified'.tr(),
             // Use the processed matchPercentage from HomeCubit (already formatted)
             matchPercentage: (job['matchPercentage'] as String?) ?? '50% Match',
             isPrimary: false,

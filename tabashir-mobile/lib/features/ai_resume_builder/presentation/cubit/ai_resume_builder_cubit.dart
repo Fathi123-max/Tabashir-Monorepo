@@ -138,8 +138,11 @@ class AiResumeBuilderCubit extends Cubit<AiResumeBuilderState> {
 
     try {
       final apiService = getIt<ResumeApiService>();
-      final userName = state.resumeData.personalDetails?.fullName?.trim() ?? 'My';
-      final cleanUserName = userName.isEmpty ? 'My' : userName.replaceAll(RegExp(r'[^a-zA-Z0-9\s]'), '').trim();
+      final userName =
+          state.resumeData.personalDetails?.fullName?.trim() ?? 'My';
+      final cleanUserName = userName.isEmpty
+          ? 'My'
+          : userName.replaceAll(RegExp(r'[^a-zA-Z0-9\s]'), '').trim();
       final baseFileName = '$cleanUserName - AI Resume';
 
       final request = SaveAndGenerateRequest(
@@ -373,8 +376,9 @@ class AiResumeBuilderCubit extends Cubit<AiResumeBuilderState> {
         city: 'Remote',
         startDate: DateTime(2020, 5),
         endDate: DateTime(2021, 1),
-        description: '• Architected the backend using Node.js and Express.\n• Integrated Stripe for payments.',
-      )
+        description:
+            '• Architected the backend using Node.js and Express.\n• Integrated Stripe for payments.',
+      ),
     ];
 
     final sampleLeadership = [
@@ -384,8 +388,9 @@ class AiResumeBuilderCubit extends Cubit<AiResumeBuilderState> {
         city: 'Berkeley, CA',
         startDate: DateTime(2017, 8),
         endDate: DateTime(2018, 5),
-        keyTasks: '• Organized weekly coding workshops for 50+ students.\n• Hosted hackathons with industry sponsors.',
-      )
+        keyTasks:
+            '• Organized weekly coding workshops for 50+ students.\n• Hosted hackathons with industry sponsors.',
+      ),
     ];
 
     // Create updated resume data with sample information
@@ -526,8 +531,9 @@ class AiResumeBuilderCubit extends Cubit<AiResumeBuilderState> {
         city: 'عن بعد',
         startDate: DateTime(2020, 5),
         endDate: DateTime(2021, 1),
-        description: '• تصميم بنية الواجهة الخلفية باستخدام Node.js و Express.\n• دمج بوابة الدفع Stripe.',
-      )
+        description:
+            '• تصميم بنية الواجهة الخلفية باستخدام Node.js و Express.\n• دمج بوابة الدفع Stripe.',
+      ),
     ];
 
     final sampleLeadership = [
@@ -537,8 +543,9 @@ class AiResumeBuilderCubit extends Cubit<AiResumeBuilderState> {
         city: 'العين، الإمارات',
         startDate: DateTime(2017, 8),
         endDate: DateTime(2018, 5),
-        keyTasks: '• تنظيم ورش عمل أسبوعية في البرمجة لأكثر من 50 طالباً.\n• استضافة هاكاثونات مع رعاة من القطاع التقني.',
-      )
+        keyTasks:
+            '• تنظيم ورش عمل أسبوعية في البرمجة لأكثر من 50 طالباً.\n• استضافة هاكاثونات مع رعاة من القطاع التقني.',
+      ),
     ];
 
     // Create updated resume data with sample information

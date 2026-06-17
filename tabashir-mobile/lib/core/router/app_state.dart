@@ -31,8 +31,7 @@ class AppState extends ChangeNotifier {
     _isLoggedIn = prefs.getBool(StorageKeys.isLoggedIn) ?? false;
     _hasCompletedOnboarding =
         prefs.getBool(StorageKeys.hasCompletedOnboarding) ?? false;
-    _hasCompletedSetup =
-        prefs.getBool(StorageKeys.hasCompletedSetup) ?? false;
+    _hasCompletedSetup = prefs.getBool(StorageKeys.hasCompletedSetup) ?? false;
     // No notifyListeners here — router is not mounted yet.
   }
 

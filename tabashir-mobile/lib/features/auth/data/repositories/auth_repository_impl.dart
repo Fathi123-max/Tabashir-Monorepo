@@ -36,7 +36,10 @@ class AuthRepositoryImpl implements AuthRepository {
       );
 
       // Debug: Log the raw response
-      AppLogger.debug('Raw response data: ${response.response.data}', tag: 'Auth');
+      AppLogger.debug(
+        'Raw response data: ${response.response.data}',
+        tag: 'Auth',
+      );
       AppLogger.debug('Parsed AuthResponse: ${response.data}', tag: 'Auth');
       AppLogger.debug(
         '- accessToken in response.data: ${response.data.accessToken != null ? "present" : "NULL"}',

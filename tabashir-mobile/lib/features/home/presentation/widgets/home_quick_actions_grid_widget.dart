@@ -24,7 +24,10 @@ class HomeQuickActionsGridWidget extends StatelessWidget {
         icon: Icons.bookmark_outline_rounded,
         label: 'Saved Jobs'.tr(),
         onTap: () {
-          AppLogger.debug('[QUICK_ACTIONS] Navigate to Saved Jobs', tag: 'Home');
+          AppLogger.debug(
+            '[QUICK_ACTIONS] Navigate to Saved Jobs',
+            tag: 'Home',
+          );
           context.push(RouteNames.savedJobs);
         },
       ),

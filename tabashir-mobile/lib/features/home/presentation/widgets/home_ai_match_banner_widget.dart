@@ -31,11 +31,13 @@ class HomeAIMatchBannerWidget extends StatelessWidget {
 
     // Generate dynamic message
     final message = count > 0
-        ? 'matched_jobs_in_cities'.tr(namedArgs: {
-            'count': count.toString(),
-            'jobTitle': title,
-            'cities': locationText,
-          })
+        ? 'matched_jobs_in_cities'.tr(
+            namedArgs: {
+              'count': count.toString(),
+              'jobTitle': title,
+              'cities': locationText,
+            },
+          )
         : 'ai_finding_matches'.tr();
 
     return Container(

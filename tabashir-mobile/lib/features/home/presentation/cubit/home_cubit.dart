@@ -44,7 +44,10 @@ class HomeCubit extends Cubit<HomeState> {
     required String email,
     String? lang,
   }) async {
-    AppLogger.debug('[HOME_CUBIT] Loading AI enhanced home data...', tag: 'Home');
+    AppLogger.debug(
+      '[HOME_CUBIT] Loading AI enhanced home data...',
+      tag: 'Home',
+    );
     if (isClosed) return;
     emit(state.copyWith(isLoading: true, error: false));
 
@@ -58,7 +61,11 @@ class HomeCubit extends Cubit<HomeState> {
             _homeRepository.getJobsCountByCity(),
             _homeRepository.getLatestJobs(),
           ]).catchError((Object error) {
-            AppLogger.error('[HOME_CUBIT] Error loading AI enhanced data: $error', tag: 'Home', error: error);
+            AppLogger.error(
+              '[HOME_CUBIT] Error loading AI enhanced data: $error',
+              tag: 'Home',
+              error: error,
+            );
             // Return typed defaults if fetching fails
             return <Object>[
               <String, dynamic>{},
@@ -76,19 +83,40 @@ class HomeCubit extends Cubit<HomeState> {
       final latestJobs = results[4] as List<Map<String, dynamic>>? ?? [];
 
       AppLogger.debug('[HOME_CUBIT] === API Results Summary ===', tag: 'Home');
-      AppLogger.debug('[HOME_CUBIT] Client Profile: ${clientProfile.isEmpty ? "empty" : "loaded"}', tag: 'Home');
-      AppLogger.debug('[HOME_CUBIT] Applied Jobs Count: $appliedJobsCount', tag: 'Home');
-      AppLogger.debug('[HOME_CUBIT] Matched Jobs: ${matchedJobs.length} jobs', tag: 'Home');
+      AppLogger.debug(
+        '[HOME_CUBIT] Client Profile: ${clientProfile.isEmpty ? "empty" : "loaded"}',
+        tag: 'Home',
+      );
+      AppLogger.debug(
+        '[HOME_CUBIT] Applied Jobs Count: $appliedJobsCount',
+        tag: 'Home',
+      );
+      AppLogger.debug(
+        '[HOME_CUBIT] Matched Jobs: ${matchedJobs.length} jobs',
+        tag: 'Home',
+      );
       if (matchedJobs.isNotEmpty) {
         for (var i = 0; i < matchedJobs.length; i++) {
           final job = matchedJobs[i];
-          AppLogger.debug('[HOME_CUBIT] [$i] ${job.title} at ${job.company} - ${job.matchPercentage}% match', tag: 'Home');
+          AppLogger.debug(
+            '[HOME_CUBIT] [$i] ${job.title} at ${job.company} - ${job.matchPercentage}% match',
+            tag: 'Home',
+          );
         }
       } else {
-        AppLogger.debug('[HOME_CUBIT] ⚠️ No matched jobs - user needs to upload resume', tag: 'Home');
+        AppLogger.debug(
+          '[HOME_CUBIT] ⚠️ No matched jobs - user needs to upload resume',
+          tag: 'Home',
+        );
       }
-      AppLogger.debug('[HOME_CUBIT] City Counts: ${cityCounts.length} cities', tag: 'Home');
-      AppLogger.debug('[HOME_CUBIT] Latest Jobs: ${latestJobs.length} jobs', tag: 'Home');
+      AppLogger.debug(
+        '[HOME_CUBIT] City Counts: ${cityCounts.length} cities',
+        tag: 'Home',
+      );
+      AppLogger.debug(
+        '[HOME_CUBIT] Latest Jobs: ${latestJobs.length} jobs',
+        tag: 'Home',
+      );
 
       // Process latest jobs using backend match percentages
       final processedLatestJobs = latestJobs.map((job) {
@@ -102,7 +130,11 @@ class HomeCubit extends Cubit<HomeState> {
             'matchPercentage': matchPercentage,
           };
         } catch (e) {
-          AppLogger.error('[HOME_CUBIT] Error processing match for job: $e', tag: 'Home', error: e);
+          AppLogger.error(
+            '[HOME_CUBIT] Error processing match for job: $e',
+            tag: 'Home',
+            error: e,
+          );
           return {
             ...job,
             'matchPercentage': '50% Match',
@@ -116,9 +148,16 @@ class HomeCubit extends Cubit<HomeState> {
         appliedJobs = await _homeRepository.getAppliedJobs(
           email: email,
         );
-        AppLogger.debug('[HOME_CUBIT] Applied Jobs List: ${appliedJobs.length} applications', tag: 'Home');
+        AppLogger.debug(
+          '[HOME_CUBIT] Applied Jobs List: ${appliedJobs.length} applications',
+          tag: 'Home',
+        );
       } catch (e) {
-        AppLogger.error('[HOME_CUBIT] Error loading applied jobs: $e', tag: 'Home', error: e);
+        AppLogger.error(
+          '[HOME_CUBIT] Error loading applied jobs: $e',
+          tag: 'Home',
+          error: e,
+        );
       }
 
       if (isClosed) return;
@@ -147,9 +186,16 @@ class HomeCubit extends Cubit<HomeState> {
         ),
       );
 
-      AppLogger.debug('[HOME_CUBIT] Successfully loaded AI enhanced home data', tag: 'Home');
+      AppLogger.debug(
+        '[HOME_CUBIT] Successfully loaded AI enhanced home data',
+        tag: 'Home',
+      );
     } catch (e) {
-      AppLogger.error('[HOME_CUBIT] Error loading AI enhanced home data: $e', tag: 'Home', error: e);
+      AppLogger.error(
+        '[HOME_CUBIT] Error loading AI enhanced home data: $e',
+        tag: 'Home',
+        error: e,
+      );
       updateError('Failed to load AI enhanced home data: $e');
     }
   }
@@ -159,7 +205,10 @@ class HomeCubit extends Cubit<HomeState> {
     required String email,
     String? lang,
   }) async {
-    AppLogger.debug('[HOME_CUBIT] Loading all matched jobs (no limit)...', tag: 'Home');
+    AppLogger.debug(
+      '[HOME_CUBIT] Loading all matched jobs (no limit)...',
+      tag: 'Home',
+    );
     if (isClosed) return;
     emit(state.copyWith(isLoading: true, error: false));
 
@@ -171,11 +220,17 @@ class HomeCubit extends Cubit<HomeState> {
         lang: lang,
       );
 
-      AppLogger.debug('[HOME_CUBIT] Loaded ${allMatchedJobs.length} all matched jobs', tag: 'Home');
+      AppLogger.debug(
+        '[HOME_CUBIT] Loaded ${allMatchedJobs.length} all matched jobs',
+        tag: 'Home',
+      );
       if (allMatchedJobs.isNotEmpty) {
         for (var i = 0; i < allMatchedJobs.length; i++) {
           final job = allMatchedJobs[i];
-          AppLogger.debug('[HOME_CUBIT] [$i] ${job.title} at ${job.company} - ${job.matchPercentage}% match', tag: 'Home');
+          AppLogger.debug(
+            '[HOME_CUBIT] [$i] ${job.title} at ${job.company} - ${job.matchPercentage}% match',
+            tag: 'Home',
+          );
         }
       }
 
@@ -187,9 +242,16 @@ class HomeCubit extends Cubit<HomeState> {
         ),
       );
 
-      AppLogger.debug('[HOME_CUBIT] Successfully loaded all matched jobs', tag: 'Home');
+      AppLogger.debug(
+        '[HOME_CUBIT] Successfully loaded all matched jobs',
+        tag: 'Home',
+      );
     } catch (e) {
-      AppLogger.error('[HOME_CUBIT] Error loading all matched jobs: $e', tag: 'Home', error: e);
+      AppLogger.error(
+        '[HOME_CUBIT] Error loading all matched jobs: $e',
+        tag: 'Home',
+        error: e,
+      );
       updateError('Failed to load all matched jobs: $e');
     }
   }
@@ -200,7 +262,10 @@ class HomeCubit extends Cubit<HomeState> {
     int page = 1,
     int limit = 20,
   }) async {
-    AppLogger.debug('[HOME_CUBIT] Loading applied jobs - Page: $page, Limit: $limit', tag: 'Home');
+    AppLogger.debug(
+      '[HOME_CUBIT] Loading applied jobs - Page: $page, Limit: $limit',
+      tag: 'Home',
+    );
     if (isClosed) return;
 
     if (page == 1) {
@@ -216,7 +281,10 @@ class HomeCubit extends Cubit<HomeState> {
         limit: limit,
       );
 
-      AppLogger.debug('[HOME_CUBIT] Loaded ${appliedJobs.length} applied jobs', tag: 'Home');
+      AppLogger.debug(
+        '[HOME_CUBIT] Loaded ${appliedJobs.length} applied jobs',
+        tag: 'Home',
+      );
 
       // Calculate if there are more jobs to load
       final hasMore = appliedJobs.length == limit;
@@ -251,9 +319,16 @@ class HomeCubit extends Cubit<HomeState> {
         );
       }
 
-      AppLogger.debug('[HOME_CUBIT] Successfully loaded applied jobs - Page: $page, HasMore: $hasMore', tag: 'Home');
+      AppLogger.debug(
+        '[HOME_CUBIT] Successfully loaded applied jobs - Page: $page, HasMore: $hasMore',
+        tag: 'Home',
+      );
     } catch (e) {
-      AppLogger.error('[HOME_CUBIT] Error loading applied jobs: $e', tag: 'Home', error: e);
+      AppLogger.error(
+        '[HOME_CUBIT] Error loading applied jobs: $e',
+        tag: 'Home',
+        error: e,
+      );
       if (page == 1) {
         emit(state.copyWith(isLoading: false, isLoadingMoreApplied: false));
       } else {
@@ -272,11 +347,17 @@ class HomeCubit extends Cubit<HomeState> {
 
     // Don't load more if already loading or no more data
     if (isLoadingMore || !hasMore) {
-      AppLogger.debug('[HOME_CUBIT] loadMoreAppliedJobs() skipped - LoadingMore: $isLoadingMore, HasMore: $hasMore', tag: 'Home');
+      AppLogger.debug(
+        '[HOME_CUBIT] loadMoreAppliedJobs() skipped - LoadingMore: $isLoadingMore, HasMore: $hasMore',
+        tag: 'Home',
+      );
       return;
     }
 
-    AppLogger.debug('[HOME_CUBIT] loadMoreAppliedJobs() called - Current page: $currentPage', tag: 'Home');
+    AppLogger.debug(
+      '[HOME_CUBIT] loadMoreAppliedJobs() called - Current page: $currentPage',
+      tag: 'Home',
+    );
 
     // Load next page
     await loadAppliedJobs(
@@ -295,11 +376,17 @@ class HomeCubit extends Cubit<HomeState> {
 
     // Don't load more if already loading or no more data
     if (isLoadingMore || !hasMore) {
-      AppLogger.debug('[HOME_CUBIT] loadMoreMatchedJobs() skipped - LoadingMore: $isLoadingMore, HasMore: $hasMore', tag: 'Home');
+      AppLogger.debug(
+        '[HOME_CUBIT] loadMoreMatchedJobs() skipped - LoadingMore: $isLoadingMore, HasMore: $hasMore',
+        tag: 'Home',
+      );
       return;
     }
 
-    AppLogger.debug('[HOME_CUBIT] loadMoreMatchedJobs() called - Current page: $currentPage', tag: 'Home');
+    AppLogger.debug(
+      '[HOME_CUBIT] loadMoreMatchedJobs() called - Current page: $currentPage',
+      tag: 'Home',
+    );
 
     // Set loading state
     emit(state.copyWith(isLoadingMoreMatched: true));
@@ -314,7 +401,10 @@ class HomeCubit extends Cubit<HomeState> {
         lang: lang,
       );
 
-      AppLogger.debug('[HOME_CUBIT] Loaded ${newMatchedJobs.length} more matched jobs', tag: 'Home');
+      AppLogger.debug(
+        '[HOME_CUBIT] Loaded ${newMatchedJobs.length} more matched jobs',
+        tag: 'Home',
+      );
 
       if (isClosed) return;
 
@@ -333,9 +423,16 @@ class HomeCubit extends Cubit<HomeState> {
         ),
       );
 
-      AppLogger.debug('[HOME_CUBIT] Successfully loaded more matched jobs - Page: $nextPage, HasMore: $hasMoreData', tag: 'Home');
+      AppLogger.debug(
+        '[HOME_CUBIT] Successfully loaded more matched jobs - Page: $nextPage, HasMore: $hasMoreData',
+        tag: 'Home',
+      );
     } catch (e) {
-      AppLogger.error('[HOME_CUBIT] Error loading more matched jobs: $e', tag: 'Home', error: e);
+      AppLogger.error(
+        '[HOME_CUBIT] Error loading more matched jobs: $e',
+        tag: 'Home',
+        error: e,
+      );
       emit(state.copyWith(isLoadingMoreMatched: false));
       updateError('Failed to load more matched jobs: $e');
     }
@@ -354,7 +451,10 @@ class HomeCubit extends Cubit<HomeState> {
   void updateUserData(UserData userData) {
     if (isClosed) return;
     emit(state.copyWith(user: userData));
-    AppLogger.debug('[HOME_CUBIT] User data updated: ${userData.name}', tag: 'Home');
+    AppLogger.debug(
+      '[HOME_CUBIT] User data updated: ${userData.name}',
+      tag: 'Home',
+    );
   }
 
   /// Initialize HomeCubit with user profile data
@@ -364,7 +464,10 @@ class HomeCubit extends Cubit<HomeState> {
   }) async {
     if (isClosed) return;
 
-    AppLogger.debug('[HOME_CUBIT] Initializing with user profile for ${userProfile.user.name}', tag: 'Home');
+    AppLogger.debug(
+      '[HOME_CUBIT] Initializing with user profile for ${userProfile.user.name}',
+      tag: 'Home',
+    );
 
     // Update user data first
     final userData = UserData(

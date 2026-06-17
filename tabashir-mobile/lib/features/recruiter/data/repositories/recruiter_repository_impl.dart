@@ -21,7 +21,9 @@ class RecruiterRepositoryImpl implements RecruiterRepository {
     required String recruiterId,
   }) async {
     try {
-      final jsonString = _persistenceService.prefs.getString('recruiter_$recruiterId');
+      final jsonString = _persistenceService.prefs.getString(
+        'recruiter_$recruiterId',
+      );
       if (jsonString == null) {
         throw Exception('Recruiter profile not found');
       }
@@ -38,7 +40,10 @@ class RecruiterRepositoryImpl implements RecruiterRepository {
   }) async {
     try {
       final jsonString = jsonEncode(profile.toJson());
-      await _persistenceService.prefs.setString('recruiter_${profile.id}', jsonString);
+      await _persistenceService.prefs.setString(
+        'recruiter_${profile.id}',
+        jsonString,
+      );
       return profile;
     } catch (e) {
       throw Exception('Failed to create recruiter profile: $e');
@@ -52,7 +57,10 @@ class RecruiterRepositoryImpl implements RecruiterRepository {
   }) async {
     try {
       final jsonString = jsonEncode(profile.toJson());
-      await _persistenceService.prefs.setString('recruiter_$recruiterId', jsonString);
+      await _persistenceService.prefs.setString(
+        'recruiter_$recruiterId',
+        jsonString,
+      );
       return profile;
     } catch (e) {
       throw Exception('Failed to update recruiter profile: $e');
@@ -76,7 +84,10 @@ class RecruiterRepositoryImpl implements RecruiterRepository {
   }) async {
     try {
       final jsonString = jsonEncode(jobPosting.toJson());
-      await _persistenceService.prefs.setString('job_${jobPosting.id}', jsonString);
+      await _persistenceService.prefs.setString(
+        'job_${jobPosting.id}',
+        jsonString,
+      );
       return jobPosting;
     } catch (e) {
       throw Exception('Failed to create job posting: $e');

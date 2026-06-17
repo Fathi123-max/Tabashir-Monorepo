@@ -53,12 +53,19 @@ class HomeLocalDataSource {
         return null;
       }
 
-      AppLogger.debug('[HOME_LOCAL_DS] Returning cached user profile', tag: 'Home');
+      AppLogger.debug(
+        '[HOME_LOCAL_DS] Returning cached user profile',
+        tag: 'Home',
+      );
       // Note: In a real implementation, you'd parse the JSON back to the object
       // For now, returning null to force fresh API call
       return null;
     } catch (e) {
-      AppLogger.error('[HOME_LOCAL_DS] Error reading cache: $e', tag: 'Home', error: e);
+      AppLogger.error(
+        '[HOME_LOCAL_DS] Error reading cache: $e',
+        tag: 'Home',
+        error: e,
+      );
       return null;
     }
   }
@@ -79,11 +86,18 @@ class HomeLocalDataSource {
       if (dataStr == null) {
         return null;
       }
-      AppLogger.debug('[HOME_LOCAL_DS] Returning cached home data', tag: 'Home');
+      AppLogger.debug(
+        '[HOME_LOCAL_DS] Returning cached home data',
+        tag: 'Home',
+      );
       // Note: In a real implementation, you'd parse the JSON
       return null;
     } catch (e) {
-      AppLogger.error('[HOME_LOCAL_DS] Error reading home cache: $e', tag: 'Home', error: e);
+      AppLogger.error(
+        '[HOME_LOCAL_DS] Error reading home cache: $e',
+        tag: 'Home',
+        error: e,
+      );
       return null;
     }
   }

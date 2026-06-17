@@ -63,7 +63,7 @@ class _ResumePreviewScreenState extends State<ResumePreviewScreen> {
           widget.resume.filename.toLowerCase().endsWith('.docx') ||
           widget.resume.fileType.toLowerCase() == 'docx';
 
-      // Construct the download URL - if we want to view in PDF viewer, 
+      // Construct the download URL - if we want to view in PDF viewer,
       // we must ensure we get a PDF from the server
       var downloadUrl = url;
       if (!isDocx && url.startsWith('http')) {
@@ -167,7 +167,8 @@ class _ResumePreviewScreenState extends State<ResumePreviewScreen> {
         actions: [
           IconButton(
             icon: const Icon(Icons.share),
-            onPressed: () => _downloadAndShare(context, isDocx ? 'docx' : 'pdf'),
+            onPressed: () =>
+                _downloadAndShare(context, isDocx ? 'docx' : 'pdf'),
             tooltip: 'Share',
           ),
           IconButton(

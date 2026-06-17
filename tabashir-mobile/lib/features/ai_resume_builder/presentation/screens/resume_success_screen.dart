@@ -67,9 +67,18 @@ class ResumeSuccessScreen extends StatelessWidget {
               SizedBox(height: 48.h),
               _buildActionButton(
                 context,
-                icon: resume.filename.toLowerCase().endsWith('.docx') ? Icons.description_rounded : Icons.picture_as_pdf_rounded,
-                label: resume.filename.toLowerCase().endsWith('.docx') ? 'Download & View DOCX'.tr() : 'Download & View PDF'.tr(),
-                onTap: () => _downloadAndOpen(context, resume.filename.toLowerCase().endsWith('.docx') ? 'docx' : 'pdf'),
+                icon: resume.filename.toLowerCase().endsWith('.docx')
+                    ? Icons.description_rounded
+                    : Icons.picture_as_pdf_rounded,
+                label: resume.filename.toLowerCase().endsWith('.docx')
+                    ? 'Download & View DOCX'.tr()
+                    : 'Download & View PDF'.tr(),
+                onTap: () => _downloadAndOpen(
+                  context,
+                  resume.filename.toLowerCase().endsWith('.docx')
+                      ? 'docx'
+                      : 'pdf',
+                ),
                 isPrimary: true,
               ),
               SizedBox(height: 16.h),
@@ -134,10 +143,9 @@ class ResumeSuccessScreen extends StatelessWidget {
       final url = resume.originalUrl;
       if (url == null || url.isEmpty) throw Exception('URL not available');
 
-      final downloadUrl =
-          url.contains('?')
-              ? '$url&output_format=$format'
-              : '$url?output_format=$format';
+      final downloadUrl = url.contains('?')
+          ? '$url&output_format=$format'
+          : '$url?output_format=$format';
 
       final dir = await getApplicationDocumentsDirectory();
       final fileName =
@@ -185,11 +193,12 @@ class ResumeSuccessScreen extends StatelessWidget {
       if (url == null || url.isEmpty) throw Exception('URL not available');
 
       // Default to PDF for sharing unless it's known to be DOCX
-      final format = resume.filename.toLowerCase().endsWith('.docx') ? 'docx' : 'pdf';
-      final downloadUrl =
-          url.contains('?')
-              ? '$url&output_format=$format'
-              : '$url?output_format=$format';
+      final format = resume.filename.toLowerCase().endsWith('.docx')
+          ? 'docx'
+          : 'pdf';
+      final downloadUrl = url.contains('?')
+          ? '$url&output_format=$format'
+          : '$url?output_format=$format';
 
       final tempDir = await getTemporaryDirectory();
       final ext = format == 'docx' ? '.docx' : '.pdf';

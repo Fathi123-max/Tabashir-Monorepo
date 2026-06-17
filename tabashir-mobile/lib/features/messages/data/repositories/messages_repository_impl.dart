@@ -217,14 +217,14 @@ class MessagesRepositoryImpl implements MessagesRepository {
       final prefs = _persistenceService.prefs;
       final reportsJson = prefs.getString('user_reports') ?? '[]';
       final reportsList = jsonDecode(reportsJson) as List<dynamic>;
-      
+
       final report = {
         'reportedUserId': reportedUserId,
         'reason': reason,
         'messageId': messageId,
         'timestamp': DateTime.now().toIso8601String(),
       };
-      
+
       reportsList.add(report);
       await prefs.setString('user_reports', jsonEncode(reportsList));
     } catch (e) {
@@ -240,7 +240,7 @@ class MessagesRepositoryImpl implements MessagesRepository {
       final prefs = _persistenceService.prefs;
       final blockedJson = prefs.getString('blocked_users') ?? '[]';
       final blockedList = jsonDecode(blockedJson) as List<dynamic>;
-      
+
       if (!blockedList.contains(blockedUserId)) {
         blockedList.add(blockedUserId);
         await prefs.setString('blocked_users', jsonEncode(blockedList));
@@ -258,7 +258,7 @@ class MessagesRepositoryImpl implements MessagesRepository {
       final prefs = _persistenceService.prefs;
       final blockedJson = prefs.getString('blocked_users') ?? '[]';
       final blockedList = jsonDecode(blockedJson) as List<dynamic>;
-      
+
       blockedList.remove(blockedUserId);
       await prefs.setString('blocked_users', jsonEncode(blockedList));
     } catch (e) {

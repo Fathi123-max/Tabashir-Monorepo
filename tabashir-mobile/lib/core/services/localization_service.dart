@@ -28,7 +28,11 @@ class LocalizationService {
       return prefs.getString(_languageKey) ?? SupportedLanguage.english.code;
     } catch (e) {
       if (kDebugMode) {
-        AppLogger.error('[Localization] Error getting language: $e', tag: 'Service', error: e);
+        AppLogger.error(
+          '[Localization] Error getting language: $e',
+          tag: 'Service',
+          error: e,
+        );
       }
       return SupportedLanguage.english.code;
     }
@@ -40,11 +44,18 @@ class LocalizationService {
       final prefs = await SharedPreferences.getInstance();
       await prefs.setString(_languageKey, language.code);
       if (kDebugMode) {
-        AppLogger.debug('[Localization] Language set to: ${language.displayName}', tag: 'Service');
+        AppLogger.debug(
+          '[Localization] Language set to: ${language.displayName}',
+          tag: 'Service',
+        );
       }
     } catch (e) {
       if (kDebugMode) {
-        AppLogger.error('[Localization] Error setting language: $e', tag: 'Service', error: e);
+        AppLogger.error(
+          '[Localization] Error setting language: $e',
+          tag: 'Service',
+          error: e,
+        );
       }
     }
   }

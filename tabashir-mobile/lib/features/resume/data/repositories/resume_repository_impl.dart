@@ -22,7 +22,9 @@ class ResumeRepositoryImpl implements ResumeRepository {
     required String resumeId,
   }) async {
     try {
-      final jsonString = _persistenceService.prefs.getString('resume_$resumeId');
+      final jsonString = _persistenceService.prefs.getString(
+        'resume_$resumeId',
+      );
       if (jsonString == null) {
         throw Exception('Resume not found');
       }
@@ -66,7 +68,10 @@ class ResumeRepositoryImpl implements ResumeRepository {
   }) async {
     try {
       final jsonString = jsonEncode(resume.toJson());
-      await _persistenceService.prefs.setString('resume_${resume.id}', jsonString);
+      await _persistenceService.prefs.setString(
+        'resume_${resume.id}',
+        jsonString,
+      );
       return resume;
     } catch (e) {
       throw Exception('Failed to create resume: $e');

@@ -45,12 +45,18 @@ class AuthDioClient {
           );
 
           if (error.response?.data != null) {
-            AppLogger.debug('Error response: ${error.response?.data}', tag: 'AuthDio');
+            AppLogger.debug(
+              'Error response: ${error.response?.data}',
+              tag: 'AuthDio',
+            );
           }
 
           // Handle 401 Unauthorized errors
           if (error.response?.statusCode == 401) {
-            AppLogger.debug('401 Unauthorized for path: $requestPath', tag: 'AuthDio');
+            AppLogger.debug(
+              '401 Unauthorized for path: $requestPath',
+              tag: 'AuthDio',
+            );
 
             // Check if this is an auth endpoint where 401 is expected or fatal
             final authEndpoints = [
@@ -66,14 +72,20 @@ class AuthDioClient {
 
             // If it's a refresh endpoint itself that failed with 401, it's a fatal session expiry
             if (requestPath.contains('/auth/refresh')) {
-              AppLogger.warning('401 on refresh endpoint - SESSION EXPIRED', tag: 'AuthDio');
+              AppLogger.warning(
+                '401 on refresh endpoint - SESSION EXPIRED',
+                tag: 'AuthDio',
+              );
               await AuthSessionService.instance.setLoggedOut();
               return handler.next(error);
             }
 
             // If it's login/register, don't logout, just pass the error
             if (isAuthEndpoint) {
-              AppLogger.debug('401 on login/register - No action needed', tag: 'AuthDio');
+              AppLogger.debug(
+                '401 on login/register - No action needed',
+                tag: 'AuthDio',
+              );
               return handler.next(error);
             }
 
@@ -112,7 +124,10 @@ class AuthDioClient {
                 await AuthSessionService.instance.setLoggedOut();
               }
             } catch (e) {
-              AppLogger.error('Token refresh failed with exception: $e', tag: 'AuthDio');
+              AppLogger.error(
+                'Token refresh failed with exception: $e',
+                tag: 'AuthDio',
+              );
               AppLogger.warning(
                 'Network or server error - KEEPING SESSION ALIVE',
                 tag: 'AuthDio',
@@ -151,11 +166,17 @@ class AuthDioClient {
   }
 
   void _logRequest(String method, String url, Map<String, dynamic>? headers) {
-    AppLogger.debug('\nAPI REQUEST - Method: $method, URL: $url, Headers: $headers', tag: 'AuthDio');
+    AppLogger.debug(
+      '\nAPI REQUEST - Method: $method, URL: $url, Headers: $headers',
+      tag: 'AuthDio',
+    );
   }
 
   void _logResponse(int? statusCode, dynamic data) {
-    AppLogger.debug('\nAPI RESPONSE - Status: $statusCode, Data: $data', tag: 'AuthDio');
+    AppLogger.debug(
+      '\nAPI RESPONSE - Status: $statusCode, Data: $data',
+      tag: 'AuthDio',
+    );
   }
 
   Dio get dio => _dio;

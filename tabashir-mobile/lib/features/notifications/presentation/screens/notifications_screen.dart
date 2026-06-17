@@ -123,9 +123,13 @@ class NotificationsScreen extends StatelessWidget {
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Text('error_with_message'.tr(namedArgs: {
-                              'message': state.errorMessage,
-                            })),
+                            Text(
+                              'error_with_message'.tr(
+                                namedArgs: {
+                                  'message': state.errorMessage,
+                                },
+                              ),
+                            ),
                             ElevatedButton(
                               onPressed: () {
                                 context
@@ -348,7 +352,9 @@ class NotificationCard extends StatelessWidget {
     } else if (difference.inHours > 0) {
       return 'hours_ago'.tr(namedArgs: {'hours': '${difference.inHours}'});
     } else {
-      return 'minutes_ago'.tr(namedArgs: {'minutes': '${difference.inMinutes}'});
+      return 'minutes_ago'.tr(
+        namedArgs: {'minutes': '${difference.inMinutes}'},
+      );
     }
   }
 

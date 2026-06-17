@@ -9,7 +9,7 @@ class LanguageInterceptor extends Interceptor {
     try {
       final languageService = getIt<LanguageService>();
       final lang = languageService.currentLanguage;
-      
+
       // Add lang to query parameters
       final queryParams = Map<String, dynamic>.from(options.queryParameters);
       if (!queryParams.containsKey('lang')) {
@@ -19,7 +19,7 @@ class LanguageInterceptor extends Interceptor {
     } catch (_) {
       // Fallback if DI is not yet initialized or other error
     }
-    
+
     super.onRequest(options, handler);
   }
 }
