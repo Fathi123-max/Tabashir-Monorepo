@@ -34,6 +34,12 @@ class _HomeScreenState extends State<HomeScreen> {
   DateTime? _lastPaymentTime;
 
   @override
+  void initState() {
+    super.initState();
+    getIt<AppInitializationCubit>().initialize();
+  }
+
+  @override
   void didChangeDependencies() {
     super.didChangeDependencies();
     // Check if we're returning from a payment (profile was refreshed)
@@ -415,7 +421,7 @@ class _HomeScreenState extends State<HomeScreen> {
     widgetTheme = Theme.of(context);
 
     return BlocProvider.value(
-      value: getIt<AppInitializationCubit>()..initialize(),
+      value: getIt<AppInitializationCubit>(),
       child: BlocBuilder<AppInitializationCubit, AppInitializationState>(
         builder: (context, initState) {
           if (initState.errorMessage != null) {

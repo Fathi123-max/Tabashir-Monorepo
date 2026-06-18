@@ -50,7 +50,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         builder: (context, state) {
           final currentTheme = Theme.of(context);
 
-          if (state.status == ProfileStatus.loading) {
+          if (state.status == ProfileStatus.loading && state.profile == null) {
             return Scaffold(
               body: Center(
                 child: CircularProgressIndicator(
@@ -62,7 +62,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             );
           }
 
-          if (state.status == ProfileStatus.failure) {
+          if (state.status == ProfileStatus.failure && state.profile == null) {
             return Scaffold(
               body: Center(
                 child: Column(

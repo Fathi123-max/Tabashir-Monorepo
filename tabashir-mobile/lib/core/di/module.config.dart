@@ -408,13 +408,6 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factory<_i117.AuthCubit>(
       () => _i117.AuthCubit(gh<_i787.AuthRepository>()),
     );
-    gh.factory<_i891.OnboardingWizardCubit>(
-      () => _i891.OnboardingWizardCubit(
-        gh<_i588.AiJobApplyRepository>(),
-        gh<_i36.ProfileCubit>(),
-        gh<_i117.AuthCubit>(),
-      ),
-    );
     gh.lazySingleton<_i938.ResumeVaultCubit>(
       () => _i938.ResumeVaultCubit(gh<_i229.ResumeVaultRepository>()),
     );
@@ -428,6 +421,14 @@ extension GetItInjectableX on _i174.GetIt {
     );
     gh.factory<_i618.AiResumeCubit>(
       () => _i618.AiResumeCubit(gh<_i27.AiResumeRepository>()),
+    );
+    gh.factory<_i891.OnboardingWizardCubit>(
+      () => _i891.OnboardingWizardCubit(
+        gh<_i588.AiJobApplyRepository>(),
+        gh<_i36.ProfileCubit>(),
+        gh<_i117.AuthCubit>(),
+        gh<_i894.ProfileRepository>(),
+      ),
     );
     gh.factory<_i656.JobDetailsService>(
       () => _i656.JobDetailsService(gh<_i973.JobsRepository>()),

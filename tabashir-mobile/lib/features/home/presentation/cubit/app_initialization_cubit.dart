@@ -22,6 +22,14 @@ class AppInitializationCubit extends Cubit<AppInitializationState> {
   /// Initialize the entire app by loading all required data
   /// Call this once after login
   Future<void> initialize({String? lang}) async {
+    if (state.isLoading) {
+      AppLogger.debug(
+        '[APP_INIT] Already initializing, skipping',
+        tag: 'Home',
+      );
+      return;
+    }
+
     if (state.isInitialized && state.errorMessage == null) {
       AppLogger.debug(
         '[APP_INIT] Already initialized successfully, skipping',

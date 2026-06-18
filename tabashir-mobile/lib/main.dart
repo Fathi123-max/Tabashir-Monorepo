@@ -10,9 +10,12 @@ import 'core/di/injection.dart';
 import 'core/router/app_router.dart';
 import 'core/router/app_state.dart';
 import 'core/services/apple_signin_service.dart';
+import 'core/services/auth_session_service.dart';
 import 'core/session/cubit/session_cubit.dart';
 import 'core/theme/app_theme.dart';
 import 'core/theme/theme_manager.dart';
+import 'core/utils/app_logger.dart';
+import 'features/home/presentation/cubit/home_cubit.dart';
 import 'features/jobs/presentation/cubit/saved_jobs_cubit.dart';
 import 'features/profile/presentation/cubit/profile_cubit.dart';
 import 'features/resume/presentation/cubit/resume_vault_cubit.dart';
@@ -83,7 +86,74 @@ class App extends StatefulWidget {
   State<App> createState() => _AppState();
 }
 
-class _AppState extends State<App> {
+class _AppState extends State<App> with WidgetsBindingObserver {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    super.didChangeAppLifecycleState(state);
+    if (state == AppLifecycleState.resumed) {
+      AppLogger.info(
+        '[LIFECYCLE] App resumed from background. Checking authentication & refreshing data...',
+        tag: 'Lifecycle',
+      );
+      _refreshAppSessionAndData();
+    }
+  }
+
+  Future<void> _refreshAppSessionAndData() async {
+    try {
+      final isAuth = await AuthSessionService.instance.isAuthenticated;
+      if (!isAuth) {
+        AppLogger.debug(
+          '[LIFECYCLE] User not authenticated, skipping refresh',
+          tag: 'Lifecycle',
+        );
+        return;
+      }
+
+      final token = await AuthSessionService.instance.accessToken;
+      if (token == null) {
+        AppLogger.debug(
+          '[LIFECYCLE] No access token available, skipping refresh',
+          tag: 'Lifecycle',
+        );
+        return;
+      }
+
+      AppLogger.debug(
+        '[LIFECYCLE] Triggering profile reload...',
+        tag: 'Lifecycle',
+      );
+      // Trigger profile reload. Interceptors handle refresh & logout on 401.
+      await getIt<ProfileCubit>().loadProfileData(force: true);
+
+      AppLogger.debug(
+        '[LIFECYCLE] Triggering home data reload...',
+        tag: 'Lifecycle',
+      );
+      final homeCubit = getIt<HomeCubit>();
+      final lang = context.mounted ? context.locale.languageCode : null;
+      await homeCubit.refreshHomeData(lang: lang);
+    } catch (e) {
+      AppLogger.error(
+        '[LIFECYCLE] Error refreshing app data on resume: $e',
+        tag: 'Lifecycle',
+        error: e,
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final themeManager = ThemeManager();

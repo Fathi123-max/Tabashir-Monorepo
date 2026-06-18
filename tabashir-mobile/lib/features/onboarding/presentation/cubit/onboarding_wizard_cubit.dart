@@ -1,9 +1,12 @@
+import 'dart:async';
+
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:injectable/injectable.dart';
 import '../../../../core/router/app_state.dart';
 import '../../../ai_job_apply/domain/repositories/ai_job_apply_repository.dart';
 import '../../../auth/presentation/cubit/auth_cubit.dart';
+import '../../../profile/domain/repositories/profile_repository.dart';
 import '../../../profile/presentation/cubit/profile_cubit.dart';
 import 'onboarding_wizard_state.dart';
 
@@ -13,10 +16,14 @@ class OnboardingWizardCubit extends Cubit<OnboardingWizardState> {
     this._repository,
     this._profileCubit,
     this._authCubit,
-  ) : super(const OnboardingWizardState());
+    this._profileRepository,
+  ) : super(const OnboardingWizardState()) {
+    unawaited(checkExistingSetup());
+  }
   final AiJobApplyRepository _repository;
   final ProfileCubit _profileCubit;
   final AuthCubit _authCubit;
+  final ProfileRepository _profileRepository;
 
   static const List<String> uaeCities = [
     'Dubai',
@@ -211,5 +218,25 @@ class OnboardingWizardCubit extends Cubit<OnboardingWizardState> {
         ),
       );
     }
+  }
+
+  /// Checks if the user already has completed onboarding or has resumes on the server.
+  /// If so, marks setup as complete to bypass the onboarding wizard.
+  Future<void> checkExistingSetup() async {
+    emit(state.copyWith(isLoading: true));
+    try {
+      final profile = await _profileRepository.getUserProfile();
+      final hasResumes = (profile.counts?.totalResumes ?? 0) > 0;
+      final isOnboardingCompleted =
+          profile.candidateProfile?.onboardingCompleted == true;
+
+      if (hasResumes || isOnboardingCompleted) {
+        await AppState.instance.setSetupComplete();
+        return;
+      }
+    } catch (e) {
+      // Ignore errors and let user do manual onboarding
+    }
+    emit(state.copyWith(isLoading: false));
   }
 }
