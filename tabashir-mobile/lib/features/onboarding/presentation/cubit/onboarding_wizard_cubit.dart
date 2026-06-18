@@ -8,6 +8,7 @@ import '../../../ai_job_apply/domain/repositories/ai_job_apply_repository.dart';
 import '../../../auth/presentation/cubit/auth_cubit.dart';
 import '../../../profile/domain/repositories/profile_repository.dart';
 import '../../../profile/presentation/cubit/profile_cubit.dart';
+import 'demo_resume_helper.dart';
 import 'onboarding_wizard_state.dart';
 
 @injectable
@@ -34,6 +35,26 @@ class OnboardingWizardCubit extends Cubit<OnboardingWizardState> {
     'Ras Al Khaimah',
     'Fujairah',
   ];
+
+  Future<void> useDemoResume() async {
+    final demoBytes = DemoResumeHelper.getDemoPdfBytes();
+    emit(
+      state.copyWith(
+        fileBytes: demoBytes,
+        fileName: 'demo_resume.pdf',
+        suggestedRoles: [
+          'Software Engineer',
+          'Product Manager',
+          'Sales Manager',
+          'Marketing Specialist',
+          'HR Consultant',
+        ],
+        selectedRoles: ['Software Engineer'],
+        currentStep: 2,
+        errorMessage: null,
+      ),
+    );
+  }
 
   Future<void> pickFile() async {
     try {

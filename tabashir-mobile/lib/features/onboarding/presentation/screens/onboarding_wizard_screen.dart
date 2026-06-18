@@ -284,7 +284,7 @@ class _ResumeUploadStep extends StatelessWidget {
               SizedBox(height: 48.h),
               if (state.isLoading)
                 const CircularProgressIndicator(color: Colors.white)
-              else
+              else ...[
                 ElevatedButton.icon(
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.white,
@@ -311,6 +311,34 @@ class _ResumeUploadStep extends StatelessWidget {
                     style: TextStyle(fontSize: 18.sp),
                   ),
                 ),
+                SizedBox(height: 16.h),
+                TextButton.icon(
+                  style: TextButton.styleFrom(
+                    foregroundColor: Colors.white70,
+                    padding: EdgeInsets.symmetric(
+                      horizontal: 24.w,
+                      vertical: 12.h,
+                    ),
+                  ),
+                  onPressed: () async {
+                    final consented = await AiConsentBottomSheet.ensureConsent(
+                      context,
+                    );
+                    if (consented && context.mounted) {
+                      context.read<OnboardingWizardCubit>().useDemoResume();
+                    }
+                  },
+                  icon: const Icon(Icons.playlist_add_check_outlined, color: Colors.white70),
+                  label: Text(
+                    'Use Demo Resume (for App Review)',
+                    style: TextStyle(
+                      fontSize: 14.sp,
+                      color: Colors.white70,
+                      decoration: TextDecoration.underline,
+                    ),
+                  ),
+                ),
+              ],
               if (state.errorMessage != null) ...[
                 SizedBox(height: 16.h),
                 Text(
