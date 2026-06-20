@@ -64,6 +64,8 @@ class OnboardingWizardCubit extends Cubit<OnboardingWizardState> {
         withData: true,
       );
 
+      if (isClosed) return;
+
       if (result != null && result.files.single.bytes != null) {
         final file = result.files.single;
         emit(
@@ -81,6 +83,8 @@ class OnboardingWizardCubit extends Cubit<OnboardingWizardState> {
             fileName: file.name,
           );
 
+          if (isClosed) return;
+
           emit(
             state.copyWith(
               suggestedRoles: suggestions,
@@ -89,6 +93,7 @@ class OnboardingWizardCubit extends Cubit<OnboardingWizardState> {
             ),
           );
         } catch (e) {
+          if (isClosed) return;
           emit(
             state.copyWith(
               isLoading: false,
@@ -99,6 +104,7 @@ class OnboardingWizardCubit extends Cubit<OnboardingWizardState> {
         }
       }
     } catch (e) {
+      if (isClosed) return;
       emit(
         state.copyWith(
           isLoading: false,
@@ -189,6 +195,7 @@ class OnboardingWizardCubit extends Cubit<OnboardingWizardState> {
       if (email.isEmpty) {
         try {
           await _profileCubit.loadProfileData(force: true);
+          if (isClosed) return;
           email = _profileCubit.state.userProfileResponse?.user.email ?? '';
         } catch (_) {
           // Ignore error and try next fallback
@@ -201,6 +208,7 @@ class OnboardingWizardCubit extends Cubit<OnboardingWizardState> {
       }
 
       if (email.isEmpty) {
+        if (isClosed) return;
         emit(
           state.copyWith(
             isProcessing: false,
@@ -221,9 +229,13 @@ class OnboardingWizardCubit extends Cubit<OnboardingWizardState> {
         gender: state.gender,
       );
 
+      if (isClosed) return;
+
       // Mark setup as complete — persists to SharedPreferences and notifies
       // the GoRouter so Gate 3 is lifted on this and all future launches.
       await AppState.instance.setSetupComplete();
+
+      if (isClosed) return;
 
       emit(
         state.copyWith(
@@ -232,6 +244,7 @@ class OnboardingWizardCubit extends Cubit<OnboardingWizardState> {
         ),
       );
     } catch (e) {
+      if (isClosed) return;
       emit(
         state.copyWith(
           isProcessing: false,
@@ -241,12 +254,11 @@ class OnboardingWizardCubit extends Cubit<OnboardingWizardState> {
     }
   }
 
-  /// Checks if the user already has completed onboarding or has resumes on the server.
-  /// If so, marks setup as complete to bypass the onboarding wizard.
   Future<void> checkExistingSetup() async {
     emit(state.copyWith(isLoading: true));
     try {
       final profile = await _profileRepository.getUserProfile();
+      if (isClosed) return;
       final hasResumes = (profile.counts?.totalResumes ?? 0) > 0;
       final isOnboardingCompleted =
           profile.candidateProfile?.onboardingCompleted == true;
@@ -258,6 +270,7 @@ class OnboardingWizardCubit extends Cubit<OnboardingWizardState> {
     } catch (e) {
       // Ignore errors and let user do manual onboarding
     }
+    if (isClosed) return;
     emit(state.copyWith(isLoading: false));
   }
 }
