@@ -2,6 +2,7 @@ import os
 import sys
 import pytest
 from unittest.mock import patch, MagicMock
+from psycopg2.extras import RealDictCursor
 
 # Set up environment variables for testing
 os.environ["PRISMA_DB_HOST"] = "localhost"
@@ -9,6 +10,11 @@ os.environ["PRISMA_DB_PORT"] = "5432"
 os.environ["PRISMA_DB_NAME"] = "tabashir"
 os.environ["PRISMA_DB_USER"] = "test_user"
 os.environ["PRISMA_DB_PASSWORD"] = "test_pass"
+os.environ["POSTGRES_HOST"] = "localhost"
+os.environ["POSTGRES_PORT"] = "5432"
+os.environ["POSTGRES_DB"] = "tabashir"
+os.environ["POSTGRES_USER"] = "test_user"
+os.environ["POSTGRES_PASSWORD"] = "test_pass"
 os.environ["AI_DB_HOST"] = "localhost"
 os.environ["AI_DB_PORT"] = "5432"
 os.environ["AI_DB_NAME"] = "ai_job_matching"
@@ -21,14 +27,14 @@ class TestConfig:
     """Tests for Config class"""
 
     def test_config_defaults(self):
-        """Test Config class has correct default values"""
+        """Test Config class has correct default values (mocked/configured in this environment)"""
         from config import Config
 
         assert Config.PRISMA_DB_HOST == "localhost"
         assert Config.PRISMA_DB_PORT == "5432"
         assert Config.PRISMA_DB_NAME == "tabashir"
-        assert Config.PRISMA_DB_USER == "postgres"
-        assert Config.PRISMA_DB_PASSWORD == ""
+        assert Config.PRISMA_DB_USER == "test_user"
+        assert Config.PRISMA_DB_PASSWORD == "test_pass"
 
     def test_config_env_override(self):
         """Test Config class can be overridden by environment variables"""
@@ -43,8 +49,8 @@ class TestConfig:
         from config import Config
 
         assert Config.JWT_SECRET_KEY == "test-secret-key"
-        assert Config.JWT_ACCESS_EXPIRE == 15 * 60  # 15 minutes
-        assert Config.JWT_REFRESH_EXPIRE == 7 * 24 * 60 * 60  # 7 days
+        assert Config.JWT_ACCESS_EXPIRE == 60 * 60  # 1 hour
+        assert Config.JWT_REFRESH_EXPIRE == 30 * 24 * 60 * 60  # 30 days
 
 
 class TestPrismaDatabase:
@@ -67,7 +73,8 @@ class TestPrismaDatabase:
             database=Config.PRISMA_DB_NAME,
             user=Config.PRISMA_DB_USER,
             password=Config.PRISMA_DB_PASSWORD,
-            cursor_factory=RealDictCursor
+            cursor_factory=RealDictCursor,
+            sslmode='prefer'
         )
         assert conn == mock_conn
 

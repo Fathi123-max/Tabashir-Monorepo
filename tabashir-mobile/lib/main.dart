@@ -157,9 +157,15 @@ class _AppState extends State<App> with WidgetsBindingObserver {
   @override
   Widget build(BuildContext context) {
     final themeManager = ThemeManager();
+    final view = View.of(context);
+    final size = view.physicalSize / view.devicePixelRatio;
+    final isTablet = size.shortestSide >= 600;
+    final designSize = isTablet ? const Size(768, 1024) : const Size(375, 812);
 
     return ScreenUtilInit(
-      designSize: const Size(375, 812),
+      designSize: designSize,
+      minTextAdapt: true,
+      splitScreenMode: true,
       builder: (context, child) => MultiBlocProvider(
         providers: [
           BlocProvider.value(

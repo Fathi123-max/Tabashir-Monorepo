@@ -36,5 +36,7 @@ make_rtl_paragraph(p)
 run = p.add_run("هذا نص تجريبي باللغة العربية")
 make_rtl_run(run)
 
-doc.save("tabashir-backend/test_rtl_output.docx")
+import os
+dir_path = os.path.dirname(os.path.realpath(__file__))
+doc.save(os.path.join(dir_path, "test_rtl_output.docx"))
 print("RTL test document generated.")

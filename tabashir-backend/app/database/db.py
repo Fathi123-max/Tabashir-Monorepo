@@ -56,24 +56,52 @@ def close_pools():
 
 def get_db_connection():
     init_pools()
-    if main_pool:
-        return main_pool.getconn()
-    raise ValueError("Main DB pool not initialized")
+    if not main_pool:
+        raise ValueError("Main DB pool not initialized")
+    
+    # Try up to 3 times to get a live connection (purging dead ones)
+    for _ in range(3):
+        conn = main_pool.getconn()
+        try:
+            # Test connection liveness
+            with conn.cursor() as cur:
+                cur.execute("SELECT 1")
+            return conn
+        except (psycopg2.OperationalError, psycopg2.InterfaceError):
+            try:
+                main_pool.putconn(conn, close=True)
+            except:
+                pass
+    return main_pool.getconn()
 
 def release_db_connection(conn):
     if main_pool and conn:
-        # Rollback any uncommitted transaction before putting it back
         try:
             conn.rollback()
         except:
             pass
-        main_pool.putconn(conn)
+        try:
+            main_pool.putconn(conn)
+        except:
+            pass
 
 def get_ai_db_connection():
     init_pools()
-    if ai_pool:
-        return ai_pool.getconn()
-    raise ValueError("AI DB pool not initialized")
+    if not ai_pool:
+        raise ValueError("AI DB pool not initialized")
+    
+    for _ in range(3):
+        conn = ai_pool.getconn()
+        try:
+            with conn.cursor() as cur:
+                cur.execute("SELECT 1")
+            return conn
+        except (psycopg2.OperationalError, psycopg2.InterfaceError):
+            try:
+                ai_pool.putconn(conn, close=True)
+            except:
+                pass
+    return ai_pool.getconn()
 
 def release_ai_db_connection(conn):
     if ai_pool and conn:
@@ -81,8 +109,10 @@ def release_ai_db_connection(conn):
             conn.rollback()
         except:
             pass
-        ai_pool.putconn(conn)
-
+        try:
+            ai_pool.putconn(conn)
+        except:
+            pass
 
 
 _column_cache = {}
@@ -113,8 +143,9 @@ def get_table_columns(table_name, conn_type='main'):
 
 def execute_ai_query(query, params=None, fetch_one=False, fetch_all=False, commit=False, retries=1):
     """Execute a query on the AI database."""
-    conn = get_ai_db_connection()
+    conn = None
     try:
+        conn = get_ai_db_connection()
         cursor = conn.cursor(cursor_factory=RealDictCursor)
         try:
             cursor.execute(query, params)
@@ -125,35 +156,40 @@ def execute_ai_query(query, params=None, fetch_one=False, fetch_all=False, commi
             if fetch_all:
                 return cursor.fetchall()
             return None
-        except psycopg2.OperationalError as e:
-            try:
-                conn.rollback()
-            except:
-                pass
-            if retries > 0:
-                cursor.close()
-                if ai_pool:
-                    ai_pool.putconn(conn, close=True)
-                return execute_ai_query(query, params, fetch_one, fetch_all, commit, retries - 1)
-            raise e
-        except Exception as e:
-            try:
-                conn.rollback()
-            except:
-                pass
-            raise e
         finally:
-            if not cursor.closed:
-                cursor.close()
+            cursor.close()
+    except (psycopg2.OperationalError, psycopg2.InterfaceError) as e:
+        if conn:
+            try:
+                conn.close()
+            except:
+                pass
+            if ai_pool:
+                try:
+                    ai_pool.putconn(conn, close=True)
+                except:
+                    pass
+            conn = None  # Prevent release in finally
+        if retries > 0:
+            return execute_ai_query(query, params, fetch_one, fetch_all, commit, retries - 1)
+        raise e
+    except Exception as e:
+        if conn:
+            try:
+                conn.rollback()
+            except:
+                pass
+        raise e
     finally:
-        if conn and not conn.closed:
+        if conn:
             release_ai_db_connection(conn)
 
 
 def execute_query(query, params=None, fetch_one=False, fetch_all=False, commit=False, retries=1):
     """Execute a query on the main database."""
-    conn = get_db_connection()
+    conn = None
     try:
+        conn = get_db_connection()
         cursor = conn.cursor()
         try:
             cursor.execute(query, params)
@@ -164,28 +200,32 @@ def execute_query(query, params=None, fetch_one=False, fetch_all=False, commit=F
             if fetch_all:
                 return cursor.fetchall()
             return None
-        except psycopg2.OperationalError as e:
-            try:
-                conn.rollback()
-            except:
-                pass
-            if retries > 0:
-                cursor.close()
-                if main_pool:
-                    main_pool.putconn(conn, close=True)
-                return execute_query(query, params, fetch_one, fetch_all, commit, retries - 1)
-            raise e
-        except Exception as e:
-            try:
-                conn.rollback()
-            except:
-                pass
-            raise e
         finally:
-            if not cursor.closed:
-                cursor.close()
+            cursor.close()
+    except (psycopg2.OperationalError, psycopg2.InterfaceError) as e:
+        if conn:
+            try:
+                conn.close()
+            except:
+                pass
+            if main_pool:
+                try:
+                    main_pool.putconn(conn, close=True)
+                except:
+                    pass
+            conn = None  # Prevent release in finally
+        if retries > 0:
+            return execute_query(query, params, fetch_one, fetch_all, commit, retries - 1)
+        raise e
+    except Exception as e:
+        if conn:
+            try:
+                conn.rollback()
+            except:
+                pass
+        raise e
     finally:
-        if conn and not conn.closed:
+        if conn:
             release_db_connection(conn)
 
 

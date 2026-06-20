@@ -165,8 +165,8 @@ class AuthRepositoryImpl implements AuthRepository {
 
       if (givenName != null || familyName != null) {
         request['fullName'] = {
-          'givenName': ?givenName,
-          'familyName': ?familyName,
+          'givenName': givenName,
+          'familyName': familyName,
         };
       }
 
