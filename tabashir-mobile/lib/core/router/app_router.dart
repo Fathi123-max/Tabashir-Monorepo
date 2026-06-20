@@ -1,6 +1,3 @@
-import 'dart:async';
-
-import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
@@ -37,67 +34,13 @@ import '../../features/services/presentation/screens/services_screen.dart';
 import '../di/injection.dart';
 import '../network/models/resume_response/resume_item.dart';
 import '../screens/main_app_shell.dart';
-import '../services/auth_session_service.dart';
 import 'app_state.dart';
 import 'route_names.dart';
-
-// ---------------------------------------------------------------------------
-// Bridges an arbitrary Stream into ChangeNotifier so GoRouter can listen to it
-// ---------------------------------------------------------------------------
-class StreamListenable extends ChangeNotifier {
-  StreamListenable(Stream stream) {
-    _subscription = stream.listen((_) {
-      if (!_disposed) {
-        scheduleMicrotask(() {
-          if (!_disposed) {
-            notifyListeners();
-          }
-        });
-      }
-    });
-  }
-
-  late final StreamSubscription _subscription;
-  bool _disposed = false;
-
-  @override
-  void dispose() {
-    _disposed = true;
-    _subscription.cancel();
-    super.dispose();
-  }
-}
-
-// ---------------------------------------------------------------------------
-// Merges multiple Listenables so GoRouter re-evaluates the redirect whenever
-// any one of them fires.
-// ---------------------------------------------------------------------------
-class _MultiListenable extends ChangeNotifier {
-  _MultiListenable(List<Listenable> listenables) {
-    for (final l in listenables) {
-      l.addListener(notifyListeners);
-    }
-    _listenables = listenables;
-  }
-
-  late final List<Listenable> _listenables;
-
-  @override
-  void dispose() {
-    for (final l in _listenables) {
-      l.removeListener(notifyListeners);
-    }
-    super.dispose();
-  }
-}
 
 final GoRouter appRouter = GoRouter(
   initialLocation: RouteNames.splash,
   // Re-evaluate redirect when either auth state OR onboarding state changes.
-  refreshListenable: _MultiListenable([
-    AppState.instance,
-    StreamListenable(AuthSessionService.instance.authStateStream),
-  ]),
+  refreshListenable: AppState.instance,
 
   // -------------------------------------------------------------------------
   // IMPORTANT: GoRouter v12 redirect MUST be synchronous.
@@ -199,7 +142,7 @@ final GoRouter appRouter = GoRouter(
         // Extract job ID or other parameters if needed
         final jobId =
             state.extra as String? ?? state.pathParameters['jobId'] ?? '';
-        return JobDetailScreen(jobId: jobId ?? '');
+        return JobDetailScreen(jobId: jobId);
       },
     ),
     GoRoute(

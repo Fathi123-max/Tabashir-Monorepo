@@ -1,3 +1,4 @@
+from urllib.parse import urlparse, parse_qsl, urlencode, urlunparse
 import threading
 import psycopg2
 from psycopg2.pool import ThreadedConnectionPool
@@ -10,12 +11,39 @@ main_pool = None
 ai_pool = None
 _pool_lock = threading.Lock()  # Prevents race condition on concurrent first requests
 
+def clean_postgres_url(url):
+    """Filter out non-libpq query parameters (e.g. pgbouncer) that cause psycopg2 to fail"""
+    if not url:
+        return url
+    try:
+        parsed = urlparse(url)
+        qsl = parse_qsl(parsed.query)
+        supported = {
+            'host', 'hostaddr', 'port', 'dbname', 'user', 'password', 'passfile', 
+            'channel_binding', 'connect_timeout', 'sslmode', 'sslcompression', 
+            'sslkey', 'sslcert', 'sslrootcert', 'sslcrl', 'sslcrldir', 'sslsni', 
+            'requirepeer', 'krbsrvname', 'gsslib', 'service', 'target_session_attrs'
+        }
+        filtered_qsl = [(k, v) for k, v in qsl if k in supported]
+        new_query = urlencode(filtered_qsl)
+        return urlunparse((
+            parsed.scheme,
+            parsed.netloc,
+            parsed.path,
+            parsed.params,
+            new_query,
+            parsed.fragment
+        ))
+    except Exception as e:
+        print(f"Failed to clean Postgres URL: {e}")
+        return url
+
 def init_pools():
     global main_pool, ai_pool
     with _pool_lock:  # Only one thread initializes the pool
         if main_pool is None:
             try:
-                db_url = Config.POSTGRES_DATABASE_PATH
+                db_url = clean_postgres_url(Config.POSTGRES_DATABASE_PATH)
                 if db_url:
                     main_pool = ThreadedConnectionPool(
                         minconn=2,
@@ -43,7 +71,7 @@ def init_pools():
                 
         if ai_pool is None:
             try:
-                ai_url = Config.AI_DATABASE_URL
+                ai_url = clean_postgres_url(Config.AI_DATABASE_URL)
                 if ai_url:
                     ai_pool = ThreadedConnectionPool(
                         minconn=2,
@@ -65,6 +93,7 @@ def init_pools():
                 print("Initialized AI DB Connection Pool")
             except Exception as e:
                 print("Failed to initialize AI DB pool:", e)
+
 
 @atexit.register
 def close_pools():
