@@ -9,6 +9,8 @@ import atexit
 # Initialize pools as None, create them lazily
 main_pool = None
 ai_pool = None
+main_pool_error = None
+ai_pool_error = None
 _pool_lock = threading.Lock()  # Prevents race condition on concurrent first requests
 
 def clean_postgres_url(url):
@@ -39,7 +41,7 @@ def clean_postgres_url(url):
         return url
 
 def init_pools():
-    global main_pool, ai_pool
+    global main_pool, ai_pool, main_pool_error, ai_pool_error
     with _pool_lock:  # Only one thread initializes the pool
         if main_pool is None:
             try:
@@ -67,6 +69,7 @@ def init_pools():
                     )
                 print("Initialized Main DB Connection Pool")
             except Exception as e:
+                main_pool_error = e
                 print("Failed to initialize Main DB pool:", e)
                 
         if ai_pool is None:
@@ -92,6 +95,7 @@ def init_pools():
                     )
                 print("Initialized AI DB Connection Pool")
             except Exception as e:
+                ai_pool_error = e
                 print("Failed to initialize AI DB pool:", e)
 
 
@@ -106,7 +110,7 @@ def close_pools():
 def get_db_connection():
     init_pools()
     if not main_pool:
-        raise ValueError("Main DB pool not initialized")
+        raise ValueError(f"Main DB pool not initialized. Last error: {main_pool_error}")
     
     # Try up to 3 times to get a live connection (purging dead ones)
     for _ in range(3):
@@ -137,7 +141,7 @@ def release_db_connection(conn):
 def get_ai_db_connection():
     init_pools()
     if not ai_pool:
-        raise ValueError("AI DB pool not initialized")
+        raise ValueError(f"AI DB pool not initialized. Last error: {ai_pool_error}")
     
     for _ in range(3):
         conn = ai_pool.getconn()
