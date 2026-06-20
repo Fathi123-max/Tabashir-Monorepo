@@ -62,6 +62,8 @@ class AppleIAPService:
                 private_key = f.read()
 
             token = jwt.encode(payload, private_key, algorithm='ES256', headers=headers)
+            if isinstance(token, bytes):
+                token = token.decode('utf-8')
             return token
         except Exception as e:
             logger.error(f'Error generating Apple App Store token: {str(e)}')

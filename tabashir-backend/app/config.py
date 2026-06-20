@@ -21,12 +21,14 @@ class Config:
     POSTGRES_USER = os.getenv("POSTGRES_USER")
     POSTGRES_PASSWORD = os.getenv("POSTGRES_PASSWORD")
     POSTGRES_SSLMODE = os.getenv("POSTGRES_SSLMODE", "prefer")
+    POSTGRES_DATABASE_PATH = os.getenv("POSTGRES_DATABASE_PATH") or os.getenv("DATABASE_URL")
 
     AI_POSTGRES_HOST = os.getenv("AI_POSTGRES_HOST", "localhost")
     AI_POSTGRES_PORT = os.getenv("AI_POSTGRES_PORT", "5432")
     AI_POSTGRES_DB = os.getenv("AI_POSTGRES_DB", "tabashir_ai")
     AI_POSTGRES_USER = os.getenv("AI_POSTGRES_USER", "")
     AI_POSTGRES_PASSWORD = os.getenv("AI_POSTGRES_PASSWORD", "")
+    AI_DATABASE_URL = os.getenv("AI_DATABASE_URL")
 
 
     SECRET_KEY = os.getenv('SECRET_KEY', 'default-dev-key')

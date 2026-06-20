@@ -42,6 +42,15 @@ def create_app(config_class=Config):
         authorizations=authorizations
     )
 
+    @api.errorhandler(Exception)
+    def handle_unhandled_exception(e):
+        """Handle unhandled exceptions and return JSON instead of HTML"""
+        app.logger.exception(f"Unhandled Exception occurred: {str(e)}")
+        return {
+            "error": "Internal Server Error",
+            "message": str(e)
+        }, 500
+
     api.add_namespace(auth_ns, path='/api/v1/auth')
     api.add_namespace(users_ns, path='/api/v1/users')
     api.add_namespace(resumes_ns, path='/api/v1/resumes')

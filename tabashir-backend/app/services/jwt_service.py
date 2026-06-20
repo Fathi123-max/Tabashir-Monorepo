@@ -14,7 +14,10 @@ def create_access_token(payload: Dict[str, Any]) -> str:
         "exp": expire,
         "iat": datetime.utcnow()
     })
-    return jwt.encode(to_encode, Config.JWT_SECRET_KEY, algorithm=ALGORITHM)
+    token = jwt.encode(to_encode, Config.JWT_SECRET_KEY, algorithm=ALGORITHM)
+    if isinstance(token, bytes):
+        token = token.decode('utf-8')
+    return token
 
 def create_refresh_token(payload: Dict[str, Any]) -> str:
     """Create JWT refresh token with 7 day expiry"""
@@ -25,7 +28,10 @@ def create_refresh_token(payload: Dict[str, Any]) -> str:
         "exp": expire,
         "iat": datetime.utcnow()
     })
-    return jwt.encode(to_encode, Config.JWT_REFRESH_SECRET, algorithm=ALGORITHM)
+    token = jwt.encode(to_encode, Config.JWT_REFRESH_SECRET, algorithm=ALGORITHM)
+    if isinstance(token, bytes):
+        token = token.decode('utf-8')
+    return token
 
 def verify_access_token(token: str) -> Dict[str, Any]:
     """Verify and decode access token"""
