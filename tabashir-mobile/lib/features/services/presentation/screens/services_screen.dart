@@ -81,7 +81,34 @@ class _ServicesScreenState extends State<ServicesScreen> {
   }
 
   Future<void> _onLinkedInEnhancerPressed(BuildContext context) async {
-    // For LinkedIn enhancement, we use the same WhatsApp redirection pattern
+    if (Platform.isIOS) {
+      final paymentCubit = context.read<PaymentCubit>();
+
+      setState(() {
+        _pendingServiceTitle = 'ai_linkedin_enhancement_title';
+        _pendingAmount = 19;
+      });
+
+      paymentCubit.onPaymentSuccess = (result) async {
+        String? txnId;
+        result.when(
+          success: (id) => txnId = id,
+          cancelled: () => txnId = null,
+          failed: (_) => txnId = null,
+        );
+        if (mounted) {
+          _navigateToSuccessScreen(txnId);
+        }
+      };
+
+      await paymentCubit.processPayment(
+        serviceId: 'ai_linkedin_enhancement',
+        amount: 19,
+      );
+      return;
+    }
+
+    // For other platforms, redirect to WhatsApp
     await _redirectToWhatsApp(
       context: context,
       serviceTitle: 'ai_linkedin_enhancement_title',
@@ -95,8 +122,9 @@ class _ServicesScreenState extends State<ServicesScreen> {
     double amount,
     String serviceTitle,
   ) async {
-    // On mobile platforms, we redirect to WhatsApp as per business requirements
-    if (Platform.isIOS || Platform.isAndroid) {
+    // On iOS, we must use In-App Purchases.
+    // On Android, we redirect to WhatsApp as per business requirements.
+    if (Platform.isAndroid) {
       await _redirectToWhatsApp(
         context: context,
         serviceTitle: serviceTitle,
@@ -131,9 +159,8 @@ class _ServicesScreenState extends State<ServicesScreen> {
       serviceId: serviceId,
       amount: amount,
     );
-    // Note: Navigation to success screen is handled by onPaymentSuccess callback
-    // Do NOT add navigation logic here
   }
+
 
   void _navigateToSuccessScreen(String? transactionId) {
     // Wait for payment sheet animation to dismiss before navigating

@@ -45,6 +45,7 @@ class PaymentFulfillmentService:
             'linkedin_optimization': lambda: self._create_linkedin_subscription(user_id),
             'ai_linkedin_enhancement': lambda: self._send_linkedin_email(user_id),
             'interview_training': lambda: self._log_interview_training(user_id),
+            'pro_subscription': lambda: self._create_pro_subscription(user_id),
         }
         return handlers.get(service_id)
 
@@ -150,8 +151,8 @@ class PaymentFulfillmentService:
                 commit=True
             )
 
-    def _create_linkedin_subscription(self, user_id):
-        """Create a 30-day LinkedIn Optimization subscription for a user."""
+    def _create_subscription(self, user_id, plan_type):
+        """Create a 30-day subscription for a user with the specified plan type."""
         sub_id = f"sub_{uuid.uuid4().hex[:12]}"
         execute_query(
             """INSERT INTO "Subscription" (id, "userId", plan, status, "startDate", "endDate", "autoRenew", "createdAt", "updatedAt")
@@ -159,7 +160,7 @@ class PaymentFulfillmentService:
             (
                 sub_id,
                 user_id,
-                'LINKEDIN_OPTIMIZATION',
+                plan_type,
                 'ACTIVE',
                 datetime.now(),
                 datetime.now() + timedelta(days=30),
@@ -169,6 +170,16 @@ class PaymentFulfillmentService:
             ),
             commit=True
         )
+
+    def _create_linkedin_subscription(self, user_id):
+        """Create a 30-day LinkedIn Optimization subscription for a user."""
+        self._create_subscription(user_id, 'LINKEDIN_OPTIMIZATION')
+
+    def _create_pro_subscription(self, user_id):
+        """Create a 30-day Pro (PRO_PLAYER) subscription for a user."""
+        self._create_subscription(user_id, 'PRO_PLAYER')
+
+
 
     def _send_linkedin_email(self, user_id):
         """Send LinkedIn enhancement onboarding email."""

@@ -32,10 +32,6 @@ bool operator ==(Object other) {
 @override
 int get hashCode => Object.hash(runtimeType,currentStep,const DeepCollectionEquality().hash(fileBytes),fileName,const DeepCollectionEquality().hash(suggestedRoles),const DeepCollectionEquality().hash(selectedRoles),const DeepCollectionEquality().hash(selectedLocations),nationality,gender,isLoading,isProcessing,errorMessage,submissionResult);
 
-@override
-String toString() {
-  return 'OnboardingWizardState(currentStep: $currentStep, fileBytes: $fileBytes, fileName: $fileName, suggestedRoles: $suggestedRoles, selectedRoles: $selectedRoles, selectedLocations: $selectedLocations, nationality: $nationality, gender: $gender, isLoading: $isLoading, isProcessing: $isProcessing, errorMessage: $errorMessage, submissionResult: $submissionResult)';
-}
 
 
 }
@@ -222,8 +218,8 @@ return $default(_that.currentStep,_that.fileBytes,_that.fileName,_that.suggested
 /// @nodoc
 
 
-class _OnboardingWizardState implements OnboardingWizardState {
-  const _OnboardingWizardState({this.currentStep = 1, this.fileBytes, this.fileName, final  List<String> suggestedRoles = const [], final  List<String> selectedRoles = const [], final  List<String> selectedLocations = const ['Dubai', 'Abu Dhabi', 'Sharjah', 'Ajman', 'Umm Al Quwain', 'Ras Al Khaimah', 'Fujairah'], this.nationality = 'ae', this.gender = 'male', this.isLoading = false, this.isProcessing = false, this.errorMessage, this.submissionResult}): _suggestedRoles = suggestedRoles,_selectedRoles = selectedRoles,_selectedLocations = selectedLocations;
+class _OnboardingWizardState extends OnboardingWizardState {
+  const _OnboardingWizardState({this.currentStep = 1, this.fileBytes, this.fileName, final  List<String> suggestedRoles = const [], final  List<String> selectedRoles = const [], final  List<String> selectedLocations = const ['Dubai', 'Abu Dhabi', 'Sharjah', 'Ajman', 'Umm Al Quwain', 'Ras Al Khaimah', 'Fujairah'], this.nationality = 'ae', this.gender = 'male', this.isLoading = false, this.isProcessing = false, this.errorMessage, this.submissionResult}): _suggestedRoles = suggestedRoles,_selectedRoles = selectedRoles,_selectedLocations = selectedLocations,super._();
   
 
 @override@JsonKey() final  int currentStep;
@@ -274,10 +270,6 @@ bool operator ==(Object other) {
 @override
 int get hashCode => Object.hash(runtimeType,currentStep,const DeepCollectionEquality().hash(fileBytes),fileName,const DeepCollectionEquality().hash(_suggestedRoles),const DeepCollectionEquality().hash(_selectedRoles),const DeepCollectionEquality().hash(_selectedLocations),nationality,gender,isLoading,isProcessing,errorMessage,submissionResult);
 
-@override
-String toString() {
-  return 'OnboardingWizardState(currentStep: $currentStep, fileBytes: $fileBytes, fileName: $fileName, suggestedRoles: $suggestedRoles, selectedRoles: $selectedRoles, selectedLocations: $selectedLocations, nationality: $nationality, gender: $gender, isLoading: $isLoading, isProcessing: $isProcessing, errorMessage: $errorMessage, submissionResult: $submissionResult)';
-}
 
 
 }

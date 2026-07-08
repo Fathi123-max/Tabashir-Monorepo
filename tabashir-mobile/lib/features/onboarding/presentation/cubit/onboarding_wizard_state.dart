@@ -6,6 +6,8 @@ part 'onboarding_wizard_state.freezed.dart';
 
 @freezed
 sealed class OnboardingWizardState with _$OnboardingWizardState {
+  const OnboardingWizardState._();
+
   const factory OnboardingWizardState({
     @Default(1) int currentStep,
     Uint8List? fileBytes,
@@ -31,4 +33,10 @@ sealed class OnboardingWizardState with _$OnboardingWizardState {
   }) = _OnboardingWizardState;
 
   factory OnboardingWizardState.initial() => const OnboardingWizardState();
+
+  @override
+  String toString() {
+    final bytesLength = fileBytes != null ? '${fileBytes!.length} bytes' : 'null';
+    return 'OnboardingWizardState(currentStep: $currentStep, fileBytes: [$bytesLength], fileName: $fileName, suggestedRoles: $suggestedRoles, selectedRoles: $selectedRoles, selectedLocations: $selectedLocations, nationality: $nationality, gender: $gender, isLoading: $isLoading, isProcessing: $isProcessing, errorMessage: $errorMessage, submissionResult: $submissionResult)';
+  }
 }

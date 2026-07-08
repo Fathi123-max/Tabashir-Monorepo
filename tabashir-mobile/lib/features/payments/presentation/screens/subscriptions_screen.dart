@@ -389,8 +389,9 @@ class _SubscriptionsScreenState extends State<SubscriptionsScreen> {
   );
 
   void _handleUpgradeToPro() {
-    // On mobile platforms, we redirect to WhatsApp as per business requirements
-    if (Platform.isIOS || Platform.isAndroid) {
+    // On Android, we redirect to WhatsApp as per business requirements.
+    // On iOS, we must use In-App Purchases to comply with Guideline 3.1.1.
+    if (Platform.isAndroid) {
       _redirectToWhatsApp(
         planName: 'Pro',
         price: 'AED 49/month',
@@ -398,8 +399,7 @@ class _SubscriptionsScreenState extends State<SubscriptionsScreen> {
       return;
     }
 
-    // Trigger payment through PaymentCubit
-    // The actual service ID and amount should come from backend config
+    // Trigger payment through PaymentCubit (uses StoreKit 2 via ApplePaymentPlatform on iOS)
     _paymentCubit.onPaymentSuccess = (_) async {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -417,4 +417,5 @@ class _SubscriptionsScreenState extends State<SubscriptionsScreen> {
       amount: 49,
     );
   }
+
 }

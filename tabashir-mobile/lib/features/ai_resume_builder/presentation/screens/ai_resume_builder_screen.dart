@@ -10,6 +10,7 @@ import '../../../../core/network/models/ai_resume/resume_models.dart';
 import '../../../../core/router/route_names.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../payments/presentation/cubit/payment_cubit.dart';
+import '../../../payments/domain/repositories/payment_platform.dart';
 import '../../../profile/presentation/cubit/profile_cubit.dart';
 import '../cubit/ai_resume_builder_cubit.dart';
 import '../widgets/ai_resume_builder_header.dart';
@@ -362,13 +363,6 @@ class _AiResumeBuilderViewState extends State<AiResumeBuilderView> {
 
               if (format == null || !context.mounted) return;
 
-              // TEMPORARY: Skip payment flow for testing
-              cubit.generateAndSave(
-                outputFormat: format,
-              );
-              return;
-
-              /* // Payment Flow (Disabled for testing)
               if (isSubscribed) {
                 // Free generation for subscribers
                 cubit.generateAndSave(
@@ -402,7 +396,7 @@ class _AiResumeBuilderViewState extends State<AiResumeBuilderView> {
                   serviceId: 'ai_resume_optimization',
                   amount: 40,
                 );
-              } catch (e) {
+              } on Exception catch (e) {
                 if (context.mounted) {
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(
@@ -412,7 +406,7 @@ class _AiResumeBuilderViewState extends State<AiResumeBuilderView> {
                   );
                 }
               }
-              */
+
             },
             child: Text(isSubscribed ? 'Generate'.tr() : 'Pay & Generate'.tr()),
           ),

@@ -83,7 +83,8 @@ class StripeService:
             "linkedin_optimization": 60,
             "ai_linkedin_enhancement": 19,
             "ai_resume_optimization": 29,
-            "interview_training": 150
+            "interview_training": 150,
+            "pro_subscription": 49
         }
         return prices.get(service_id)
 
@@ -98,6 +99,8 @@ class StripeService:
             "linkedin_optimization": "LinkedIn Optimization",
             "ai_linkedin_enhancement": "LinkedIn Profile Enhancement",
             "ai_resume_optimization": "ATS CV Optimization",
-            "interview_training": "Interview Training"
+            "interview_training": "Interview Training",
+            "pro_subscription": "Pro Subscription"
         }
         return titles.get(service_id, service_id)
+

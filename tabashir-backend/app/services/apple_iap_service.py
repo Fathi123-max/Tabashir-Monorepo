@@ -97,7 +97,22 @@ class AppleIAPService:
             try:
                 response = requests.get(url, headers=headers, timeout=10)
                 response.raise_for_status()
-                return response.json()
+                
+                response_data = response.json()
+                signed_info = response_data.get('signedTransactionInfo')
+                if not signed_info:
+                    logger.error('[AppleIAP] No signedTransactionInfo in App Store response')
+                    return None
+
+                try:
+                    # Decode JWS payload without verifying signature as it is fetched via TLS
+                    decoded_payload = jwt.decode(signed_info, options={"verify_signature": False})
+                    logger.info(f'[AppleIAP] Successfully verified transaction {transaction_id} for product {decoded_payload.get("productId")}')
+                    return decoded_payload
+                except Exception as jwt_err:
+                    logger.error(f'[AppleIAP] JWT decoding failed: {str(jwt_err)}')
+                    return None
+
             except requests.exceptions.HTTPError as e:
                 status_code = response.status_code
                 # 4xx errors are not retriable (except 429)
@@ -113,3 +128,4 @@ class AppleIAPService:
                     logger.error(f'Apple receipt verification failed after {max_retries} retries: {str(e)}')
                     return None
                 time.sleep(2 ** attempt)
+

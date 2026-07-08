@@ -142,7 +142,7 @@ abstract class RegisterModule {
 
   // Apple IAP Service (used on iOS)
   @lazySingleton
-  AppleIAPService get appleIAPService => AppleIAPService(dio);
+  AppleIAPService get appleIAPService => AppleIAPService(authDioClient.dio);
 
   // PaymentPlatform — platform-specific implementation
   @lazySingleton
