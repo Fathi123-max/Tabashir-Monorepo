@@ -150,6 +150,8 @@ PODS:
     - Flutter
   - flutter_pdf_text (0.0.1):
     - Flutter
+  - flutter_pdfview (1.0.2):
+    - Flutter
   - flutter_secure_storage (6.0.0):
     - Flutter
   - google_sign_in_ios (0.0.1):
@@ -289,8 +291,6 @@ PODS:
     - OneSignalXCFramework/OneSignalOutcomes
   - open_filex (0.0.2):
     - Flutter
-  - pdfx (1.0.0):
-    - Flutter
   - PromisesObjC (2.4.0)
   - PromisesSwift (2.4.0):
     - PromisesObjC (= 2.4.0)
@@ -383,6 +383,7 @@ DEPENDENCIES:
   - Flutter (from `Flutter`)
   - flutter_local_notifications (from `.symlinks/plugins/flutter_local_notifications/ios`)
   - flutter_pdf_text (from `.symlinks/plugins/flutter_pdf_text/ios`)
+  - flutter_pdfview (from `.symlinks/plugins/flutter_pdfview/ios`)
   - flutter_secure_storage (from `.symlinks/plugins/flutter_secure_storage/ios`)
   - google_sign_in_ios (from `.symlinks/plugins/google_sign_in_ios/darwin`)
   - image_picker_ios (from `.symlinks/plugins/image_picker_ios/ios`)
@@ -390,7 +391,6 @@ DEPENDENCIES:
   - onesignal_flutter (from `.symlinks/plugins/onesignal_flutter/ios`)
   - OneSignalXCFramework (< 6.0, >= 5.0.0)
   - open_filex (from `.symlinks/plugins/open_filex/ios`)
-  - pdfx (from `.symlinks/plugins/pdfx/ios`)
   - share_plus (from `.symlinks/plugins/share_plus/ios`)
   - shared_preferences_foundation (from `.symlinks/plugins/shared_preferences_foundation/darwin`)
   - sign_in_with_apple (from `.symlinks/plugins/sign_in_with_apple/ios`)
@@ -462,6 +462,8 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/flutter_local_notifications/ios"
   flutter_pdf_text:
     :path: ".symlinks/plugins/flutter_pdf_text/ios"
+  flutter_pdfview:
+    :path: ".symlinks/plugins/flutter_pdfview/ios"
   flutter_secure_storage:
     :path: ".symlinks/plugins/flutter_secure_storage/ios"
   google_sign_in_ios:
@@ -474,8 +476,6 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/onesignal_flutter/ios"
   open_filex:
     :path: ".symlinks/plugins/open_filex/ios"
-  pdfx:
-    :path: ".symlinks/plugins/pdfx/ios"
   share_plus:
     :path: ".symlinks/plugins/share_plus/ios"
   shared_preferences_foundation:
@@ -517,6 +517,7 @@ SPEC CHECKSUMS:
   Flutter: cabc95a1d2626b1b06e7179b784ebcf0c0cde467
   flutter_local_notifications: a5a732f069baa862e728d839dd2ebb904737effb
   flutter_pdf_text: d3f9367533f673311267acb57b0d2337c578f77a
+  flutter_pdfview: 32bf27bda6fd85b9dd2c09628a824df5081246cf
   flutter_secure_storage: 1ed9476fba7e7a782b22888f956cce43e2c62f13
   google_sign_in_ios: b48bb9af78576358a168361173155596c845f0b9
   GoogleAdsOnDeviceConversion: d68c69dd9581a0f5da02617b6f377e5be483970f
@@ -532,7 +533,6 @@ SPEC CHECKSUMS:
   onesignal_flutter: 557110960f936d1d2d792864149e79a58945c686
   OneSignalXCFramework: 943852e7d70d719f73e9669d48620aeec1b93022
   open_filex: 432f3cd11432da3e39f47fcc0df2b1603854eff1
-  pdfx: 77f4dddc48361fbb01486fa2bdee4532cbb97ef3
   PromisesObjC: f5707f49cb48b9636751c5b2e7d227e43fba9f47
   PromisesSwift: 9d77319bbe72ebf6d872900551f7eeba9bce2851
   RecaptchaInterop: 11e0b637842dfb48308d242afc3f448062325aba

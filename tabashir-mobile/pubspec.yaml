@@ -1,7 +1,7 @@
 name: tabashir
 description: "A new Flutter project."
 publish_to: "none"
-version: 0.1.0+19
+version: 1.0.0+20
 
 environment:
   sdk: ^3.9.2
@@ -41,7 +41,7 @@ dependencies:
 
   # File handling
   file_picker: ^8.1.2
-  pdfx: ^2.6.1
+  flutter_pdfview: ^1.4.4
   flutter_pdf_text:
     path: packages/flutter_pdf_text
   archive: ^3.4.10

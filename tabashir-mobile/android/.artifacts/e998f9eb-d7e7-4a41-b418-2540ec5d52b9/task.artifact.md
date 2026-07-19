@@ -1,0 +1,4 @@
+- [x] Modify `gradle.properties` to enable uncompressed native libs in bundle
+- [x] Explicitly set NDK version to r28 in `app/build.gradle.kts`
+- [x] Verify build configuration consistency
+- [x] Summarize changes in walkthrough

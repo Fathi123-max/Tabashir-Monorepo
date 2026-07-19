@@ -1,3 +1,4 @@
+import java.io.File
 import java.util.Properties
 import java.io.FileInputStream
 
@@ -31,23 +32,25 @@ if (versionPropertiesFile.exists()) {
 android {
     namespace = "ae.tabashir"
     compileSdk = flutter.compileSdkVersion
-    ndkVersion = flutter.ndkVersion
+    ndkVersion = "28.0.12433566"
+
+    experimentalProperties["android.experiment.useElfAlignment"] = true
 
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_11
-        targetCompatibility = JavaVersion.VERSION_11
-        isCoreLibraryDesugaringEnabled = true 
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
+        isCoreLibraryDesugaringEnabled = true
     }
 
     kotlinOptions {
-        jvmTarget = JavaVersion.VERSION_11.toString()
+        jvmTarget = JavaVersion.VERSION_17.toString()
     }
 
     defaultConfig {
         applicationId = "ae.tabashir"
         minSdk = flutter.minSdkVersion
         targetSdk = flutter.targetSdkVersion
-        
+
         versionCode = versionProperties.getProperty("version.code")?.toInt() ?: flutter.versionCode
         versionName = versionProperties.getProperty("version.name") ?: flutter.versionName
     }
@@ -71,7 +74,7 @@ android {
                 // Fallback to debug signing if keystore not configured (dev only)
                 signingConfig = signingConfigs.getByName("debug")
             }
-            
+
             isMinifyEnabled = true
             isShrinkResources = true
             proguardFiles(
@@ -83,7 +86,18 @@ android {
 
     packaging {
         jniLibs {
-            useLegacyPackaging = true
+            useLegacyPackaging = false
+        }
+        resources {
+            excludes += "/remoteconfigs"
+        }
+    }
+
+    // Force uncompressed native libs for 16 KB support
+    @Suppress("DEPRECATION")
+    packagingOptions {
+        jniLibs {
+            useLegacyPackaging = false
         }
     }
 }
@@ -93,5 +107,15 @@ flutter {
 }
 
 dependencies {
-    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.1.5")  
+    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.1.5")
+
+    // Force 16 KB aligned version of Pdfium
+    constraints {
+        implementation("io.github.endigo:pdfiumandroid:1.0.33") {
+            because("Previous versions are only 4 KB aligned")
+        }
+    }
 }
+
+// Toolchain aligned with JAVA_HOME
+// kotlin { jvmToolchain(17) }

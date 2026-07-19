@@ -14,6 +14,30 @@
       },
       "oauth_client": [
         {
+          "client_id": "908457286237-ctjjldtsjij51jjl4sod7m849brggqen.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "ae.tabashir",
+            "certificate_hash": "f5f017663939634689799ab5a466899386d78ece"
+          }
+        },
+        {
+          "client_id": "908457286237-saqgsd8b6v40tr1fn7cdpd9t2s7dk5ff.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "ae.tabashir",
+            "certificate_hash": "701a23ca0a24974e860e2643889fc33f74dfe986"
+          }
+        },
+        {
+          "client_id": "908457286237-t3s12t5n49uoe7pse7favd1cg8mh4bd6.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "ae.tabashir",
+            "certificate_hash": "9e53a3ed2bba417b94c95e24aa9ae420e5cc7db0"
+          }
+        },
+        {
           "client_id": "908457286237-sl5h3g85uf350uje8k39f55t6ankopjc.apps.googleusercontent.com",
           "client_type": 3
         }
@@ -31,10 +55,11 @@
               "client_type": 3
             },
             {
-              "client_id": "908457286237-kcd4psro9fe34ljqgjfp5t124r873j5o.apps.googleusercontent.com",
+              "client_id": "908457286237-6gslbsmh8udm0pqnr2s4aohib6n9kunh.apps.googleusercontent.com",
               "client_type": 2,
               "ios_info": {
-                "bundle_id": "com.example.tabashir"
+                "bundle_id": "ae.tabashir",
+                "app_store_id": "6761712536"
               }
             }
           ]

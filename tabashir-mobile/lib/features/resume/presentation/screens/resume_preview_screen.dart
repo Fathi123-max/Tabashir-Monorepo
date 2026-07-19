@@ -1,12 +1,13 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_pdfview/flutter_pdfview.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:open_filex/open_filex.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:pdfx/pdfx.dart';
 import 'package:share_plus/share_plus.dart';
 
 import '../../../../core/di/injection.dart';
@@ -29,8 +30,12 @@ class ResumePreviewScreen extends StatefulWidget {
 }
 
 class _ResumePreviewScreenState extends State<ResumePreviewScreen> {
-  PdfController? _pdfController;
+  final Completer<PDFViewController> _pdfController = Completer<PDFViewController>();
+  String? _pdfFilePath;
   bool _isLoading = true;
+  bool _isReady = false;
+  int _totalPages = 0;
+  int _currentPage = 0;
   String? _error;
 
   @override
@@ -39,17 +44,13 @@ class _ResumePreviewScreenState extends State<ResumePreviewScreen> {
     _loadPdf();
   }
 
-  @override
-  void dispose() {
-    _pdfController?.dispose();
-    super.dispose();
-  }
-
   Future<void> _loadPdf() async {
     try {
       setState(() {
         _isLoading = true;
+        _isReady = false;
         _error = null;
+        _pdfFilePath = null;
       });
 
       // Check if originalUrl is available
@@ -113,25 +114,11 @@ class _ResumePreviewScreenState extends State<ResumePreviewScreen> {
         throw Exception('Failed to download resume file');
       }
 
-      // If it's a PDF, initialize the PDF controller
-      if (!isDocx) {
-        final controller = PdfController(
-          document: PdfDocument.openFile(filePath),
-        );
-
-        if (mounted) {
-          setState(() {
-            _pdfController = controller;
-            _isLoading = false;
-          });
-        }
-      } else {
-        // For DOCX, we just finish loading without a PDF controller
-        if (mounted) {
-          setState(() {
-            _isLoading = false;
-          });
-        }
+      if (mounted) {
+        setState(() {
+          _pdfFilePath = filePath;
+          _isLoading = false;
+        });
       }
     } catch (e) {
       if (mounted) {
@@ -179,25 +166,29 @@ class _ResumePreviewScreenState extends State<ResumePreviewScreen> {
         ],
       ),
       body: _buildBody(context, isDocx),
-      floatingActionButton: _pdfController != null
+      floatingActionButton: _isReady && _totalPages > 1
           ? Column(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
                 FloatingActionButton(
                   heroTag: 'prev',
-                  onPressed: () => _pdfController?.previousPage(
-                    duration: const Duration(milliseconds: 300),
-                    curve: Curves.easeInOut,
-                  ),
+                  onPressed: () async {
+                    final controller = await _pdfController.future;
+                    if (_currentPage > 0) {
+                      await controller.setPage(_currentPage - 1);
+                    }
+                  },
                   child: const Icon(Icons.chevron_left),
                 ),
                 SizedBox(height: 10.h),
                 FloatingActionButton(
                   heroTag: 'next',
-                  onPressed: () => _pdfController?.nextPage(
-                    duration: const Duration(milliseconds: 300),
-                    curve: Curves.easeInOut,
-                  ),
+                  onPressed: () async {
+                    final controller = await _pdfController.future;
+                    if (_currentPage < _totalPages - 1) {
+                      await controller.setPage(_currentPage + 1);
+                    }
+                  },
                   child: const Icon(Icons.chevron_right),
                 ),
               ],
@@ -303,16 +294,44 @@ class _ResumePreviewScreenState extends State<ResumePreviewScreen> {
       );
     }
 
-    if (_pdfController == null) {
+    if (_pdfFilePath == null) {
       return const Center(
         child: Text('No PDF data available'),
       );
     }
 
-    return PdfView(
-      controller: _pdfController!,
-      scrollDirection: Axis.vertical,
-      physics: const BouncingScrollPhysics(),
+    return PDFView(
+      filePath: _pdfFilePath,
+      enableSwipe: true,
+      swipeHorizontal: false,
+      autoSpacing: true,
+      pageFling: true,
+      onRender: (pages) {
+        if (mounted) {
+          setState(() {
+            _totalPages = pages ?? 0;
+            _isReady = true;
+          });
+        }
+      },
+      onViewCreated: (PDFViewController pdfViewController) {
+        _pdfController.complete(pdfViewController);
+      },
+      onPageChanged: (int? page, int? total) {
+        if (mounted) {
+          setState(() {
+            _currentPage = page ?? 0;
+            _totalPages = total ?? 0;
+          });
+        }
+      },
+      onError: (error) {
+        if (mounted) {
+          setState(() {
+            _error = error.toString();
+          });
+        }
+      },
     );
   }
 
