@@ -22,6 +22,14 @@
           }
         },
         {
+          "client_id": "908457286237-oh409n863vmmh2ari8co5ic83e6edbim.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "ae.tabashir",
+            "certificate_hash": "fa28b060684c89e29a7b85a36178c6e88623f04c"
+          }
+        },
+        {
           "client_id": "908457286237-saqgsd8b6v40tr1fn7cdpd9t2s7dk5ff.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
